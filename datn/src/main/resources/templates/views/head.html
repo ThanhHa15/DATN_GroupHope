@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Header mẫu</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      .header {
+        background-color: #0a2449;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        position: relative;
+        height: 70px;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        flex-grow: 1; /* Chiếm không gian còn lại */
+      }
+
+      .logo {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+      }
+
+      .logo img {
+        height: 80%;
+        width: auto;
+        max-height: 50px;
+        object-fit: contain;
+      }
+
+      .search-group {
+        display: flex;
+        align-items: center;
+        flex-grow: 1; /* Cho phép nhóm này chiếm không gian */
+        max-width: 800px; /* Giới hạn độ rộng tối đa */
+      }
+
+      .category-menu {
+        position: relative;
+        display: inline-block;
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+
+      .category-btn {
+        background-color: #17088b;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      .category-btn i {
+        margin-right: 8px;
+      }
+
+      .category-dropdown {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 250px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 4px;
+        top: 100%;
+        left: 0;
+      }
+
+      .category-menu:hover .category-dropdown {
+        display: block;
+      }
+
+      .category-dropdown a {
+        color: #333;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        border-bottom: 1px solid #eee;
+      }
+
+      .category-dropdown a:hover {
+        background-color: #f1f1f1;
+        color: #0973bf;
+      }
+
+      .category-dropdown i {
+        width: 20px;
+        text-align: center;
+        margin-right: 10px;
+      }
+
+      .search-bar {
+        margin-left: 20px;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 4px;
+        flex-grow: 1; /* Ô tìm kiếm chiếm không gian còn lại */
+        min-width: 200px; /* Độ rộng tối thiểu */
+      }
+
+      .right-section {
+        display: flex;
+        align-items: center;
+        margin-left: 20px; /* Khoảng cách với ô tìm kiếm */
+      }
+
+      .hotline {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        margin-right: 20px; /* Khoảng cách với nav-icons */
+      }
+
+      .hotline-number {
+        font-weight: bold;
+        color: #ffd700;
+        margin-right: 10px;
+      }
+
+      .nav-icons {
+        display: flex;
+        align-items: center;
+      }
+
+      .nav-icon {
+        margin-left: 15px; /* Giảm khoảng cách giữa các icon */
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        color: white;
+        min-width: 50px; /* Đảm bảo không bị co khi màn hình nhỏ */
+      }
+
+      .nav-icon i {
+        font-size: 20px;
+        margin-bottom: 3px;
+      }
+
+      /* Phần navigation phía dưới */
+      .main-nav {
+        background-color: #f8f8f8;
+        padding: 10px 20px;
+        border-bottom: 1px solid #e7e7e7;
+        display: flex;
+        justify-content: center;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        margin: 0 auto;
+        padding: 0;
+      }
+
+      .nav-links li {
+        margin: 0 12px;
+        position: relative;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+      }
+
+      .nav-links a:hover {
+        color: #d70018;
+      }
+
+      .nav-links i {
+        margin-right: 5px;
+        font-size: 16px;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <div class="logo-section">
+        <div class="logo">
+          <img src="img/image copy.png" alt="Logo" />
+        </div>
+
+        <div class="search-group">
+          <div class="category-menu">
+            <button class="category-btn">
+              <i class="fas fa-list"></i>
+              <span>Danh mục</span>
+            </button>
+            <div class="category-dropdown">
+              <a href="#"><i class="fas fa-mobile-alt"></i> Điện thoại</a>
+              <a href="#"><i class="fas fa-laptop"></i> Laptop</a>
+              <a href="#"><i class="fas fa-tablet-alt"></i> Tablet</a>
+              <a href="#"><i class="fas fa-headphones"></i> Phụ kiện</a>
+              <a href="#"><i class="fas fa-clock"></i> Đồng hồ</a>
+              <a href="#"><i class="fas fa-home"></i> Điện gia dụng</a>
+              <a href="#"><i class="fas fa-tv"></i> TV</a>
+              <a href="#"><i class="fas fa-gamepad"></i> Gaming</a>
+            </div>
+          </div>
+
+          <input
+            type="text"
+            class="search-bar"
+            placeholder="Danh mục sản phẩm cần tìm..."
+          />
+        </div>
+      </div>
+
+      <div class="right-section">
+        <div class="hotline">
+          <span class="hotline-number">1900 6750</span>
+          <span>Hotline</span>
+        </div>
+
+        <div class="nav-icons">
+          <div class="nav-icon">
+            <i class="fas fa-headset"></i>
+            <span>Hệ thống</span>
+          </div>
+          <div class="nav-icon">
+            <i class="fas fa-gift"></i>
+            <span>Khuyến mãi</span>
+          </div>
+          <div class="nav-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Giỏ hàng (0)</span>
+          </div>
+          <div class="nav-icon">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Đơn hàng</span>
+          </div>
+          <div class="nav-icon">
+            <i class="fas fa-user"></i>
+            <span>Thông tin</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="main-nav">
+      <ul class="nav-links">
+        <li>
+          <a href="#"><i class="fas fa-home"></i> Trang chủ</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-info-circle"></i> Giới thiệu</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-box-open"></i> Sản phẩm</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-newspaper"></i> Tin tức</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-star"></i> Review</a>
+        </li>
+        <li>
+          <a href="#"
+            ><i class="fas fa-question-circle"></i> Câu hỏi thường gặp</a
+          >
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-search"></i> Tra cứu bảo hành</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-calendar-check"></i> Đặt trước</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-phone-alt"></i> Liên hệ</a>
+        </li>
+      </ul>
+    </nav>
+  </body>
+</html>
