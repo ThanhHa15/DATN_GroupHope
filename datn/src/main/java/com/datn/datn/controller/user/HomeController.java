@@ -54,5 +54,9 @@ public class HomeController {
     public String register(Model model, HttpSession session) {
         return "views/shared/register";
     }
+     @GetMapping("/forgetPass")
+    public String forgetPass(Model model, HttpSession session) {
+        return "views/shared/forgetPass";
+    }
     
 }

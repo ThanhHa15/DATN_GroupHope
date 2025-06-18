@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giỏ hàng</title>
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <script>tailwind.config={theme:{extend:{colors:{primary:'#001e73',secondary:'#4a6cf7'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         :where([class^="ri-"])::before { content: "\f3c2"; }
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f5f5f5;
         }
-        .quantity-input::-webkit-inner-spin-button, 
-        .quantity-input::-webkit-outer-spin-button { 
+        .quantity-input::-webkit-inner-spin-button,
+        .quantity-input::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
@@ -25,180 +27,111 @@
             -moz-appearance: textfield;
         }
     </style>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#0a2896',secondary:'#4a5568'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
 </head>
-<body class="min-h-screen">
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <h1 class="text-2xl font-bold mb-6">Giỏ hàng của bạn</h1>
-        
-        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-            <!-- Header -->
-            <div class="grid grid-cols-12 gap-4 p-4 border-b text-gray-700 font-medium">
-                <div class="col-span-6">
-                    <span>Thông tin sản phẩm</span>
-                </div>
-                <div class="col-span-2 text-right">
-                    <span>Đơn giá</span>
-                </div>
-                <div class="col-span-2 text-center">
-                    <span>Số lượng</span>
-                </div>
-                <div class="col-span-2 text-right">
-                    <span>Thành tiền</span>
-                </div>
-            </div>
-            
-            <!-- Product Item 1 -->
-            <div class="grid grid-cols-12 gap-4 p-4 items-center border-b">
-                <div class="col-span-6 flex items-center">
-                    <div class="w-24 h-24 flex-shrink-0 mr-4">
-                        <img src="https://readdy.ai/api/search-image?query=iPhone%2015%20Pro%20Max%20titanium%20color%2C%20professional%20product%20photo%20on%20white%20background%2C%20high%20quality%2C%20detailed%2C%20studio%20lighting&width=200&height=200&seq=1&orientation=squarish" alt="iPhone 15 Pro Max" class="w-full h-full object-contain">
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-gray-800">iPhone 15 Pro Max 1TB - Chính hãng VN/A</h3>
-                        <p class="text-gray-600 text-sm mt-1">Titan</p>
-                        <button class="text-blue-600 text-sm mt-2 hover:underline flex items-center">
-                            <span>Xóa</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-span-2 text-right text-gray-800 font-medium">
-                    45.590.000đ
-                </div>
-                <div class="col-span-2 flex justify-center">
-                    <div class="flex items-center border rounded-button">
-                        <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-l-button border-r !rounded-button" id="decreaseBtn">
-                            <i class="ri-subtract-line"></i>
-                        </button>
-                        <input type="text" value="1" class="quantity-input w-10 h-8 text-center border-none focus:outline-none" id="quantityInput">
-                        <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-r-button border-l !rounded-button" id="increaseBtn">
-                            <i class="ri-add-line"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-span-2 text-right text-primary font-medium">
-                    45.590.000đ
-                </div>
-            </div>
-            
-            <!-- Product Item 2 -->
-            <div class="grid grid-cols-12 gap-4 p-4 items-center">
-                <div class="col-span-6 flex items-center">
-                    <div class="w-24 h-24 flex-shrink-0 mr-4">
-                        <img src="https://readdy.ai/api/search-image?query=AirPods%20Pro%202%20with%20USB-C%20case%2C%20professional%20product%20photo%20on%20white%20background%2C%20high%20quality%2C%20detailed%2C%20studio%20lighting&width=200&height=200&seq=2&orientation=squarish" alt="AirPods Pro" class="w-full h-full object-contain">
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-gray-800">AirPods Pro 2 - Chính hãng VN/A</h3>
-                        <p class="text-gray-600 text-sm mt-1">Trắng</p>
-                        <button class="text-blue-600 text-sm mt-2 hover:underline flex items-center">
-                            <span>Xóa</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-span-2 text-right text-gray-800 font-medium">
-                    6.790.000đ
-                </div>
-                <div class="col-span-2 flex justify-center">
-                    <div class="flex items-center border rounded-button">
-                        <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-l-button border-r !rounded-button" id="decreaseBtn2">
-                            <i class="ri-subtract-line"></i>
-                        </button>
-                        <input type="text" value="1" class="quantity-input w-10 h-8 text-center border-none focus:outline-none" id="quantityInput2">
-                        <button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-r-button border-l !rounded-button" id="increaseBtn2">
-                            <i class="ri-add-line"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-span-2 text-right text-primary font-medium">
-                    6.790.000đ
-                </div>
-            </div>
-        </div>
-        
-        <!-- Summary -->
-        <div class="flex flex-col md:flex-row justify-between items-start gap-6">
-            <div class="w-full md:w-1/2 lg:w-2/3">
-                <div class="bg-white rounded-lg shadow-sm p-4">
-                    <h2 class="text-lg font-medium mb-3">Ghi chú đơn hàng</h2>
-                    <textarea class="w-full border rounded-button p-3 focus:outline-none focus:ring-1 focus:ring-primary" rows="4" placeholder="Nhập ghi chú cho đơn hàng của bạn"></textarea>
-                </div>
-            </div>
-            
-            <div class="w-full md:w-1/2 lg:w-1/3 bg-white rounded-lg shadow-sm p-4">
-                <div class="flex justify-between py-2 border-b">
-                    <span class="text-gray-600">Tạm tính:</span>
-                    <span class="font-medium">52.380.000đ</span>
-                </div>
-                <div class="flex justify-between py-2 border-b">
-                    <span class="text-gray-600">Giảm giá:</span>
-                    <span class="font-medium">0đ</span>
-                </div>
-                <div class="flex justify-between py-3">
-                    <span class="text-gray-800 font-medium">Tổng tiền:</span>
-                    <span class="text-primary font-bold text-xl">52.380.000đ</span>
-                </div>
-                <button class="w-full bg-primary text-white py-3 rounded-button font-medium mt-3 hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">
-                    Thanh toán
-                </button>
-                <div class="flex justify-center mt-4">
-                    <a href="#" class="text-primary hover:underline flex items-center">
-                        <i class="ri-arrow-left-line mr-1"></i>
-                        <span>Tiếp tục mua hàng</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+<body class="bg-gray-50 min-h-screen" style="background-color: #f2f2f2;">
 
-    <script id="quantityControlScript">
+    <main class="container mx-auto mt-2 px-4 py-8 bg-white rounded-lg p-6 mb-8 shadow-[0_0_15px_rgba(0,0,0,0.1)]"> 
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+            <div class="grid grid-cols-12 border-b py-4 px-6 bg-gray-50 font-medium text-gray-700">
+                <div class="col-span-6"><b style="font-weight: 1100; font-size: 18px;"> Thông tin sản phẩm</b></div>
+                <div class="col-span-2 text-center"><b style="font-weight: 1100; font-size: 18px;"> Đơn giá</b></div>
+                <div class="col-span-2 text-center"><b style="font-weight: 1100; font-size: 18px;"> Số lượng</b></div>
+                <div class="col-span-2 text-right"><b style="font-weight: 1100; font-size: 18px;"> Thành tiền</b></div>
+            </div>
+            
+            <!-- Sản phẩm 1 -->
+            <div class="grid grid-cols-12 items-center py-6 px-6 border-b">
+                <div class="col-span-6 flex items-center">
+                    <img src="https://bizweb.dktcdn.net/thumb/compact/100/502/883/products/230225044129-z4137191702518-058b-7c6d0c7a-a87b-46da-a4dc-bae4cd7cb08a-31e2c29c-d083-4f09-b2af-7dd77c8875f2.png" alt="iPhone 14 Plus" class="w-24 h-24 object-contain mr-4">
+                    <div>
+                        <h2 class="font-medium text-gray-1000">iPhone 14 Plus 512GB - Chính hãng VN/A</h2>
+                        <p class="text-sm text-gray-700 mt-1">Trắng</p>
+                        <button class="text-[#000f8f] text-sm mt-2 flex items-center">
+                            <i class="ri-delete-bin-line mr-1"></i> <b>Xóa</b>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-span-2 text-center font-medium text-[#000f8f]">25.490.000đ</div>
+                <div class="col-span-2 flex justify-center">
+                    <div class="flex items-center">
+                        <button class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-button">
+                            <i class="ri-subtract-line"></i>
+                        </button>
+                        <input type="text" value="1" class="quantity-input w-10 h-8 text-center border-none mx-1 bg-transparent" readonly>
+                        <button class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-button">
+                            <i class="ri-add-line"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-span-2 text-right font-medium text-[#000f8f]">25.490.000đ</div>
+            </div>
+            
+            <!-- Sản phẩm 2 -->
+            <div class="grid grid-cols-12 items-center py-6 px-6 border-b">
+                <div class="col-span-6 flex items-center">
+                    <img src="https://readdy.ai/api/search-image?query=iPhone%2015%20Pro%20Max%20titanium%20color%20on%20clean%20white%20background%2C%20high%20quality%20product%20photography%2C%20detailed%2C%20professional%20lighting&width=120&height=120&seq=2&orientation=squarish" alt="iPhone 15 Pro Max" class="w-24 h-24 object-contain mr-4">
+                    <div>
+                        <h3 class="font-medium text-gray-1000">iPhone 15 Pro Max 1TB - Chính hãng VN/A</h3>
+                        <p class="text-sm text-gray-700 mt-1">Titan</p>
+                        <button class="text-[#000f8f] text-sm mt-2 flex items-center">
+                            <i class="ri-delete-bin-line mr-1"></i> <b>Xóa</b>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-span-2 text-center font-medium text-[#000f8f]">45.590.000đ</div>
+                <div class="col-span-2 flex justify-center">
+                    <div class="flex items-center">
+                        <button class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-button">
+                            <i class="ri-subtract-line"></i>
+                        </button>
+                        <input type="text" value="2" class="quantity-input w-10 h-8 text-center border-none mx-1 bg-transparent" readonly>
+                        <button class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-button">
+                            <i class="ri-add-line"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-span-2 text-right font-medium text-[#000f8f]">91.180.000đ</div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm p-6 md:w-1/3" style="margin-left: 830px; margin-top: -0px;">
+                    <div class="space-y-3 mb-2">
+                        <div class=" pt-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-medium">Tổng tiền:</span>
+                                <span class="text-xl font-bold text-primary">116.670.000đ</span>
+                            </div>
+                        </div>
+                    </div>
+                <button class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap">Thanh toán</button>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
+<script id="quantity-control"> // Xử lý sự kiện cho các nút tăng/giảm số lượng
         document.addEventListener('DOMContentLoaded', function() {
-            // First product quantity control
-            const decreaseBtn = document.getElementById('decreaseBtn');
-            const increaseBtn = document.getElementById('increaseBtn');
-            const quantityInput = document.getElementById('quantityInput');
+            const minusBtns = document.querySelectorAll('button:has(.ri-subtract-line)');
+            const plusBtns = document.querySelectorAll('button:has(.ri-add-line)');
             
-            decreaseBtn.addEventListener('click', function() {
-                let value = parseInt(quantityInput.value);
-                if (value > 1) {
-                    quantityInput.value = value - 1;
-                }
+            minusBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const input = this.nextElementSibling;
+                    let value = parseInt(input.value);
+                    if (value > 1) {
+                        input.value = value - 1;
+                    }
+                });
             });
             
-            increaseBtn.addEventListener('click', function() {
-                let value = parseInt(quantityInput.value);
-                quantityInput.value = value + 1;
-            });
-            
-            quantityInput.addEventListener('input', function() {
-                let value = parseInt(this.value);
-                if (isNaN(value) || value < 1) {
-                    this.value = 1;
-                }
-            });
-            
-            // Second product quantity control
-            const decreaseBtn2 = document.getElementById('decreaseBtn2');
-            const increaseBtn2 = document.getElementById('increaseBtn2');
-            const quantityInput2 = document.getElementById('quantityInput2');
-            
-            decreaseBtn2.addEventListener('click', function() {
-                let value = parseInt(quantityInput2.value);
-                if (value > 1) {
-                    quantityInput2.value = value - 1;
-                }
-            });
-            
-            increaseBtn2.addEventListener('click', function() {
-                let value = parseInt(quantityInput2.value);
-                quantityInput2.value = value + 1;
-            });
-            
-            quantityInput2.addEventListener('input', function() {
-                let value = parseInt(this.value);
-                if (isNaN(value) || value < 1) {
-                    this.value = 1;
-                }
+            plusBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    let value = parseInt(input.value);
+                    input.value = value + 1;
+                });
             });
         });
     </script>
-</body>
-</html>
+    
