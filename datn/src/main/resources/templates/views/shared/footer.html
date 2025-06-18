@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Footer Dolaphone</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    footer {
+      background-color: #f3f3f3;
+      margin-top: 40px;
+      padding-bottom: 30px;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      padding: 20px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .footer-top div {
+      text-align: center;
+      margin: 10px;
+      opacity: 0;
+      animation: fadeSlideUp 3s ease forwards;
+    }
+
+    .footer-top div:nth-child(1) { animation-delay: 0.2s; }
+    .footer-top div:nth-child(2) { animation-delay: 0.4s; }
+    .footer-top div:nth-child(3) { animation-delay: 0.6s; }
+    .footer-top div:nth-child(4) { animation-delay: 0.8s; }
+    .footer-top div:nth-child(5) { animation-delay: 1s; }
+    .footer-top div:nth-child(6) { animation-delay: 1.2s; }
+    .footer-top div:nth-child(7) { animation-delay: 1.4s; }
+
+    .footer-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 30px 0;
+    }
+
+    .footer-section {
+      flex: 1;
+      min-width: 250px;
+      margin: 10px;
+      opacity: 0;
+      animation: fadeSlideUp 3s ease forwards;
+    }
+
+    .footer-section:nth-child(1) { animation-delay: 0.3s; }
+    .footer-section:nth-child(2) { animation-delay: 0.6s; }
+    .footer-section:nth-child(3) { animation-delay: 0.9s; }
+
+    .footer-section h3 {
+      color: #001baf;
+      margin-bottom: 10px;
+    }
+
+    .footer-section p,
+    .footer-section a {
+      color: #000;
+      font-size: 14px;
+      line-height: 1.6;
+      text-decoration: none;
+    }
+
+    .footer-section a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-icons img {
+      height: 30px;
+      margin: 5px;
+    }
+
+    .footer-top img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 8px;
+    }
+
+    .footer-top button {
+      background-color: #001baf;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 5px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Animation */
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>heder</h1>
+</header>
+<nav>
+  <h1>nav</h1>
+</nav>
+<footer>
+  <div class="footer-container">
+    <!-- PHẦN TRÊN -->
+    <div class="footer-top">
+      <div>
+        <img src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png" alt="Thanh toán khi nhận hàng">
+        <p>Thanh toán<br>khi nhận hàng</p>
+      </div>
+      <div>
+        <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Cam kết uy tín">
+        <p>Cam kết uy tín<br>hàng chính hãng</p>
+      </div>
+      <div>
+        <img src="https://cdn-icons-png.flaticon.com/512/893/893257.png" alt="Giao hàng nhanh">
+        <p>Giao hàng<br>miễn phí 2h</p>
+      </div>
+      <div>
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828640.png" alt="Đổi trả miễn phí">
+        <p>14 ngày đổi trả<br>miễn phí</p>
+      </div>
+      <div>
+        <p><strong>📞 KHIẾU NẠI, GÓP Ý</strong></p>
+        <button>19006750</button>
+      </div>
+      <div>
+        <p><strong>📞 TƯ VẤN</strong></p>
+        <button>19006750</button>
+      </div>
+      <div>
+        <p><strong>📍 TÌM CHI NHÁNH</strong></p>
+        <button>Hệ thống Dola</button>
+      </div>
+    </div>
+
+    <!-- PHẦN DƯỚI -->
+    <div class="footer-bottom">
+      <div class="footer-section">
+        <h3>Dolaphone</h3>
+        <p>Hệ thống bán lẻ smartphone, máy tính bảng, MacBook, thiết bị công nghệ chính hãng với giá tốt, có trả góp 0%, giao hàng nhanh miễn phí.</p>
+        <p><strong>Địa chỉ:</strong> 70 Lữ Gia, Phường 15, Quận 11, TP.HCM</p>
+        <p><strong>Điện thoại:</strong> 1900 6750</p>
+        <p><strong>Email:</strong> support@sapo.vn</p>
+      </div>
+
+      <div class="footer-section">
+        <h3>MẠNG XÃ HỘI</h3>
+        <p><strong>MUA ONLINE (08:00 - 21:00 mỗi ngày)</strong><br><a href="#">19006750</a><br><i>Tất cả các ngày trong tuần (Trừ tết Âm Lịch)</i></p>
+        <br>
+        <p><strong>GÓP Ý & KHIẾU NẠI (08:30 - 20:30)</strong><br><a href="#">19006750</a><br><i>Tất cả các ngày trong tuần (Trừ tết Âm Lịch)</i></p>
+      </div>
+
+      <div class="footer-section">
+        <h3>LIÊN KẾT SÀN</h3>
+        <div class="footer-icons">
+          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968773.png" alt="Shopee">
+          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968912.png" alt="Lazada">
+          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968705.png" alt="Tiki">
+          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968831.png" alt="Sendo">
+        </div>
+        <h3>HÌNH THỨC THANH TOÁN</h3>
+        <div class="footer-icons">
+          <img src="https://cdn-icons-png.flaticon.com/512/2331/2331966.png" alt="Tiền mặt">
+          <img src="https://cdn-icons-png.flaticon.com/512/4202/4202842.png" alt="Chuyển khoản">
+          <img src="https://cdn-icons-png.flaticon.com/512/349/349228.png" alt="Visa/Mastercard">
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
