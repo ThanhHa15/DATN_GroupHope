@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thanh toán đơn hàng</title>
+<script src="https://cdn.tailwindcss.com/3.4.16">
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+input:focus, textarea:focus {
+outline: none;
+box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+</style>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { primary: "#3b82f6", secondary: "#64748b" },
+      borderRadius: {
+        none: "0px",
+        sm: "4px",
+        DEFAULT: "8px",
+        md: "12px",
+        lg: "16px",
+        xl: "20px",
+        "2xl": "24px",
+        "3xl": "32px",
+        full: "9999px",
+        button: "8px",
+      },
+    },
+  },
+};
+</script>
+<script src="https://cdn.tailwindcss.com/3.4.16">
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<!-- Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+input:focus, textarea:focus {
+outline: none;
+box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+.password-toggle:hover {
+cursor: pointer;
+}
+</style>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { primary: "#3b82f6", secondary: "#64748b" },
+      borderRadius: {
+        none: "0px",
+        sm: "4px",
+        DEFAULT: "8px",
+        md: "12px",
+        lg: "16px",
+        xl: "20px",
+        "2xl": "24px",
+        "3xl": "32px",
+        full: "9999px",
+        button: "8px",
+      },
+    },
+  },
+};
+</script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<header class="bg-white">
+  <div class="max-w-7xl mx-auto py-4 flex justify-center">
+    <img src="image.png" alt="HOPEPHONE" class="h-26 object-contain">
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-8">
+<div class="flex flex-col lg:flex-row gap-6">
+<!-- Left Column - Shipping Info -->
+<div class="lg:w-[400px]">
+<div class="bg-white rounded-lg shadow-sm p-6">
+<h1 class="text-xl font-semibold text-gray-900 mb-6">Thông tin nhận hàng</h1>
+<form id="checkout-form">
+<div class="space-y-4">
+<div>
+<label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+<input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-button" value="vuhhps38859@gmail.com">
+</div>
+<div>
+<label for="name" class="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+<input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-button" value="Hoàng Hải Vũ">
+</div>
+<div>
+<label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+<div class="flex">
+<div class="relative w-[120px] mr-2">
+<select class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-button appearance-none">
+<option value="+84">🇻🇳 +84</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-400"></i>
+</div>
+</div>
+<input type="tel" id="phone" name="phone" class="flex-1 px-4 py-2 border border-gray-300 rounded-button" value="099355393">
+</div>
+</div>
+<div>
+<label for="address" class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
+<input type="text" id="address" name="address" class="w-full px-4 py-2 border border-gray-300 rounded-button" value="78 Tôn Đức Thắng - Hòa Khánh Bắc">
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label for="province" class="block text-sm font-medium text-gray-700 mb-1">Tỉnh/Thành phố</label>
+<div class="relative">
+<select id="province" name="province" class="w-full px-4 py-2 border border-gray-300 rounded-button appearance-none">
+<option value="danang" selected>Đà Nẵng</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-400"></i>
+</div>
+</div>
+</div>
+<div>
+<label for="district" class="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện</label>
+<div class="relative">
+<select id="district" name="district" class="w-full px-4 py-2 border border-gray-300 rounded-button appearance-none">
+<option value="lienchieu" selected>Quận Liên Chiểu</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-400"></i>
+</div>
+</div>
+</div>
+</div>
+<div>
+<label for="ward" class="block text-sm font-medium text-gray-700 mb-1">Phường/Xã</label>
+<div class="relative">
+<select id="ward" name="ward" class="w-full px-4 py-2 border border-gray-300 rounded-button appearance-none">
+<option value="hoakhanhbac" selected>Phường Hòa Khánh Bắc</option>
+<option value="hoakhanhbac" selected>Phường Hòa Khánh Nam</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-400"></i>
+</div>
+</div>
+</div>
+<div>
+<label for="note" class="block text-sm font-medium text-gray-700 mb-1">Ghi chú</label>
+<textarea id="note" name="note" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-button resize-none" placeholder="Ghi chú về đơn hàng, ví dụ: thời gian hay chỉ dẫn địa điểm giao hàng chi tiết hơn."></textarea>
+</div>
+</div>
+</form>
+</div>
+</div>
+<!-- Middle Column - Shipping & Payment -->
+<div class="lg:w-[400px]">
+  <div class="bg-white rounded-lg shadow-sm p-6">
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Thanh toán</h2>
+      <div class="space-y-3">
+        <!-- Chuyển khoản -->
+        <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg cursor-pointer">
+          <div class="flex items-center">
+            <input type="radio" name="payment" class="text-primary" checked>
+            <span class="ml-2">Chuyển khoản qua ngân hàng</span>
+          </div>
+          <!-- Icon đồng tiền -->
+          <i class="fa-solid fa-money-bill-1"></i>
+        </label>
+
+        <!-- COD -->
+        <label class="flex items-center justify-between p-4 border border-gray-200 rounded-lg cursor-pointer">
+          <div class="flex items-center">
+            <input type="radio" name="payment" class="text-primary">
+            <span class="ml-2">Thanh toán khi giao hàng (COD)</span>
+          </div>
+          <!-- Icon đồng tiền -->
+          <i class="fa-solid fa-money-bill-1"></i>
+        </label>
+      </div>
+    </div>
+<!-- <div>
+<h2 class="text-xl font-semibold text-gray-900 mb-4">Thanh toán</h2>
+<div class="space-y-3">
+<label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer">
+<input type="radio" name="payment" class="text-primary" checked>
+<span class="ml-2">Chuyển khoản qua ngân hàng</span>
+</label>
+<label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer">
+<input type="radio" name="payment" class="text-primary">
+<span class="ml-2">Thanh toán khi giao hàng (COD)</span>
+</label>
+</div>
+</div> -->
+</div>
+</div>
+<!-- Right Column - Order Summary -->
+<div class="lg:w-[400px]">
+  <div class="bg-white rounded-lg shadow-sm p-6">
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Đơn hàng (1 sản phẩm)</h2>
+
+    <div class="border-t border-b border-gray-200 py-4">
+      <div class="flex items-start">
+        <img src="https://readdy.ai/api/search-image?query=iPad%20Air%205%2064GB%20Wifi%20in%20blue%20color%2C%20modern%20sleek%20design%2C%20professional%20product%20photography%20on%20white%20background&width=80&height=80&seq=1&orientation=squarish" alt="iPad Air" class="w-20 h-20 object-cover rounded-lg">
+        
+        <div class="ml-4 flex-1">
+          <div class="flex justify-between items-start mb-1">
+            <h3 class="text-sm font-medium text-gray-900 w-2/3">iPad Air 5 64GB Wifi - Chính hãng VN</h3>
+            <!-- Số lượng -->
+            
+          </div>
+          <p class="text-sm text-gray-500">Màu: Xanh</p>
+            <p class="text-sm text-gray-500">Số lượng: 1</p>
+          <p class="mt-1 text-sm font-semibold text-blue-600">13.390.000₫</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <div class="flex items-center">
+        <input type="text" placeholder="Nhập mã giảm giá" class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+        <button class="px-6 py-2 bg-primary text-white rounded-r-md hover:bg-blue-600 text-sm font-medium whitespace-nowrap">Áp dụng</button>
+      </div>
+    </div>
+
+    <div class="mt-6 space-y-2 text-sm text-gray-700">
+      <div class="flex justify-between">
+        <span>Tạm tính</span>
+        <span class="font-medium">13.390.000₫</span>
+      </div>
+      <div class="flex justify-between">
+        <span>Phí vận chuyển</span>
+        <span class="font-medium">40.000₫</span>
+      </div>
+      <div class="flex justify-between text-base font-semibold text-gray-900 pt-4 border-t border-gray-200">
+        <span>Tổng cộng</span>
+        <span>13.430.000₫</span>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <button type="submit" class="w-full px-6 py-3 bg-primary text-white rounded-md hover:bg-blue-600 font-medium">
+        ĐẶT HÀNG
+      </button>
+      <a href="#" class="block text-center text-sm text-primary hover:text-blue-600 mt-4">
+        <i class="ri-arrow-left-line align-text-bottom"></i> Quay về giỏ hàng
+      </a>
+    </div>
+  </div>
+</div>
+
+
+</div>
+</main>
+
+</div>
+<script id="form-validation">
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("checkout-form");
+  const submitButton = document.querySelector('button[type="submit"]');
+  submitButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    // Basic form validation
+    const email = document.getElementById("email").value;
+    const name = document.getElementById("name").value;
+    const phone = document.getElementById("phone").value;
+    const address = document.getElementById("address").value;
+    if (!email || !name || !phone || !address) {
+      const modal = document.createElement("div");
+      modal.className = "fixed inset-0 flex items-center justify-center z-50";
+      modal.innerHTML = `
+<div class="fixed inset-0 bg-black opacity-50"></div>
+<div class="relative bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+<h3 class="text-lg font-medium text-gray-900 mb-4">Thông báo</h3>
+<p class="text-gray-600">Vui lòng điền đầy đủ thông tin giao hàng</p>
+<button class="mt-6 w-full px-4 py-2 bg-primary text-white rounded-button">Đóng</button>
+</div>
+`;
+      document.body.appendChild(modal);
+      modal.querySelector("button").onclick = function () {
+        modal.remove();
+      };
+      return;
+    }
+    // Show success message
+    const successModal = document.createElement("div");
+    successModal.className =
+      "fixed inset-0 flex items-center justify-center z-50";
+    successModal.innerHTML = `
+<div class="fixed inset-0 bg-black opacity-50"></div>
+<div class="relative bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+<div class="text-center">
+<i class="ri-checkbox-circle-line text-green-500 text-5xl"></i>
+<h3 class="text-lg font-medium text-gray-900 mt-4">Đặt hàng thành công!</h3>
+<p class="text-gray-600 mt-2">Cảm ơn bạn đã mua hàng. Chúng tôi sẽ sớm liên hệ với bạn.</p>
+<button class="mt-6 w-full px-4 py-2 bg-primary text-white rounded-button">Đóng</button>
+</div>
+</div>
+`;
+    document.body.appendChild(successModal);
+    successModal.querySelector("button").onclick = function () {
+      successModal.remove();
+    };
+  });
+});
+</script>
+
+</script>
+<script id="form-validation-script">
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("profile-form");
+  const provinceSelect = document.getElementById("province");
+  const districtSelect = document.getElementById("district");
+  const wardSelect = document.getElementById("ward");
+  const provinces = {
+    hanoi: {
+      name: "Hà Nội",
+      districts: {
+        caugiay: {
+          name: "Cầu Giấy",
+          wards: [
+            "Dịch Vọng",
+            "Dịch Vọng Hậu",
+            "Mai Dịch",
+            "Nghĩa Đô",
+            "Nghĩa Tân",
+            "Quan Hoa",
+            "Trung Hòa",
+            "Yên Hòa",
+          ],
+        },
+        dongda: {
+          name: "Đống Đa",
+          wards: [
+            "Cát Linh",
+            "Hàng Bột",
+            "Khâm Thiên",
+            "Khương Thượng",
+            "Kim Liên",
+            "Láng Hạ",
+            "Láng Thượng",
+            "Nam Đồng",
+            "Ngã Tư Sở",
+            "Ô Chợ Dừa",
+            "Phương Liên",
+            "Phương Mai",
+            "Quang Trung",
+            "Quốc Tử Giám",
+            "Thịnh Quang",
+            "Thổ Quan",
+            "Trung Liệt",
+            "Trung Phụng",
+            "Trung Tự",
+            "Văn Chương",
+            "Văn Miếu",
+          ],
+        },
+        badinh: {
+          name: "Ba Đình",
+          wards: [
+            "Cống Vị",
+            "Điện Biên",
+            "Đội Cấn",
+            "Giảng Võ",
+            "Kim Mã",
+            "Liễu Giai",
+            "Ngọc Hà",
+            "Ngọc Khánh",
+            "Nguyễn Trung Trực",
+            "Phúc Xá",
+            "Quán Thánh",
+            "Thành Công",
+            "Trúc Bạch",
+            "Vĩnh Phúc",
+          ],
+        },
+      },
+    },
+    hochiminh: {
+      name: "TP. Hồ Chí Minh",
+      districts: {
+        district1: {
+          name: "Quận 1",
+          wards: [
+            "Bến Nghé",
+            "Bến Thành",
+            "Cầu Kho",
+            "Cầu Ông Lãnh",
+            "Cô Giang",
+            "Đa Kao",
+            "Nguyễn Cư Trinh",
+            "Nguyễn Thái Bình",
+            "Phạm Ngũ Lão",
+            "Tân Định",
+          ],
+        },
+        district3: {
+          name: "Quận 3",
+          wards: [
+            "Võ Thị Sáu",
+            "Nguyễn Thái Bình",
+            "Nguyễn Cư Trinh",
+            "Phường 1",
+            "Phường 2",
+            "Phường 3",
+            "Phường 4",
+            "Phường 5",
+            "Phường 6",
+            "Phường 7",
+            "Phường 8",
+            "Phường 9",
+            "Phường 10",
+            "Phường 11",
+            "Phường 12",
+            "Phường 13",
+            "Phường 14",
+          ],
+        },
+        binhtan: {
+          name: "Bình Tân",
+          wards: [
+            "An Lạc",
+            "An Lạc A",
+            "Bình Hưng Hòa",
+            "Bình Hưng Hoà A",
+            "Bình Hưng Hoà B",
+            "Bình Trị Đông",
+            "Bình Trị Đông A",
+            "Bình Trị Đông B",
+            "Tân Tạo",
+            "Tân Tạo A",
+          ],
+        },
+      },
+    },
+    danang: {
+      name: "Đà Nẵng",
+      districts: {
+        lienchieu: {
+          name: "Liên Chiểu",
+          wards: [
+            "Hòa Hiệp Bắc",
+            "Hòa Hiệp Nam",
+            "Hòa Khánh Bắc",
+            "Hòa Khánh Nam",
+            "Hòa Minh",
+          ],
+        },
+        thanhkhe: {
+          name: "Thanh Khê",
+          wards: [
+            "An Khê",
+            "Chính Gián",
+            "Hòa Khê",
+            "Tam Thuận",
+            "Tân Chính",
+            "Thạc Gián",
+            "Thanh Khê Đông",
+            "Thanh Khê Tây",
+            "Vĩnh Trung",
+            "Xuân Hà",
+          ],
+        },
+        haichau: {
+          name: "Hải Châu",
+          wards: [
+            "Bình Hiên",
+            "Bình Thuận",
+            "Hải Châu 1",
+            "Hải Châu 2",
+            "Hòa Cường Bắc",
+            "Hòa Cường Nam",
+            "Hòa Thuận Đông",
+            "Hòa Thuận Tây",
+            "Nam Dương",
+            "Phước Ninh",
+            "Thạch Thang",
+            "Thanh Bình",
+            "Thuận Phước",
+          ],
+        },
+      },
+    },
+    haiphong: {
+      name: "Hải Phòng",
+      districts: {
+        hongbang: {
+          name: "Hồng Bàng",
+          wards: [
+            "Hạ Lý",
+            "Hoàng Văn Thụ",
+            "Hùng Vương",
+            "Minh Khai",
+            "Phạm Hồng Thái",
+            "Phan Bội Châu",
+            "Quán Toan",
+            "Quang Trung",
+            "Sở Dầu",
+            "Thượng Lý",
+          ],
+        },
+        ngoquyen: {
+          name: "Ngô Quyền",
+          wards: [
+            "Cầu Đất",
+            "Cầu Tre",
+            "Đằng Giang",
+            "Đông Khê",
+            "Gia Viên",
+            "Lạc Viên",
+            "Lê Lợi",
+            "Lương Khánh Thiện",
+            "Máy Chai",
+            "Máy Tơ",
+          ],
+        },
+      },
+    },
+    cantho: {
+      name: "Cần Thơ",
+      districts: {
+        ninhkieu: {
+          name: "Ninh Kiều",
+          wards: [
+            "An Hòa",
+            "An Nghiệp",
+            "An Phú",
+            "Cái Khế",
+            "Hưng Lợi",
+            "Tân An",
+            "Thới Bình",
+            "Xuân Khánh",
+          ],
+        },
+        binhthuỷ: {
+          name: "Bình Thủy",
+          wards: [
+            "An Thới",
+            "Bình Thủy",
+            "Bùi Hữu Nghĩa",
+            "Long Hòa",
+            "Long Tuyền",
+            "Thới An Đông",
+            "Trà An",
+            "Trà Nóc",
+          ],
+        },
+      },
+    },
+  };
+  provinceSelect.addEventListener("change", function () {
+    const selectedProvince = this.value;
+    districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
+    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+    if (selectedProvince && provinces[selectedProvince]) {
+      const districts = provinces[selectedProvince].districts;
+      Object.keys(districts).forEach((districtKey) => {
+        const option = document.createElement("option");
+        option.value = districtKey;
+        option.textContent = districts[districtKey].name;
+        districtSelect.appendChild(option);
+      });
+    }
+  });
+  districtSelect.addEventListener("change", function () {
+    const selectedProvince = provinceSelect.value;
+    const selectedDistrict = this.value;
+    wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+    if (
+      selectedProvince &&
+      selectedDistrict &&
+      provinces[selectedProvince].districts[selectedDistrict]
+    ) {
+      const wards =
+        provinces[selectedProvince].districts[selectedDistrict].wards;
+      wards.forEach((ward) => {
+        const option = document.createElement("option");
+        option.value = ward.toLowerCase().replace(/\s+/g, "");
+        option.textContent = ward;
+        wardSelect.appendChild(option);
+      });
+    }
+  });
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    let isValid = true;
+    // Validate fullname
+    const fullname = document.getElementById("fullname");
+    if (!fullname.value.trim()) {
+      showError(fullname, "Vui lòng nhập họ và tên");
+      isValid = false;
+    } else {
+      hideError(fullname);
+    }
+    // Validate email
+    const email = document.getElementById("email");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+      showError(email, "Vui lòng nhập email hợp lệ");
+      isValid = false;
+    } else {
+      hideError(email);
+    }
+    // Validate phone
+    const phone = document.getElementById("phone");
+    const phoneRegex = /^[0-9]{10,11}$/;
+    if (phone.value.trim() && !phoneRegex.test(phone.value.trim())) {
+      showError(phone, "Vui lòng nhập số điện thoại hợp lệ");
+      isValid = false;
+    } else {
+      hideError(phone);
+    }
+    // Validate password confirmation
+    const newPassword = document.getElementById("new-password");
+    const confirmPassword = document.getElementById("confirm-password");
+    if (newPassword.value && confirmPassword.value !== newPassword.value) {
+      showError(confirmPassword, "Mật khẩu xác nhận không khớp");
+      isValid = false;
+    } else {
+      hideError(confirmPassword);
+    }
+    if (isValid) {
+      // Submit form or show success message
+      alert("Thông tin đã được cập nhật thành công!");
+    }
+  });
+  function showError(input, message) {
+    const errorElement =
+      input.parentElement.querySelector(".error-message") ||
+      input.parentElement.parentElement.querySelector(".error-message");
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.classList.remove("hidden");
+      input.classList.add("border-red-500");
+    }
+  }
+  function hideError(input) {
+    const errorElement =
+      input.parentElement.querySelector(".error-message") ||
+      input.parentElement.parentElement.querySelector(".error-message");
+    if (errorElement) {
+      errorElement.classList.add("hidden");
+      input.classList.remove("border-red-500");
+    }
+  }
+});
+</script>
+</body>
+</html>
