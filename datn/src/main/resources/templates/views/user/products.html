@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link rel="stylesheet" href="/css/shared/footer.css">
+    <link rel="stylesheet" href="/css/shared/header.css">
     <style>
         :where([class^="ri-"])::before { content: "\f3c2"; }
         body {
@@ -154,50 +155,21 @@
     
 </head>
 <body style="background-color: #f2f2f2;">
-    <!-- <header class="bg-white shadow-sm">
-        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center">
-                <a href="#" class="text-2xl font-['Pacifico'] text-primary mr-8">logo</a>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="#" class="text-gray-800 hover:text-primary font-medium">Trang chủ</a>
-                    <a href="#" class="text-gray-800 hover:text-primary font-medium">Sản phẩm</a>
-                    <a href="#" class="text-gray-800 hover:text-primary font-medium">Khuyến mãi</a>
-                    <a href="#" class="text-gray-800 hover:text-primary font-medium">Tin tức</a>
-                    <a href="#" class="text-gray-800 hover:text-primary font-medium">Liên hệ</a>
-                </nav>
-            </div>
-            <div class="flex items-center space-x-4">
-                <div class="relative">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm..." class="pl-10 pr-4 py-2 rounded-button border border-gray-200 focus:outline-none focus:border-primary w-64">
-                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400">
-                        <i class="ri-search-line"></i>
-                    </div>
-                </div>
-                <div class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-primary relative">
-                    <i class="ri-user-line ri-lg"></i>
-                </div>
-                <div class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-primary relative">
-                    <i class="ri-heart-line ri-lg"></i>
-                    <span class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
-                </div>
-                <div class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-primary relative">
-                    <i class="ri-shopping-cart-line ri-lg"></i>
-                    <span class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">2</span>
-                </div>
-            </div>
-        </div>
-    </header> -->
+
+    <!-- Header -->
+    <div th:insert="views/shared/header :: siteHeader"></div>
 
     <div class="image-container" style=" margin-bottom: -20px;">
-        <div class="image-wrapper">
+        <div class="image-wrapper" style="width: 612px;">
             <img src="//bizweb.dktcdn.net/100/502/883/themes/934584/assets/banner_col_1.png?1719764721426" alt="Banner 1">
         </div>
-        <div class="image-wrapper">
+        <div class="image-wrapper" style="width: 612px;">
             <img src="//bizweb.dktcdn.net/100/502/883/themes/934584/assets/banner_col_2.png?1719764721426" alt="Banner 2">
         </div>
     </div>
 
-    <section class="py-8" style="margin-bottom: -40px;">
+    <!-- // Nội dung sản phẩm -->
+    <section class="py-8" style="margin-bottom: -40px; max-width: 1350px; margin: auto;">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"> <!-- Giảm gap xuống 3 -->
                 <!-- Item iPhone -->
@@ -301,7 +273,7 @@
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
                         <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
                                     group-hover:shadow-lg group-hover:bg-blue-900">
-                        <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/products/silver-1.png?v=1700216072443" 
+                        <img src="https://i.postimg.cc/QxP9d4RW/image-removebg-preview-1.png" 
                             alt="iPhone" 
                             class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
                         </div>
@@ -320,7 +292,7 @@
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
                         <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
                                     group-hover:shadow-lg group-hover:bg-blue-900">
-                        <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/products/coc-sac-nhanh-apple-20w-type-c-m.png?v=1700216485363" 
+                        <img src="https://i.postimg.cc/QCRhQkJy/image-removebg-preview.png" 
                             alt="iPhone" 
                             class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
                         </div>
@@ -339,7 +311,7 @@
 
     <section class="py-8">
             <div class="container mx-auto px-4 ">
-                <div class="bg-white rounded-lg p-6 mb-8 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+                <div class="bg-white rounded-lg p-6 mb-8 shadow-[0_0_15px_rgba(0,0,0,0.1)]" style="max-width: 1250px; margin: auto;">
                     <div class="flex items-center justify-between mb-8">
                         <h2 class="text-2xl font-bold border-l-8 border-custom-blue pl-4">TẤT CẢ SẢN PHẨM</h2>
                     </div>
@@ -888,7 +860,8 @@
 
 
 
-
+    <!-- Footer -->
+   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 30px;"></div>
 </body>
 </html>
 <script id="filter-dropdowns"> // Xử lý sự kiện cho các checkbox trong bộ lọc
