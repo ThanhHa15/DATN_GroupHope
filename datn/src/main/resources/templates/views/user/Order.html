@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trang tài khoản</title>
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/css/shared/header.css" />
-    <link rel="stylesheet" href="/css/shared/footer.css" />
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#e11d48',secondary:'#f97316'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/shared/footer.css">
+    <link rel="stylesheet" href="/css/shared/header.css">
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -32,7 +35,7 @@
       };
     </script>
   </head>
-  <body class="bg-[#f2f2f2]">
+  <body style="background-color: #f2f2f2;">
     <!-- Header -->
     <div th:insert="views/shared/header :: siteHeader" style="margin-bottom: 150px;"></div>
 
@@ -80,24 +83,6 @@
                   <a href="order-detail" class="block w-full h-full">12 Tôn Bản, Thị xã Sơn Tây, Hà Nội</a>
                 </td>
                 <td class="px-6 py-4 text-gray-800 font-medium">
-                  <a href="order-detail" class="block w-full h-full">10.459.000đ</a>
-                </td>
-                <td class="px-6 py-4 text-amber-500 font-semibold">
-                  <a href="order-detail" class="block w-full h-full">Chưa thanh toán</a>
-                </td>
-                <td class="px-6 py-4 text-amber-500 font-semibold">
-                  <a href="order-detail" class="block w-full h-full">Chưa chuyển</a>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-gray-100 cursor-pointer transition">
-                <td class="px-6 py-4 text-gray-700">
-                  <a href="order-detail" class="block w-full h-full">16/06/2025</a>
-                </td>
-                <td class="px-6 py-4 text-gray-700">
-                  <a href="order-detail" class="block w-full h-full">12 Tôn Bản, Thị xã Sơn Tây, Hà Nội</a>
-                </td>
-                <td class="px-6 py-4 text-gray-800 font-medium">
                   <a href="order-detail" class="block w-full h-full">44.459.000đ</a>
                 </td>
                 <td class="px-6 py-4 text-amber-500 font-semibold">
@@ -117,6 +102,7 @@
         </div>
       </div>
     </div>
+
      <!-- Footer -->
    <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 30px;"></div>
   </body>
