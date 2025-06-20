@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/css/shared/header.css" />
+    <link rel="stylesheet" href="/css/shared/footer.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
       rel="stylesheet"
@@ -50,7 +52,9 @@
       };
     </script>
   </head>
-  <body class="bg-gray-50">
+  <body class="bg-[#f2f2f2]">
+    <!-- Header -->
+    <div th:insert="views/shared/header :: siteHeader" style="margin-bottom: 150px;"></div>
     <div class="flex items-center justify-center min-h-screen bg-gray-50">
   <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-5xl">
  
@@ -183,7 +187,11 @@
     </div>
     </div> 
 
-    <script id="navigation-script">
+    <!-- Footer -->
+   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 30px;"></div>
+  </body>
+</html>
+<script id="navigation-script">
       document.addEventListener("DOMContentLoaded", function () {
         const navLinks = document.querySelectorAll("nav a");
         navLinks.forEach((link) => {
@@ -195,5 +203,3 @@
         });
       });
     </script>
-  </body>
-</html>

@@ -42,7 +42,7 @@ public class HomeController {
             model.addAttribute("products", productsService.findAll());
         }
         
-        return "views/user/home";
+        return "views/user/trangchu";
 }
 
     @GetMapping("/login")
@@ -76,5 +76,17 @@ public class HomeController {
     @GetMapping("/cart")
     public String cart(Model model, HttpSession session) {
         return "views/user/cart";
+    }
+    @GetMapping("/checkout")
+    public String checkout(Model model, HttpSession session) {
+        return "views/user/checkout";
+    }
+    @GetMapping("/order")
+    public String order(Model model, HttpSession session) {
+        return "views/user/order";
+    }
+    @GetMapping("/order-detail")
+    public String orderDetail(Model model, HttpSession session) {
+        return "views/user/orderDetail";
     }
 }

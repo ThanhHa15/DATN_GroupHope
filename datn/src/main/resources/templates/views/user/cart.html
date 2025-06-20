@@ -28,12 +28,15 @@
         }
     </style>
     <script>tailwind.config={theme:{extend:{colors:{primary:'#0a2896',secondary:'#4a5568'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="stylesheet" href="/css/shared/footer.css">
+    <link rel="stylesheet" href="/css/shared/header.css">
 </head>
 <body class="bg-gray-50 min-h-screen" style="background-color: #f2f2f2;">
-
-    <main class="container mx-auto mt-2 px-4 py-8 bg-white rounded-lg p-6 mb-8 shadow-[0_0_15px_rgba(0,0,0,0.1)]"> 
+<!-- Header -->
+    <div th:insert="views/shared/header :: siteHeader" style="margin-top: 160px;"></div>
+    <main class="container mx-auto mt-3 h-[auto]  bg-white rounded-lg p-6  shadow-[0_0_15px_rgba(0,0,0,0.1)]" style="max-width: 1250px; margin-bottom: 60px;"> 
         <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-            <div class="grid grid-cols-12 border-b py-4 px-6 bg-gray-50 font-medium text-gray-700">
+            <div class="grid grid-cols-12 border-b py-4 px-6 bg-gray-50 font-medium text-gray-700 " style="margin-top: -20px;">
                 <div class="col-span-6"><b style="font-weight: 1100; font-size: 18px;"> Thông tin sản phẩm</b></div>
                 <div class="col-span-2 text-center"><b style="font-weight: 1100; font-size: 18px;"> Đơn giá</b></div>
                 <div class="col-span-2 text-center"><b style="font-weight: 1100; font-size: 18px;"> Số lượng</b></div>
@@ -67,6 +70,9 @@
                 <div class="col-span-2 text-right font-medium text-[#000f8f]">25.490.000đ</div>
             </div>
             
+
+            
+            
             <!-- Sản phẩm 2 -->
             <div class="grid grid-cols-12 items-center py-6 px-6 border-b">
                 <div class="col-span-6 flex items-center">
@@ -94,7 +100,7 @@
                 <div class="col-span-2 text-right font-medium text-[#000f8f]">91.180.000đ</div>
             </div>
             
-            <div class="bg-white rounded-lg shadow-sm p-6 md:w-1/3" style="margin-left: 830px; margin-top: -0px;">
+            <div class="bg-white rounded-lg shadow-sm p-6 md:w-1/3" style="margin-left: 815px; margin-top: -10px; margin-bottom: -23px;">
                     <div class="space-y-3 mb-2">
                         <div class=" pt-3">
                             <div class="flex justify-between items-center">
@@ -103,10 +109,15 @@
                             </div>
                         </div>
                     </div>
-                <button class="w-full bg-primary text-white py-3 rounded-button font-medium !rounded-button whitespace-nowrap">Thanh toán</button>
+               <a href="checkout" class="w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-yellow-500 block text-center whitespace-nowrap">
+  Thanh toán
+</a>
+
             </div>
         </div>
     </main>
+    <!-- Footer -->
+   <div th:insert="views/shared/footer :: footerFragment"></div>
 </body>
 </html>
 <script id="quantity-control"> // Xử lý sự kiện cho các nút tăng/giảm số lượng
