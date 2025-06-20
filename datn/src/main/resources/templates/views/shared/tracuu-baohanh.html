@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tra cứu bảo hành</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    .lookup-box {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color:#ffffff;
+      border-radius: 8px;
+      padding: 30px 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .lookup-box h2 {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .lookup-box p {
+      font-size: 18px;
+      margin-bottom: 25px;
+    }
+
+    .form-lookup {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-lookup input {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 300px;
+    }
+
+    .form-lookup button {
+      background-color: #000f8f;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .form-lookup button:hover {
+      background-color: #001eaa;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lookup-box">
+    <h2>Kiểm tra thông tin bảo hành</h2>
+    <p>Tra cứu thông tin và thời hạn bảo hành sản phẩm của bạn</p>
+    <form class="form-lookup" id="lookupForm">
+      <input type="text" id="serialInput" placeholder="Nhập số serial sản phẩm. VD: demo123">
+      <button type="submit">Kiểm tra</button>
+    </form>
+    <div class="error-message" id="errorMessage"></div>
+  </div>
+
+ 
+
+</body>
+ <script>
+    document.getElementById('lookupForm').addEventListener('submit', function (e) {
+      const serialInput = document.getElementById('serialInput');
+      const errorDiv = document.getElementById('errorMessage');
+      const value = serialInput.value.trim();
+
+      errorDiv.textContent = ''; // Clear error
+
+      if (value === '') {
+        e.preventDefault();
+        errorDiv.textContent = 'Vui lòng nhập số serial trước khi tra cứu.';
+      } else if (value.toLowerCase() === 'demo123') {
+        e.preventDefault();
+        window.location.href = 'baohanh.html'; // 👉 Trang đích khi nhập đúng
+      } else {
+        e.preventDefault();
+        errorDiv.textContent = 'Số serial không hợp lệ. Vui lòng kiểm tra lại.';
+      }
+    });
+  </script>
+</html>
