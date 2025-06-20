@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Footer Dolaphone</title>
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- CSS riêng -->
+  <link rel="stylesheet" href="/css/shared/footer.css">
   <style>
     * {
       box-sizing: border-box;
@@ -14,7 +18,7 @@
 
     footer {
       background-color: #f3f3f3;
-      margin-top: 40px;
+      margin-top: 0;
       padding-bottom: 30px;
     }
 
@@ -105,7 +109,6 @@
       cursor: pointer;
     }
 
-    /* Animation */
     @keyframes fadeSlideUp {
       0% {
         opacity: 0;
@@ -119,81 +122,104 @@
   </style>
 </head>
 <body>
-<header>
-  <h1>heder</h1>
-</header>
-<nav>
-  <h1>nav</h1>
-</nav>
-<footer>
-  <div class="footer-container">
-    <!-- PHẦN TRÊN -->
-    <div class="footer-top">
-      <div>
-        <img src="https://cdn-icons-png.flaticon.com/512/2838/2838912.png" alt="Thanh toán khi nhận hàng">
-        <p>Thanh toán<br>khi nhận hàng</p>
-      </div>
-      <div>
-        <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Cam kết uy tín">
-        <p>Cam kết uy tín<br>hàng chính hãng</p>
-      </div>
-      <div>
-        <img src="https://cdn-icons-png.flaticon.com/512/893/893257.png" alt="Giao hàng nhanh">
-        <p>Giao hàng<br>miễn phí 2h</p>
-      </div>
-      <div>
-        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828640.png" alt="Đổi trả miễn phí">
-        <p>14 ngày đổi trả<br>miễn phí</p>
-      </div>
-      <div>
-        <p><strong>📞 KHIẾU NẠI, GÓP Ý</strong></p>
-        <button>19006750</button>
-      </div>
-      <div>
-        <p><strong>📞 TƯ VẤN</strong></p>
-        <button>19006750</button>
-      </div>
-      <div>
-        <p><strong>📍 TÌM CHI NHÁNH</strong></p>
-        <button>Hệ thống Dola</button>
-      </div>
-    </div>
 
-    <!-- PHẦN DƯỚI -->
-    <div class="footer-bottom">
-      <div class="footer-section">
-        <h3>Dolaphone</h3>
-        <p>Hệ thống bán lẻ smartphone, máy tính bảng, MacBook, thiết bị công nghệ chính hãng với giá tốt, có trả góp 0%, giao hàng nhanh miễn phí.</p>
-        <p><strong>Địa chỉ:</strong> 70 Lữ Gia, Phường 15, Quận 11, TP.HCM</p>
-        <p><strong>Điện thoại:</strong> 1900 6750</p>
-        <p><strong>Email:</strong> support@sapo.vn</p>
+<div th:fragment="footerFragment">
+
+  <!-- PHẦN MỚI: Thanh đăng ký email + kết nối mạng xã hội -->
+  <div class="w-full bg-[#000f8f] text-white px-6 py-4" style="margin-top: -40px;">
+    <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <!-- Form đăng ký -->
+      <div class="flex w-full md:max-w-md">
+        <input
+          type="email"
+          placeholder="Nhập email nhận tin khuyến mãi"
+          class="flex-1 px-4 py-2 rounded-l-full text-black focus:outline-none"
+        />
+        <button class="bg-yellow-400 text-white font-bold px-4 py-2 rounded-r-full hover:bg-yellow-500">
+          ĐĂNG KÝ
+        </button>
       </div>
 
-      <div class="footer-section">
-        <h3>MẠNG XÃ HỘI</h3>
-        <p><strong>MUA ONLINE (08:00 - 21:00 mỗi ngày)</strong><br><a href="#">19006750</a><br><i>Tất cả các ngày trong tuần (Trừ tết Âm Lịch)</i></p>
-        <br>
-        <p><strong>GÓP Ý & KHIẾU NẠI (08:30 - 20:30)</strong><br><a href="#">19006750</a><br><i>Tất cả các ngày trong tuần (Trừ tết Âm Lịch)</i></p>
-      </div>
-
-      <div class="footer-section">
-        <h3>LIÊN KẾT SÀN</h3>
-        <div class="footer-icons">
-          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968773.png" alt="Shopee">
-          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968912.png" alt="Lazada">
-          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968705.png" alt="Tiki">
-          <img src="https://cdn-icons-png.flaticon.com/512/5968/5968831.png" alt="Sendo">
-        </div>
-        <h3>HÌNH THỨC THANH TOÁN</h3>
-        <div class="footer-icons">
-          <img src="https://cdn-icons-png.flaticon.com/512/2331/2331966.png" alt="Tiền mặt">
-          <img src="https://cdn-icons-png.flaticon.com/512/4202/4202842.png" alt="Chuyển khoản">
-          <img src="https://cdn-icons-png.flaticon.com/512/349/349228.png" alt="Visa/Mastercard">
-        </div>
+      <!-- Kết nối mạng xã hội -->
+      <div class="flex items-center gap-2 text-sm font-semibold text-white">
+        <span class="whitespace-nowrap">Kết nối với chúng tôi:</span>
+        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/zalo.png?1719764721426" alt="Zalo" class="h-6 w-6 object-contain" />
+        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/facebook.png?1719764721426" alt="Facebook" class="h-6 w-6 object-contain" />
+        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/youtube.png?1719764721426" alt="YouTube" class="h-6 w-6 object-contain" />
+        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/google.png?1719764721426" alt="Google" class="h-6 w-6 object-contain" />
       </div>
     </div>
   </div>
-</footer>
+
+  <footer  style="background-color: #ffffff;"  >
+    <div class="footer-container">
+        <!-- PHẦN TRÊN -->
+        <div class="footer-top" style="margin: -0px auto 0 auto; background-color: #ebebeb; max-width: 1250px; border-radius: 12px;">
+          <div>
+            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_1.png?1719764721426" alt="Thanh toán khi nhận hàng" style="margin-left: 25px;">
+            <p>Thanh toán<br>khi nhận hàng</p>
+          </div>
+          <div>
+            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_2.png?1719764721426" alt="Cam kết uy tín" style="margin-left: 35px;">
+            <p>Cam kết uy tín<br>hàng chính hãng</p>
+          </div>
+          <div>
+            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_3.png?1719764721426" alt="Giao hàng nhanh" style="margin-left: 15px;">
+            <p>Giao hàng<br>miễn phí 2h</p>
+          </div>
+          <div>
+            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_4.png?1719764721426" alt="Đổi trả miễn phí" style="margin-left: 30px;">
+            <p>14 ngày đổi trả<br>miễn phí</p>
+          </div>
+          <div style="margin-top: 20px;">
+            <p><strong><i class="fas fa-question-circle"></i>  KHIẾU NẠI, GÓP Ý</strong></p>
+            <button>19000000</button>
+          </div>
+          <div style="margin-top: 20px;">
+            <p><strong><i class="fas fa-phone-alt"></i>  TƯ VẤN</strong></p>
+            <button>19000000</button>
+          </div>
+          <div style="margin-top: 20px;">
+            <p><strong><i class="fas fa-map-marker-alt"></i>  TÌM CHI NHÁNH</strong></p>
+            <button>Hệ thống Hope</button>
+          </div>
+        </div>
+        <!-- PHẦN DƯỚI -->
+        <div class="footer-bottom">
+          <div class="footer-section">
+            <img src="/images/l.png" alt="" style="width: 75%;  margin-top: -20px;">
+            <p style="font-size: 15px; opacity: 0.8;">Hệ thống bán lẻ smartphone, máy tính bảng, MacBook, thiết bị công nghệ chính hãng với giá tốt,  giao hàng nhanh miễn phí.</p>
+            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Địa chỉ:</strong> 70 Lữ Gia, Phường 15, Quận 11, TP.HCM</p>
+            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Điện thoại:</strong> 1900 6750</p>
+            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Email:</strong> support@sapo.vn</p>
+          </div>
+
+          <div class="footer-section" style="margin-left: 80px;">
+            <h3 style="font-weight: 700; font-size: 24px;">MẠNG XÃ HỘI</h3>
+            <p><strong style="font-weight: 700; font-size: 16px;">MUA ONLINE (08:00 - 21:00 mỗi ngày)</strong><br><a href="#" style="color: #001baf;font-weight: 1000; font-size: 17px; ">19000000</a><br><i>Tất cả các ngày trong tuần (Trừ tết Âm Lịch)</i></p>
+            <br>
+            <p><strong style="font-weight: 700; font-size: 16px;">GÓP Ý & KHIẾU NẠI (08:30 - 20:30)</strong><br><a href="#" style="color: #001baf;font-weight: 1000; font-size: 17px; ">19006750</a><br><i>Tất cả các ngày trong tuần (Trừ tết Âm Lịch)</i></p>
+          </div>
+
+          <div class="footer-section">
+            <h3 style="font-weight: 700; font-size: 24px;">LIÊN KẾT SÀN</h3>
+            <div class="footer-icons" style="display: flex; gap: 10px; align-items: center;">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/shopee.png?1719764721426" alt="Shopee">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/lazada.png?1719764721426" alt="Lazada">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/tiki.png?1719764721426" alt="Tiki">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/sendo.png?1719764721426" alt="Sendo">
+            </div>
+            <h3 style="font-weight: 700; font-size: 24px;">HÌNH THỨC THANH TOÁN</h3>
+            <div class="footer-icons" style="display: flex; gap: 10px; align-items: center;">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_1.png?1719764721426" alt="Tiền mặt">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_2.png?1719764721426" alt="Chuyển khoản">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_3.png?1719764721426" alt="Visa/Mastercard">
+            </div>
+          </div>
+        </div>
+    </div>
+  </footer>
+</div>
 
 </body>
 </html>

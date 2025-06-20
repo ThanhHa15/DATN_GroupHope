@@ -59,4 +59,18 @@ public class HomeController {
         return "views/shared/forgetPass";
     }
     
+    @GetMapping("/products")
+    public String products(Model model, HttpSession session) {
+        return "views/user/products";
+    }
+
+    @GetMapping("/detail")
+    public String detail(Model model, HttpSession session) {
+        return "views/user/products-detail";
+    }
+
+    @GetMapping("/introduction")
+    public String introduction(Model model, HttpSession session) {
+        return "views/user/introduction";
+    }
 }

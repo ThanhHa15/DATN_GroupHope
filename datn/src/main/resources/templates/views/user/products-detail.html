@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link rel="stylesheet" href="/css/shared/header.css" />
+    <link rel="stylesheet" href="/css/shared/footer.css" />
     <style>
         :where([class^="ri-"])::before { content: "\f3c2"; }
         body {
@@ -130,10 +131,13 @@
     </style>
 </head>
 <body style="background-color: #f2f2f2;">
+    <!-- Header -->
+    <div th:insert="views/shared/header :: siteHeader"></div>
+    
     <section class="py-8">
            <div class="container mx-auto px-4">
                 <!-- Đoạn 1 -->
-                <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+                <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]" style="max-width: 1250px; margin: auto;">
                     <!-- Tiêu đề sản phẩm -->
                     <div class="flex items-center justify-between mb-8">
                         <div class="w-full">
@@ -183,7 +187,7 @@
                         </div>
 
                         <!-- Phần 2: Thông tin cơ bản và giá -->
-                        <div class="lg:w-2/4">
+                        <div class="lg:w-2/4" style="margin-right: -20px;">
                             <!-- Thông tin cơ bản -->
                             <div class="mb-6">
                                 <div class="mb-4">
@@ -392,7 +396,7 @@
                         <!-- Phần 3: Thông tin mua hàng -->
                         <div class="lg:w-2/7">
                             <!-- Hệ thống cửa hàng -->
-                            <div class="border-[1.5px] border-black rounded-md overflow-hidden text-sm mb-5" style="margin-bottom: 10px;">
+                            <div class="border-[1.5px] border-black rounded-md overflow-hidden text-sm mb-5" style="margin-bottom: 20px;">
                                 <!-- Tiêu đề -->
                                 <div class="bg-[#000f8f] text-white px-4 py-3 flex items-center font-semibold" style="margin-bottom: -10px; padding-left: 7px;">
                                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -422,7 +426,7 @@
                             </div>
 
                             <!-- Cam kết bán hàng -->
-                            <div class="border-[1.5px] border-black rounded-md overflow-hidden text-sm mb-5" style="margin-bottom: 10px;">
+                            <div class="border-[1.5px] border-black rounded-md overflow-hidden text-sm mb-5" style="margin-bottom: 20px;">
                                 <div class=" rounded-md overflow-hidden w-full max-w-md">
                                     <!-- Tiêu đề -->
                                     <div class="bg-[#000f8f] text-white px-4 py-2 flex items-center space-x-2" style="margin-bottom: -8px;">
@@ -470,11 +474,11 @@
                                         </li>
                                         <li class="flex items-start space-x-2">
                                         <i class="fa-solid fa-check"  style="margin-top: 6px;"></i>
-                                        <span>Giảm giá 10% khi mua từ 5 sản phẩm trở lên.</span>
+                                        <span>Giảm giá 10% khi mua từ 5 sản phẩm.</span>
                                         </li>
                                         <li class="flex items-start space-x-2">
                                         <i class="fa-solid fa-gift"  style="margin-top: 6px;"></i>
-                                        <span>Tặng 100.000₫ cho thành viên Dola Phone.</span>
+                                        <span>Tặng 100.000₫ cho thành viên Dola.</span>
                                         </li>
                                     </ul>
                                     </div>
@@ -486,7 +490,7 @@
                 </div>
 
                 <!-- Đoạn 2 -->
-                <div class="flex gap-4">
+                <div class="flex gap-4" style="max-width: 1250px; margin: auto; margin-top: 20px;">
                     <!-- Phần 6/10 -->
                     <div class="w-6/10 flex-6 basis-3/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
                         <div class="flex items-center justify-between mb-8" style="margin-bottom: 5px;">
@@ -580,7 +584,7 @@
                         </div>
                     </div>
                     <!-- Phần 4/10 -->
-                    <div class="w-4/10 flex-4 basis-2/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+                    <div class="w-4/10 flex-4 basis-2/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]" >
                         <!-- Tiêu đề -->
                         <div class="bg-[#000f8f] text-white px-4 py-2 rounded-md flex items-center space-x-2 mb-2" style="margin-top: -7px;">
                             <i class="fa-solid fa-gear"></i>
@@ -745,7 +749,7 @@
                 </div>
 
                 <!-- Đoạn 3 -->
-                <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+                <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]" style="max-width: 1250px; margin: auto;">
                     <div class="flex items-center justify-between mb-8" style="margin-bottom: 5px;">
                             <h2 class="text-2xl font-bold border-l-8 border-custom-blue pl-4">CÁC SẢN PHẨM KHÁC</h2>
                     </div>
@@ -1104,12 +1108,13 @@
                         </div> 
                     </div>
                        <!-- Nút "Xem tất cả" sẽ dẫn đến trang danh sách sản phẩm khác -->
-                    <button class="xem-tat-ca-btn" style="margin-top: 20px;">Xem toàn bộ sản phẩm  <i class="arrow-icon fas fa-arrow-right"></i></button>
+                    <button class="xem-tat-ca-btn" style="margin-top: 20px;"><a href="products">Xem toàn bộ sản phẩm</a>  <i class="arrow-icon fas fa-arrow-right"></i></button>
                 </div>
 
             </div>
     </section>
-
+    <!-- Footer -->
+   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 30px;"></div>
 </body>
 </html>
 <script> // Xử lý thay đổi ảnh chính và thumbnail khi chọn màu sắc
