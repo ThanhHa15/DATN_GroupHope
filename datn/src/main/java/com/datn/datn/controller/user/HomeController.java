@@ -42,7 +42,7 @@ public class HomeController {
             model.addAttribute("products", productsService.findAll());
         }
         
-        return "views/user/home";
+        return "views/user/trangchu";
 }
 
     @GetMapping("/login")

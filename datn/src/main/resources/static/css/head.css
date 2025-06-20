@@ -1,0 +1,208 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  background-color: #0a2449;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  position: relative;
+  height: 70px;
+}
+
+.header-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex-grow: 1;
+}
+
+.logo {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.logo img {
+  height: 80%;
+  width: auto;
+  max-height: 50px;
+  object-fit: contain;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  max-width: 600px;
+}
+
+.category-menu {
+  position: relative;
+  display: inline-block;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.category-btn {
+  background-color: #17088b;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.category-btn i {
+  margin-right: 8px;
+}
+
+.category-dropdown {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 250px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 4px;
+  top: 100%;
+  left: 0;
+}
+
+.category-menu:hover .category-dropdown {
+  display: block;
+}
+
+.category-dropdown a {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid #eee;
+}
+
+.category-dropdown a:hover {
+  background-color: #f1f1f1;
+  color: #0973bf;
+}
+
+.category-dropdown i {
+  width: 20px;
+  text-align: center;
+  margin-right: 10px;
+}
+
+.search-bar {
+  margin-left: 20px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  flex-grow: 1;
+  width: 300px; /* Thu nhỏ ô tìm kiếm */
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.hotline {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-right: 20px;
+}
+
+.hotline-number {
+  font-weight: bold;
+  color: #ffd700;
+  margin-right: 10px;
+}
+
+.nav-icons {
+  display: flex;
+  align-items: center;
+}
+
+.nav-icon {
+  margin-left: 15px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  color: white;
+  min-width: 50px;
+}
+
+.nav-icon i {
+  font-size: 20px;
+  margin-bottom: 3px;
+}
+
+/* Phần navigation phía dưới */
+.main-nav {
+  background-color: #f8f8f8;
+  padding: 10px 20px;
+  border-bottom: 1px solid #e7e7e7;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  justify-content: space-between;
+}
+
+.nav-links li {
+  margin: 0 5px;
+  position: relative;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.nav-links a:hover {
+  color: #d70018;
+}
+
+/* Xóa icon trong navigation */
+.nav-links i {
+  display: none;
+}

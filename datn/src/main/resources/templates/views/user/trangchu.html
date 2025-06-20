@@ -4,240 +4,702 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shop Homepage</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/shared/footer.css" />
+    <link rel="stylesheet" href="/css/shared/header.css" />
     <style>
-      .banner-container {
-        position: relative;
+      .main-content-container {
+        max-width: 1250px;
         width: 100%;
-        height: 570px;
-        text-align: center;
-        background-color: #f8f9fa;
+        margin-left: auto;
+        margin-right: auto;
       }
-
-      .main-banner {
-        width: 100%;
-        height: 100%;
+      .info-card {
+        transition: all 0.3s ease;
       }
-
-      .main-banner img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .small-banners {
-        position: absolute;
-        bottom: -70px;
-        left: 0;
-        right: 0;
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-        flex-wrap: wrap;
-        z-index: 10;
-      }
-
-      .small-banner {
-        width: calc(50% - 20px);
-        margin-bottom: 0;
-      }
-
-      .small-banner .banner-card {
-        transition: transform 0.3s;
-        height: 100%;
-        border: 1px solid #dee2e6;
-        border-radius: 0.25rem;
-        overflow: hidden;
-        background-color: white;
-      }
-
-      .small-banner .banner-card:hover {
+      .info-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
       }
-
-      .small-banner img {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
+      /* Thêm style mới cho ảnh sản phẩm */
+      .product-image-container {
+        height: 200px; /* Chiều cao cố định */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
       }
-
-      @media (max-width: 992px) {
-        .small-banner {
-          width: calc(50% - 20px);
-        }
+      .product-image {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
       }
-
-      @media (max-width: 576px) {
-        .small-banner {
-          width: 100%;
-        }
+      .category-image-container {
+        height: 120px; /* Chiều cao cố định */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      .category-image {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+      .category-card {
+        position: relative;
+        overflow: hidden;
+      }
+      .category-image-container {
+        transition: transform 0.3s ease;
+      }
+      .category-card:hover .category-image-container {
+        transform: scale(1.25);
+      }
+      .category-card h3 {
+        transition: color 0.3s ease;
+      }
+      .category-card:hover h3 {
+        color: #fbbf24; /* Màu vàng */
+      }
+      .category-arrow {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        color: #000; /* Màu đen mặc định */
+        transition: color 0.3s ease; /* Chỉ transition cho màu sắc */
+      }
+      .category-card:hover .category-arrow {
+        color: #fbbf24; /* Chuyển màu vàng khi hover */
       }
     </style>
-    <link th:href="@{/css/head.css}" rel="stylesheet" />
-    <link th:href="@{/css/home.css}" rel="stylesheet" />
   </head>
-  <body>
-    <div th:replace="~{views/layout/head :: header}"></div>
-
-    <!-- Navigation -->
-    <div th:replace="~{views/layout/head :: nav}"></div>
-    <!-- Main Content -->
-
-    <div class="banner-container">
-      <div class="main-banner">
-        <img th:src="@{/images/banner.png}" alt="banner" />
+  <body class="bg-gray-50">
+    <!-- Header (Full width) -->
+    <div th:insert="views/shared/header :: siteHeader"></div>
+    <div class="relative w-full h-[570px] text-center bg-gray-100">
+      <!-- Main Banner -->
+      <div class="w-full h-full">
+        <img
+          th:src="@{/images/bn1.jpg}"
+          alt="banner"
+          class="w-full h-full object-cover"
+        />
       </div>
-      <div class="small-banners">
-        <div class="small-banner">
-          <div class="banner-card">
-            <img th:src="@{/images/banner.png}" alt="banner" />
+
+      <!-- Small Banners -->
+      <div
+        class="absolute bottom-[-120px] left-0 right-0 flex justify-center gap-5 max-w-[1200px] mx-auto flex-wrap z-10"
+      >
+        <div class="w-[calc(50%-20px)]">
+          <div
+            class="transition-transform duration-300 h-full border border-gray-200 rounded-xl overflow-hidden bg-white hover:translate-y-[-5px] hover:shadow-lg"
+          >
+            <img
+              th:src="@{/images/image copy 3.png}"
+              alt="banner"
+              class="w-full h-[180px] object-cover"
+            />
           </div>
         </div>
-        <div class="small-banner">
-          <div class="banner-card">
-            <img th:src="@{/images/banner.png}" alt="banner" />
+        <div class="w-[calc(50%-20px)]">
+          <div
+            class="transition-transform duration-300 h-full border border-gray-200 rounded-xl overflow-hidden bg-white hover:translate-y-[-5px] hover:shadow-lg"
+          >
+            <img
+              th:src="@{/images/image copy 4.png}"
+              alt="banner"
+              class="w-full h-[180px] object-cover"
+            />
           </div>
         </div>
       </div>
     </div>
+    <!-- Main Content (1250px centered) -->
+    <div class="main-content-container">
+      <!-- Info Boxes Section -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-32 px-4 mb-8">
+        <div
+          class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"
+        >
+          <div class="text-blue-600 mb-2">
+            <i class="fas fa-truck-fast text-2xl"></i>
+          </div>
+          <h3 class="font-bold mb-1">Giao hàng nhanh</h3>
+          <p class="text-sm text-gray-600">Nhận hàng trong 2h</p>
+        </div>
 
-    <div class="main-content py-4">
-      <div class="container">
-        <div class="row">
-          <!-- Products -->
-          <div class="col-12">
-            <div class="row mb-4">
-              <div class="col-md-4"></div>
-              <div class="col-md-4">
-                <select class="form-select" id="categorySelect">
-                  <option value="all" th:selected="${selectedCategory == null}">
-                    Tất cả
-                  </option>
-                  <option
-                    th:each="category : ${categories}"
-                    th:value="${category.id}"
-                    th:text="${category.name}"
-                    th:selected="${selectedCategory != null && selectedCategory.id == category.id}"
-                  >
-                    Electronics
-                  </option>
-                </select>
+        <div
+          class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"
+        >
+          <div class="text-green-600 mb-2">
+            <i class="fas fa-headset text-2xl"></i>
+          </div>
+          <h3 class="font-bold mb-1">Tư vấn chuyên nghiệp</h3>
+          <p class="text-sm text-gray-600">Hỗ trợ 24/7</p>
+        </div>
+
+        <div
+          class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"
+        >
+          <div class="text-purple-600 mb-2">
+            <i class="fas fa-certificate text-2xl"></i>
+          </div>
+          <h3 class="font-bold mb-1">100% chính hãng</h3>
+          <p class="text-sm text-gray-600">Bảo hành đầy đủ</p>
+        </div>
+
+        <div
+          class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"
+        >
+          <div class="text-orange-600 mb-2">
+            <i class="fas fa-credit-card text-2xl"></i>
+          </div>
+          <h3 class="font-bold mb-1">Thanh toán linh hoạt</h3>
+          <p class="text-sm text-gray-600">Nhiều hình thức</p>
+        </div>
+      </div>
+
+      <div
+        class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 -mt-4"
+      >
+        <h2 class="text-2xl font-bold mb-8 text-left px-4">DANH MỤC NỔI BẬT</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 px-4">
+          <!-- Danh mục iPhone -->
+          <div
+            class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="category-image-container">
+                <img
+                  th:src="@{/images/iponemau.jpg}"
+                  alt="iPhone icon"
+                  class="category-image"
+                />
               </div>
+              <h3 class="font-bold text-lg mb-1">iPhone</h3>
+              <p class="text-sm text-blue-600">Nhiều ưu đãi cho iPhone 15</p>
             </div>
+          </div>
 
-            <div class="row" id="product-container">
-              <!-- Product Cards -->
-              <div
-                th:each="product : ${products}"
-                class="col-lg-4 col-md-6 col-12 mb-4"
-              >
-                <div class="card product-card h-100">
-                  <div class="text-center p-3">
-                    <img
-                      th:if="${product.image != null and !product.image.isEmpty()}"
-                      th:src="@{${product.image}}"
-                      class="product-image img-fluid rounded"
-                      alt="Product image"
-                    />
-                    <img
-                      th:unless="${product.image != null and !product.image.isEmpty()}"
-                      src="https://via.placeholder.com/300x200?text=No+Image"
-                      class="product-image img-fluid rounded"
-                      alt="Default product image"
-                    />
-                  </div>
-                  <div class="card-body d-flex flex-column">
-                    <h5 class="card-title" th:text="${product.name}">
-                      Product Name
-                    </h5>
-                    <p
-                      class="card-text text-muted"
-                      th:text="${product.description}"
-                    >
-                      Product description...
-                    </p>
-                    <p
-                      class="card-text text-muted"
-                      th:text="${'Tồn kho: ' + product.quantity}"
-                    >
-                      Product description...
-                    </p>
-                    <div
-                      class="d-flex justify-content-between align-items-center mt-auto"
-                    >
-                      <span class="h5 text-primary"
-                        ><td
-                          th:text="${#numbers.formatDecimal(product.price, 0, 'POINT', 0, 'NONE') + 'đ'}"
-                        ></td>
-                      </span>
-                      <span
-                        class="badge bg-secondary"
-                        th:text="${product.category.name}"
-                      >
-                        Category
-                      </span>
+          <!-- Danh mục iPad -->
+          <div
+            class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="category-image-container">
+                <img
+                  th:src="@{/images/1750395869916_air6.jpg}"
+                  alt="iPad icon"
+                  class="category-image"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-1">iPad</h3>
+              <p class="text-sm text-blue-600">Giảm giá cực sốc</p>
+            </div>
+          </div>
+
+          <!-- Danh mục Mac -->
+          <div
+            class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="category-image-container">
+                <img
+                  th:src="@{/images/macmau.webp}"
+                  alt="Mac icon"
+                  class="category-image"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-1">Mac</h3>
+              <p class="text-sm text-blue-600">Giá tốt mỗi ngày</p>
+            </div>
+          </div>
+
+          <!-- Danh mục Watch -->
+          <div
+            class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="category-image-container">
+                <img
+                  th:src="@{/images/airpodsmau.webp}"
+                  alt="Watch icon"
+                  class="category-image"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-1">Watch</h3>
+              <p class="text-sm text-blue-600">Ưu đãi cực khủng</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Section -->
+      <div
+        class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 -mt-6 min-h-[450px]"
+      >
+        <div class="flex justify-between items-center mb-4 px-4">
+          <h2 class="text-2xl font-bold">SẢN PHẨM</h2>
+        </div>
+
+        <!-- Product Grid -->
+         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                        <!-- sản phẩm -->
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+                            <div class="absolute top-3 left-3 z-10">
+                                <div class="relative">
+                                    <!-- Phần chính của mác -->
+                                    <div class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm 
+                                                transform -rotate-3 origin-left
+                                                shadow-[2px_2px_0px_rgba(0,0,0,0.2)] 
+                                                group-hover:shadow-[3px_3px_0px_rgba(0,0,0,0.3)]
+                                                transition-all duration-200">
+                                        GIẢM 10%
+                                    </div>
+                                    <!-- Hiệu ứng góc gập 3D */ -->
+                                    <div class="absolute top-full left-1 w-4 h-1 bg-red-700 
+                                                transform -rotate-6 origin-top-left
+                                                opacity-80"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <img src="https://readdy.ai/api/search-image?query=iPhone%2015%20Pro%20Max%20in%20black%20titanium%20color%20on%20white%20background%2C%20professional%20product%20photography%20with%20clean%20shadows&width=300&height=300&seq=10&orientation=squarish" 
+                                    alt="iPhone 15 Pro Max" 
+                                    class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110">
+                                
+                                <!-- Wishlist button -->
+                                <div class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-100">
+                                    <i class="ri-heart-line text-gray-600 hover:text-primary transition-colors"></i>
+                                </div>
+                                
+                                <!-- Animated Cart button -->
+                                <button class="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-[#000f8f] text-white rounded-full 
+                                            transform translate-x-full opacity-0 
+                                            group-hover:translate-x-0 group-hover:opacity-100 
+                                            transition-all duration-500 ease-in-out
+                                            hover:bg-red-700 hover:scale-110 z-10">
+                                <i class="ri-shopping-cart-line"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="p-4">
+                            <a href="" class="block">
+                                    <h3 class="font-semibold text-gray-900 mb-1 hover:text-yellow-400 transition-colors duration-300">iPhone 15 Pro Max 256GB</h3>
+                                </a>
+                                
+                                <div class="flex items-center mb-2">
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-half-fill ri-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-1">(124)</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-bold text-primary">33.990.000₫</span>
+                                        <span class="text-sm text-gray-500 line-through ml-2">34.990.000₫</span>
+                                    </div>
+                                    <!-- Fallback button for mobile -->
+                                    <button class="w-10 h-10 md:hidden flex items-center justify-center bg-primary text-white rounded-full hover:bg-red-700 transition-all duration-300 transform hover:scale-110">
+                                        <i class="ri-shopping-cart-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Hover overlay effect -->
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300 pointer-events-none"></div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+                            <div class="absolute top-3 left-3 z-10">
+                                <div class="relative">
+                                    <!-- Phần chính của mác -->
+                                    <div class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm 
+                                                transform -rotate-3 origin-left
+                                                shadow-[2px_2px_0px_rgba(0,0,0,0.2)] 
+                                                group-hover:shadow-[3px_3px_0px_rgba(0,0,0,0.3)]
+                                                transition-all duration-200">
+                                        GIẢM 10%
+                                    </div>
+                                    <!-- Hiệu ứng góc gập 3D */ -->
+                                    <div class="absolute top-full left-1 w-4 h-1 bg-red-700 
+                                                transform -rotate-6 origin-top-left
+                                                opacity-80"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <img src="https://readdy.ai/api/search-image?query=iPhone%2015%20Pro%20Max%20in%20black%20titanium%20color%20on%20white%20background%2C%20professional%20product%20photography%20with%20clean%20shadows&width=300&height=300&seq=10&orientation=squarish" 
+                                    alt="iPhone 15 Pro Max" 
+                                    class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110">
+                                
+                                <!-- Wishlist button -->
+                                <div class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-100">
+                                    <i class="ri-heart-line text-gray-600 hover:text-primary transition-colors"></i>
+                                </div>
+                                
+                                <!-- Animated Cart button -->
+                            <button class="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-[#000f8f] text-white rounded-full 
+                                            transform translate-x-full opacity-0 
+                                            group-hover:translate-x-0 group-hover:opacity-100 
+                                            transition-all duration-500 ease-in-out
+                                            hover:bg-red-700 hover:scale-110 z-10">
+                                <i class="ri-shopping-cart-line"></i>
+                            </button>
+
+
+                            </div>
+                            
+                            <div class="p-4">
+                            <a href="" class="block">
+                                    <h3 class="font-semibold text-gray-900 mb-1 hover:text-yellow-400 transition-colors duration-300">iPhone 15 Pro Max 256GB</h3>
+                                </a>
+                                
+                                <div class="flex items-center mb-2">
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-half-fill ri-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-1">(124)</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-bold text-primary">33.990.000₫</span>
+                                        <span class="text-sm text-gray-500 line-through ml-2">34.990.000₫</span>
+                                    </div>
+                                    <!-- Fallback button for mobile -->
+                                    <button class="w-10 h-10 md:hidden flex items-center justify-center bg-primary text-white rounded-full hover:bg-red-700 transition-all duration-300 transform hover:scale-110">
+                                        <i class="ri-shopping-cart-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Hover overlay effect -->
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300 pointer-events-none"></div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+                            <div class="absolute top-3 left-3 z-10">
+                                <div class="relative">
+                                    <!-- Phần chính của mác -->
+                                    <div class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm 
+                                                transform -rotate-3 origin-left
+                                                shadow-[2px_2px_0px_rgba(0,0,0,0.2)] 
+                                                group-hover:shadow-[3px_3px_0px_rgba(0,0,0,0.3)]
+                                                transition-all duration-200">
+                                        GIẢM 10%
+                                    </div>
+                                    <!-- Hiệu ứng góc gập 3D */ -->
+                                    <div class="absolute top-full left-1 w-4 h-1 bg-red-700 
+                                                transform -rotate-6 origin-top-left
+                                                opacity-80"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <img src="https://readdy.ai/api/search-image?query=iPhone%2015%20Pro%20Max%20in%20black%20titanium%20color%20on%20white%20background%2C%20professional%20product%20photography%20with%20clean%20shadows&width=300&height=300&seq=10&orientation=squarish" 
+                                    alt="iPhone 15 Pro Max" 
+                                    class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110">
+                                
+                                <!-- Wishlist button -->
+                                <div class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-100">
+                                    <i class="ri-heart-line text-gray-600 hover:text-primary transition-colors"></i>
+                                </div>
+                                
+                                <!-- Animated Cart button -->
+                                <button class="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-[#000f8f] text-white rounded-full 
+                                            transform translate-x-full opacity-0 
+                                            group-hover:translate-x-0 group-hover:opacity-100 
+                                            transition-all duration-500 ease-in-out
+                                            hover:bg-red-700 hover:scale-110 z-10">
+                                <i class="ri-shopping-cart-line"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="p-4">
+                            <a href="" class="block">
+                                    <h3 class="font-semibold text-gray-900 mb-1 hover:text-yellow-400 transition-colors duration-300">iPhone 15 Pro Max 256GB</h3>
+                                </a>
+                                
+                                <div class="flex items-center mb-2">
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-half-fill ri-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-1">(124)</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-bold text-primary">33.990.000₫</span>
+                                        <span class="text-sm text-gray-500 line-through ml-2">34.990.000₫</span>
+                                    </div>
+                                    <!-- Fallback button for mobile -->
+                                    <button class="w-10 h-10 md:hidden flex items-center justify-center bg-primary text-white rounded-full hover:bg-red-700 transition-all duration-300 transform hover:scale-110">
+                                        <i class="ri-shopping-cart-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Hover overlay effect -->
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300 pointer-events-none"></div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+                            <div class="absolute top-3 left-3 z-10">
+                                <div class="relative">
+                                    <!-- Phần chính của mác -->
+                                    <div class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm 
+                                                transform -rotate-3 origin-left
+                                                shadow-[2px_2px_0px_rgba(0,0,0,0.2)] 
+                                                group-hover:shadow-[3px_3px_0px_rgba(0,0,0,0.3)]
+                                                transition-all duration-200">
+                                        GIẢM 10%
+                                    </div>
+                                    <!-- Hiệu ứng góc gập 3D */ -->
+                                    <div class="absolute top-full left-1 w-4 h-1 bg-red-700 
+                                                transform -rotate-6 origin-top-left
+                                                opacity-80"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <img src="https://readdy.ai/api/search-image?query=iPhone%2015%20Pro%20Max%20in%20black%20titanium%20color%20on%20white%20background%2C%20professional%20product%20photography%20with%20clean%20shadows&width=300&height=300&seq=10&orientation=squarish" 
+                                    alt="iPhone 15 Pro Max" 
+                                    class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110">
+                                
+                                <!-- Wishlist button -->
+                                <div class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-100">
+                                    <i class="ri-heart-line text-gray-600 hover:text-primary transition-colors"></i>
+                                </div>
+                                
+                                <!-- Animated Cart button -->
+                                <button class="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-[#000f8f] text-white rounded-full 
+                                            transform translate-x-full opacity-0 
+                                            group-hover:translate-x-0 group-hover:opacity-100 
+                                            transition-all duration-500 ease-in-out
+                                            hover:bg-red-700 hover:scale-110 z-10">
+                                <i class="ri-shopping-cart-line"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="p-4">
+                            <a href="" class="block">
+                                    <h3 class="font-semibold text-gray-900 mb-1 hover:text-yellow-400 transition-colors duration-300">iPhone 15 Pro Max 256GB</h3>
+                                </a>
+                                
+                                <div class="flex items-center mb-2">
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-half-fill ri-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-1">(124)</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-bold text-primary">33.990.000₫</span>
+                                        <span class="text-sm text-gray-500 line-through ml-2">34.990.000₫</span>
+                                    </div>
+                                    <!-- Fallback button for mobile -->
+                                    <button class="w-10 h-10 md:hidden flex items-center justify-center bg-primary text-white rounded-full hover:bg-red-700 transition-all duration-300 transform hover:scale-110">
+                                        <i class="ri-shopping-cart-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Hover overlay effect -->
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300 pointer-events-none"></div>
+                        </div>
+
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+                            <div class="absolute top-3 left-3 z-10">
+                                <div class="relative">
+                                    <!-- Phần chính của mác -->
+                                    <div class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm 
+                                                transform -rotate-3 origin-left
+                                                shadow-[2px_2px_0px_rgba(0,0,0,0.2)] 
+                                                group-hover:shadow-[3px_3px_0px_rgba(0,0,0,0.3)]
+                                                transition-all duration-200">
+                                        GIẢM 10%
+                                    </div>
+                                    <!-- Hiệu ứng góc gập 3D */ -->
+                                    <div class="absolute top-full left-1 w-4 h-1 bg-red-700 
+                                                transform -rotate-6 origin-top-left
+                                                opacity-80"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <img src="https://readdy.ai/api/search-image?query=iPhone%2015%20Pro%20Max%20in%20black%20titanium%20color%20on%20white%20background%2C%20professional%20product%20photography%20with%20clean%20shadows&width=300&height=300&seq=10&orientation=squarish" 
+                                    alt="iPhone 15 Pro Max" 
+                                    class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-110">
+                                
+                                <!-- Wishlist button -->
+                                <div class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-100">
+                                    <i class="ri-heart-line text-gray-600 hover:text-primary transition-colors"></i>
+                                </div>
+                                
+                                <!-- Animated Cart button -->
+                                <button class="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-[#000f8f] text-white rounded-full 
+                                            transform translate-x-full opacity-0 
+                                            group-hover:translate-x-0 group-hover:opacity-100 
+                                            transition-all duration-500 ease-in-out
+                                            hover:bg-red-700 hover:scale-110 z-10">
+                                <i class="ri-shopping-cart-line"></i>
+                                <button>
+                            </div>
+                            
+                            <div class="p-4">
+                            <a href="" class="block">
+                                    <h3 class="font-semibold text-gray-900 mb-1 hover:text-yellow-400 transition-colors duration-300">iPhone 15 Pro Max 256GB</h3>
+                                </a>
+                                
+                                <div class="flex items-center mb-2">
+                                    <div class="flex text-yellow-400">
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-fill ri-xs"></i>
+                                        <i class="ri-star-half-fill ri-xs"></i>
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-1">(124)</span>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-bold text-primary">33.990.000₫</span>
+                                        <span class="text-sm text-gray-500 line-through ml-2">34.990.000₫</span>
+                                    </div>
+                                    <!-- Fallback button for mobile -->
+                                    <button class="w-10 h-10 md:hidden flex items-center justify-center bg-primary text-white rounded-full hover:bg-red-700 transition-all duration-300 transform hover:scale-110">
+                                        <i class="ri-shopping-cart-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Hover overlay effect -->
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300 pointer-events-none"></div>
+                        </div>            
                     </div>
-                  </div>
-                  <div class="card-footer bg-white">
-                    <button class="btn btn-primary w-100">Mua</button>
-                  </div>
-                </div>
+      </div>
+      <div class="w-full h-full -mt-8">
+        <!-- Thêm negative margin -->
+        <img
+          th:src="@{/images/banner.webp}"
+          alt="banner"
+          class="w-full h-full object-cover"
+        />
+      </div>
+      <div
+        class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 mt-4 mb-1.25"
+      >
+        <h2 class="text-2xl font-bold mb-8 text-left px-4">PHỤ KIỆN NỔI BẬT</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 px-4">
+          <!-- Phụ kiện 1 - Ốp lưng -->
+          <div
+            class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="category-image-container">
+                <img
+                  th:src="@{/images/image copy 6.png}"
+                  alt="Ốp lưng iPhone"
+                  class="category-image"
+                />
               </div>
+              <h3 class="font-bold text-lg mb-1">Ốp lưng</h3>
+              <p class="text-sm text-blue-600">Đa dạng mẫu mã</p>
             </div>
+          </div>
 
-            <!-- Pagination -->
+          <!-- Phụ kiện 2 - Cáp sạc -->
+          <div
+            class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="category-image-container">
+                <img
+                  th:src="@{/images/image copy 7.png}"
+                  alt="Cáp sạc"
+                  class="category-image"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-1">Cáp sạc</h3>
+              <p class="text-sm text-blue-600">Chính hãng 100%</p>
+            </div>
+          </div>
+
+          <!-- Phụ kiện 3 - Tai nghe -->
+          <div
+            class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="category-image-container">
+                <img
+                  th:src="@{/images/image copy 8.png}"
+                  alt="Pin dự phòng"
+                  class="category-image"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-1">Pin dự phòng</h3>
+              <p class="text-sm text-blue-600">Dung lượng cao</p>
+            </div>
+          </div>
+
+          <!-- Phụ kiện 4 - Miếng dán màn hình -->
+          <div
+            class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+          >
+            <div class="flex flex-col items-center text-center">
+              <div class="category-image-container">
+                <img
+                  th:src="@{/images/image copy 9.png}"
+                  alt="Miếng dán màn hình"
+                  class="category-image"
+                />
+              </div>
+              <h3 class="font-bold text-lg mb-1">Dán màn hình</h3>
+              <p class="text-sm text-blue-600">Chống lóa, chống vân tay</p>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <h5>About Us</h5>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in
-              dui mauris.
-            </p>
-          </div>
-          <div class="col-md-4 mb-3">
-            <h5>Quick Links</h5>
-            <ul class="list-unstyled">
-              <li><a href="#" class="text-white">Home</a></li>
-              <li><a href="#" class="text-white">Products</a></li>
-              <li><a href="#" class="text-white">About</a></li>
-              <li><a href="#" class="text-white">Contact</a></li>
-            </ul>
-          </div>
-          <div class="col-md-4 mb-3">
-            <h5>Contact</h5>
-            <p><i class="fas fa-map-marker-alt me-2"></i> 123 Street, City</p>
-            <p><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
-            <p><i class="fas fa-envelope me-2"></i> info@example.com</p>
-          </div>
-        </div>
-        <hr class="my-4 bg-light" />
-        <div class="text-center">
-          <p class="mb-0">&copy; 2023 My Shop. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+    <!-- Footer (Full width) -->
+    <div th:insert="views/shared/footer :: footerFragment"></div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
       $(document).ready(function () {
