@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thông tin bảo hành</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color:  #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .baohanh {
+      max-width: 900px;
+      margin: auto;
+      background-color:#ffffff;
+      padding: 40px auto 10px auto;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .logo-img {
+      width: 400px;
+      height: 500px;
+      margin: 0 auto 20px auto;
+      display: block;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      text-align: left;
+      color: #222;
+    }
+
+    .title {
+      font-size: 26px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .serial {
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .link {
+      text-align: center;
+      display: block;
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: #0077cc;
+      text-decoration: none;
+    }
+
+    .section {
+      display: flex;
+      align-items: flex-start;
+      gap: 25px;
+      margin: 30px 0;
+    }
+
+    .icon {
+      font-size: 20px;
+      color: #3b3bff;
+      margin-top: 2px;
+      padding-left:100px ;
+    }
+
+    .info p {
+      margin: 4px 0;
+      line-height: 1.4;
+    }
+
+    .highlight {
+      color: green;
+      font-weight: bold;
+    }
+
+    strong {
+      font-weight: bold;
+    }
+    h1 {
+
+        margin:  30px auto 60px;
+        width: 33%;
+        /* border-bottom: 5px solid blue; */
+        color: blue;
+    }
+  </style>
+</head>
+<body>
+  <div class="baohanh">
+    <h1>Thông tin bảo hành</h1>
+    <img src="/text/img.png" alt="Logo sản phẩm" class="logo-img" />
+
+    <div class="container">
+      <p class="title">iPhone 14 Pro Max 1TB - Chính hãng VN/A</p>
+      <p class="serial">Số serial: <strong>demo123</strong></p>
+      <a href="#" class="link" id="backToLookup">Kiểm tra số serial của sản phẩm khác</a>
+
+      <div class="section">
+        <span class="icon">✔️</span>
+        <div class="info">
+          <p><strong>Sản phẩm chính hãng</strong></p>
+          <p>Đây là sản phẩm được phân phối và bảo hành chính hãng bởi Hope Phone</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <span class="icon">ℹ️</span>
+        <div class="info">
+          <p>Tình trạng bảo hành: <span class="highlight">Còn bảo hành</span></p>
+          <p>Thời gian bảo hành đến: <strong>20-6-2024</strong></p>
+          <p>Chi nhánh: <strong>Tất cả chi nhánh Hope Phone</strong></p>
+          <p>Mô tả: <strong>Máy mới</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  document.getElementById('backToLookup').addEventListener('click', function (e) {
+    e.preventDefault(); // Ngăn chuyển hướng mặc định
+    window.location.href = "/text/tracuu.html"; // Trang bạn muốn quay lại
+  });
+</script>
+
+</html>
