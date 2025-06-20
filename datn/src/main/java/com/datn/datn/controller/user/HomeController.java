@@ -89,4 +89,12 @@ public class HomeController {
     public String orderDetail(Model model, HttpSession session) {
         return "views/user/orderDetail";
     }
+    @GetMapping("/guarantee")
+    public String guarantee(Model model, HttpSession session) {
+        return "views/user/baohanh";
+    }
+    @GetMapping("/formGuarantee")
+    public String formGuarantee(Model model, HttpSession session) {
+        return "views/user/tracuu-baohanh";
+    }
 }
