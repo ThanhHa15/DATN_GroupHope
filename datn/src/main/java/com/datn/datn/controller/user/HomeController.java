@@ -73,4 +73,8 @@ public class HomeController {
     public String introduction(Model model, HttpSession session) {
         return "views/user/introduction";
     }
+    @GetMapping("/cart")
+    public String cart(Model model, HttpSession session) {
+        return "views/user/cart";
+    }
 }
