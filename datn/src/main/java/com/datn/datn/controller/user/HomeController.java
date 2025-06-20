@@ -54,5 +54,27 @@ public class HomeController {
     public String register(Model model, HttpSession session) {
         return "views/shared/register";
     }
+     @GetMapping("/forgetPass")
+    public String forgetPass(Model model, HttpSession session) {
+        return "views/shared/forgetPass";
+    }
     
+    @GetMapping("/products")
+    public String products(Model model, HttpSession session) {
+        return "views/user/products";
+    }
+
+    @GetMapping("/detail")
+    public String detail(Model model, HttpSession session) {
+        return "views/user/products-detail";
+    }
+
+    @GetMapping("/introduction")
+    public String introduction(Model model, HttpSession session) {
+        return "views/user/introduction";
+    }
+    @GetMapping("/cart")
+    public String cart(Model model, HttpSession session) {
+        return "views/user/cart";
+    }
 }
