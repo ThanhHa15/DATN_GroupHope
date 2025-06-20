@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết đơn hàng</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+      body {
+          font-family: 'Inter', sans-serif;
+      }
+      .active-link {
+          color: #e5a500;
+          font-weight: 600;
+      }
+      .status-pending {
+          color: #e5a500;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#e5a500", secondary: "#4a5568" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50">
+    <div class="flex items-center justify-center min-h-screen bg-gray-50">
+  <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-5xl">
+ 
+      <!-- Main Content -->
+      <div class="flex-1 p-8">
+        <div class="max-w-5xl mx-auto">
+          <!-- Order Header -->
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Chi tiết đơn hàng</h1>
+            <p class="text-gray-500">Ngày tạo: 17/06/2025</p>
+          </div>
+
+          <!-- Order Status -->
+          <div class="flex flex-wrap gap-8 mb-6">
+            <div class="flex items-center">
+              <span class="text-gray-600 mr-2 font-bold">Trạng thái thanh toán:</span>
+              <span class="status-pending font-medium">Chưa thanh toán</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-600 mr-2 font-bold">Trạng thái vận chuyển:</span>
+              <span class="status-pending font-medium">Chưa chuyển</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-600 mr-2 font-bold">Mã vận đơn:</span>
+              <span class="text-gray-800"></span>
+            </div>
+          </div>
+
+          <!-- Order Info Boxes -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Shipping Address -->
+            <div class="bg-white p-5 rounded shadow-sm border border-gray-100">
+              <h2 class="text-gray-800 font-semibold mb-3">
+                ĐỊA CHỈ GIAO HÀNG
+              </h2>
+              <div class="text-gray-700">
+                <p class="font-medium mb-1">TEST LÊ</p>
+                <p class="mb-1 ">Địa chỉ: 12 Tôn Bản, Thị xã Sơn Tây, Hà Nội</p>
+                <p>Số điện thoại: +84987654325</p>
+              </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="bg-white p-5 rounded shadow-sm border border-gray-100">
+              <h2 class="text-gray-800 font-semibold mb-3">THANH TOÁN</h2>
+              <div class="text-gray-700">
+                <p>Chuyển khoản</p>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="bg-white p-5 rounded shadow-sm border border-gray-100">
+              <h2 class="text-gray-800 font-semibold mb-3">GHI CHÚ</h2>
+              <div class="text-gray-700">
+                <p>Không có ghi chú</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Items -->
+          <div
+            class="bg-white rounded shadow-sm border border-gray-100 overflow-hidden mb-6"
+          >
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gray-50">
+                  <th class="py-4 px-6 text-center text-gray-600 font-bold whitespace-nowrap">
+                    Sản phẩm
+                  </th>
+                  <th class="py-4 px-6 text-center text-gray-600 font-bold whitespace-nowrap">
+                    Đơn giá
+                  </th>
+                  <th class="py-4 px-6 text-center text-gray-600 font-bold whitespace-nowrap">
+                    Số lượng
+                    </th>
+
+                  <th class="py-4 px-6 text-center text-gray-600 font-bold whitespace-nowrap">
+                    Tổng
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-t border-gray-100">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center">
+                      <div
+                        class="w-16 h-16 flex-shrink-0 mr-4 bg-gray-100 rounded"
+                      >
+                        <img
+                          src="https://readdy.ai/api/search-image?query=Black%20silicone%20MagSafe%20iPhone%2015%20case%2C%20minimalist%20design%2C%20product%20photography%20on%20white%20background%2C%20high%20quality&width=100&height=100&seq=1&orientation=squarish"
+                          alt="iPhone case"
+                          class="w-full h-full object-contain"
+                        />
+                      </div>
+                      <span class="text-gray-800"
+                        >Ốp lưng MagSafe iPhone 15 Apple Silicone Chính
+                        Hãng</span
+                      >
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-right text-gray-800">1.429.000đ</td>
+                  <td class="py-4 px-6 text-center text-gray-800">1</td>
+                  <td class="py-4 px-6 text-right text-gray-800">1.429.000đ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Order Summary -->
+          <div
+            class="bg-white rounded shadow-sm border border-gray-100 overflow-hidden"
+          >
+            <div class="p-6">
+              <div class="flex justify-between py-2">
+                <span class="text-gray-600 font-bold">Khuyến mãi: </span>
+                <span class="text-gray-800">0đ</span>
+              </div>
+              <div class="flex justify-between py-2 border-b border-gray-100">
+                <span class="text-gray-600 font-bold">Phí vận chuyển: </span>
+                <span class="text-gray-800">40.000đ (Giao hàng tận nơi)</span>
+              </div>
+              <div class="flex justify-between py-3 font-medium">
+                <span class="text-gray-800 font-bold">Tổng tiền</span>
+                <span class="text-red-600 text-2xl font-bold">1.469.000đ</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div> 
+
+    <script id="navigation-script">
+      document.addEventListener("DOMContentLoaded", function () {
+        const navLinks = document.querySelectorAll("nav a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            navLinks.forEach((l) => l.classList.remove("active-linkM "));
+            this.classList.add("active-link");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
