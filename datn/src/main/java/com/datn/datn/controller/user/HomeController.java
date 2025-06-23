@@ -97,4 +97,16 @@ public class HomeController {
     public String formGuarantee(Model model, HttpSession session) {
         return "views/user/tracuu-baohanh";
     }
+    @GetMapping("/info")
+    public String info(Model model, HttpSession session) {
+        return "views/shared/info";
+    }
+    @GetMapping("/editInf")
+    public String editInf(Model model, HttpSession session) {
+        return "views/shared/editInf";
+    }
+    @GetMapping("/address")
+    public String address(Model model, HttpSession session) {
+        return "views/shared/address";
+    }
 }

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thông tin cá nhân</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#e11d48',secondary:'#f97316'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/shared/footer.css">
+    <link rel="stylesheet" href="/css/shared/header.css">
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+      input:focus, textarea:focus {
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+      .password-toggle:hover {
+          cursor: pointer;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#3b82f6", secondary: "#64748b" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-[#f2f2f2] ">
+    <!-- Header -->
+    <div th:insert="views/shared/header :: siteHeader" style="margin-top: 140px;"></div>
+
+    <div class="flex justify-center items-center bg-gray-100 p-4">
+      <div class="w-full max-w-[1250px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col md:flex-row flex">
+          <!-- Sidebar -->
+          <aside class="w-full md:w-64 bg-gray-300 p-6">
+            <div class="mb-8">
+              <h2 class="text-xl font-bold text-gray-800">TRANG TÀI KHOẢN</h2>
+              <p class="text-sm text-gray-600 mt-2">
+                Xin chào, <span class="text-primary font-medium">name !</span>
+              </p>
+            </div>
+
+            <nav class="space-y-1">
+              <a href="info" class="block py-2 px-3 text-primary font-medium border-l-4 border-primary bg-blue-50">
+                Thông tin tài khoản
+              </a>
+              <a href="editInf" class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors">
+                Chỉnh sửa thông tin
+              </a>
+              <a href="address" class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors">
+                Sổ địa chỉ
+              </a>
+            </nav>
+          </aside>
+
+          <!-- Main Content -->
+          <main class="flex-1 p-6 md:p-8">
+            <h1 class="text-xl font-bold text-gray-800 mb-6 -mt-3" >THÔNG TIN CÁ NHÂN</h1>
+              <div class="space-y-3 text-base text-gray-800">
+                <p><span class="font-semibold">Họ tên:</span> user name</p>
+                <p><span class="font-semibold">Email:</span> ZXCVBNM@gmail.com</p>
+                <p><span class="font-semibold">Điện thoại:</span> +84 987654325</p>
+                <p><span class="font-semibold">Địa chỉ:</span> 12 Tôn Bản, Thị xã Sơn Tây, Hà Nội, Vietnam</p>
+              </div>
+          </main>
+      </div>
+    </div>
+    <!-- Footer -->
+   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 50px;"></div>
+</body> 
+</html>
+    <script id="password-toggle-script">
+      document.addEventListener("DOMContentLoaded", function () {
+        const toggleButtons = document.querySelectorAll(".password-toggle");
+
+        toggleButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            const input = this.parentElement.querySelector("input");
+            const icon = this.querySelector("i");
+
+            if (input.type === "password") {
+              input.type = "text";
+              icon.classList.remove("ri-eye-line");
+              icon.classList.add("ri-eye-off-line");
+            } else {
+              input.type = "password";
+              icon.classList.remove("ri-eye-off-line");
+              icon.classList.add("ri-eye-line");
+            }
+          });
+        });
+      });
+    </script>
+
+    <script id="form-validation-script">
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("profile-form");
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          let isValid = true;
+
+          // Validate fullname
+          const fullname = document.getElementById("fullname");
+          if (!fullname.value.trim()) {
+            showError(fullname, "Vui lòng nhập họ và tên");
+            isValid = false;
+          } else {
+            hideError(fullname);
+          }
+
+          // Validate email
+          const email = document.getElementById("email");
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+            showError(email, "Vui lòng nhập email hợp lệ");
+            isValid = false;
+          } else {
+            hideError(email);
+          }
+
+          // Validate phone
+          const phone = document.getElementById("phone");
+          const phoneRegex = /^[0-9]{10,11}$/;
+          if (phone.value.trim() && !phoneRegex.test(phone.value.trim())) {
+            showError(phone, "Vui lòng nhập số điện thoại hợp lệ");
+            isValid = false;
+          } else {
+            hideError(phone);
+          }
+
+          // Validate password confirmation
+          const newPassword = document.getElementById("new-password");
+          const confirmPassword = document.getElementById("confirm-password");
+
+          if (newPassword.value && confirmPassword.value !== newPassword.value) {
+            showError(confirmPassword, "Mật khẩu xác nhận không khớp");
+            isValid = false;
+          } else {
+            hideError(confirmPassword);
+          }
+
+          if (isValid) {
+            // Submit form or show success message
+            alert("Thông tin đã được cập nhật thành công!");
+          }
+        });
+
+        function showError(input, message) {
+          const errorElement =
+            input.parentElement.querySelector(".error-message") ||
+            input.parentElement.parentElement.querySelector(".error-message");
+          if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.classList.remove("hidden");
+            input.classList.add("border-red-500");
+          }
+        }
+
+        function hideError(input) {
+          const errorElement =
+            input.parentElement.querySelector(".error-message") ||
+            input.parentElement.parentElement.querySelector(".error-message");
+          if (errorElement) {
+            errorElement.classList.add("hidden");
+            input.classList.remove("border-red-500");
+          }
+        }
+      });
+    </script>

@@ -5,16 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chỉnh sửa thông tin cá nhân</title>
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
-    />
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#e11d48',secondary:'#f97316'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/shared/footer.css">
+    <link rel="stylesheet" href="/css/shared/header.css">
     <style>
       :where([class^="ri-"])::before { content: "\f3c2"; }
       input:focus, textarea:focus {
@@ -47,56 +45,40 @@
       };
     </script>
   </head>
-  <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
-    <div
-      class="w-full max-w-4xl bg-white rounded-lg shadow-md overflow-hidden flex"
-    >
-      <!-- Sidebar -->
-      <div class="w-64 bg-gray-100 p-6 hidden md:block">
-        <div class="mb-8">
-          <h2 class="text-xl font-bold text-gray-800">TRANG TÀI KHOẢN</h2>
-          <p class="text-sm text-gray-600 mt-2">
-            Xin chào,
-            <span class="text-primary font-medium">Hoàng Hải Vũ !</span>
-          </p>
-        </div>
-
-        <nav class="space-y-1">
-          <a
-            href="#"
-            class="block py-2 px-3 text-primary font-medium border-l-4 border-primary bg-blue-50"
-          >
-            Thông tin tài khoản
-          </a>
-          <a
-            href="#"
-            class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors"
-          >
-            Đơn hàng của bạn
-          </a>
-          <a
-            href="#"
-            class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors"
-          >
-            Đổi mật khẩu
-          </a>
-          <a
-            href="#"
-            class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors"
-          >
-            Sổ địa chỉ (0)
-          </a>
-        </nav>
+  <body class="bg-[#f2f2f2]">
+<!-- Header -->
+    <div th:insert="views/shared/header :: siteHeader" style="margin-top: 140px;"></div>
+     <div class="flex justify-center items-center bg-gray-100 p-4">
+  <div class="w-full max-w-[1250px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 bg-gray-300 p-6">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800">TRANG TÀI KHOẢN</h2>
+        <p class="text-sm text-gray-600 mt-2">
+          Xin chào, <span class="text-primary font-medium">name !</span>
+        </p>
       </div>
 
-      <!-- Main Content -->
-      <div class="flex-1 p-6 md:p-8">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">
-          CHỈNH SỬA THÔNG TIN CÁ NHÂN
-        </h1>
+      <nav class="space-y-1">
+        <a href="info" class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors">
+          Thông tin tài khoản
+        </a>
+        <a href="editInf" class="block py-2 px-3 text-primary font-medium border-l-4 border-primary bg-blue-50">
+          Chỉnh sửa thông tin
+        </a>
+        <a href="address" class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors">
+          Sổ địa chỉ
+        </a>
+      </nav>
+    </aside>
 
-        <form id="profile-form" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Main Content -->
+    <main class="flex-1 p-6 md:p-8">
+      <h1 class="text-xl font-bold text-gray-800 mb-6 -mt-3" >CHỈNH SỬA THÔNG TIN CÁ NHÂN</h1>
+
+      <form id="profile-form" class="space-y-6">
+        <!-- Các trường form giữ nguyên Tailwind như cũ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Họ và tên -->
             <div class="col-span-1">
               <label
@@ -110,8 +92,7 @@
                 id="fullname"
                 name="fullname"
                 class="w-full px-4 py-2 border border-gray-300 rounded-button text-gray-700"
-                value="Hoàng Hải Vũ"
-                required
+                placeholder="Nhập họ và tên của bạn"
               />
               <p class="error-message text-red-500 text-xs mt-1 hidden">
                 Vui lòng nhập họ và tên
@@ -131,8 +112,7 @@
                 id="email"
                 name="email"
                 class="w-full px-4 py-2 border border-gray-300 rounded-button text-gray-700"
-                value="vuhhps38859@gmail.com"
-                required
+                placeholder="Nhập email của bạn"
               />
               <p class="error-message text-red-500 text-xs mt-1 hidden">
                 Vui lòng nhập email hợp lệ
@@ -162,23 +142,7 @@
 
             
           </div>
-
-          <!-- Địa chỉ -->
-          <div>
-            <label
-              for="address"
-              class="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Địa chỉ
-            </label>
-            <textarea
-              id="address"
-              name="address"
-              rows="3"
-              class="w-full px-4 py-2 border border-gray-300 rounded-button text-gray-700 resize-none"
-              placeholder="Nhập địa chỉ của bạn"
-            ></textarea>
-          </div>
+    
 
           <div class="border-t border-gray-200 pt-6 mt-6">
             <h2 class="text-lg font-semibold text-gray-800 mb-4">
@@ -265,25 +229,24 @@
               </div>
             </div>
           </div>
-
-          <div class="flex justify-end space-x-4 pt-6">
-            <button
-              type="button"
-              class="px-6 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50 whitespace-nowrap !rounded-button"
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              class="px-6 py-2 bg-primary text-white rounded-button hover:bg-blue-600 whitespace-nowrap !rounded-button"
-            >
-              Lưu thay đổi
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
+        <div class="flex justify-end space-x-4 pt-6">
+          <button type="button"
+            class="px-6 py-2 border border-gray-300 rounded-button text-gray-700 bg-white hover:bg-gray-50">
+            Hủy
+          </button>
+          <button type="submit"
+            class="px-6 py-2 bg-primary text-white rounded-button hover:bg-blue-600">
+            Lưu thay đổi
+          </button>
+        </div>
+      </form>
+    </main>
+  </div>
+  </div>
+  <!-- Footer -->
+   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 50px;"></div>
+</body> 
+</html>
     <script id="password-toggle-script">
       document.addEventListener("DOMContentLoaded", function () {
         const toggleButtons = document.querySelectorAll(".password-toggle");
@@ -384,5 +347,3 @@
         }
       });
     </script>
-  </body>
-</html>
