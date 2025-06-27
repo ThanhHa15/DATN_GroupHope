@@ -15,7 +15,7 @@ import com.datn.datn.service.ProductsService;
 
 import jakarta.servlet.http.HttpSession;
 
-
+@Controller
 @RequestMapping("/")
 public class HomeController {
     @Autowired
