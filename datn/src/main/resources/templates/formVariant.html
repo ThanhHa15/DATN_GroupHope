@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm phiên bản</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    form {
+      margin-top: 20px;
+      max-width: 600px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .edit-btn {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .save-btn {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .product-image {
+      height: 50px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .discounted-price {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .original-price {
+      color: #95a5a6;
+      text-decoration: line-through;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+
+<body>
+  <div th:replace="~{dashboard :: nav}"></div>
+
+  <h2>🧩 Thêm / Cập nhật phiên bản sản phẩm</h2>
+  <form th:action="@{/variants/add}" method="post" th:object="${variant}" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{variantID}" />
+
+    <div class="form-group">
+      <label>Sản phẩm:</label>
+      <select th:field="*{product.productID}" required>
+        <option value="" disabled selected>-- Chọn sản phẩm --</option>
+        <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.productName}"></option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Màu:</label>
+      <input type="text" th:field="*{color}" required />
+    </div>
+
+    <div class="form-group">
+      <label>Dung lượng:</label>
+      <select th:field="*{storage}">
+        <option value="" selected>-- Chọn dung lượng --</option>
+        <option value="128GB">128GB</option>
+        <option value="256GB">256GB</option>
+        <option value="512GB">512GB</option>
+        <option value="1TB">1TB</option>
+        <option value="2TB">2TB</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Số lượng:</label>
+      <input type="number" th:field="*{quantityInStock}" required min="0" />
+    </div>
+
+    <div class="form-group">
+      <label>Giá gốc (VNĐ):</label>
+      <input type="text" id="priceInput"
+        th:value="${variant.price != null ? #numbers.formatDecimal(variant.price, 0, 'COMMA', 0, 'POINT') : ''}" />
+      <input type="hidden" th:field="*{price}" id="priceHidden" />
+    </div>
+
+    <div class="form-group">
+      <label>Hình ảnh:</label>
+      <input type="file" name="imageFile" accept="image/*" />
+      <span th:if="${variant.imagesno2 != null}">
+        <img th:src="@{'/images/' + ${variant.imagesno2}}" class="product-image"
+          style="max-height: 100px; margin-top: 10px;" />
+      </span>
+    </div>
+
+    <button type="submit" class="save-btn">Lưu phiên bản</button>
+  </form> <br>
+
+
+  <form th:action="@{/admin/discount/apply}" method="post" class="space-y-4">
+    <label for="">Giảm giá sản phẩm</label><br>
+
+    <!-- Chọn sản phẩm -->
+    <select name="productId" id="productSelect" required>
+      <option value="">-- Chọn sản phẩm --</option>
+      <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.productName}"
+        th:attr="data-storages=${p.storages}">
+      </option>
+    </select>
+
+    <!-- Chọn dung lượng (lọc theo sản phẩm) -->
+    <select name="storage" id="storageSelect">
+      <option value="">-- Chọn dung lượng --</option>
+    </select>
+
+    <!-- Nhập phần trăm giảm giá -->
+    <input type="number" name="discount" placeholder="Phần trăm giảm (vd: 10)" min="0" max="100" required />
+
+    <!-- Chọn ngày bắt đầu và kết thúc -->
+    <input type="date" name="startDate" min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required />
+    <input type="date" name="endDate" min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required />
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
+      Áp dụng giảm giá
+    </button>
+
+    <!-- Hiển thị thông báo lỗi -->
+    <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+      <p th:text="${error}"></p>
+    </div>
+
+    <!-- Hiển thị thông báo thành công -->
+    <div th:if="${success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+      <p th:text="${success}"></p>
+    </div>
+  </form>
+  <br>
+
+
+
+
+
+
+  <h3>📋 Danh sách phiên bản</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>STT</th>
+        <th>Sản phẩm</th>
+        <th>Hình ảnh</th>
+        <th>Màu</th>
+        <th>Dung lượng</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+        <th>Giảm giá</th>
+        <th>Bắt đầu</th>
+        <th>Kết thúc</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="v, stat : ${variants}">
+        <td th:text="${stat.index + 1}"></td>
+        <td th:text="${v.product.productName}"></td>
+
+        <td>
+          <img th:src="@{'/images/' + ${v.imagesno2}}" alt="ảnh" style="height: 50px" />
+        </td>
+
+        <td th:text="${v.color}"></td>
+        <td th:text="${v.storage}"></td>
+
+        <!-- Giá hiển thị: có giảm thì hiện 2 dòng, không giảm thì 1 dòng -->
+        <td>
+          <span th:if="${v.discountedPrice < v.price}">
+            <!-- Giá đã giảm: nổi bật -->
+            <span style="color: #dc2626; font-weight: bold; font-size: 1.125rem;"
+              th:text="${#numbers.formatDecimal(v.discountedPrice, 0, 0) + ' VNĐ'}">
+            </span>
+            <br />
+            <!-- Giá gốc: mờ hơn, nhỏ hơn -->
+            <span style="color: #9ca3af; text-decoration: line-through; font-size: 0.75rem; font-style: italic;"
+              th:text="${#numbers.formatDecimal(v.price, 0, 0) + ' VNĐ'}">
+            </span>
+          </span>
+
+
+
+          <span th:if="${v.discountedPrice == v.price}">
+            <span th:text="${#numbers.formatDecimal(v.price, 0, 0) + ' VNĐ'}"></span>
+          </span>
+        </td>
+
+        <td th:text="${v.quantityInStock}"></td>
+
+
+        <td th:text="${v.discount != null ? v.discount + '%' : '0%'}"></td>
+        <td th:text="${v.discountStart}"></td>
+        <td th:text="${v.discountEnd}"></td>
+        <td>
+          <a th:href="@{/variants/edit/{id}(id=${v.variantID})}">
+            <button type="button" class="edit-btn">Sửa</button>
+          </a>
+          <a th:href="@{/variants/delete/{id}(id=${v.variantID})}" th:onclick="'return confirm(\'Xóa phiên bản?\')'">
+            <button type="button" class="delete-btn">Xóa</button>
+          </a>
+        </td>
+
+      </tr>
+    </tbody>
+
+  </table>
+</body>
+
+</html>
+<script>
+  // Xử lý định dạng giá tiền
+  const priceInput = document.getElementById('priceInput');
+  const priceHidden = document.getElementById('priceHidden');
+
+  priceInput.addEventListener('input', function () {
+    let raw = this.value.replace(/\D/g, '');
+    let formatted = new Intl.NumberFormat('vi-VN').format(raw);
+    this.value = formatted;
+    priceHidden.value = raw;
+  });
+
+  // Khởi tạo giá trị nếu có
+  if (priceHidden.value) {
+    priceInput.value = new Intl.NumberFormat('vi-VN').format(priceHidden.value);
+  }
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const productSelect = document.getElementById("productSelect");
+    const storageSelect = document.getElementById("storageSelect");
+
+    productSelect.addEventListener("change", function () {
+      const selectedOption = this.options[this.selectedIndex];
+      const storagesStr = selectedOption.getAttribute("data-storages");
+
+      // Reset select
+      storageSelect.innerHTML = '<option value="">-- Chọn dung lượng --</option>';
+
+      if (storagesStr) {
+        const cleaned = storagesStr.replaceAll('[', '').replaceAll(']', '').replaceAll("'", "").trim();
+        const storages = cleaned.split(',').map(s => s.trim()).filter(s => s);
+
+        storages.forEach(storage => {
+          const option = document.createElement("option");
+          option.value = storage;
+          option.textContent = storage;
+          storageSelect.appendChild(option);
+        });
+      }
+    });
+  });
+</script>
