@@ -57,17 +57,19 @@ public class ProductVariant {
     private BigDecimal discountedPrice;
 
     @Transient
-    public double getDiscountedPrice() {
+    public BigDecimal getDiscountedPrice() {
         LocalDate today = LocalDate.now();
+
         if (price == null)
-            return 0;
+            return null;
 
         if (discount != null && discountStart != null && discountEnd != null &&
                 !today.isBefore(discountStart) && !today.isAfter(discountEnd)) {
-            return price * (1 - discount / 100.0);
+            BigDecimal discountRate = BigDecimal.valueOf(discount).divide(BigDecimal.valueOf(100));
+            return BigDecimal.valueOf(price).multiply(BigDecimal.ONE.subtract(discountRate));
         }
 
-        return price;
+        return BigDecimal.valueOf(price);
     }
 
     @Transient

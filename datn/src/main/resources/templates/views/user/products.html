@@ -435,69 +435,6 @@
                             </div>
                         </div>
 
-                        <div class="dropdown relative">
-                            <button
-                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white !whitespace-nowrap">
-                                <span>Bộ nhớ trong</span>
-                                <i class="ri-arrow-down-s-line"></i>
-                            </button>
-                            <div class="dropdown-content mt-0 left-0">
-                                <div class="p-3">
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="storage1" class="mr-2 filter-checkbox"
-                                            data-category="storage" data-value="64GB">
-                                        <label for="storage1">64GB</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="storage2" class="mr-2 filter-checkbox"
-                                            data-category="storage" data-value="128GB">
-                                        <label for="storage2">128GB</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="storage3" class="mr-2 filter-checkbox"
-                                            data-category="storage" data-value="256GB">
-                                        <label for="storage3">256GB</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="storage4" class="mr-2 filter-checkbox"
-                                            data-category="storage" data-value="512GB">
-                                        <label for="storage4">512GB</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="dropdown relative">
-                            <button
-                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white !whitespace-nowrap">
-                                <span>Dung lượng RAM</span>
-                                <i class="ri-arrow-down-s-line"></i>
-                            </button>
-                            <div class="dropdown-content mt-0 left-0">
-                                <div class="p-3">
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="ram1" class="mr-2 filter-checkbox"
-                                            data-category="ram" data-value="4GB">
-                                        <label for="ram1">4GB</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="ram2" class="mr-2 filter-checkbox"
-                                            data-category="ram" data-value="6GB">
-                                        <label for="ram2">6GB</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="ram3" class="mr-2 filter-checkbox"
-                                            data-category="ram" data-value="8GB">
-                                        <label for="ram3">8GB</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="ram4" class="mr-2 filter-checkbox"
-                                            data-category="ram" data-value="16GB">
-                                        <label for="ram4">16GB</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -508,49 +445,59 @@
                     </div>
 
                     <div class="flex flex-wrap gap-2" id="sort-buttons">
-                        <button
-                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap">
-                            Tên A-Z
-                            <span
-                                class="checkmark hidden absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-                                <i class="ri-check-line text-xs"></i>
-                            </span>
-                        </button>
-                        <button
-                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap">
-                            Tên Z-A
-                            <span
-                                class="checkmark hidden absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-                                <i class="ri-check-line text-xs"></i>
-                            </span>
-                        </button>
-                        <button
-                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap">
-                            Giá thấp đến cao
-                            <span
-                                class="checkmark hidden absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-                                <i class="ri-check-line text-xs"></i>
-                            </span>
-                        </button>
-                        <button
-                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap">
-                            Giá cao xuống thấp
-                            <span
-                                class="checkmark hidden absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-                                <i class="ri-check-line text-xs"></i>
-                            </span>
-                        </button>
-                        <a href="/products?discounted=true">
-                            <button
-                                class="sort-btn relative px-4 py-2 border border-gray-300 rounded hover:border-primary hover:text-primary transition">
-                                Sản phẩm đang giảm giá
-                                <span th:classappend="${isDiscounted} ? '' : 'hidden'"
-                                    class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-                                    <i class="ri-check-line text-xs"></i>
-                                </span>
-                            </button>
-                        </a>
-                    </div>
+    <a th:href="@{/products(sort='name_asc')}"
+       class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+       th:classappend="${sort == 'name_asc'} ? ' border-primary text-primary' : ''">
+        Tên A-Z
+        <span th:classappend="${sort == 'name_asc'} ? '' : ' hidden'"
+              class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+            <i class="ri-check-line text-xs"></i>
+        </span>
+    </a>
+
+    <a th:href="@{/products(sort='name_desc')}"
+       class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+       th:classappend="${sort == 'name_desc'} ? ' border-primary text-primary' : ''">
+        Tên Z-A
+        <span th:classappend="${sort == 'name_desc'} ? '' : ' hidden'"
+              class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+            <i class="ri-check-line text-xs"></i>
+        </span>
+    </a>
+
+    <a th:href="@{/products(sort='price_asc')}"
+       class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+       th:classappend="${sort == 'price_asc'} ? ' border-primary text-primary' : ''">
+        Giá thấp đến cao
+        <span th:classappend="${sort == 'price_asc'} ? '' : ' hidden'"
+              class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+            <i class="ri-check-line text-xs"></i>
+        </span>
+    </a>
+
+    <a th:href="@{/products(sort='price_desc')}"
+       class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+       th:classappend="${sort == 'price_desc'} ? ' border-primary text-primary' : ''">
+        Giá cao đến thấp
+        <span th:classappend="${sort == 'price_desc'} ? '' : ' hidden'"
+              class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+            <i class="ri-check-line text-xs"></i>
+        </span>
+    </a>
+
+    <a th:href="@{/products(discounted=true)}">
+        <button
+            class="sort-btn relative px-4 py-2 border border-gray-300 rounded hover:border-primary hover:text-primary transition"
+            th:classappend="${isDiscounted} ? ' border-primary text-primary' : ''">
+            Sản phẩm đang giảm giá
+            <span th:classappend="${isDiscounted} ? '' : ' hidden'"
+                  class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                <i class="ri-check-line text-xs"></i>
+            </span>
+        </button>
+    </a>
+</div>
+
                 </div>
 
                 <!-- Nếu không có sản phẩm -->
@@ -811,22 +758,3 @@
     });
 </script>
 
-<script>// Hiệu ứng chuyển đổi trạng thái cho các nút sắp xếp
-    document.addEventListener('DOMContentLoaded', function () {
-        const sortButtons = document.querySelectorAll('.sort-btn');
-
-        sortButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Xóa trạng thái active của tất cả các button
-                sortButtons.forEach(btn => {
-                    btn.classList.remove('border-primary', 'text-primary');
-                    btn.querySelector('.checkmark').classList.add('hidden');
-                });
-
-                // Thêm trạng thái active cho button được chọn
-                this.classList.add('border-primary', 'text-primary');
-                this.querySelector('.checkmark').classList.remove('hidden');
-            });
-        });
-    });
-</script>

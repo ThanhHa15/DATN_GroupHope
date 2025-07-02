@@ -109,9 +109,11 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public List<ProductVariant> findDiscountedVariants() {
         return repo.findAll().stream()
                 .filter(variant -> {
-                    Double discounted = variant.getDiscountedPrice();
+                    BigDecimal discounted = variant.getDiscountedPrice();
                     Double price = variant.getPrice();
-                    return discounted != null && price != null && discounted < price;
+
+                    return discounted != null && price != null
+                            && discounted.compareTo(BigDecimal.valueOf(price)) < 0;
                 })
                 .collect(Collectors.toList());
     }

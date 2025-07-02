@@ -1,5 +1,7 @@
 package com.datn.datn.controller.user;
 
+import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,29 +42,44 @@ public class ProductController {
     @GetMapping
     public String listProducts(
             @RequestParam(required = false) Boolean discounted,
+            @RequestParam(required = false) String sort,
             Model model) {
 
         List<ProductVariant> variants;
 
         if (Boolean.TRUE.equals(discounted)) {
-            // Lọc các variant đang giảm giá, sau đó loại trùng theo productId + storage (có
-            // thể null)
             variants = productVariantService.findDiscountedVariants()
                     .stream()
                     .collect(Collectors.collectingAndThen(
                             Collectors.toMap(
-                                    v -> v.getProduct().getProductID() + "-"
-                                            + (v.getStorage() != null ? v.getStorage() : "no-storage"), // nếu null thì
-                                                                                                        // thay thế
+                                    v -> v.getProduct().getProductID() + "-" +
+                                            (v.getStorage() != null ? v.getStorage() : "no-storage"),
                                     v -> v,
-                                    (v1, v2) -> v1 // nếu trùng thì giữ bản đầu tiên
-                            ),
+                                    (v1, v2) -> v1),
                             map -> map.values().stream().collect(Collectors.toList())));
         } else {
-            // Lấy tất cả các sản phẩm duy nhất theo productId + storage
             variants = productVariantService.findUniqueVariantsByProductAndStorage();
         }
 
+        // Sắp xếp theo yêu cầu
+        if ("name_asc".equalsIgnoreCase(sort)) {
+            variants.sort(Comparator.comparing(v -> v.getProduct().getProductName(), String.CASE_INSENSITIVE_ORDER));
+        } else if ("name_desc".equalsIgnoreCase(sort)) {
+            variants.sort(Comparator.comparing(
+                    (ProductVariant v) -> v.getProduct().getProductName(), String.CASE_INSENSITIVE_ORDER).reversed());
+        }  else if ("price_asc".equalsIgnoreCase(sort)) {
+    variants.sort(Comparator.comparing(v -> {
+        BigDecimal discountedPrice = v.getDiscountedPrice();
+        return discountedPrice != null ? discountedPrice : BigDecimal.valueOf(0);
+    }));
+} else if ("price_desc".equalsIgnoreCase(sort)) {
+    variants.sort(Comparator.comparing((ProductVariant v) -> {
+        BigDecimal discountedPrice = v.getDiscountedPrice();
+        return discountedPrice != null ? discountedPrice : BigDecimal.valueOf(0);
+    }).reversed());
+}
+
+        model.addAttribute("sort", sort); // truyền sort về Thymeleaf
         model.addAttribute("products", variants);
         model.addAttribute("isEmpty", variants.isEmpty());
         model.addAttribute("isDiscounted", discounted != null ? discounted : false);

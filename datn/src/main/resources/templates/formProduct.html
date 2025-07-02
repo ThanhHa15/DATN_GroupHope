@@ -1,111 +1,113 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Thêm sản phẩm</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 30px;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-        margin-top: 20px;
-      }
-      th,
-      td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: center;
-      }
-      form {
-        margin-top: 20px;
-      }
-      button {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .edit-btn {
-        background-color: #2980b9;
-        color: white;
-      }
-      .delete-btn {
-        background-color: #e74c3c;
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <div th:replace="~{dashboard :: nav}"></div>
-    <!-- Đúng -->
 
-    <h2>📝 Thêm sản phẩm</h2>
-    <form
-      th:action="@{/admin-products/add}"
-      method="post"
-      enctype="multipart/form-data"
-      th:object="${product}"
-    >
-      <input type="hidden" th:field="*{productID}" />
+<head>
+  <meta charset="UTF-8" />
+  <title>Thêm sản phẩm</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
 
-      <label>Tên sản phẩm:</label><br />
-      <input type="text" th:field="*{productName}" required /><br />
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
 
-      <label>Loại (ID):</label><br />
-      <select th:field="*{category.categoryID}">
-        <option
-          th:each="c : ${categories}"
-          th:value="${c.categoryID}"
-          th:text="${c.name}"
-        ></option></select
-      ><br />
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
 
-      <label>Mô tả:</label><br />
-      <textarea th:field="*{description}" rows="3"></textarea><br />
+    form {
+      margin-top: 20px;
+    }
 
-      <label>Ảnh:</label><br />
-      <input type="file" name="imageFile" /><br /><br />
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-      <button type="submit">Lưu sản phẩm</button>
-    </form>
+    .edit-btn {
+      background-color: #2980b9;
+      color: white;
+    }
 
-    <h3>📋 Danh sách sản phẩm</h3>
-    <table>
-      <tr>
-        <th>STT</th>
-        <th>Tên sản phẩm</th>
-        <th>Loại</th>
-        <th>Mô tả</th>
-        <th>Ảnh</th>
-        <th>Sửa</th>
-        <th>Xóa</th>
-      </tr>
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+  </style>
+</head>
 
-      <tr th:each="p, iter : ${products}">
-        <td th:text="${iter.index + 1}"></td>
-        <td th:text="${p.productName}"></td>
-        <td th:text="${p.category.name}"></td>
-        <td th:text="${p.description}"></td>
-        <td>
-          <img th:src="@{'/images/' + ${p.imageUrl}}" width="60" />
-        </td>
-        <td>
-          <a th:href="@{'/admin-products/edit/' + ${p.productID}}">
-            <button class="edit-btn">Sửa</button>
-          </a>
-        </td>
-        <td>
-          <a
-            th:href="@{'/admin-products/delete/' + ${p.productID}}"
-            onclick="return confirm('Xóa sản phẩm?')"
-          >
-            <button class="delete-btn">Xóa</button>
-          </a>
-        </td>
-      </tr>
-    </table>
-  </body>
+<body>
+  <div th:replace="~{dashboard :: nav}"></div>
+  <!-- Đúng -->
+
+  <h2>📝 Thêm sản phẩm</h2>
+  <form th:action="@{/admin-products/add}" method="post" enctype="multipart/form-data" th:object="${product}">
+    <input type="hidden" th:field="*{productID}" />
+
+    <label>Tên sản phẩm:</label><br />
+    <input type="text" th:field="*{productName}" required /><br />
+
+    <label>Loại (ID):</label><br />
+
+    <select th:field="*{category.categoryID}" required>
+      <option value="" selected>-- Chọn danh mục --</option>
+      <option th:each="c : ${categories}" th:value="${c.categoryID}" th:text="${c.name}">
+      </option>
+    </select>
+
+    <br />
+
+    <label>Mô tả:</label><br />
+    <textarea th:field="*{description}" rows="3"></textarea><br />
+
+    <label>Ảnh:</label><br />
+    <input type="file" name="imageFile" /><br /><br />
+
+    <button type="submit">Lưu sản phẩm</button>
+  </form>
+
+  <h3>📋 Danh sách sản phẩm</h3>
+  <table>
+    <tr>
+      <th>STT</th>
+      <th>Tên sản phẩm</th>
+      <th>Loại</th>
+      <th>Mô tả</th>
+      <th>Ảnh</th>
+      <th>Sửa</th>
+      <th>Xóa</th>
+    </tr>
+
+    <tr th:each="p, iter : ${products}">
+      <td th:text="${iter.index + 1}"></td>
+      <td th:text="${p.productName}"></td>
+      <td th:text="${p.category.name}"></td>
+      <td th:text="${p.description}"></td>
+      <td>
+        <img th:src="@{'/images/' + ${p.imageUrl}}" width="60" />
+      </td>
+      <td>
+        <a th:href="@{'/admin-products/edit/' + ${p.productID}}">
+          <button class="edit-btn">Sửa</button>
+        </a>
+      </td>
+      <td>
+        <a th:href="@{'/admin-products/delete/' + ${p.productID}}" onclick="return confirm('Xóa sản phẩm?')">
+          <button class="delete-btn">Xóa</button>
+        </a>
+      </td>
+    </tr>
+  </table>
+</body>
+
 </html>
