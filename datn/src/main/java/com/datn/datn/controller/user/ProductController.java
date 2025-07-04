@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.datn.model.Category;
@@ -67,17 +68,17 @@ public class ProductController {
         } else if ("name_desc".equalsIgnoreCase(sort)) {
             variants.sort(Comparator.comparing(
                     (ProductVariant v) -> v.getProduct().getProductName(), String.CASE_INSENSITIVE_ORDER).reversed());
-        }  else if ("price_asc".equalsIgnoreCase(sort)) {
-    variants.sort(Comparator.comparing(v -> {
-        BigDecimal discountedPrice = v.getDiscountedPrice();
-        return discountedPrice != null ? discountedPrice : BigDecimal.valueOf(0);
-    }));
-} else if ("price_desc".equalsIgnoreCase(sort)) {
-    variants.sort(Comparator.comparing((ProductVariant v) -> {
-        BigDecimal discountedPrice = v.getDiscountedPrice();
-        return discountedPrice != null ? discountedPrice : BigDecimal.valueOf(0);
-    }).reversed());
-}
+        } else if ("price_asc".equalsIgnoreCase(sort)) {
+            variants.sort(Comparator.comparing(v -> {
+                BigDecimal discountedPrice = v.getDiscountedPrice();
+                return discountedPrice != null ? discountedPrice : BigDecimal.valueOf(0);
+            }));
+        } else if ("price_desc".equalsIgnoreCase(sort)) {
+            variants.sort(Comparator.comparing((ProductVariant v) -> {
+                BigDecimal discountedPrice = v.getDiscountedPrice();
+                return discountedPrice != null ? discountedPrice : BigDecimal.valueOf(0);
+            }).reversed());
+        }
 
         model.addAttribute("sort", sort); // truyền sort về Thymeleaf
         model.addAttribute("products", variants);
@@ -87,4 +88,5 @@ public class ProductController {
         return "views/user/products";
     }
 
+    
 }

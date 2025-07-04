@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/css/shared/footer.css">
     <link rel="stylesheet" href="/css/shared/header.css">
+     <link rel="stylesheet" href="/css/shared/chatbox.css">
     <style>
         :where([class^="ri-"])::before {
             content: "\f3c2";
@@ -178,6 +179,8 @@
 
     <!-- Header -->
     <div th:insert="views/shared/header :: siteHeader" style="margin-top: 130px;"></div>
+     <!-- chatbox -->
+  <div th:insert="views/shared/chatbot :: siteChatbot"></div>
 
     <div class="image-container" style=" margin-bottom: -20px;">
         <div class="image-wrapper" style="width: 612px;">
@@ -445,59 +448,64 @@
                     </div>
 
                     <div class="flex flex-wrap gap-2" id="sort-buttons">
-    <a th:href="@{/products(sort='name_asc')}"
-       class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
-       th:classappend="${sort == 'name_asc'} ? ' border-primary text-primary' : ''">
-        Tên A-Z
-        <span th:classappend="${sort == 'name_asc'} ? '' : ' hidden'"
-              class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-            <i class="ri-check-line text-xs"></i>
-        </span>
-    </a>
+                        <a th:href="@{/products(sort='name_asc')}"
+                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+                            th:classappend="${sort == 'name_asc'} ? ' border-primary text-primary' : ''">
+                            Tên A-Z
+                            <span th:classappend="${sort == 'name_asc'} ? '' : ' hidden'"
+                                class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                <i class="ri-check-line text-xs"></i>
+                            </span>
+                        </a>
 
-    <a th:href="@{/products(sort='name_desc')}"
-       class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
-       th:classappend="${sort == 'name_desc'} ? ' border-primary text-primary' : ''">
-        Tên Z-A
-        <span th:classappend="${sort == 'name_desc'} ? '' : ' hidden'"
-              class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-            <i class="ri-check-line text-xs"></i>
-        </span>
-    </a>
+                        <a th:href="@{/products(sort='name_desc')}"
+                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+                            th:classappend="${sort == 'name_desc'} ? ' border-primary text-primary' : ''">
+                            Tên Z-A
+                            <span th:classappend="${sort == 'name_desc'} ? '' : ' hidden'"
+                                class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                <i class="ri-check-line text-xs"></i>
+                            </span>
+                        </a>
 
-    <a th:href="@{/products(sort='price_asc')}"
-       class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
-       th:classappend="${sort == 'price_asc'} ? ' border-primary text-primary' : ''">
-        Giá thấp đến cao
-        <span th:classappend="${sort == 'price_asc'} ? '' : ' hidden'"
-              class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-            <i class="ri-check-line text-xs"></i>
-        </span>
-    </a>
+                        <a th:href="@{/products(sort='price_asc')}"
+                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+                            th:classappend="${sort == 'price_asc'} ? ' border-primary text-primary' : ''">
+                            Giá thấp đến cao
+                            <span th:classappend="${sort == 'price_asc'} ? '' : ' hidden'"
+                                class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                <i class="ri-check-line text-xs"></i>
+                            </span>
+                        </a>
 
-    <a th:href="@{/products(sort='price_desc')}"
-       class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
-       th:classappend="${sort == 'price_desc'} ? ' border-primary text-primary' : ''">
-        Giá cao đến thấp
-        <span th:classappend="${sort == 'price_desc'} ? '' : ' hidden'"
-              class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-            <i class="ri-check-line text-xs"></i>
-        </span>
-    </a>
+                        <a th:href="@{/products(sort='price_desc')}"
+                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+                            th:classappend="${sort == 'price_desc'} ? ' border-primary text-primary' : ''">
+                            Giá cao đến thấp
+                            <span th:classappend="${sort == 'price_desc'} ? '' : ' hidden'"
+                                class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                <i class="ri-check-line text-xs"></i>
+                            </span>
+                        </a>
 
-    <a th:href="@{/products(discounted=true)}">
-        <button
-            class="sort-btn relative px-4 py-2 border border-gray-300 rounded hover:border-primary hover:text-primary transition"
-            th:classappend="${isDiscounted} ? ' border-primary text-primary' : ''">
-            Sản phẩm đang giảm giá
-            <span th:classappend="${isDiscounted} ? '' : ' hidden'"
-                  class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
-                <i class="ri-check-line text-xs"></i>
-            </span>
-        </button>
-    </a>
-</div>
+                        <a th:href="@{/products(discounted=true)}">
+                            <button
+                                class="sort-btn relative px-4 py-2 border border-gray-300 rounded hover:border-primary hover:text-primary transition"
+                                th:classappend="${isDiscounted} ? ' border-primary text-primary' : ''">
+                                Sản phẩm đang giảm giá
+                                <span th:classappend="${isDiscounted} ? '' : ' hidden'"
+                                    class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                                    <i class="ri-check-line text-xs"></i>
+                                </span>
+                            </button>
+                        </a>
+                    </div>
 
+                </div>
+
+                <!-- Hiển thị thông báo lỗi -->
+                <div th:if="${error != null}" class="w-full text-center text-red-600 font-semibold mb-4">
+                    <p th:text="${error}"></p>
                 </div>
 
                 <!-- Nếu không có sản phẩm -->
@@ -506,6 +514,7 @@
                         alt="No products" class="mx-auto w-[250px] h-auto  mb-4 " style="margin-top: -50px;" />
                     <p class="text-gray-800 text-lg">Không có sản phẩm nào được tìm thấy.</p>
                 </div>
+
 
                 <!-- Nếu có sản phẩm -->
                 <div th:unless="${#lists.isEmpty(products)}"
@@ -757,4 +766,3 @@
         }
     });
 </script>
-

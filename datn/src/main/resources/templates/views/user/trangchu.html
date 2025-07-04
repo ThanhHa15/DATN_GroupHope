@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/shared/footer.css" />
   <link rel="stylesheet" href="/css/shared/header.css" />
+  <link rel="stylesheet" href="/css/shared/chatbox.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -193,7 +196,8 @@
 <body class="bg-[#f2f2f2]">
   <!-- Header (Full width) -->
   <div th:insert="views/shared/header :: siteHeader" style="margin-bottom: 130px;"></div>
-
+  <!-- chatbox -->
+  <div th:insert="views/shared/chatbot :: siteChatbot"></div>
   <!-- Main Banner Section -->
   <div class="relative w-full h-[570px] text-center bg-gray-100">
     <!-- Main Banner -->
@@ -517,16 +521,21 @@
       });
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script th:if="${loginSuccess != null}" th:inline="javascript">
+
+  <!-- Đoạn script này đặt ở footer hoặc head -->
+<script th:if="${session.showLoginSuccess != null && session.showLoginSuccess}">
     Swal.fire({
         icon: 'success',
         title: 'Thông báo',
-        text: /*[[${loginSuccess}]]*/,
+        text: 'Đăng nhập thành công!',
         confirmButtonText: 'OK',
         confirmButtonColor: '#8b5cf6'
+    }).then(() => {
+        // Gọi API để xóa session attribute (tránh hiện lại khi refresh)
+        fetch('/clear-login-message', { method: 'POST' });
     });
 </script>
+
 </body>
 
 </html>

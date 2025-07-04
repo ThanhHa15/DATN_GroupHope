@@ -1,6 +1,7 @@
 package com.datn.datn.controller.user;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -8,16 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.datn.model.Category;
+import com.datn.datn.model.Member;
 import com.datn.datn.model.ProductVariant;
 import com.datn.datn.model.RoleDetail;
 import com.datn.datn.model.Users;
+import com.datn.datn.repository.MemberRepository;
 import com.datn.datn.model.Product;
 import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.EmailService;
@@ -26,6 +32,7 @@ import com.datn.datn.service.UsersService;
 import com.datn.datn.service.ProductService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller
 public class HomeController {
@@ -34,6 +41,8 @@ public class HomeController {
     private UsersService usersService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private MemberRepository memberRepository;
 
     public HomeController(ProductVariantService productVariantService) {
         this.productVariantService = productVariantService;
@@ -45,114 +54,124 @@ public class HomeController {
     }
 
     @GetMapping("/home")
-    public String Home(Model model) {
-        // Lấy danh sách sản phẩm mỗi (productid + storage) duy nhất
+    public String home(Model model, HttpSession session,
+            @ModelAttribute("loginSuccess") String loginSuccess) {
+
+        // Gán thông báo đăng nhập (nếu có) từ flash attribute
+        if (loginSuccess != null && !loginSuccess.isEmpty()) {
+            model.addAttribute("loginSuccess", loginSuccess);
+        }
+
+        // Gán thông tin người dùng đã đăng nhập vào model
+        Object loggedInUser = session.getAttribute("loggedInUser");
+        model.addAttribute("loggedInUser", loggedInUser);
+
+        // Lấy danh sách sản phẩm duy nhất theo productId + storage
         List<ProductVariant> allVariants = productVariantService.findUniqueVariantsByProductAndStorage();
 
-        // Giới hạn chỉ lấy 5 sản phẩm đầu tiên
+        // Giới hạn lấy 10 sản phẩm
         List<ProductVariant> limitedVariants = allVariants.stream()
                 .limit(10)
                 .collect(Collectors.toList());
 
-        // Gán vào model để hiển thị ra trang chủ
         model.addAttribute("products", limitedVariants);
 
         return "views/user/trangchu";
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model, HttpSession session) {
         return "views/shared/login";
     }
 
     @PostMapping("/login")
-    public String loginPost(RedirectAttributes redirectAttributes,
-            @RequestParam("email") String email,
-            @RequestParam("password") String password,
-            Model model, HttpSession session) {
-        try {
-            if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute("message", "Thông tin người dùng không được để trống!");
-                return "redirect:/login";
+    public String login(
+            @RequestParam String input,
+            @RequestParam String password,
+            HttpSession session,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        Optional<Member> optional = memberRepository.loginByPhoneOrEmail(input, password);
+
+        if (optional.isPresent()) {
+            Member member = optional.get();
+            session.setAttribute("loggedInUser", member);
+
+            switch (member.getRole()) {
+                case "ADMIN":
+                    return "redirect:/admin-products";
+                case "STAFF":
+                    return "redirect:/admin-products";
+                case "CUSTOMER":
+                    // Đặt cờ hiển thị thông báo vào Session
+                    session.setAttribute("showLoginSuccess", true); // Thay vì dùng Model
+                    return "redirect:/"; // Redirect về trang chủ (không trả view trực tiếp)
+                default:
+                    model.addAttribute("error", "Không xác định được vai trò");
+                    return "views/shared/login";
             }
-            Users users = usersService.login(email, password);
-
-            if (users != null && Boolean.TRUE.equals(users.getActivated())) {
-                session.setAttribute("currentUser", users);
-                if (users.getRoleDetails() != null) {
-                    for (RoleDetail roleDetail : users.getRoleDetails()) {
-                        System.out.println(">> ROLE: " + roleDetail.getRole().getDescription());
-                    }
-                }
-                System.out.println("isAdmin: " + isAdmin(users));
-                System.out.println("isStaff: " + isStaff(users));
-                System.out.println("isCustomer: " + isCustomer(users));
-
-                if (isAdmin(users)) {
-                    session.setAttribute("userAdmin", "Admin");
-                    redirectAttributes.addFlashAttribute("loginSuccess", "Đăng nhập thành công (Admin)!");
-                    return "redirect:/admin/employees"; // Admin đi đến trang quản lý nhân viên
-                }
-
-                if (isStaff(users)) {
-                    session.setAttribute("userStaff", "Staff");
-                    redirectAttributes.addFlashAttribute("loginSuccess", "Đăng nhập thành công (Staff)!");
-                    return "redirect:/l"; // Staff đi đến trang chủ
-                }
-                if (isCustomer(users)) {
-                    session.setAttribute("userCustomer", "Customer");
-                    redirectAttributes.addFlashAttribute("loginSuccess", "Đăng nhập thành công (Customer)!");
-                    return "redirect:/home"; // Customer đi đến trang chủ
-                }
-
-                redirectAttributes.addFlashAttribute("message", "Bạn không có quyền truy cập hệ thống!");
-                return "redirect:/login";
-            } else {
-                redirectAttributes.addFlashAttribute("message",
-                        "Email hoặc mật khẩu không đúng hoặc tài khoản chưa kích hoạt!");
-                return "redirect:/login";
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("message", "Đã xảy ra lỗi hệ thống: " + e.getMessage());
-            return "redirect:/login";
+        } else {
+            model.addAttribute("error", "Sai email/số điện thoại hoặc mật khẩu");
+            return "views/shared/login";
         }
     }
 
-    private boolean isAdmin(Users users) {
-        if (users.getRoleDetails() == null)
-            return false;
-        for (RoleDetail roleDetail : users.getRoleDetails()) {
-            String roleName = roleDetail.getRole().getDescription();
-            if (roleName != null && roleName.trim().equalsIgnoreCase("Admin")) {
-                return true;
-            }
-        }
-        return false;
+    @PostMapping("/clear-login-message")
+    @ResponseBody
+    public String clearLoginMessage(HttpSession session) {
+        session.removeAttribute("showLoginSuccess"); // Xóa cờ hiển thị
+        return "OK"; // Không cần trả về gì đặc biệt
     }
 
-    private boolean isStaff(Users users) {
-        if (users.getRoleDetails() == null)
-            return false;
-        for (RoleDetail roleDetail : users.getRoleDetails()) {
-            String roleName = roleDetail.getRole().getDescription();
-            if (roleName != null && roleName.trim().equalsIgnoreCase("Staff")) {
-                return true;
-            }
-        }
-        return false;
+    @GetMapping("/logout")
+    public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
+        session.invalidate(); // Hủy toàn bộ session
+        redirectAttributes.addFlashAttribute("logoutSuccess", "Bạn đã đăng xuất thành công!");
+        return "redirect:/login";
     }
 
-    private boolean isCustomer(Users users) {
-        if (users.getRoleDetails() == null)
-            return false;
-        for (RoleDetail roleDetail : users.getRoleDetails()) {
-            String roleName = roleDetail.getRole().getDescription();
-            if (roleName != null && roleName.trim().equalsIgnoreCase("Customer")) {
-                return true;
-            }
+    @GetMapping("/register")
+    public String register(Model model, HttpSession session) {
+        model.addAttribute("member", new Member());
+        return "views/shared/register";
+    }
+
+    @PostMapping("/register")
+    public String register(
+            @Valid @ModelAttribute("member") Member member,
+            BindingResult result,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        if (!member.getPassword().equals(member.getConfirmPassword())) {
+            result.rejectValue("confirmPassword", "error.confirmPassword", "Mật khẩu xác nhận không khớp");
         }
-        return false;
+
+        if (memberRepository.existsByEmail(member.getEmail())) {
+            result.rejectValue("email", "error.email", "Email đã tồn tại");
+        }
+
+        if (memberRepository.existsByPhone(member.getPhone())) {
+            result.rejectValue("phone", "error.phone", "Số điện thoại đã tồn tại");
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("member", member);
+            return "views/shared/register";
+        }
+
+        // ✅ Gán mặc định quyền khách hàng
+        member.setRole("CUSTOMER");
+
+        memberRepository.save(member);
+        redirectAttributes.addFlashAttribute("success", "Đăng ký thành công!");
+        return "redirect:/login";
+    }
+
+    @GetMapping("/forgetPass")
+    public String forgetPass(Model model, HttpSession session) {
+        return "views/shared/forgetPass";
     }
 
     @PostMapping("/forgetPass")
@@ -175,16 +194,6 @@ public class HomeController {
 
         redirectAttributes.addFlashAttribute("message", "Mật khẩu mới đã được gửi đến email của bạn!");
         return "redirect:/forgetPass";
-    }
-
-    @GetMapping("/register")
-    public String register(Model model, HttpSession session) {
-        return "views/shared/register";
-    }
-
-    @GetMapping("/forgetPass")
-    public String forgetPass(Model model, HttpSession session) {
-        return "views/shared/forgetPass";
     }
 
     @GetMapping("/detail")

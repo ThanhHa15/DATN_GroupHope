@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/css/shared/footer.css">
     <link rel="stylesheet" href="/css/shared/header.css">
+     <link rel="stylesheet" href="/css/shared/chatbox.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -79,6 +80,8 @@
 <body>
   <!-- Header -->
     <div th:insert="views/shared/header :: siteHeader" style="margin-top: 160px;"></div>
+     <!-- chatbox -->
+  <div th:insert="views/shared/chatbot :: siteChatbot"></div>
 
   <div class="lookup-box" style="max-width: 1250px; padding-top: 10px">
     <h2>Kiểm tra thông tin bảo hành</h2>

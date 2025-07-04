@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.datn.datn.model.ProductSpecification;
 import com.datn.datn.model.ProductVariant;
+import com.datn.datn.service.ProductSpecificationService;
 import com.datn.datn.service.ProductVariantService;
 
 @Controller
@@ -20,8 +22,12 @@ public class DetaiController {
 
     private final ProductVariantService productVariantService;
 
-    public DetaiController(ProductVariantService productVariantService) {
+    private final ProductSpecificationService productSpecificationService;
+
+    public DetaiController(ProductVariantService productVariantService,
+            ProductSpecificationService productSpecificationService) {
         this.productVariantService = productVariantService;
+        this.productSpecificationService = productSpecificationService;
     }
 
     @GetMapping("/{id}")
@@ -38,21 +44,24 @@ public class DetaiController {
         List<ProductVariant> variantsByProduct = productVariantService.findByProduct(variant.getProduct());
 
         // Lấy duy nhất mỗi storage 1 variant (theo thứ tự xuất hiện)
-       Map<String, ProductVariant> uniqueVariantsByStorage = variantsByProduct.stream()
-        .collect(Collectors.toMap(
-            ProductVariant::getStorage,
-            pv -> pv,
-            (existing, replacement) -> existing, // giữ lại bản đầu tiên
-            LinkedHashMap::new
-        ));
+        Map<String, ProductVariant> uniqueVariantsByStorage = variantsByProduct.stream()
+                .collect(Collectors.toMap(
+                        ProductVariant::getStorage,
+                        pv -> pv,
+                        (existing, replacement) -> existing, // giữ lại bản đầu tiên
+                        LinkedHashMap::new));
 
         model.addAttribute("v", variant);
         model.addAttribute("sameStorageVariants", sameStorageVariants);
         model.addAttribute("uniqueVariantsByStorage", uniqueVariantsByStorage.values());
-        variantsByProduct.forEach(pv ->
-    System.out.println("Variant ID: " + pv.getVariantID() + " | Storage: " + pv.getStorage()));
+        variantsByProduct.forEach(pv -> System.out.println("Variant ID: " + pv.getVariantID() + " | Storage: "
+                + pv.getStorage() + " | Product Name: " + pv.getProduct().getProductName()));
+        List<ProductSpecification> specifications = productSpecificationService
+                .getSpecificationsByProductId(variant.getProduct().getProductID());
+
+        model.addAttribute("specifications", specifications);
 
         return "views/user/products-detail";
-        
+
     }
 }

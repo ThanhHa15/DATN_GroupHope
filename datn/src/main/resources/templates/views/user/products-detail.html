@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/shared/footer.css">
   <link rel="stylesheet" href="/css/shared/header.css">
+   <link rel="stylesheet" href="/css/shared/chatbox.css">
   <style>
     :where([class^="ri-"])::before {
       content: "\f3c2";
@@ -154,6 +155,8 @@
 <body class="bg-[#f2f2f2]">
   <!-- Header -->
   <div th:insert="views/shared/header :: siteHeader" style="margin-top: 120px;"></div>
+   <!-- chatbox -->
+  <div th:insert="views/shared/chatbot :: siteChatbot"></div>
 
   <section class="py-8">
     <div class="container mx-auto px-4">
@@ -242,7 +245,8 @@
 
                   <!-- Nếu không giảm -->
                   <div th:if="${v.discountedPrice == v.price}">
-                    <h2 class="text-2xl font-bold text-red-600" style="font-size: 37px; margin-top: 11px; margin-bottom: 12px;"
+                    <h2 class="text-2xl font-bold text-red-600"
+                      style="font-size: 37px; margin-top: 11px; margin-bottom: 12px;"
                       th:text="${#strings.replace(#numbers.formatDecimal(v.price, 0, 'COMMA', 0, 'POINT'), ',', '.')} + ' ₫'">
                     </h2>
                   </div>
@@ -656,62 +660,16 @@
           </div>
 
           <!-- Danh sách thông số -->
-          <div class="space-y-2 text-sm">
-            <!-- Dòng trắng -->
-            <div class="flex bg-white">
-              <div class="w-1/2 px-4 py-2 font-medium">RAM</div>
-              <div class="w-1/2 px-4 py-2">8GB</div>
+          <div class="space-y-2 text-sm relative" style="position: relative">
+            <div th:each="spec, iterStat : ${specifications}" th:if="${iterStat.index < 8}"
+              th:class="${iterStat.index % 2 == 0} ? 'flex bg-white' : 'flex bg-gray-200'">
+              <div class="w-1/2 px-4 py-2 font-medium" th:text="${#strings.replace(spec.specKey, '''', '')}"></div>
+              <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
             </div>
 
-            <!-- Dòng xám -->
-            <div class="flex bg-gray-200">
-              <div class="w-1/2 px-4 py-2 font-medium">
-                Kích thước màn hình
-              </div>
-              <div class="w-1/2 px-4 py-2">6.1"</div>
-            </div>
-
-            <!-- Dòng trắng -->
-            <div class="flex bg-white">
-              <div class="w-1/2 px-4 py-2 font-medium">Tần số quét</div>
-              <div class="w-1/2 px-4 py-2">120 Hz</div>
-            </div>
-
-            <!-- Dòng xám -->
-            <div class="flex bg-gray-200">
-              <div class="w-1/2 px-4 py-2 font-medium">Độ phân giải</div>
-              <div class="w-1/2 px-4 py-2">2556 x 1179 pixels</div>
-            </div>
-
-            <!-- Dòng trắng -->
-            <div class="flex bg-white">
-              <div class="w-1/2 px-4 py-2 font-medium">Bộ nhớ trong</div>
-              <div class="w-1/2 px-4 py-2">1TB</div>
-            </div>
-
-            <!-- Dòng xám -->
-            <div class="flex bg-gray-200">
-              <div class="w-1/2 px-4 py-2 font-medium">
-                Độ phân giải camera sau
-              </div>
-              <div class="w-1/2 px-4 py-2">
-                Camera chính: 48MP, 24 mm, ƒ/1.78<br />
-                Góc siêu rộng: 12 MP, 13 mm, ƒ/2.2<br />
-                Tele 3x: 12 MP, 77 mm, ƒ/2.8<br />
-                Tele 2x: 12 MP, 48 mm, ƒ/1.78
-              </div>
-            </div>
-
-            <!-- Dòng trắng -->
-            <div class="flex bg-white">
-              <div class="w-1/2 px-4 py-2 font-medium">Hệ điều hành</div>
-              <div class="w-1/2 px-4 py-2">iOS 17</div>
-            </div>
-
-            <!-- Dòng mờ (xám nhạt, mờ) -->
-            <div class="flex bg-gray-100 opacity-60">
-              <div class="w-1/2 px-4 py-2 font-medium">Chip xử lý</div>
-              <div class="w-1/2 px-4 py-2">A17 Pro</div>
+            <!-- 👇 Lớp làm mờ phủ lên dòng cuối -->
+            <div
+              class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-lg">
             </div>
           </div>
 
@@ -741,84 +699,10 @@
 
               <!-- Nội dung thông số -->
               <div class="divide-y divide-gray-200">
-                <!-- Dòng 1 -->
-                <div class="flex bg-white">
-                  <div class="w-1/2 px-4 py-2 font-medium">RAM</div>
-                  <div class="w-1/2 px-4 py-2">8GB</div>
-                </div>
-
-                <!-- Dòng 2 -->
-                <div class="flex bg-gray-100">
-                  <div class="w-1/2 px-4 py-2 font-medium">
-                    Kích thước màn hình
-                  </div>
-                  <div class="w-1/2 px-4 py-2">6.1"</div>
-                </div>
-
-                <div class="flex bg-white">
-                  <div class="w-1/2 px-4 py-2 font-medium">Tần số quét</div>
-                  <div class="w-1/2 px-4 py-2">120 Hz</div>
-                </div>
-
-                <div class="flex bg-gray-100">
-                  <div class="w-1/2 px-4 py-2 font-medium">Độ phân giải</div>
-                  <div class="w-1/2 px-4 py-2">2556 x 1179 pixels</div>
-                </div>
-
-                <div class="flex bg-white">
-                  <div class="w-1/2 px-4 py-2 font-medium">Bộ nhớ trong</div>
-                  <div class="w-1/2 px-4 py-2">1TB</div>
-                </div>
-
-                <div class="flex bg-gray-100">
-                  <div class="w-1/2 px-4 py-2 font-medium">
-                    Độ phân giải camera sau
-                  </div>
-                  <div class="w-1/2 px-4 py-2">
-                    Camera chính: 48MP, 24 mm, ƒ/1.78<br />
-                    Góc siêu rộng: 12 MP, 13 mm, ƒ/2.2<br />
-                    Tele 3x: 12 MP, 77 mm, ƒ/2.8<br />
-                    Tele 2x: 12 MP, 48 mm, ƒ/1.78
-                  </div>
-                </div>
-
-                <div class="flex bg-white">
-                  <div class="w-1/2 px-4 py-2 font-medium">Hệ điều hành</div>
-                  <div class="w-1/2 px-4 py-2">iOS 17</div>
-                </div>
-
-                <div class="flex bg-gray-100">
-                  <div class="w-1/2 px-4 py-2 font-medium">Chip xử lý</div>
-                  <div class="w-1/2 px-4 py-2">A17 Pro</div>
-                </div>
-
-                <div class="flex bg-white">
-                  <div class="w-1/2 px-4 py-2 font-medium">SIM</div>
-                  <div class="w-1/2 px-4 py-2">2 SIM (nano-SIM và eSIM)</div>
-                </div>
-
-                <div class="flex bg-gray-100">
-                  <div class="w-1/2 px-4 py-2 font-medium">Pin</div>
-                  <div class="w-1/2 px-4 py-2">3240 mAh, sạc nhanh 20W</div>
-                </div>
-
-                <div class="flex bg-white">
-                  <div class="w-1/2 px-4 py-2 font-medium">Mặt kính</div>
-                  <div class="w-1/2 px-4 py-2">Ceramic Shield</div>
-                </div>
-
-                <div class="flex bg-gray-100">
-                  <div class="w-1/2 px-4 py-2 font-medium">Chất liệu</div>
-                  <div class="w-1/2 px-4 py-2">
-                    Khung titan, mặt lưng kính mờ
-                  </div>
-                </div>
-
-                <div class="flex bg-white">
-                  <div class="w-1/2 px-4 py-2 font-medium">
-                    Kháng nước, bụi
-                  </div>
-                  <div class="w-1/2 px-4 py-2">Chuẩn IP68</div>
+                <div th:each="spec, iterStat : ${specifications}"
+                  th:class="${iterStat.index % 2 == 0} ? 'flex bg-white' : 'flex bg-gray-100'">
+                  <div class="w-1/2 px-4 py-2 font-medium" th:text="${#strings.replace(spec.specKey, '''', '')}"></div>
+                  <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
                 </div>
               </div>
             </div>
@@ -1168,7 +1052,7 @@
 <script> // Hiệu ứng cuộn cho phần hình ảnh sản phẩm
   document.addEventListener('DOMContentLoaded', function () {
     const scrollableSection = document.querySelector('.product-images-scrollable');
-    const scrollLimit = 450; // Giới hạn 200px
+    const scrollLimit = 400; // Giới hạn 200px
 
     window.addEventListener('scroll', function () {
       if (window.innerWidth >= 1024) {
