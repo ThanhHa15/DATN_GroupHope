@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/css/shared/footer.css">
   <link rel="stylesheet" href="/css/shared/header.css">
-   <link rel="stylesheet" href="/css/shared/chatbox.css">
+  <link rel="stylesheet" href="/css/shared/chatbox.css">
   <style>
     :where([class^="ri-"])::before {
       content: "\f3c2";
@@ -155,7 +155,7 @@
 <body class="bg-[#f2f2f2]">
   <!-- Header -->
   <div th:insert="views/shared/header :: siteHeader" style="margin-top: 120px;"></div>
-   <!-- chatbox -->
+  <!-- chatbox -->
   <div th:insert="views/shared/chatbot :: siteChatbot"></div>
 
   <section class="py-8">
@@ -256,6 +256,8 @@
               </div>
 
               <!-- Dung lượng -->
+              <!-- Dung lượng -->
+              <!-- Dung lượng -->
               <div class="mb-6 mt-2">
                 <h2 class="text-[16px] text-gray-800 font-medium mb-2" style="font-weight: 600; margin-bottom: 5px;">
                   Dung lượng:</h2>
@@ -275,9 +277,9 @@
                         <span class="block font-medium text-gray-900" style="font-weight: 500;"
                           th:text="${variant.storage}">Dung lượng</span>
 
-                        <!-- Hiển thị giá -->
-                        <span class="text-red-600 font-semibold"
-                          th:text="${#numbers.formatInteger(variant.price, 0, 'POINT')} + 'đ'">Giá</span>
+                        <!-- Hiển thị giá cuối cùng -->
+                        <span class="text-red-600 font-semibold block mt-1"
+                          th:text="${#numbers.formatInteger(variant.discountedPrice, 0, 'POINT')} + 'đ'">Giá</span>
 
                         <!-- Dấu tick khi chọn -->
                         <span
@@ -287,9 +289,10 @@
                     </a>
                   </div>
 
-
                 </div>
               </div>
+
+
 
               <!-- Màu sắc -->
               <div class="mb-6" style="margin-bottom: 10px">

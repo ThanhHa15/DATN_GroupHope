@@ -21,14 +21,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.datn.datn.model.Category;
 import com.datn.datn.model.Member;
 import com.datn.datn.model.ProductVariant;
-import com.datn.datn.model.RoleDetail;
-import com.datn.datn.model.Users;
 import com.datn.datn.repository.MemberRepository;
 import com.datn.datn.model.Product;
 import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.EmailService;
 import com.datn.datn.service.ProductVariantService;
-import com.datn.datn.service.UsersService;
+import com.datn.datn.service.MembersService;
 import com.datn.datn.service.ProductService;
 
 import jakarta.servlet.http.HttpSession;
@@ -38,7 +36,7 @@ import jakarta.validation.Valid;
 public class HomeController {
     private final ProductVariantService productVariantService;
     @Autowired
-    private UsersService usersService;
+    private MembersService memberService;
     @Autowired
     private EmailService emailService;
     @Autowired
@@ -100,12 +98,12 @@ public class HomeController {
 
             switch (member.getRole()) {
                 case "ADMIN":
-                    return "redirect:/admin-products";
+                    return "redirect:/admin/employees";
                 case "STAFF":
                     return "redirect:/admin-products";
                 case "CUSTOMER":
                     // Đặt cờ hiển thị thông báo vào Session
-                    session.setAttribute("showLoginSuccess", true); // Thay vì dùng Model
+                    session.setAttribute("showLoginSuccess", true);
                     return "redirect:/"; // Redirect về trang chủ (không trả view trực tiếp)
                 default:
                     model.addAttribute("error", "Không xác định được vai trò");
@@ -175,21 +173,25 @@ public class HomeController {
     }
 
     @PostMapping("/forgetPass")
-    public String processForgetPass(@RequestParam("email") String email, RedirectAttributes redirectAttributes) {
-        Users user = usersService.findByEmail(email);
-        if (user == null) {
+    public String processForgetPass(
+            @RequestParam("email") String email,
+            RedirectAttributes redirectAttributes) {
+
+        Member member = memberService.findByEmail(email);
+        if (member == null) {
             redirectAttributes.addFlashAttribute("message", "Email không tồn tại!");
             return "redirect:/forgetPass";
         }
 
         String newPassword = UUID.randomUUID().toString().substring(0, 8);
-        user.setPassword(newPassword); // ⚠️ Bạn nên mã hóa mật khẩu nếu đang dùng mã hóa!
-        usersService.save(user);
+        member.setPassword(newPassword); // ⚠ Bạn nên mã hóa nếu đang dùng BCrypt!
 
-        // In ra console (tạm thời để debug)
-        System.out.println("Mật khẩu mới: " + newPassword);
+        memberService.save(member); // Đã sửa lại tên đúng
 
-        // Gửi email
+        // In ra console (chỉ để test)
+        System.out.println("Mật khẩu mới của " + email + " là: " + newPassword);
+
+        // Gửi email (nếu có service email)
         emailService.sendNewPassword(email, newPassword);
 
         redirectAttributes.addFlashAttribute("message", "Mật khẩu mới đã được gửi đến email của bạn!");
