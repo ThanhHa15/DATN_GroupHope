@@ -376,7 +376,7 @@
           <!-- Nội dung -->
           <div class="p-4">
             <a th:href="@{/detail/} + ${product.variantID}" class="block">
-              <h3 class="font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
+              <h3 class=" h-[70px] font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
                 th:text="${product.product.productName} + ' ' + ${product.storage} + ' - Chính hãng VN'">
               </h3>
 
@@ -394,25 +394,25 @@
 
             <div class="flex items-center justify-between">
               <div>
-                <!-- Nếu có giảm giá -->
-                <span th:if="${product.discountedPrice < product.price}">
+                <!-- Nếu có giảm -->
+                <span
+                  th:if="${product.discountedPrice != null and product.price != null and product.discountedPrice < product.price}"
+                  class="flex items-center gap-2">
+
                   <span class="text-lg font-bold text-red-600"
-                    th:text="${#strings.replace(#numbers.formatDecimal(product.discountedPrice, 0, 'COMMA', 0, 'POINT'), ',', '.')} + ' ₫'">
-                  </span> <br>
-                  <span class="text-sm text-gray-500 line-through "
-                    th:text="${#strings.replace(#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT'), ',', '.')} + ' ₫'">
-                  </span>
+                    th:text="${#numbers.formatDecimal(product.discountedPrice, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+
+                  <span class=" text-gray-500 line-through"
+                    style="font-size: 14px; margin-left: 110px; position: absolute;"
+                    th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
                 </span>
+
 
                 <!-- Nếu không giảm -->
-                <span th:if="${product.discountedPrice == product.price}">
+                <span th:if="${product.discountedPrice == null or product.discountedPrice >= product.price}">
                   <span class="text-lg font-bold text-red-600"
-                    th:text="${#strings.replace(#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT'), ',', '.')} + ' ₫'">
-                  </span>
+                    th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
                 </span>
-
-
-
               </div>
 
               <!-- Fallback cho mobile -->
@@ -523,18 +523,18 @@
   </script>
 
   <!-- Đoạn script này đặt ở footer hoặc head -->
-<script th:if="${session.showLoginSuccess != null && session.showLoginSuccess}">
+  <script th:if="${session.showLoginSuccess != null && session.showLoginSuccess}">
     Swal.fire({
-        icon: 'success',
-        title: 'Thông báo',
-        text: 'Đăng nhập thành công!',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#8b5cf6'
+      icon: 'success',
+      title: 'Thông báo',
+      text: 'Đăng nhập thành công!',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#8b5cf6'
     }).then(() => {
-        // Gọi API để xóa session attribute (tránh hiện lại khi refresh)
-        fetch('/clear-login-message', { method: 'POST' });
+      // Gọi API để xóa session attribute (tránh hiện lại khi refresh)
+      fetch('/clear-login-message', { method: 'POST' });
     });
-</script>
+  </script>
 
 </body>
 

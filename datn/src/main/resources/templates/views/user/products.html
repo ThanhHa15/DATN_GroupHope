@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/css/shared/footer.css">
     <link rel="stylesheet" href="/css/shared/header.css">
-     <link rel="stylesheet" href="/css/shared/chatbox.css">
+    <link rel="stylesheet" href="/css/shared/chatbox.css">
     <style>
         :where([class^="ri-"])::before {
             content: "\f3c2";
@@ -179,8 +179,8 @@
 
     <!-- Header -->
     <div th:insert="views/shared/header :: siteHeader" style="margin-top: 130px;"></div>
-     <!-- chatbox -->
-  <div th:insert="views/shared/chatbot :: siteChatbot"></div>
+    <!-- chatbox -->
+    <div th:insert="views/shared/chatbot :: siteChatbot"></div>
 
     <div class="image-container" style=" margin-bottom: -20px;">
         <div class="image-wrapper" style="width: 612px;">
@@ -567,7 +567,7 @@
                         <!-- Nội dung -->
                         <div class="p-4">
                             <a th:href="@{/detail/} + ${product.variantID}" class="block">
-                                <h3 class="font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
+                                <h3 class="h-[70px] font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
                                     th:text="${product.product.productName + ' ' + product.storage + ' - Chính hãng VN'}">
                                 </h3>
                             </a>
@@ -586,19 +586,23 @@
                                 <div>
                                     <!-- Nếu có giảm -->
                                     <span
-                                        th:if="${product.discountedPrice != null and product.price != null and product.discountedPrice < product.price}">
+                                        th:if="${product.discountedPrice != null and product.price != null and product.discountedPrice < product.price}"
+                                        class="flex items-center gap-2">
+
                                         <span class="text-lg font-bold text-red-600"
-                                            th:text="${#numbers.formatDecimal(product.discountedPrice, 0, 'COMMA', 0, 'POINT') + ' ₫'}"></span>
-                                        <br>
-                                        <span class="text-sm text-gray-500 line-through"
-                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' ₫'}"></span>
+                                            th:text="${#numbers.formatDecimal(product.discountedPrice, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+
+                                        <span class=" text-gray-500 line-through"
+                                            style="font-size: 14px; margin-left: 110px; position: absolute;"
+                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
                                     </span>
+
 
                                     <!-- Nếu không giảm -->
                                     <span
                                         th:if="${product.discountedPrice == null or product.discountedPrice >= product.price}">
                                         <span class="text-lg font-bold text-red-600"
-                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' ₫'}"></span>
+                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
                                     </span>
                                 </div>
 
