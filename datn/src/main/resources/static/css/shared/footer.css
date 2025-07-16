@@ -1,0 +1,113 @@
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    footer {
+      background-color: #f3f3f3;
+      padding-bottom: 30px;
+    }
+
+    .footer-container {
+      max-width: 1350px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      /* padding: 20px 0; */
+      border-bottom: 1px solid #ccc;
+    }
+
+    .footer-top div {
+      text-align: center;
+      margin: 10px;
+      opacity: 0;
+      animation: fadeSlideUp 3s ease forwards;
+    }
+
+    .footer-top div:nth-child(1) { animation-delay: 0.2s; }
+    .footer-top div:nth-child(2) { animation-delay: 0.4s; }
+    .footer-top div:nth-child(3) { animation-delay: 0.6s; }
+    .footer-top div:nth-child(4) { animation-delay: 0.8s; }
+    .footer-top div:nth-child(5) { animation-delay: 1s; }
+    .footer-top div:nth-child(6) { animation-delay: 1.2s; }
+    .footer-top div:nth-child(7) { animation-delay: 1.4s; }
+
+    .footer-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 30px ;
+    }
+
+    .footer-section {
+      flex: 1;
+      min-width: 250px;
+      margin: 10px;
+      opacity: 0;
+      animation: fadeSlideUp 3s ease forwards;
+    }
+
+    .footer-section:nth-child(1) { animation-delay: 0.3s; }
+    .footer-section:nth-child(2) { animation-delay: 0.6s; }
+    .footer-section:nth-child(3) { animation-delay: 0.9s; }
+
+    .footer-section h3 {
+      color: #001baf;
+      margin-bottom: 10px;
+    }
+
+    .footer-section p,
+    .footer-section a {
+      color: #000;
+      font-size: 14px;
+      line-height: 1.6;
+      text-decoration: none;
+    }
+
+    .footer-section a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-icons img {
+      height: 30px;
+      margin: 5px;
+    }
+
+    .footer-top img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 8px;
+    }
+
+    .footer-top button {
+      background-color: #001baf;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 5px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Animation */
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+ 

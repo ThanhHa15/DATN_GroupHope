@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký trở thành SMEMBER</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#dc0000', secondary: '#f8f8f8' }, borderRadius: { 'none': '0px', 'sm': '4px', DEFAULT: '8px', 'md': '12px', 'lg': '16px', 'xl': '20px', '2xl': '24px', '3xl': '32px', 'full': '9999px', 'button': '8px' } } } }</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background-position: right;
+            cursor: pointer;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body class="bg-white min-h-screen flex items-center justify-center py-10">
+    <div class="w-full max-w-xl px-6">
+        <h1 class="text-3xl font-bold text-[#000f8f] text-center mb-6">Đăng ký trở thành MEMBER</h1>
+
+        <div class="flex justify-center mb-6">
+            <img src="https://readdy.ai/api/search-image?query=cute%20cartoon%20mascot%20character%20with%20red%20outfit%20and%20antennas%2C%20white%20color%2C%20friendly%20face%2C%20simple%20design%2C%20clean%20background%2C%20digital%20art&width=150&height=150&seq=mascot123&orientation=squarish"
+                alt="Mascot" class="w-24 h-24 object-contain">
+        </div>
+
+
+        <form th:action="@{/register}" method="post" th:object="${member}">
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold mb-4">Thông tin cá nhân</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+                        <input type="text" id="fullname" th:field="*{fullname}" placeholder="Nhập họ và tên"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                        <div th:if="${#fields.hasErrors('fullname')}" class="text-red-500 text-sm mt-1"
+                            th:errors="*{fullname}"></div>
+                    </div>
+
+                    <div>
+                        <label for="birthday" class="block text-sm font-medium text-gray-700 mb-1">Ngày sinh</label>
+                        <div class="relative">
+                            <input type="date" id="birthday" th:field="*{birthday}" placeholder="Nhập ngày sinh"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                            <div
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none w-5 h-5 flex items-center justify-center">
+                                <i class="ri-calendar-line text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div th:if="${#fields.hasErrors('birthday')}" class="text-red-500 text-sm mt-1"
+                            th:errors="*{birthday}"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                        <input type="tel" id="phone" th:field="*{phone}" placeholder="Nhập số điện thoại"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                        <div th:if="${#fields.hasErrors('phone')}" class="text-red-500 text-sm mt-1"
+                            th:errors="*{phone}"></div>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email </label>
+                        <input type="email" id="email" th:field="*{email}" placeholder="Nhập email"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                        <div th:if="${#fields.hasErrors('email')}" class="text-red-500 text-sm mt-1"
+                            th:errors="*{email}"></div>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label class="flex items-start gap-2 cursor-pointer">
+
+                        <span class="text-sm text-gray-600">Hóa đơn VAT khi mua hàng sẽ được gửi qua email này</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold mb-4">Tạo mật khẩu</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+                        <div class="relative">
+                            <input type="password" id="password" th:field="*{password}"
+                                placeholder="Nhập mật khẩu của bạn"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary pr-10">
+                            <button type="button"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
+                                <i class="ri-eye-off-line text-gray-400"></i>
+                            </button>
+                        </div>
+                        <div th:if="${#fields.hasErrors('password')}" class="text-red-500 text-sm mt-1"
+                            th:errors="*{password}"></div>
+                    </div>
+
+                    <div>
+                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Nhập lại mật
+                            khẩu</label>
+                        <div class="relative">
+                            <input type="password" id="confirm-password" th:field="*{confirmPassword}"
+                                placeholder="Nhập lại mật khẩu của bạn"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary pr-10">
+                            <button type="button"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
+                                <i class="ri-eye-off-line text-gray-400"></i>
+                            </button>
+                        </div>
+                        <div th:if="${#fields.hasErrors('confirmPassword')}" class="text-red-500 text-sm mt-1"
+                            th:errors="*{confirmPassword}"></div>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label class="flex items-start gap-2">
+
+                        <span class="text-sm text-gray-600">Mật khẩu tối thiểu 6 ký tự, có ít nhất 1 chữ số và 1
+                            số</span>
+                    </label>
+                </div>
+
+                <div class="mt-4">
+                    <label class="inline-flex items-start gap-3 cursor-pointer">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox"
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer">
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            Bằng việc Đăng ký, bạn đã đọc và đồng ý với
+                            <a href="#" class="text-primary hover:underline">Điều khoản sử dụng</a>
+                            và
+                            <a href="#" class="text-primary hover:underline">Chính sách bảo mật</a>
+                            của HopePhone.
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+
+            <div class="flex gap-4 mt-6">
+                <a href="login"
+                    class="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-center font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors !rounded-button whitespace-nowrap">
+                    <div class="w-5 h-5 flex items-center justify-center">
+                        <i class="ri-arrow-left-s-line"></i>
+                    </div>
+                    Quay lại đăng nhập
+                </a>
+
+                <button type="submit"
+                    class="flex-1 py-3 px-4 bg-[#000f8f] text-white rounded-lg text-center font-medium hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap">
+                    Hoàn tất đăng ký
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script id="toggle-password-visibility">
+        document.addEventListener('DOMContentLoaded', function () {
+            const passwordToggles = document.querySelectorAll('button[type="button"]');
+
+            passwordToggles.forEach(toggle => {
+                toggle.addEventListener('click', function () {
+                    const input = this.parentElement.querySelector('input');
+                    const icon = this.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('ri-eye-off-line');
+                        icon.classList.add('ri-eye-line');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('ri-eye-line');
+                        icon.classList.add('ri-eye-off-line');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script id="toggle-switch">
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.getElementById('student-toggle');
+            const dot = toggle.nextElementSibling.nextElementSibling;
+
+            toggle.addEventListener('change', function () {
+                if (this.checked) {
+                    dot.style.transform = 'translateX(24px)';
+                    toggle.nextElementSibling.classList.remove('bg-gray-300');
+                    toggle.nextElementSibling.classList.add('bg-primary');
+                } else {
+                    dot.style.transform = 'translateX(0)';
+                    toggle.nextElementSibling.classList.remove('bg-primary');
+                    toggle.nextElementSibling.classList.add('bg-gray-300');
+                }
+            });
+        });
+    </script>
+
+    <script id="checkbox-toggle">
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            checkboxes.forEach(checkbox => {
+                if (!checkbox.id || checkbox.id !== 'student-toggle') {
+                    checkbox.addEventListener('change', function () {
+                        const checkmark = this.parentElement.querySelector('div:last-child');
+
+                        if (this.checked) {
+                            checkmark.classList.add('bg-primary', 'border-primary');
+                            checkmark.innerHTML = '<i class="ri-check-line text-white text-xs"></i>';
+                        } else {
+                            checkmark.classList.remove('bg-primary', 'border-primary');
+                            checkmark.classList.add('border-gray-300');
+                            checkmark.innerHTML = '';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
