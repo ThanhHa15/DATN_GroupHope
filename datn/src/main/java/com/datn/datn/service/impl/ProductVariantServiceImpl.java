@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,6 +117,30 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                     return discounted != null && price != null
                             && discounted.compareTo(BigDecimal.valueOf(price)) < 0;
                 })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductVariant> find6UniqueOtherVariants(Integer excludeVariantId, Integer excludeProductId) {
+        List<ProductVariant> allVariants = repo.findAll();
+
+        // Lọc ra sản phẩm không trùng productId và variantId
+        List<ProductVariant> filtered = allVariants.stream()
+                .filter(pv -> !pv.getVariantID().equals(excludeVariantId)) // loại trừ variant hiện tại
+                .filter(pv -> !pv.getProduct().getProductID().equals(excludeProductId)) // có thể loại trừ luôn sản phẩm
+                                                                                        // hiện tại nếu muốn
+                .collect(Collectors.toList());
+
+        // Giữ lại duy nhất theo (productId + storage)
+        Map<String, ProductVariant> uniqueVariants = filtered.stream()
+                .collect(Collectors.toMap(
+                        pv -> pv.getProduct().getProductID() + "_" + pv.getStorage(), // key duy nhất
+                        pv -> pv,
+                        (existing, replacement) -> existing,
+                        LinkedHashMap::new));
+
+        return uniqueVariants.values().stream()
+                .limit(6)
                 .collect(Collectors.toList());
     }
 

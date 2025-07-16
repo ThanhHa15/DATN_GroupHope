@@ -1,9 +1,12 @@
 package com.datn.datn.controller.user;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,48 +23,62 @@ import com.datn.datn.service.ProductVariantService;
 @RequestMapping("/detail")
 public class DetaiController {
 
-    private final ProductVariantService productVariantService;
+        private final ProductVariantService productVariantService;
 
-    private final ProductSpecificationService productSpecificationService;
+        private final ProductSpecificationService productSpecificationService;
 
-    public DetaiController(ProductVariantService productVariantService,
-            ProductSpecificationService productSpecificationService) {
-        this.productVariantService = productVariantService;
-        this.productSpecificationService = productSpecificationService;
-    }
-
-    @GetMapping("/{id}")
-    public String detail(@PathVariable("id") Integer variantId, Model model) {
-        ProductVariant variant = productVariantService.getById(variantId);
-
-        if (variant == null) {
-            return "redirect:/error";
+        public DetaiController(ProductVariantService productVariantService,
+                        ProductSpecificationService productSpecificationService) {
+                this.productVariantService = productVariantService;
+                this.productSpecificationService = productSpecificationService;
         }
 
-        List<ProductVariant> sameStorageVariants = productVariantService.findByProductAndStorage(
-                variant.getProduct(), variant.getStorage());
+        @GetMapping("/{id}")
+        public String detail(@PathVariable("id") Integer variantId, Model model) {
+                ProductVariant variant = productVariantService.getById(variantId);
 
-        List<ProductVariant> variantsByProduct = productVariantService.findByProduct(variant.getProduct());
+                if (variant == null) {
+                        return "redirect:/error";
+                }
 
-        // Lấy duy nhất mỗi storage 1 variant (theo thứ tự xuất hiện)
-        Map<String, ProductVariant> uniqueVariantsByStorage = variantsByProduct.stream()
-                .collect(Collectors.toMap(
-                        ProductVariant::getStorage,
-                        pv -> pv,
-                        (existing, replacement) -> existing, // giữ lại bản đầu tiên
-                        LinkedHashMap::new));
+                List<ProductVariant> sameStorageVariants = productVariantService.findByProductAndStorage(
+                                variant.getProduct(), variant.getStorage());
 
-        model.addAttribute("v", variant);
-        model.addAttribute("sameStorageVariants", sameStorageVariants);
-        model.addAttribute("uniqueVariantsByStorage", uniqueVariantsByStorage.values());
-        variantsByProduct.forEach(pv -> System.out.println("Variant ID: " + pv.getVariantID() + " | Storage: "
-                + pv.getStorage() + " | Product Name: " + pv.getProduct().getProductName()));
-        List<ProductSpecification> specifications = productSpecificationService
-                .getSpecificationsByProductId(variant.getProduct().getProductID());
+                List<ProductVariant> variantsByProduct = productVariantService.findByProduct(variant.getProduct());
 
-        model.addAttribute("specifications", specifications);
+                Map<String, ProductVariant> uniqueVariantsByStorage = variantsByProduct.stream()
+                                .collect(Collectors.toMap(
+                                                ProductVariant::getStorage,
+                                                pv -> pv,
+                                                (existing, replacement) -> existing,
+                                                LinkedHashMap::new));
 
-        return "views/user/products-detail";
+                List<ProductSpecification> specifications = productSpecificationService
+                                .getSpecificationsByProductId(variant.getProduct().getProductID());
 
-    }
+                // 👉 Tận dụng hàm có sẵn trong HomeController
+                List<ProductVariant> allUniqueVariants = productVariantService.findUniqueVariantsByProductAndStorage();
+
+                // 👉 Lọc: KHÔNG cùng productId (tức loại bỏ mọi phiên bản của sp đang xem),
+                // cùng danh mục
+                List<ProductVariant> otherProducts = allUniqueVariants.stream()
+                                .filter(pv -> !pv.getProduct().getProductID()
+                                                .equals(variant.getProduct().getProductID())) // ✅ KHÁC sản phẩm đang
+                                                                                              // xem
+                                .filter(pv -> pv.getProduct().getCategory().getCategoryID()
+                                                .equals(variant.getProduct().getCategory().getCategoryID())) // ✅ CÙNG
+                                                                                                             // danh mục
+                                .limit(5)
+                                .collect(Collectors.toList()); 
+
+                // Đưa vào model
+                model.addAttribute("v", variant);
+                model.addAttribute("sameStorageVariants", sameStorageVariants);
+                model.addAttribute("uniqueVariantsByStorage", uniqueVariantsByStorage.values());
+                model.addAttribute("specifications", specifications);
+                model.addAttribute("products", otherProducts);
+
+                return "views/user/products-detail";
+        }
+
 }

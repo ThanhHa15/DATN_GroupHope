@@ -34,5 +34,9 @@ public interface ProductVariantService {
 
     List<ProductVariant> findDiscountedVariants();
 
+    List<ProductVariant> find6UniqueOtherVariants(Integer excludeVariantId, Integer excludeProductId);
+
+
+
 
 }

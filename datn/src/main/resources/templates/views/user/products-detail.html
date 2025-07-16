@@ -721,26 +721,30 @@
             CÁC SẢN PHẨM KHÁC
           </h2>
         </div>
+
         <!-- Sản phẩm khác có thể bạn quan tâm: -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+
           <div th:each="product : ${products}"
-            class="bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+            class="bg-white rounded-lg border border-gray-200 shadow-lg hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
 
             <!-- Mác giảm giá -->
-            <div class="absolute top-3 left-3 z-10">
+            <div class="absolute top-3 left-3 z-10" th:if="${product.discountedPrice < product.price}">
               <div class="relative">
                 <div class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm 
-                  transform -rotate-3 origin-left
-                  shadow-[2px_2px_0px_rgba(0,0,0,0.2)] 
-                  group-hover:shadow-[3px_3px_0px_rgba(0,0,0,0.3)]
-                  transition-all duration-200">
-                  GIẢM 10%
+                                                transform -rotate-3 origin-left
+                                                shadow-[2px_2px_0px_rgba(0,0,0,0.2)] 
+                                                group-hover:shadow-[3px_3px_0px_rgba(0,0,0,0.3)]
+                                                transition-all duration-200">
+                  GIẢM <span th:text="${product.discount}">0</span>%
                 </div>
+                <!-- Hiệu ứng góc gập 3D */ -->
                 <div class="absolute top-full left-1 w-4 h-1 bg-red-700 
-                  transform -rotate-6 origin-top-left
-                  opacity-80"></div>
+                                                transform -rotate-6 origin-top-left
+                                                opacity-80"></div>
               </div>
             </div>
+
 
             <!-- Hình ảnh sản phẩm -->
             <div class="relative">
@@ -772,7 +776,8 @@
             <!-- Nội dung -->
             <div class="p-4">
               <a th:href="@{/detail/} + ${product.variantID}" class="block">
-                <h3 class="font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
+                <h3
+                  class=" h-[70px] font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
                   th:text="${product.product.productName} + ' ' + ${product.storage} + ' - Chính hãng VN'">
                 </h3>
 
@@ -790,11 +795,25 @@
 
               <div class="flex items-center justify-between">
                 <div>
-                  <span class="text-lg font-bold text-red-600"
-                    th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}">
-                    33.990.000₫
+                  <!-- Nếu có giảm -->
+                  <span
+                    th:if="${product.discountedPrice != null and product.price != null and product.discountedPrice < product.price}"
+                    class="flex items-center gap-2">
+
+                    <span class="text-lg font-bold text-red-600"
+                      th:text="${#numbers.formatDecimal(product.discountedPrice, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+
+                    <span class=" text-gray-500 line-through"
+                      style="font-size: 14px; margin-left: 110px; position: absolute;"
+                      th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
                   </span>
-                  <span class="text-sm text-gray-500 line-through ml-2 ">34.990.000₫</span>
+
+
+                  <!-- Nếu không giảm -->
+                  <span th:if="${product.discountedPrice == null or product.discountedPrice >= product.price}">
+                    <span class="text-lg font-bold text-red-600"
+                      th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+                  </span>
                 </div>
 
                 <!-- Fallback cho mobile -->
@@ -803,6 +822,8 @@
                   <i class="ri-shopping-cart-line"></i>
                 </button>
               </div>
+
+
             </div>
 
             <!-- Overlay hover -->
@@ -811,17 +832,23 @@
             </div>
           </div>
 
-          <!-- Hover overlay effect -->
-          <div
-            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300 pointer-events-none">
+          <!-- Nếu không có sản phẩm -->
+          <div th:if="${#lists.isEmpty(products)}" class="w-full text-center py-12 " style="margin-left: 500px;">
+            <img
+              src="https://i.postimg.cc/nrf4Qjsw/pngtree-business-web-error-404-concept-illustration-png-image-3507632-removebg-preview.png"
+              alt="No products" class="mx-auto w-[250px] h-auto   " style="margin-top: -50px;" />
+            <p class="text-gray-800 text-lg">Không có sản phẩm nào được tìm thấy.</p>
           </div>
+
+
         </div>
+        <!-- Nút "Xem tất cả" sẽ dẫn đến trang danh sách sản phẩm khác -->
+        <button class="xem-tat-ca-btn" style="margin-top: 20px">
+          <a href="/products">Xem toàn bộ sản phẩm</a>
+          <i class="arrow-icon fas fa-arrow-right"></i>
+        </button>
       </div>
-      <!-- Nút "Xem tất cả" sẽ dẫn đến trang danh sách sản phẩm khác -->
-      <button class="xem-tat-ca-btn" style="margin-top: 20px">
-        <a href="products">Xem toàn bộ sản phẩm</a>
-        <i class="arrow-icon fas fa-arrow-right"></i>
-      </button>
+
     </div>
   </section>
 

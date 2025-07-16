@@ -45,4 +45,8 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     @Query("SELECT DISTINCT p FROM Product p JOIN p.variants v WHERE v.discount > 0 AND v.discountStart <= CURRENT_DATE AND v.discountEnd >= CURRENT_DATE")
     List<Product> findProductsWithActiveDiscount();
 
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.product.productID = :productId AND pv.variantID <> :excludeVariantId")
+    List<ProductVariant> findByProductIdAndVariantIDNot(@Param("productId") Integer productId,
+            @Param("excludeVariantId") Integer excludeVariantId);
+
 }

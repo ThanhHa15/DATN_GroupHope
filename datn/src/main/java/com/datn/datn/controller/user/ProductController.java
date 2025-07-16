@@ -80,6 +80,11 @@ public class ProductController {
             }).reversed());
         }
 
+        // 👉 Giới hạn tối đa 15 sản phẩm
+        variants = variants.stream()
+                .limit(15)
+                .collect(Collectors.toList());
+
         model.addAttribute("sort", sort); // truyền sort về Thymeleaf
         model.addAttribute("products", variants);
         model.addAttribute("isEmpty", variants.isEmpty());
@@ -88,5 +93,4 @@ public class ProductController {
         return "views/user/products";
     }
 
-    
 }
