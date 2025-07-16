@@ -1,14 +1,25 @@
 package com.datn.datn.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 import com.datn.datn.validator.MinAge;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
@@ -40,16 +51,20 @@ public class Member {
     @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "Mật khẩu không được để trống")
-    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).+$", message = "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 số")
+    // @NotBlank(message = "Mật khẩu không được để trống")
+    // @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
+    // @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).+$", message = "Mật khẩu phải
+    // chứa ít nhất 1 chữ cái và 1 số")
     private String password;
 
-    @Transient // Không ánh xạ với database
-    @NotBlank(message = "Xác nhận mật khẩu không được để trống")
+    @Transient
+    // @NotBlank(message = "Xác nhận mật khẩu không được để trống")
     private String confirmPassword;
 
     @Column(nullable = false)
     private String role; // "CUSTOMER", "STAFF", "ADMIN"
+
+    @Column(nullable = false)
+    private boolean active = true;
 
 }

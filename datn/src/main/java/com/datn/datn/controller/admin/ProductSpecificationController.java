@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +23,23 @@ public class ProductSpecificationController {
     @Autowired
     private ProductSpecificationServiceImpl specificationService;
 
-     @GetMapping
+    @GetMapping
     public String showForm(Model model) {
-        model.addAttribute("products", productService.getAll());
-        model.addAttribute("specList", specificationService.findAll());   // <-- thêm dòng này
+        List<Product> products = productService.getAll();
+        model.addAttribute("products", products);
+
+        // Create a map of productId (as Integer) to productName
+        Map<Integer, String> productIdToNameMap = new HashMap<>();
+        for (Product product : products) {
+            productIdToNameMap.put(product.getProductID().intValue(), product.getProductName());
+        }
+
+        model.addAttribute("productIdToNameMap", productIdToNameMap);
+        model.addAttribute("specList", specificationService.findAll());
         return "formProductSpecification";
     }
 
-   @PostMapping("/save")
+    @PostMapping("/save")
     public String saveSpecifications(
             @RequestParam("productid") Long productId,
             @RequestParam Map<String, String> allParams) {
@@ -39,25 +49,25 @@ public class ProductSpecificationController {
             if (entry.getKey().startsWith("specs[") && entry.getValue() != null && !entry.getValue().isEmpty()) {
                 // Trích xuất tên thông số từ key
                 String specKey = entry.getKey().substring(6, entry.getKey().length() - 1);
-                
+
                 // Tạo và lưu thông số kỹ thuật
                 ProductSpecification spec = new ProductSpecification();
                 spec.setProductid(productId.intValue());
                 spec.setSpecKey(specKey);
                 spec.setSpecValue(entry.getValue());
-                
+
                 specificationService.saveSpecification(spec);
-                
+
                 // Hiển thị thông tin (debug)
                 System.out.println("Đã lưu: " + specKey + " = " + entry.getValue());
             }
         }
-        
+
         return "redirect:/specification";
     }
 
-     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Integer id){
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Integer id) {
         specificationService.deleteSpecification(id);
         return "redirect:/specification";
     }
@@ -65,7 +75,7 @@ public class ProductSpecificationController {
     /* ===== cập nhật specValue ===== */
     @PostMapping("/update")
     public String update(@RequestParam Integer specId,
-                         @RequestParam String specValue){
+            @RequestParam String specValue) {
         specificationService.updateSpecificationValue(specId, specValue);
         return "redirect:/specification";
     }

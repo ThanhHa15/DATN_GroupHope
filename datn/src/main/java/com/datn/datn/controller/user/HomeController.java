@@ -1,5 +1,6 @@
 package com.datn.datn.controller.user;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +30,7 @@ import com.datn.datn.service.ProductVariantService;
 import com.datn.datn.service.MembersService;
 import com.datn.datn.service.ProductService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -94,6 +96,12 @@ public class HomeController {
 
         if (optional.isPresent()) {
             Member member = optional.get();
+            session.setAttribute("loggedInUser", member);
+            // 👉 Kiểm tra xem tài khoản có bị khóa không
+            if (!member.isActive()) {
+                model.addAttribute("error", "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.");
+                return "views/shared/login";
+            }
             session.setAttribute("loggedInUser", member);
 
             switch (member.getRole()) {
@@ -163,8 +171,8 @@ public class HomeController {
         member.setRole("CUSTOMER");
 
         memberRepository.save(member);
-        redirectAttributes.addFlashAttribute("success", "Đăng ký thành công!");
-        return "redirect:/login";
+        model.addAttribute("success", "Đăng ký thành công!");
+        return "views/shared/login";
     }
 
     @GetMapping("/forgetPass")
@@ -239,17 +247,96 @@ public class HomeController {
     }
 
     @GetMapping("/info")
-    public String info(Model model, HttpSession session) {
+    public String showInfo(Model model, HttpSession session) {
+        Member member = (Member) session.getAttribute("loggedInUser"); // ✅ Sửa ở đây
+        if (member == null) {
+            return "redirect:/login";
+        }
+        // Tạo chuỗi ****** theo độ dài mật khẩu
+        String maskedPassword = "*".repeat(member.getPassword().length());
+        model.addAttribute("member", member);
+        model.addAttribute("maskedPassword", maskedPassword); // Truyền chuỗi ẩn mật khẩu
+        model.addAttribute("member", member);
         return "views/shared/info";
     }
 
     @GetMapping("/editInf")
     public String editInf(Model model, HttpSession session) {
+        Member member = (Member) session.getAttribute("loggedInUser");
+
+        if (member == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("member", member);
         return "views/shared/editInf";
+    }
+
+    @PostMapping("/editInf")
+    public String updateMemberInfo(HttpServletRequest request, HttpSession session, Model model) {
+        Member currentUser = (Member) session.getAttribute("loggedInUser"); // ✅ Lấy đúng session
+
+        if (currentUser == null) {
+            return "redirect:/login"; // Phòng trường hợp bị null
+        }
+
+        // Lấy dữ liệu từ form
+        String fullname = request.getParameter("fullname");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String birthdayStr = request.getParameter("birthday");
+
+        String currentPassword = request.getParameter("current-password");
+        String newPassword = request.getParameter("new-password");
+        String confirmPassword = request.getParameter("confirm-password");
+
+        // Cập nhật thông tin cơ bản
+        currentUser.setFullname(fullname);
+        currentUser.setEmail(email);
+        currentUser.setPhone(phone);
+        if (birthdayStr != null && !birthdayStr.isBlank()) {
+            currentUser.setBirthday(LocalDate.parse(birthdayStr));
+        }
+
+        // Xử lý đổi mật khẩu nếu có
+        if (currentPassword != null && !currentPassword.isBlank()) {
+            if (!currentPassword.equals(currentUser.getPassword())) {
+                model.addAttribute("error", "Mật khẩu hiện tại không đúng");
+                model.addAttribute("member", currentUser);
+                return "views/shared/editInf";
+            }
+
+            if (newPassword == null || newPassword.isBlank()) {
+                model.addAttribute("error", "Vui lòng nhập mật khẩu mới");
+                model.addAttribute("member", currentUser);
+                return "views/shared/editInf";
+            }
+
+            if (!newPassword.equals(confirmPassword)) {
+                model.addAttribute("error", "Mật khẩu xác nhận không khớp");
+                model.addAttribute("member", currentUser);
+                return "views/shared/editInf";
+            }
+
+            currentUser.setPassword(newPassword); // Nếu có BCrypt thì mã hóa ở đây
+        }
+
+        // Lưu thay đổi
+        memberService.save(currentUser);
+        session.setAttribute("loggedInUser", currentUser); // ✅ Cập nhật lại session
+
+        model.addAttribute("success", "Cập nhật thông tin thành công");
+        model.addAttribute("member", currentUser);
+        return "views/shared/editInf"; // ✅ Load lại trang
     }
 
     @GetMapping("/address")
     public String address(Model model, HttpSession session) {
         return "views/shared/address";
+    }
+
+    @GetMapping("/wishlist")
+    public String wishlist(Model model, HttpSession session) {
+        return "views/user/wishlist";
     }
 }

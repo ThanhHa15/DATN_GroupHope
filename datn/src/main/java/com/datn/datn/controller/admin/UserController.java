@@ -20,8 +20,8 @@ import com.datn.datn.service.MembersService;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/admin/employees")
-public class EmployeeController {
+@RequestMapping("/admin/users")
+public class UserController {
 
     @Autowired
     private MembersService membersService;
@@ -29,21 +29,21 @@ public class EmployeeController {
     @GetMapping
     public String showEmployeeList(@RequestParam(required = false) String keyword, Model model) {
         List<Member> employees = (keyword != null && !keyword.trim().isEmpty())
-                ? membersService.searchByKeywordAndRoles(keyword.trim(), List.of("ADMIN", "STAFF"))
-                : membersService.findByRoles(List.of("ADMIN", "STAFF"));
+                ? membersService.searchByKeywordAndRoles(keyword.trim(), List.of("CUSTOMER"))
+                : membersService.findByRoles(List.of("CUSTOMER"));
 
         model.addAttribute("employee", new Member());
         model.addAttribute("employees", employees);
         model.addAttribute("keyword", keyword);
-        return "views/admin/list";
+        return "views/admin/userslist";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Member employee = membersService.getEmployeeById(id);
         if (employee == null) {
-            redirectAttributes.addFlashAttribute("error", "Không tìm thấy nhân viên");
-            return "redirect:/admin/employees";
+            redirectAttributes.addFlashAttribute("error", "Không tìm thấy người dùng");
+            return "redirect:/admin/userslist";
         }
 
         model.addAttribute("employee", employee);
@@ -67,58 +67,76 @@ public class EmployeeController {
         if (isCreate) {
             if (membersService.existsByEmail(member.getEmail())) {
                 result.rejectValue("email", "error.member", "Email đã tồn tại");
-                model.addAttribute("employees", membersService.findByRoles(List.of("ADMIN", "STAFF")));
-                return "views/admin/list";
+                model.addAttribute("employees", membersService.findByRoles(List.of("CUSTOMER")));
+                return "views/admin/userslist";
             }
             if (newPassword == null || newPassword.isBlank()) {
                 result.rejectValue("password", "error.member", "Mật khẩu không được để trống");
-                model.addAttribute("employees", membersService.findByRoles(List.of("ADMIN", "STAFF")));
-                return "views/admin/list";
+                model.addAttribute("employees", membersService.findByRoles(List.of("CUSTOMER")));
+                return "views/admin/userslist";
             }
             member.setPassword(newPassword);
             membersService.save(member);
-            redirectAttributes.addFlashAttribute("success", "Thêm nhân viên thành công");
+            redirectAttributes.addFlashAttribute("success", "Thêm người dùng thành công");
 
         } else {
             Member existing = membersService.getEmployeeById(member.getId());
             if (existing == null) {
-                redirectAttributes.addFlashAttribute("error", "Không tìm thấy nhân viên");
-                return "redirect:/admin/employees";
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy người dùng vui lòng nhập lại");
+                return "redirect:/admin/userslist";
             }
-            if (member.getBirthday() == null) {
-                member.setBirthday(existing.getBirthday());
-            }
-
             if (newPassword != null && !newPassword.isBlank()) {
                 if (!newPassword.equals(confirmPassword)) {
                     result.rejectValue("confirmPassword", "error.member", "Xác nhận mật khẩu không khớp");
                     model.addAttribute("employees", membersService.findByRoles(List.of("ADMIN", "STAFF")));
-                    return "views/admin/list";
+                    return "views/admin/userslist";
                 }
                 if (!currentPassword.equals(existing.getPassword())) {
                     result.rejectValue("password", "error.member", "Mật khẩu hiện tại không đúng");
                     model.addAttribute("employees", membersService.findByRoles(List.of("ADMIN", "STAFF")));
-                    return "views/admin/list";
+                    return "views/admin/userslist";
                 }
                 member.setPassword(newPassword);
             } else {
                 member.setPassword(existing.getPassword());
             }
             membersService.update(member);
-            redirectAttributes.addFlashAttribute("success", "Cập nhật nhân viên thành công");
+            redirectAttributes.addFlashAttribute("success", "Cập nhật người dùng thành công");
         }
-        return "redirect:/admin/employees";
+        return "redirect:/admin/userslist";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteEmployee(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             membersService.deleteEmployee(id);
-            redirectAttributes.addFlashAttribute("success", "Xóa nhân viên thành công");
+            redirectAttributes.addFlashAttribute("success", "Xóa người dùng thành công");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Xóa nhân viên thất bại: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Xóa người dùng thất bại: " + e.getMessage());
         }
 
-        return "redirect:/admin/employees";
+        return "redirect:/admin/userslist";
     }
+
+    @PostMapping("/toggle/{id}")
+    public String toggleAccountStatus(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Member member = membersService.getEmployeeById(id);
+            if (member == null) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy người dùng");
+                return "redirect:/admin/users";
+            }
+
+            member.setActive(!member.isActive()); // Đảo trạng thái true <=> false
+            membersService.update(member);
+
+            String action = member.isActive() ? "Mở khóa" : "Khóa";
+            redirectAttributes.addFlashAttribute("success", action + " tài khoản thành công");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi cập nhật tài khoản");
+        }
+
+        return "redirect:/admin/users";
+    }
+
 }

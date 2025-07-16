@@ -169,7 +169,7 @@
 
             <!-- Dropdown -->
             <div
-              class="absolute right-0 mt-2 bg-white border rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all z-50 w-40 overflow-hidden">
+              class="absolute right-0 mt-2 bg-white border rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all z-50 w-60 overflow-hidden">
 
               <!-- Nếu CHƯA đăng nhập -->
               <div th:if="${loggedInUser == null}">
@@ -189,6 +189,11 @@
                   class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
                   <i class="fas fa-user-cog"></i> Tài khoản
                 </a>
+                <a href="/wishlist"
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
+                  <i class="fas fa-heart"></i> Danh sách yêu thích
+                </a>
+
                 <a href="/logout" onclick="handleLogout()"
                   class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
                   <i class="fas fa-sign-out-alt"></i> Đăng xuất
@@ -300,7 +305,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     function handleLogout() {
-    Swal.fire({
+      Swal.fire({
         title: 'Xác nhận đăng xuất',
         text: "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?",
         icon: 'question',
@@ -312,22 +317,22 @@
         reverseButtons: true,
         focusCancel: true,
         allowOutsideClick: false
-    }).then((result) => {
+      }).then((result) => {
         if (result.isConfirmed) {
-            // Hiển thị loading khi đang xử lý
-            Swal.fire({
-                title: 'Đang đăng xuất...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
-            
-            // Submit form đăng xuất
-            document.getElementById('logoutForm').submit();
+          // Hiển thị loading khi đang xử lý
+          Swal.fire({
+            title: 'Đang đăng xuất...',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+
+          // Submit form đăng xuất
+          document.getElementById('logoutForm').submit();
         }
-    });
-}
+      });
+    }
   </script>
 
 </body>
