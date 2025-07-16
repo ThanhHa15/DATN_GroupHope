@@ -42,6 +42,8 @@ public class ProductController {
 
     @GetMapping
     public String listProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "15") int size,
             @RequestParam(required = false) Boolean discounted,
             @RequestParam(required = false) String sort,
             Model model) {
@@ -62,32 +64,36 @@ public class ProductController {
             variants = productVariantService.findUniqueVariantsByProductAndStorage();
         }
 
-        // Sắp xếp theo yêu cầu
+        // Sắp xếp
         if ("name_asc".equalsIgnoreCase(sort)) {
             variants.sort(Comparator.comparing(v -> v.getProduct().getProductName(), String.CASE_INSENSITIVE_ORDER));
         } else if ("name_desc".equalsIgnoreCase(sort)) {
-            variants.sort(Comparator.comparing(
-                    (ProductVariant v) -> v.getProduct().getProductName(), String.CASE_INSENSITIVE_ORDER).reversed());
+            variants.sort(Comparator
+                    .comparing((ProductVariant v) -> v.getProduct().getProductName(), String.CASE_INSENSITIVE_ORDER)
+                    .reversed());
         } else if ("price_asc".equalsIgnoreCase(sort)) {
             variants.sort(Comparator.comparing(v -> {
                 BigDecimal discountedPrice = v.getDiscountedPrice();
-                return discountedPrice != null ? discountedPrice : BigDecimal.valueOf(0);
+                return discountedPrice != null ? discountedPrice : BigDecimal.ZERO;
             }));
         } else if ("price_desc".equalsIgnoreCase(sort)) {
             variants.sort(Comparator.comparing((ProductVariant v) -> {
                 BigDecimal discountedPrice = v.getDiscountedPrice();
-                return discountedPrice != null ? discountedPrice : BigDecimal.valueOf(0);
+                return discountedPrice != null ? discountedPrice : BigDecimal.ZERO;
             }).reversed());
         }
 
-        // 👉 Giới hạn tối đa 15 sản phẩm
-        variants = variants.stream()
-                .limit(15)
-                .collect(Collectors.toList());
+        // Phân trang
+        int totalItems = variants.size();
+        int totalPages = (int) Math.ceil((double) totalItems / size);
+        int fromIndex = Math.min((page - 1) * size, totalItems);
+        int toIndex = Math.min(fromIndex + size, totalItems);
+        List<ProductVariant> pagedVariants = variants.subList(fromIndex, toIndex);
 
-        model.addAttribute("sort", sort); // truyền sort về Thymeleaf
-        model.addAttribute("products", variants);
-        model.addAttribute("isEmpty", variants.isEmpty());
+        model.addAttribute("products", pagedVariants);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("sort", sort);
         model.addAttribute("isDiscounted", discounted != null ? discounted : false);
 
         return "views/user/products";

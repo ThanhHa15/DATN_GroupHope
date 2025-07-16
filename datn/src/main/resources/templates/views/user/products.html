@@ -622,27 +622,48 @@
                 </div>
 
 
-                <!-- phân trang -->
-                <div class="flex justify-center mt-10">
-                    <nav class="flex items-center">
-                        <button
-                            class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-l-lg hover:border-[#000f8f] hover:text-[#000f8f] transition">
-                            <i class="ri-arrow-left-s-line"></i>
-                        </button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center border-t border-b border-gray-300 bg-[#000f8f] text-white">
-                            1
-                        </button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center border-t border-b border-gray-300 hover:bg-gray-50 transition">
-                            2
-                        </button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-r-lg hover:border-[#000f8f] hover:text-[#000f8f] transition">
-                            <i class="ri-arrow-right-s-line"></i>
-                        </button>
-                    </nav>
+                <!-- Hiển thị sản phẩm ở đây -->
+
+                <!-- PHÂN TRANG -->
+                <div class="flex justify-center mt-6">
+                    <ul class="inline-flex items-center -space-x-px">
+                        <!-- Nút "Trước" -->
+                        <li th:if="${currentPage > 1}">
+                            <a th:href="@{/products(page=${currentPage - 1}, sort=${sort}, discounted=${isDiscounted})}"
+                                class="flex items-center px-3 py-2 ml-0 text-gray-700 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-50 hover:text-[#000f8f] transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7" />
+                                </svg>
+                                Trước
+                            </a>
+                        </li>
+
+                        <!-- Các số trang -->
+                        <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                            <a th:href="@{/products(page=${i}, sort=${sort}, discounted=${isDiscounted})}"
+                                th:text="${i}"
+                                th:classappend="${i == currentPage} ? 'z-10 bg-[#000f8f] border-[#000f8f] text-white hover:bg-[#000d7a]' : 'text-gray-700 bg-white hover:bg-gray-50 hover:text-[#000f8f]'"
+                                class="flex items-center px-4 py-2 border border-gray-300 leading-tight transition-colors">
+                            </a>
+                        </li>
+
+                        <!-- Nút "Sau" -->
+                        <li th:if="${currentPage < totalPages}">
+                            <a th:href="@{/products(page=${currentPage + 1}, sort=${sort}, discounted=${isDiscounted})}"
+                                class="flex items-center px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 hover:text-[#000f8f] transition-colors">
+                                Sau
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+
 
             </div>
         </div>
