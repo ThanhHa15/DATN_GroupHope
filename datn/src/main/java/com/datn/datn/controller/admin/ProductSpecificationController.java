@@ -22,10 +22,10 @@ public class ProductSpecificationController {
     @Autowired
     private ProductSpecificationServiceImpl specificationService;
 
-    @GetMapping
+     @GetMapping
     public String showForm(Model model) {
-        List<Product> products = productService.getAll();
-        model.addAttribute("products", products);
+        model.addAttribute("products", productService.getAll());
+        model.addAttribute("specList", specificationService.findAll());   // <-- thêm dòng này
         return "formProductSpecification";
     }
 
@@ -53,6 +53,20 @@ public class ProductSpecificationController {
             }
         }
         
+        return "redirect:/specification";
+    }
+
+     @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Integer id){
+        specificationService.deleteSpecification(id);
+        return "redirect:/specification";
+    }
+
+    /* ===== cập nhật specValue ===== */
+    @PostMapping("/update")
+    public String update(@RequestParam Integer specId,
+                         @RequestParam String specValue){
+        specificationService.updateSpecificationValue(specId, specValue);
         return "redirect:/specification";
     }
 }

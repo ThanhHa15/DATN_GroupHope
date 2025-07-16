@@ -3,6 +3,85 @@
   <head>
     <meta charset="UTF-8" />
     <title>Thêm Thông số kỹ thuật</title>
+    <style>
+      /* ===== BẢNG THÔNG SỐ ===== */
+      table.spec-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+      }
+      table.spec-table thead {
+        background: #f5f5f5;
+      }
+      table.spec-table th,
+      table.spec-table td {
+        border: 1px solid #e0e0e0;
+        padding: 8px 10px;
+        text-align: left;
+      }
+
+      /* ID, Product, Key nhỏ – Value rộng */
+      table.spec-table th:nth-child(1),
+      table.spec-table td:nth-child(1) {
+        width: 6%;
+      }
+      table.spec-table th:nth-child(2),
+      table.spec-table td:nth-child(2) {
+        width: 10%;
+      }
+      table.spec-table th:nth-child(3),
+      table.spec-table td:nth-child(3) {
+        width: 18%;
+      }
+
+      /* Cột giá trị chiếm ~40‑45% */
+      table.spec-table th:nth-child(4),
+      table.spec-table td:nth-child(4) {
+        width: 45%;
+      }
+
+      /* Cột thao tác còn lại */
+      table.spec-table th:nth-child(5),
+      table.spec-table td:nth-child(5) {
+        width: 10%;
+        text-align: center;
+      }
+
+      /* ===== Ô INPUT chỉnh sửa ===== */
+      .spec-edit-form {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .spec-edit-form input[type="text"] {
+        flex: 1; /* tự giãn đầy cột */
+        min-width: 180px;
+        padding: 6px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .spec-edit-form button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        background: #1976d2;
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .spec-edit-form button:hover {
+        background: #155a9e;
+      }
+
+      /* Link xoá */
+      a.delete-link {
+        color: #d32f2f;
+        text-decoration: none;
+      }
+      a.delete-link:hover {
+        text-decoration: underline;
+      }
+    </style>
   </head>
   <body>
     <div th:replace="~{dashboard :: nav}"></div>
@@ -240,6 +319,50 @@
       <br />
       <button type="submit">Lưu thông số</button>
     </form>
+    <hr />
+
+    <h3>Danh sách thông số đã lưu</h3>
+    <table border="1" cellspacing="0" cellpadding="6" class="spec-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Sản phẩm</th>
+          <th>Tên thông số</th>
+          <th>Giá trị</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="s : ${specList}">
+          <td th:text="${s.specId}"></td>
+          <td th:text="${s.productid}"></td>
+          <td th:text="${s.specKey}"></td>
+
+          <!-- ========== cột EDITABLE specValue ========== -->
+          <td>
+            <form
+              th:action="@{/specification/update}"
+              method="post"
+              class="spec-edit-form"
+            >
+              <input type="hidden" name="specId" th:value="${s.specId}" />
+              <input type="text" name="specValue" th:value="${s.specValue}" />
+              <button type="submit">Lưu</button>
+            </form>
+          </td>
+
+          <!-- ========== nút xoá ========== -->
+          <td>
+            <a
+              th:href="@{/specification/delete/{id}(id=${s.specId})}"
+              class="delete-link"
+              onclick="return confirm('Xoá thông số này?')"
+              >Xoá</a
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     <script>
       function showFieldsByProductType() {

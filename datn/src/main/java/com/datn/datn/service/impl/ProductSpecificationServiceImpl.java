@@ -15,6 +15,10 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     @Autowired
     private ProductSpecificationRepository specRepo;
 
+
+    public List<ProductSpecification> findAll() {
+        return specRepo.findAll();
+    }
     @Override
     public List<ProductSpecification> getSpecificationsByProductId(Integer productid) {
         return specRepo.findByProductid(productid);
@@ -28,5 +32,11 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     @Override
     public void deleteSpecification(Integer specId) {
         specRepo.deleteById(specId);
+    }
+
+    public void updateSpecificationValue(Integer specId, String newValue) {
+        ProductSpecification s = specRepo.findById(specId).orElseThrow();
+        s.setSpecValue(newValue);
+        specRepo.save(s);
     }
 }
