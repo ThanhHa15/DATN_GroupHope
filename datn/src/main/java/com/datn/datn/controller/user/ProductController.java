@@ -3,6 +3,7 @@ package com.datn.datn.controller.user;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.datn.model.Category;
+import com.datn.datn.model.Member;
 import com.datn.datn.model.ProductVariant;
 import com.datn.datn.model.Product;
 import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.ProductVariantService;
+import com.datn.datn.service.WishlistService;
 import com.datn.datn.service.ProductService;
 
 import jakarta.servlet.http.HttpSession;
@@ -31,13 +35,16 @@ public class ProductController {
     private final ProductVariantService productVariantService;
     private final CategoryService categoryService;
     private final ProductService productService; // Thêm service này nếu cần
+    private final WishlistService wishlistService;
 
     public ProductController(ProductService productService,
             ProductVariantService productVariantService,
-            CategoryService categoryService) {
+            CategoryService categoryService,
+            WishlistService wishlistService) {
         this.productService = productService;
         this.productVariantService = productVariantService;
         this.categoryService = categoryService;
+        this.wishlistService = wishlistService;
     }
 
     @GetMapping
@@ -46,7 +53,8 @@ public class ProductController {
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(required = false) Boolean discounted,
             @RequestParam(required = false) String sort,
-            Model model) {
+            Model model, HttpSession session,
+            @ModelAttribute("message") String message) {
 
         List<ProductVariant> variants;
 
@@ -62,6 +70,16 @@ public class ProductController {
                             map -> map.values().stream().collect(Collectors.toList())));
         } else {
             variants = productVariantService.findUniqueVariantsByProductAndStorage();
+        }
+
+        // 🧠 Thêm danh sách wishlistIds nếu đã đăng nhập
+        Member user = (Member) session.getAttribute("loggedInUser");
+        if (user != null) {
+            Set<Integer> wishlistIds = wishlistService.getWishlistByUserId(user.getId())
+                    .stream()
+                    .map(ProductVariant::getVariantID)
+                    .collect(Collectors.toSet());
+            model.addAttribute("wishlistIds", wishlistIds);
         }
 
         // Sắp xếp
@@ -96,6 +114,9 @@ public class ProductController {
         model.addAttribute("sort", sort);
         model.addAttribute("isDiscounted", discounted != null ? discounted : false);
 
+        if (message != null && !message.isEmpty()) {
+            model.addAttribute("message", message); // thêm vào model
+        }
         return "views/user/products";
     }
 

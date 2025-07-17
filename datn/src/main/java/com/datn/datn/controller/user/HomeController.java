@@ -335,8 +335,8 @@ public class HomeController {
         return "views/shared/address";
     }
 
-    @GetMapping("/wishlist")
-    public String wishlist(Model model, HttpSession session) {
-        return "views/user/wishlist";
-    }
+    // @GetMapping("/wishlist")
+    // public String wishlist(Model model, HttpSession session) {
+    //     return "views/user/wishlist";
+    // }
 }
