@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Địa chỉ</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#e11d48',secondary:'#f97316'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/shared/footer.css">
+    <link rel="stylesheet" href="/css/shared/header.css">
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+      input:focus, textarea:focus {
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+      .password-toggle:hover {
+          cursor: pointer;
+      }
+    </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#3b82f6", secondary: "#64748b" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-[#f2f2f2] ">
+    <!-- Header -->
+    <div th:insert="views/shared/header :: siteHeader" style="margin-top: 140px;"></div>
+    <div class="flex justify-center items-center bg-gray-100 p-4">
+  <div class="w-full max-w-[1250px] bg-white rounded-2xl shadow-md overflow-hidden flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <aside class="w-full md:w-64 bg-gray-300 p-6">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800">TRANG TÀI KHOẢN</h2>
+        <p class="text-sm text-gray-600 mt-2">
+          Xin chào, <span class="text-primary font-medium">name !</span>
+        </p>
+      </div>
+
+      <nav class="space-y-1">
+        <a href="info" class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors">
+          Thông tin tài khoản
+        </a>
+        <a href="editInf" class="block py-2 px-3 text-gray-600 hover:text-primary hover:bg-blue-50 transition-colors">
+          Chỉnh sửa thông tin
+        </a>
+        <a href="address" class="block py-2 px-3 text-primary font-medium border-l-4 border-primary bg-blue-50">
+          Sổ địa chỉ
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 md:p-8">
+       <!-- Tiêu đề + nút -->
+      <div class="flex flex-col items-start mb-4">
+        <h2 class="text-xl font-semibold text-gray-800 -mt-2">ĐỊA CHỈ CỦA BẠN</h2>
+        <button id="openModalBtn" class="mt-2 bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded-md font-medium">
+          Thêm địa chỉ
+        </button>
+        <hr class="w-full mt-4 border-t border-gray-300">
+      </div>
+
+       <!-- Thông tin địa chỉ -->
+    <div class="relative space-y-2 text-base text-gray-800">
+      <p>
+        <span class="font-semibold">Họ tên:</span> test test 
+        <span class="text-green-600 text-xs font-medium " style="margin-left: 50px;">Địa chỉ mặc định</span>
+      </p>
+      <p><span class="font-semibold">Địa chỉ:</span> 12 Tôn Bản, Xã Ea Na, Huyện Krông Ana, Đắk Lắk, Vietnam</p>
+      <p><span class="font-semibold">Số điện thoại:</span> 0987654325</p>
+      <p><span class="font-semibold">Công ty:</span> thanhha</p>
+
+      <!-- Chỉnh sửa -->
+      <a href="" id="editAddressBtn" class="absolute right-0 top-0 text-blue-600 hover:underline text-sm font-medium">
+        Chỉnh sửa địa chỉ
+      </a>
+    </div>
+  </div>
+
+    <!-- Modal thêm địa chỉ -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"> 
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">THÊM ĐỊA CHỈ MỚI</h3>
+          <button id="closeModalBtn" class="text-2xl text-gray-600 hover:text-black font-bold">&times;</button>
+        </div>
+
+        <form class="space-y-4 text-sm text-gray-800">
+          <!-- Họ tên -->
+          <input type="text" placeholder="Họ tên"
+                class="w-full border border-gray-300 rounded-md px-4 py-2" />
+
+          <!-- Số điện thoại -->
+          <input type="text" placeholder="Số điện thoại"
+                class="w-full border border-gray-300 rounded-md px-4 py-2" />
+
+          <!-- Địa chỉ -->
+          <input type="text" placeholder="Địa chỉ"
+                class="w-full border border-gray-300 rounded-md px-4 py-2" />
+
+          <!-- Tỉnh/Quận/Phường -->
+          <div class="flex flex-col md:flex-row gap-4">
+            <select class="w-full border border-gray-300 rounded-md px-4 py-2">
+              <option>---</option>
+            </select>
+            <select class="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-100" disabled>
+              <option>Quận huyện</option>
+            </select>
+            <select class="w-full border border-gray-300 rounded-md px-4 py-2 bg-gray-100" disabled>
+              <option>Phường xã</option>
+            </select>
+          </div>
+
+          <!-- Checkbox -->
+          <label class="flex items-center mt-2">
+            <input type="checkbox" class="mr-2" />
+            Đặt là địa chỉ mặc định?
+          </label>
+
+          <!-- Nút hành động -->
+          <div class="flex justify-end gap-3 pt-2">
+            <button type="button"
+                    class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100">
+              Hủy
+            </button>
+            <button type="submit"
+                    class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white rounded-md font-medium">
+              Thêm địa chỉ
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+    
+    </main>
+    </div>
+    <!-- Footer -->
+   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 50px;"></div>
+</body> 
+</html>
+    <script>
+    const openBtn = document.getElementById('openModalBtn');
+const editBtn = document.getElementById('editAddressBtn'); // thêm dòng này
+const modal = document.getElementById('modal');
+const closeBtns = [
+  document.getElementById('closeModalBtn'),
+  document.getElementById('closeModalBtn2')
+];
+
+openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+editBtn.addEventListener('click', (e) => {
+  e.preventDefault(); // ngăn link nhảy trang
+  modal.classList.remove('hidden');
+});
+
+closeBtns.forEach(btn => {
+  btn.addEventListener('click', () => modal.classList.add('hidden'));
+});
+
+  </script>

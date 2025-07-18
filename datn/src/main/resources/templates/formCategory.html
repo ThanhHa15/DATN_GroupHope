@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quản lý danh mục</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 30px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+      }
+      form {
+        margin-top: 20px;
+      }
+      button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .edit-btn {
+        background-color: #2980b9;
+        color: white;
+      }
+      .delete-btn {
+        background-color: #e74c3c;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div th:replace="~{dashboard :: nav}"></div>
+    <!-- Đúng -->
+
+    <!-- Đúng -->
+
+    <h2>🗂️ Thêm danh mục</h2>
+    <form th:action="@{/categories/add}" method="post" th:object="${category}">
+      <input type="hidden" th:field="*{categoryID}" />
+      <label>Tên danh mục:</label><br />
+      <input type="text" th:field="*{name}" required /><br /><br />
+      <button type="submit">Lưu danh mục</button>
+    </form>
+
+    <h3>📋 Danh sách danh mục</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Tên danh mục</th>
+          <th>Sửa</th>
+          <th>Xóa</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="c, iterStat : ${categories}">
+          <td th:text="${iterStat.index + 1}"></td>
+          <td th:text="${c.name}"></td>
+          <td>
+            <a th:href="@{/categories/edit/{id}(id=${c.categoryID})}">
+              <button class="edit-btn" type="button">Sửa</button>
+            </a>
+          </td>
+          <td>
+            <a
+              th:href="@{/categories/delete/{id}(id=${c.categoryID})}"
+              th:onclick="'return confirm(\'Xóa danh mục?\')'"
+            >
+              <button class="delete-btn" type="button">Xóa</button>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
