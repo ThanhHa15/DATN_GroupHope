@@ -172,3 +172,4 @@ function updateQuantity(variantId, newQty) {
     })
     .catch((err) => alert("❌ " + err.message));
 }
+

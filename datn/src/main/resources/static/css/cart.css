@@ -1,0 +1,25 @@
+.notification {
+  background-color: #f0f9ff;
+  color: #0c4a6e;
+  border-left: 5px solid #0ea5e9;
+  padding: 12px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%); /* xuất phát từ bên phải */
+  opacity: 0;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  max-width: 300px;
+  font-weight: 500;
+}
+
+/* Khi hiện ra */
+.notification.show {    
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Khi ẩn đi */
+.notification.fade-out {
+  opacity: 0;
+  transform: translateX(100%);
+}

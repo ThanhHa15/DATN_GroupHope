@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.datn.datn.model.Member;
 import com.datn.datn.model.ProductSpecification;
 import com.datn.datn.model.ProductVariant;
 import com.datn.datn.service.ProductSpecificationService;
 import com.datn.datn.service.ProductVariantService;
+import com.datn.datn.service.WishlistService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/detail")
@@ -27,14 +31,18 @@ public class DetaiController {
 
         private final ProductSpecificationService productSpecificationService;
 
+        private final WishlistService wishlistService;
+
         public DetaiController(ProductVariantService productVariantService,
-                        ProductSpecificationService productSpecificationService) {
+                        ProductSpecificationService productSpecificationService,
+                        WishlistService wishlistService) {
                 this.productVariantService = productVariantService;
                 this.productSpecificationService = productSpecificationService;
+                this.wishlistService = wishlistService;
         }
 
         @GetMapping("/{id}")
-        public String detail(@PathVariable("id") Integer variantId, Model model) {
+        public String detail(@PathVariable("id") Integer variantId, Model model, HttpSession session) {
                 ProductVariant variant = productVariantService.getById(variantId);
 
                 if (variant == null) {
@@ -56,22 +64,26 @@ public class DetaiController {
                 List<ProductSpecification> specifications = productSpecificationService
                                 .getSpecificationsByProductId(variant.getProduct().getProductID());
 
-                // 👉 Tận dụng hàm có sẵn trong HomeController
                 List<ProductVariant> allUniqueVariants = productVariantService.findUniqueVariantsByProductAndStorage();
 
-                // 👉 Lọc: KHÔNG cùng productId (tức loại bỏ mọi phiên bản của sp đang xem),
-                // cùng danh mục
                 List<ProductVariant> otherProducts = allUniqueVariants.stream()
                                 .filter(pv -> !pv.getProduct().getProductID()
-                                                .equals(variant.getProduct().getProductID())) // ✅ KHÁC sản phẩm đang
-                                                                                              // xem
+                                                .equals(variant.getProduct().getProductID()))
                                 .filter(pv -> pv.getProduct().getCategory().getCategoryID()
-                                                .equals(variant.getProduct().getCategory().getCategoryID())) // ✅ CÙNG
-                                                                                                             // danh mục
+                                                .equals(variant.getProduct().getCategory().getCategoryID()))
                                 .limit(5)
-                                .collect(Collectors.toList()); 
+                                .collect(Collectors.toList());
 
-                // Đưa vào model
+                // ✅ Thêm wishlist nếu người dùng đã đăng nhập
+                Member user = (Member) session.getAttribute("loggedInUser");
+                if (user != null) {
+                        Set<Integer> wishlistIds = wishlistService.getWishlistByUserId(user.getId())
+                                        .stream()
+                                        .map(ProductVariant::getVariantID)
+                                        .collect(Collectors.toSet());
+                        model.addAttribute("wishlistIds", wishlistIds);
+                }
+
                 model.addAttribute("v", variant);
                 model.addAttribute("sameStorageVariants", sameStorageVariants);
                 model.addAttribute("uniqueVariantsByStorage", uniqueVariantsByStorage.values());

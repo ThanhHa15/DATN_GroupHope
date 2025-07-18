@@ -38,9 +38,11 @@
 </head>
 
 <body>
+
   <div th:fragment="siteHeader" class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <header class="header">
+      <link rel="stylesheet" th:href="@{/css/cart.css}" />
       <div class="header-container">
         <div class="logo-section">
           <div class="logo" style="margin-left: -37px">
@@ -66,14 +68,25 @@
               </button>
               <!-- // Dropdown menu  -->
               <div class="category-dropdown">
-                <a href="product"><i class="fas fa-mobile-alt"></i> Điện thoại</a>
-                <a href="#"><i class="fas fa-laptop"></i> Laptop</a>
-                <a href="#"><i class="fas fa-tablet-alt"></i> Tablet</a>
-                <a href="#"><i class="fas fa-headphones"></i> Phụ kiện</a>
-                <a href="#"><i class="fas fa-clock"></i> Đồng hồ</a>
-                <a href="#"><i class="fas fa-home"></i> Điện gia dụng</a>
-                <a href="#"><i class="fas fa-tv"></i> TV</a>
-                <a href="#"><i class="fas fa-gamepad"></i> Gaming</a>
+                <a href="/product">
+                  <i class="fas fa-mobile-alt"></i> Điện thoại
+                </a>
+                <a href="/audio">
+                  <i class="fas fa-headphones"></i> Âm thanh
+                </a>
+                <a href="/tablet">
+                  <i class="fas fa-tablet-alt"></i> Tablet
+                </a>
+                <a href="/accessories">
+                  <i class="fas fa-plug"></i> Phụ kiện
+                </a>
+                <a href="/watch">
+                  <i class="fas fa-clock"></i> Đồng hồ
+                </a>
+                <a href="/laptop">
+                  <i class="fas fa-laptop"></i> Laptop
+                </a>
+
               </div>
             </div>
             <!-- Search bar -->
@@ -182,6 +195,7 @@
           </div>
         </div>
       </div>
+      <script th:src="@{/js/cart.js}"></script>
     </header>
 
     <nav class="main-nav">
@@ -306,6 +320,7 @@
       </div>
     </nav>
   </div>
+  <div id="notification-container" style="position: fixed; top: 160px; right: 10px; z-index: 9999"></div>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     function handleLogout() {
