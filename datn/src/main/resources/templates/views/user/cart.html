@@ -1,339 +1,316 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Giỏ hàng</title>
-    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: { primary: "#e11d48", secondary: "#f97316" },
-            borderRadius: {
-              none: "0px",
-              sm: "4px",
-              DEFAULT: "8px",
-              md: "12px",
-              lg: "16px",
-              xl: "20px",
-              "2xl": "24px",
-              "3xl": "32px",
-              full: "9999px",
-              button: "8px",
-            },
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giỏ hàng</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: "#e11d48", secondary: "#f97316" },
+          borderRadius: {
+            none: "0px",
+            sm: "4px",
+            DEFAULT: "8px",
+            md: "12px",
+            lg: "16px",
+            xl: "20px",
+            "2xl": "24px",
+            "3xl": "32px",
+            full: "9999px",
+            button: "8px",
           },
         },
-      };
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="/css/shared/footer.css" />
-    <link rel="stylesheet" href="/css/shared/header.css" />
-    <link rel="stylesheet" href="/css/shared/chatbox.css" />
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/shared/footer.css" />
+  <link rel="stylesheet" href="/css/shared/header.css" />
+  <link rel="stylesheet" href="/css/shared/chatbox.css" />
 
-    <style>
-      :where([class^="ri-"])::before {
-        content: "\f3c2";
-      }
+  <style>
+    :where([class^="ri-"])::before {
+      content: "\f3c2";
+    }
 
-      body {
-        font-family: "Roboto", sans-serif;
-      }
+    body {
+      font-family: "Roboto", sans-serif;
+    }
 
-      .quantity-input::-webkit-inner-spin-button,
-      .quantity-input::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
+    .quantity-input::-webkit-inner-spin-button,
+    .quantity-input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
 
-      .quantity-input {
-        -moz-appearance: textfield;
-      }
-    </style>
-  </head>
+    .quantity-input {
+      -moz-appearance: textfield;
+    }
+  </style>
+</head>
 
-  <body class="bg-gray-50 min-h-screen" style="background-color: #f2f2f2">
-    <!-- Header -->
-    <div
-      th:insert="views/shared/header :: siteHeader"
-      style="margin-top: 160px"
-    ></div>
-    <!-- chatbox -->
-    <div th:insert="views/shared/chatbot :: siteChatbot"></div>
-    <main
-      class="container mx-auto mt-3 h-[auto] bg-white rounded-lg p-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]"
-      style="max-width: 1250px; margin-bottom: 60px"
-    >
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
-        <!-- Header -->
-        <div
-          class="grid grid-cols-12 border-b py-4 px-6 bg-gray-50 font-medium text-gray-700"
-        >
-          <div class="col-span-6">
-            <b class="text-lg">Thông tin sản phẩm</b>
+<body class="bg-gray-50 min-h-screen" style="background-color: #f2f2f2">
+  <!-- Header -->
+  <div th:insert="views/shared/header :: siteHeader" style="margin-top: 160px"></div>
+  <!-- chatbox -->
+  <div th:insert="views/shared/chatbot :: siteChatbot"></div>
+  <main class="container mx-auto mt-3 h-[auto] bg-white rounded-lg p-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]"
+    style="max-width: 1250px; margin-bottom: 60px">
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+      <!-- Header -->
+      <div class="grid grid-cols-12 border-b py-4 px-6 bg-gray-50 font-medium text-gray-700">
+        <div class="col-span-6">
+          <b class="text-lg">Thông tin sản phẩm</b>
+        </div>
+        <div class="col-span-2 text-center">
+          <b class="text-lg">Đơn giá</b>
+        </div>
+        <div class="col-span-2 text-center">
+          <b class="text-lg">Số lượng</b>
+        </div>
+        <div class="col-span-2 text-right">
+          <b class="text-lg">Thành tiền</b>
+        </div>
+      </div>
+
+      <!-- Danh sách sản phẩm -->
+      <div th:if="${cartItems != null and !cartItems.empty}">
+        <div th:each="cart : ${cartItems}" class="grid grid-cols-12 items-center py-6 px-6 border-b cart-item"
+          th:attr="data-variant-id=${cart.variant.variantID}">
+          <div class="col-span-6 flex items-center">
+            <img th:src="@{'/images/' + ${cart.variant.imagesno2}}" alt="Product image"
+              class="w-24 h-24 object-contain mr-4"
+              th:onerror="this.src='https://via.placeholder.com/120x120?text=No+Image'" />
+            <div>
+              <h2 class="font-medium text-gray-1000">
+                <span th:text="${cart.variant.product.productName}"></span>
+                <span th:text="' ' + ${cart.variant.storage}"></span>
+                <span> - Chính hãng VN/A</span>
+              </h2>
+              <p class="text-sm text-gray-700 mt-1" th:text="${cart.variant.color}"></p>
+              <button class="text-[#000f8f] text-sm mt-2 flex items-center remove-btn"
+                th:attr="data-variant-id=${cart.variant.variantID}">
+                <i class="ri-delete-bin-line mr-1"></i> <b>Xóa</b>
+              </button>
+            </div>
           </div>
-          <div class="col-span-2 text-center">
-            <b class="text-lg">Đơn giá</b>
+          <div class="col-span-2 text-center font-medium text-[#000f8f]">
+            <span th:if="${cart.variant.discountedPrice != null}">
+              <span
+                th:text="${#numbers.formatDecimal(cart.variant.discountedPrice, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+              <br />
+              <span class="text-gray-500 line-through text-sm"
+                th:text="${#numbers.formatDecimal(cart.variant.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+            </span>
+            <span th:unless="${cart.variant.discountedPrice != null}">
+              <span th:text="${#numbers.formatDecimal(cart.variant.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+            </span>
           </div>
-          <div class="col-span-2 text-center">
-            <b class="text-lg">Số lượng</b>
+          <div class="col-span-2 flex justify-center">
+            <div class="flex items-center">
+              <button
+                class="w-8 h-8 flex items-center justify-center bg-[#000f8f] text-white rounded-button decrease-btn"
+                th:attr="data-variant-id=${cart.variant.variantID}">
+                <i class="ri-subtract-line"></i>
+              </button>
+              <input type="text" th:value="${cart.quantity}"
+                class="quantity-input w-10 h-8 text-center border-none mx-1 bg-transparent" readonly />
+              <button
+                class="w-8 h-8 flex items-center justify-center bg-[#000f8f] text-white rounded-button increase-btn"
+                th:attr="data-variant-id=${cart.variant.variantID}">
+                <i class="ri-add-line"></i>
+              </button>
+            </div>
           </div>
-          <div class="col-span-2 text-right">
-            <b class="text-lg">Thành tiền</b>
+          <div class="col-span-2 text-right font-medium text-[#000f8f] item-total">
+            <span th:if="${cart.variant.discountedPrice != null}">
+              <span
+                th:text="${#numbers.formatDecimal(cart.variant.discountedPrice * cart.quantity, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+            </span>
+            <span th:unless="${cart.variant.discountedPrice != null}">
+              <span
+                th:text="${#numbers.formatDecimal(cart.variant.price * cart.quantity, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+            </span>
           </div>
         </div>
-
-        <!-- Danh sách sản phẩm -->
-        <div th:if="${cartItems != null and !cartItems.empty}">
-          <div
-            th:each="cart : ${cartItems}"
-            class="grid grid-cols-12 items-center py-6 px-6 border-b cart-item"
-            th:attr="data-variant-id=${cart.variant.variantID}"
-          >
-            <div class="col-span-6 flex items-center">
-              <img
-                th:src="@{'/images/' + ${cart.variant.imagesno2}}"
-                alt="Product image"
-                class="w-24 h-24 object-contain mr-4"
-                th:onerror="this.src='https://via.placeholder.com/120x120?text=No+Image'"
-              />
-              <div>
-                <h2 class="font-medium text-gray-1000">
-                  <span th:text="${cart.variant.product.productName}"></span>
-                  <span th:text="' ' + ${cart.variant.storage}"></span>
-                  <span> - Chính hãng VN/A</span>
-                </h2>
-                <p
-                  class="text-sm text-gray-700 mt-1"
-                  th:text="${cart.variant.color}"
-                ></p>
-                <button
-                  class="text-[#000f8f] text-sm mt-2 flex items-center remove-btn"
-                  th:attr="data-variant-id=${cart.variant.variantID}"
-                >
-                  <i class="ri-delete-bin-line mr-1"></i> <b>Xóa</b>
-                </button>
+        <div th:if="${cartItems != null and !cartItems.empty}"
+          class="bg-white rounded-lg shadow-sm p-6 md:w-1/3 float-right">
+          <div class="space-y-3 mb-2">
+            <div class="pt-3">
+              <div class="flex justify-between items-center">
+                <span class="text-lg font-medium">Tổng tiền:</span>
+                <span class="text-xl font-bold text-primary cart-total"
+                  th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
               </div>
-            </div>
-            <div class="col-span-2 text-center font-medium text-[#000f8f]">
-              <span th:if="${cart.variant.discountedPrice != null}">
-                <span
-                  th:text="${#numbers.formatDecimal(cart.variant.discountedPrice, 0, 'COMMA', 0, 'POINT') + '₫'}"
-                ></span>
-                <br />
-                <span
-                  class="text-gray-500 line-through text-sm"
-                  th:text="${#numbers.formatDecimal(cart.variant.price, 0, 'COMMA', 0, 'POINT') + '₫'}"
-                ></span>
-              </span>
-              <span th:unless="${cart.variant.discountedPrice != null}">
-                <span
-                  th:text="${#numbers.formatDecimal(cart.variant.price, 0, 'COMMA', 0, 'POINT') + '₫'}"
-                ></span>
-              </span>
-            </div>
-            <div class="col-span-2 flex justify-center">
-              <div class="flex items-center">
-                <button
-                  class="w-8 h-8 flex items-center justify-center bg-[#000f8f] text-white rounded-button decrease-btn"
-                  th:attr="data-variant-id=${cart.variant.variantID}"
-                >
-                  <i class="ri-subtract-line"></i>
-                </button>
-                <input
-                  type="text"
-                  th:value="${cart.quantity}"
-                  class="quantity-input w-10 h-8 text-center border-none mx-1 bg-transparent"
-                  readonly
-                />
-                <button
-                  class="w-8 h-8 flex items-center justify-center bg-[#000f8f] text-white rounded-button increase-btn"
-                  th:attr="data-variant-id=${cart.variant.variantID}"
-                >
-                  <i class="ri-add-line"></i>
-                </button>
-              </div>
-            </div>
-            <div
-              class="col-span-2 text-right font-medium text-[#000f8f] item-total"
-            >
-              <span th:if="${cart.variant.discountedPrice != null}">
-                <span
-                  th:text="${#numbers.formatDecimal(cart.variant.discountedPrice * cart.quantity, 0, 'COMMA', 0, 'POINT') + '₫'}"
-                ></span>
-              </span>
-              <span th:unless="${cart.variant.discountedPrice != null}">
-                <span
-                  th:text="${#numbers.formatDecimal(cart.variant.price * cart.quantity, 0, 'COMMA', 0, 'POINT') + '₫'}"
-                ></span>
-              </span>
             </div>
           </div>
-          <div
-            th:if="${cartItems != null and !cartItems.empty}"
-            class="bg-white rounded-lg shadow-sm p-6 md:w-1/3 float-right"
-          >
-            <div class="space-y-3 mb-2">
-              <div class="pt-3">
-                <div class="flex justify-between items-center">
-                  <span class="text-lg font-medium">Tổng tiền:</span>
-                  <span
-                    class="text-xl font-bold text-primary cart-total"
-                    th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT') + '₫'}"
-                  ></span>
-                </div>
-              </div>
-            </div>
-            <a
-              href="/checkout"
-              class="w-full bg-[#000f8f] text-white py-3 rounded-button font-medium hover:bg-yellow-500 block text-center whitespace-nowrap"
-            >
-              Thanh toán
-            </a>
-          </div>
-        </div>
-
-        <!-- Giỏ hàng trống -->
-        <div
-          th:if="${cartItems == null or cartItems.empty}"
-          class="text-center py-12"
-        >
-          <i class="ri-shopping-cart-line text-4xl text-gray-400 mb-4"></i>
-          <p class="text-gray-600">Giỏ hàng của bạn đang trống</p>
-          <a
-            href="/home"
-            class="mt-4 inline-block bg-[#000f8f] text-white px-6 py-2 rounded hover:bg-[#000f8f]/90 transition"
-          >
-            Tiếp tục mua sắm
+          <a href="/checkout"
+            class="w-full bg-[#000f8f] text-white py-3 rounded-button font-medium hover:bg-yellow-500 block text-center whitespace-nowrap">
+            Thanh toán
           </a>
         </div>
       </div>
 
-      <!-- Tổng tiền và nút thanh toán -->
-    </main>
-    <!-- Footer -->
-    <div th:insert="views/shared/footer :: footerFragment"></div>
-    <script id="quantity-control">
-      // Xử lý sự kiện cho các nút tăng/giảm số lượng
-      document.addEventListener("DOMContentLoaded", function () {
-        const minusBtns = document.querySelectorAll(
-          "button:has(.ri-subtract-line)"
-        );
-        const plusBtns = document.querySelectorAll("button:has(.ri-add-line)");
+      <!-- Giỏ hàng trống -->
+      <div th:if="${cartItems == null or cartItems.empty}" class="text-center py-12">
+        <i class="ri-shopping-cart-line text-4xl text-gray-400 mb-4"></i>
+        <p class="text-gray-600">Giỏ hàng của bạn đang trống</p>
+        <a href="/home"
+          class="mt-4 inline-block bg-[#000f8f] text-white px-6 py-2 rounded hover:bg-[#000f8f]/90 transition">
+          Tiếp tục mua sắm
+        </a>
+      </div>
+    </div>
 
-        minusBtns.forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const input = this.nextElementSibling;
-            let value = parseInt(input.value);
-            if (value > 1) {
-              input.value = value - 1;
-            }
-          });
-        });
+    <!-- Tổng tiền và nút thanh toán -->
+  </main>
+  <!-- Footer -->
+  <div th:insert="views/shared/footer :: footerFragment"></div>
+  <script id="quantity-control">
+    // Xử lý sự kiện cho các nút tăng/giảm số lượng
+    document.addEventListener("DOMContentLoaded", function () {
+      const minusBtns = document.querySelectorAll(
+        "button:has(.ri-subtract-line)"
+      );
+      const plusBtns = document.querySelectorAll("button:has(.ri-add-line)");
 
-        plusBtns.forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const input = this.previousElementSibling;
-            let value = parseInt(input.value);
-            input.value = value + 1;
-          });
-        });
-      });
-    </script>
-    <script th:src="@{/js/cart.js}"></script>
-    <script>
-      // Sử dụng lại các hàm từ file js của bạn
-      function updateCart() {
-        updateMiniCart();
-        updateCartCount();
-
-        // Cập nhật lại trang cart (nếu đang ở trang cart)
-        if (window.location.pathname === "/cart") {
-          window.location.reload();
-        }
-      }
-
-      // Xử lý sự kiện cho trang cart
-      document.addEventListener("DOMContentLoaded", function () {
-        // Xử lý nút xóa
-        document.querySelectorAll(".remove-btn").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const variantId = this.getAttribute("data-variant-id");
-            removeFromCart(variantId);
-          });
-        });
-
-        // Xử lý nút giảm số lượng
-        document.querySelectorAll(".decrease-btn").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const variantId = this.getAttribute("data-variant-id");
-            const input = this.nextElementSibling;
-            const newQty = parseInt(input.value) - 1;
-            updateQuantity(variantId, newQty);
-          });
-        });
-
-        // Xử lý nút tăng số lượng
-        document.querySelectorAll(".increase-btn").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const variantId = this.getAttribute("data-variant-id");
-            const input = this.previousElementSibling;
-            const newQty = parseInt(input.value) + 1;
-            updateQuantity(variantId, newQty);
-          });
+      minusBtns.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const input = this.nextElementSibling;
+          let value = parseInt(input.value);
+          if (value > 1) {
+            input.value = value - 1;
+          }
         });
       });
 
-      // Cập nhật các hàm từ file js để gọi updateCart() thay vì updateMiniCart()
-      function removeFromCart(variantId) {
-        if (!confirm("Bạn có chắc muốn xóa sản phẩm này không?")) return;
+      plusBtns.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const input = this.previousElementSibling;
+          let value = parseInt(input.value);
+          input.value = value + 1;
+        });
+      });
+    });
+  </script>
+  <script th:src="@{/js/cart.js}"></script>
+  <script>
+    // Sử dụng lại các hàm từ file js của bạn
+    function updateCart() {
+      updateMiniCart();
+      updateCartCount();
 
-        fetch("/api/cart/remove", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: `variantId=${variantId}`,
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Lỗi khi xóa sản phẩm");
-            updateCart();
-          })
-          .catch((err) => alert("❌ " + err.message));
+      // Cập nhật lại trang cart (nếu đang ở trang cart)
+      if (window.location.pathname === "/cart") {
+        window.location.reload();
       }
+    }
 
-      function updateQuantity(variantId, newQty) {
-        if (newQty < 1) {
+    // Xử lý sự kiện cho trang cart
+    document.addEventListener("DOMContentLoaded", function () {
+      // Xử lý nút xóa
+      document.querySelectorAll(".remove-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const variantId = this.getAttribute("data-variant-id");
           removeFromCart(variantId);
-          return;
-        }
+        });
+      });
 
-        fetch("/api/cart/update", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: `variantId=${variantId}&quantity=${newQty}`,
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Không thể cập nhật số lượng");
-            updateCart();
+      // Xử lý nút giảm số lượng
+      document.querySelectorAll(".decrease-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const variantId = this.getAttribute("data-variant-id");
+          const input = this.nextElementSibling;
+          const newQty = parseInt(input.value) - 1;
+          updateQuantity(variantId, newQty);
+        });
+      });
+
+      // Xử lý nút tăng số lượng
+      document.querySelectorAll(".increase-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const variantId = this.getAttribute("data-variant-id");
+          const input = this.previousElementSibling;
+          const newQty = parseInt(input.value) + 1;
+          updateQuantity(variantId, newQty);
+        });
+      });
+    });
+
+    // Cập nhật các hàm từ file js để gọi updateCart() thay vì updateMiniCart()
+    function removeFromCart(variantId) {
+      Swal.fire({
+        title: 'Xác nhận xóa?',
+        text: 'Bạn có chắc muốn xóa sản phẩm này không?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch("/api/cart/remove", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `variantId=${variantId}`,
           })
-          .catch((err) => alert("❌ " + err.message));
+            .then((res) => {
+              if (!res.ok) throw new Error("Lỗi khi xóa sản phẩm");
+              return res.text();
+            })
+            .then(() => {
+              updateMiniCart();
+              updateCartCount();
+              Swal.fire({
+                icon: 'success',
+                title: 'Đã xóa sản phẩm',
+                showConfirmButton: false,
+                timer: 1200
+              });
+            })
+            .catch((err) => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: err.message
+              });
+            });
+        }
+      });
+    }
+
+
+    function updateQuantity(variantId, newQty) {
+      if (newQty < 1) {
+        removeFromCart(variantId);
+        return;
       }
-    </script>
-  </body>
+
+      fetch("/api/cart/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `variantId=${variantId}&quantity=${newQty}`,
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Không thể cập nhật số lượng");
+          updateCart();
+        })
+        .catch((err) => alert("❌ " + err.message));
+    }
+  </script>
+</body>
+
 </html>

@@ -71,7 +71,16 @@ function updateCartCount() {
       if (el) el.textContent = count;
     });
 }
+function updateCartCountUI(count) {
+  const el = document.querySelector(".cart-count");
+  if (el) el.textContent = count;
 
+  // Cập nhật cả tiêu đề giỏ hàng nếu có
+  const cartTitle = document.querySelector(".cart-title");
+  if (cartTitle) {
+    cartTitle.textContent = `Giỏ hàng (${count})`;
+  }
+}
 function updateMiniCart() {
   fetch("/api/cart/items")
     .then((response) => {
@@ -98,24 +107,25 @@ function updateMiniCart() {
             <div class="text-xl font-semibold text-gray-800">Chưa có sản phẩm</div>
             <p class="text-sm text-gray-500 mt-1">Giỏ hàng của bạn đang trống</p>
           </div>
-
         `;
         return;
       }
 
       let total = 0;
+      let totalQuantity = 0;
 
       items.forEach((item) => {
         const imageUrl = item.image
           ? `/images/${item.image}`
-          : "https://via.placeholder.com/60x60?text=No+Image";
+          : "https://via.placeholder.com/40x40?text=No+Image";
         const itemTotal = item.price * item.quantity;
         total += itemTotal;
+        totalQuantity += item.quantity;
 
         container.innerHTML += `
           <div class="flex gap-3 border-b pb-3 mb-3" data-variant-id="${item.variantId
           }">
-<img src="${imageUrl}" class="w-12 h-12 object-cover rounded" />
+            <img src="${imageUrl}" class="w-15 h-20 rounded" />
             <div class="flex-1">
               <div class="flex justify-between">
                 <p class="font-semibold text-sm text-black">
@@ -124,9 +134,13 @@ function updateMiniCart() {
                 </p>
                 <button
                   onclick="removeFromCart(${item.variantId})"
-                  class="text-gray-400 hover:text-red-600 focus:outline-none"
+                  class="text-gray-400 hover:text-red-600 focus:outline-none transition-colors"
                   type="button"
-                >Xóa</button>
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
               </div>
               
               <div class="flex justify-between items-center mt-2">
@@ -141,7 +155,7 @@ function updateMiniCart() {
                 <div class="text-red-600 font-bold text-right text-sm" id="item-total-${item.variantId
           }">
                   ${formatCurrency(itemTotal)}
-                </div>
+</div>
               </div>
             </div>
           </div>
@@ -150,14 +164,44 @@ function updateMiniCart() {
 
       container.innerHTML += `
         <div class="flex justify-between font-semibold text-base mt-4 mb-4">
-          <span class="text-black">Tổng tiền:</span>
+          <span class="text-black">Tổng (${totalQuantity} sản phẩm):</span>
           <span class="text-red-600">${formatCurrency(total)}</span>
         </div>
         <a href="/checkout" class="block w-full text-center bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
           Thanh toán
         </a>
       `;
+
+      updateCartCount(totalQuantity);
     });
+}
+
+function updateCartCount(count) {
+  // Nếu count không được truyền vào, thì gọi API để lấy
+  if (count === undefined) {
+    fetch("/api/cart/count")
+      .then((response) => response.json())
+      .then((data) => {
+        // Giả sử backend trả về { count: 0 }
+        updateCartCountUI(data.count);
+      });
+  } else {
+    updateCartCountUI(count);
+  }
+}
+
+function updateCartCountUI(count) {
+  const el = document.querySelector(".cart-count");
+  if (el) el.textContent = count;
+
+  const cartTitle = document.querySelector(".cart-title");
+  if (cartTitle) {
+    if (count === 0) {
+      cartTitle.textContent = "Chưa có sản phẩm";
+    } else {
+      cartTitle.textContent = `Giỏ hàng (${count})`;
+    }
+  }
 }
 function formatCurrency(number) {
   return new Intl.NumberFormat("vi-VN", {
@@ -172,25 +216,49 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function removeFromCart(variantId) {
-  if (!confirm("Bạn có chắc muốn xóa sản phẩm này không?")) return;
-
-  fetch("/api/cart/remove", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: `variantId=${variantId}`,
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Lỗi khi xóa sản phẩm");
-      return res.text();
-    })
-    .then(() => {
-      updateMiniCart();
-      updateCartCount();
-    })
-    .catch((err) => alert("❌ " + err.message));
+  Swal.fire({
+    title: 'Xác nhận xóa?',
+    text: 'Bạn có chắc muốn xóa sản phẩm này không?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Xóa',
+    cancelButtonText: 'Hủy'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch("/api/cart/remove", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `variantId=${variantId}`,
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Lỗi khi xóa sản phẩm");
+          return res.text();
+        })
+        .then(() => {
+          updateMiniCart();
+          updateCartCount();
+          Swal.fire({
+            icon: 'success',
+            title: 'Đã xóa sản phẩm',
+            showConfirmButton: false,
+            timer: 1200
+          });
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: err.message
+          });
+        });
+    }
+  });
 }
+
 
 function updateQuantity(variantId, newQty) {
   fetch("/api/cart/update", {
