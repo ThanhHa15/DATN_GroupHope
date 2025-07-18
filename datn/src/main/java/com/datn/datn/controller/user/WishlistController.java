@@ -15,11 +15,13 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,27 +39,33 @@ public class WishlistController {
     private ProductVariantRepository productVariantRepository;
 
     @PostMapping("/add")
-    public String toggleWishlist(@RequestParam int variantId,
-            HttpSession session,
-            RedirectAttributes redirectAttributes,
-            HttpServletRequest request) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> toggleWishlist(@RequestParam int variantId,
+            HttpSession session) {
         Member user = (Member) session.getAttribute("loggedInUser");
+        Map<String, Object> response = new HashMap<>();
+
         if (user == null) {
-            return "redirect:/login";
+            response.put("message", "Bạn cần đăng nhập để thêm yêu thích!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
         ProductVariant variant = productVariantRepository.findById(variantId).orElse(null);
         if (variant != null) {
             boolean added = wishlistService.toggleWishlist(user, variant);
             if (added) {
-                redirectAttributes.addFlashAttribute("message", "Đã thêm vào danh sách yêu thích!");
+                response.put("status", "added");
+                response.put("message", "Đã thêm vào danh sách yêu thích!");
             } else {
-                redirectAttributes.addFlashAttribute("message", "Đã xóa khỏi danh sách yêu thích!");
+                response.put("status", "removed");
+                response.put("message", "Đã xóa khỏi danh sách yêu thích!");
             }
+        } else {
+            response.put("message", "Sản phẩm không tồn tại!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        String referer = request.getHeader("Referer");
-        return "redirect:" + (referer != null ? referer : "/products");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/wishlist")

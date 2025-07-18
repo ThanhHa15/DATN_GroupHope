@@ -76,7 +76,14 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model, HttpSession session,
-            @ModelAttribute("loginSuccess") String loginSuccess) {
+            @ModelAttribute("loginSuccess") String loginSuccess,
+            @ModelAttribute("message") String message,
+            @ModelAttribute("type") String type) {
+
+        if (message != null && !message.isEmpty()) {
+            model.addAttribute("message", message);
+            model.addAttribute("type", (type != null && !type.isEmpty()) ? type : "success");
+        }
 
         // Gán thông báo đăng nhập (nếu có) từ flash attribute
         if (loginSuccess != null && !loginSuccess.isEmpty()) {

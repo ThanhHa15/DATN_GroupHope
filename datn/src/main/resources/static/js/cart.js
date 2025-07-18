@@ -91,7 +91,14 @@ function updateMiniCart() {
 
       if (items.length === 0) {
         container.innerHTML = `
-          <div class="text-center text-gray-500 text-sm py-4">Chưa có sản phẩm</div>
+          <div class="flex flex-col items-center justify-center py-6 text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7a1 1 0 00.9 1.5H19M7 13l.5 2m6.5-2l1 2m-9 4h.01M17 17h.01"/>
+            </svg>
+            <div class="text-xl font-semibold text-gray-800">Chưa có sản phẩm</div>
+            <p class="text-sm text-gray-500 mt-1">Giỏ hàng của bạn đang trống</p>
+          </div>
+
         `;
         return;
       }
@@ -106,16 +113,14 @@ function updateMiniCart() {
         total += itemTotal;
 
         container.innerHTML += `
-          <div class="flex gap-3 border-b pb-3 mb-3" data-variant-id="${
-            item.variantId
+          <div class="flex gap-3 border-b pb-3 mb-3" data-variant-id="${item.variantId
           }">
 <img src="${imageUrl}" class="w-12 h-12 object-cover rounded" />
             <div class="flex-1">
               <div class="flex justify-between">
                 <p class="font-semibold text-sm text-black">
-                  ${item.productName} ${item.storage || ""} - ${
-          item.color || ""
-        }
+                  ${item.productName} ${item.storage || ""} - ${item.color || ""
+          }
                 </p>
                 <button
                   onclick="removeFromCart(${item.variantId})"
@@ -126,19 +131,15 @@ function updateMiniCart() {
               
               <div class="flex justify-between items-center mt-2">
                 <div class="flex items-center border rounded">
-                  <button class="px-2 text-gray-600 hover:bg-gray-100" onclick="updateQuantity(${
-                    item.variantId
-                  }, ${item.quantity - 1})">-</button>
-                  <span class="px-2 text-black" id="qty-${item.variantId}">${
-          item.quantity
-        }</span>
-                  <button class="px-2 text-gray-600 hover:bg-gray-100" onclick="updateQuantity(${
-                    item.variantId
-                  }, ${item.quantity + 1})">+</button>
+                  <button class="px-2 text-gray-600 hover:bg-gray-100" onclick="updateQuantity(${item.variantId
+          }, ${item.quantity - 1})">-</button>
+                  <span class="px-2 text-black" id="qty-${item.variantId}">${item.quantity
+          }</span>
+                  <button class="px-2 text-gray-600 hover:bg-gray-100" onclick="updateQuantity(${item.variantId
+          }, ${item.quantity + 1})">+</button>
                 </div>
-                <div class="text-red-600 font-bold text-right text-sm" id="item-total-${
-                  item.variantId
-                }">
+                <div class="text-red-600 font-bold text-right text-sm" id="item-total-${item.variantId
+          }">
                   ${formatCurrency(itemTotal)}
                 </div>
               </div>
@@ -199,7 +200,7 @@ function updateQuantity(variantId, newQty) {
     },
     body: `variantId=${variantId}&quantity=${newQty}`,
   })
-.then((res) => {
+    .then((res) => {
       if (!res.ok) throw new Error("Không thể cập nhật số lượng");
       return res.text();
     })
