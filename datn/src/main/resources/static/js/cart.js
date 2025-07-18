@@ -1,3 +1,39 @@
+function showNotification(message, type = "success") {
+  const container = document.getElementById("notification-container");
+  if (!container) return;
+
+  const notif = document.createElement("div");
+  notif.className = "notification";
+
+  // Tạo phần HTML bên trong với icon nếu là success
+  let iconHtml = "";
+  if (type === "success") {
+    iconHtml = `<img src="/images/sc.png" alt="success" class="w-6 h-6 mr-2 inline-block" />`;
+  }
+
+  if (type === "error") {
+    notif.style.backgroundColor = "#fee2e2";
+    notif.style.color = "#991b1b";
+    notif.style.borderLeftColor = "#dc2626";
+  }
+
+  notif.innerHTML = iconHtml + message;
+
+  container.appendChild(notif);
+
+  // Hiện ra
+  setTimeout(() => {
+    notif.classList.add("show");
+  }, 50);
+
+  // Tự ẩn
+  setTimeout(() => {
+    notif.classList.remove("show");
+    notif.classList.add("fade-out");
+    setTimeout(() => container.removeChild(notif), 500);
+  }, 2500);
+}
+
 function addToCart(button) {
   const variantId = button.getAttribute("data-variant-id");
 
@@ -17,12 +53,13 @@ function addToCart(button) {
       return response.text(); // OK
     })
     .then((data) => {
-      alert("✅ Đã thêm sản phẩm vào giỏ hàng");
+      showNotification("Đã thêm sản phẩm vào giỏ hàng");
+
       updateCartCount();
       updateMiniCart();
     })
     .catch((error) => {
-      alert("❌ Lỗi: " + error.message);
+      showNotification("❌ Lỗi: " + error.message, "error");
     });
 }
 
@@ -72,7 +109,7 @@ function updateMiniCart() {
           <div class="flex gap-3 border-b pb-3 mb-3" data-variant-id="${
             item.variantId
           }">
-            <img src="${imageUrl}" class="w-12 h-12 object-cover rounded" />
+<img src="${imageUrl}" class="w-12 h-12 object-cover rounded" />
             <div class="flex-1">
               <div class="flex justify-between">
                 <p class="font-semibold text-sm text-black">
@@ -162,7 +199,7 @@ function updateQuantity(variantId, newQty) {
     },
     body: `variantId=${variantId}&quantity=${newQty}`,
   })
-    .then((res) => {
+.then((res) => {
       if (!res.ok) throw new Error("Không thể cập nhật số lượng");
       return res.text();
     })
@@ -172,4 +209,3 @@ function updateQuantity(variantId, newQty) {
     })
     .catch((err) => alert("❌ " + err.message));
 }
-
