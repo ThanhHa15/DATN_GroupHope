@@ -1,7 +1,11 @@
 package com.datn.datn.controller.user;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,9 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.datn.datn.model.Cart;
 import com.datn.datn.model.Category;
 import com.datn.datn.model.Member;
 import com.datn.datn.model.ProductVariant;
+import com.datn.datn.repository.CartRepository;
 import com.datn.datn.repository.MemberRepository;
 import com.datn.datn.model.Product;
 import com.datn.datn.service.CategoryService;
@@ -43,6 +49,9 @@ public class HomeController {
     private EmailService emailService;
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     public HomeController(ProductVariantService productVariantService) {
         this.productVariantService = productVariantService;
@@ -218,6 +227,28 @@ public class HomeController {
 
     @GetMapping("/cart")
     public String cart(Model model, HttpSession session) {
+        Member user = (Member) session.getAttribute("loggedInUser");
+        model.addAttribute("loggedInUser", user);
+
+        List<Cart> items = new ArrayList<>();
+        BigDecimal total = BigDecimal.ZERO;
+
+        if (user != null) {
+            items = cartRepository.findByMember(user);
+
+            for (Cart c : items) {
+                ProductVariant v = c.getVariant();
+                BigDecimal price = v.getDiscountedPrice() != null
+                                    ? v.getDiscountedPrice()
+                                    : BigDecimal.valueOf(v.getPrice());
+                BigDecimal sub = price.multiply(BigDecimal.valueOf(c.getQuantity()));
+                total = total.add(sub);
+            }
+        }
+
+        model.addAttribute("cartItems", items);
+        model.addAttribute("total", total);
+
         return "views/user/cart";
     }
 
@@ -335,8 +366,127 @@ public class HomeController {
         return "views/shared/address";
     }
 
-    // @GetMapping("/wishlist")
-    // public String wishlist(Model model, HttpSession session) {
-    //     return "views/user/wishlist";
-    // }
+    @PostMapping("/api/cart/add")
+    @ResponseBody
+    public ResponseEntity<?> addToCart(
+            @RequestParam Integer variantId,
+            @RequestParam(defaultValue = "1") int quantity,
+            HttpSession session) {
+        
+        Member loggedInUser = (Member) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vui lòng đăng nhập");
+        }
+        
+        Optional<ProductVariant> variantOpt = productVariantRepository.findById(variantId);
+        if (variantOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
+        }
+        
+        ProductVariant variant = variantOpt.get();
+        
+        // Kiểm tra nếu sản phẩm đã có trong giỏ
+        Optional<Cart> existingCart = cartRepository.findByMemberAndVariant(loggedInUser, variant);
+        
+        if (existingCart.isPresent()) {
+            // Cập nhật số lượng nếu đã có
+            Cart cart = existingCart.get();
+            cart.setQuantity(cart.getQuantity() + quantity);
+            cartRepository.save(cart);
+        } else {
+            // Thêm mới vào giỏ
+            Cart cart = new Cart();
+            cart.setMember(loggedInUser);
+            cart.setVariant(variant);
+            cart.setQuantity(quantity);
+            cartRepository.save(cart);
+        }
+        
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping("/api/cart/items")
+    @ResponseBody
+    public ResponseEntity<?> getCartItems(HttpSession session) {
+        Member loggedInUser = (Member) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Chưa đăng nhập");
+        }
+
+        List<Cart> cartItems = cartRepository.findByMember(loggedInUser);
+
+        // Duyệt và build dữ liệu đơn giản để gửi về cho client
+        List<Map<String, Object>> items = new ArrayList<>();
+
+        for (Cart cart : cartItems) {
+            ProductVariant variant = cart.getVariant();
+            Product product = variant.getProduct();
+
+            Map<String, Object> item = new HashMap<>();
+            item.put("variantId", variant.getVariantID()); // cần để JS gọi xóa
+
+            item.put("productName", product.getProductName());
+            item.put("storage", variant.getStorage());
+            item.put("color", variant.getColor());
+            item.put("image", variant.getImagesno2());
+            item.put("price", variant.getDiscountedPrice() != null ? variant.getDiscountedPrice() : variant.getPrice());
+            item.put("quantity", cart.getQuantity());
+
+            items.add(item);
+        }
+
+        return ResponseEntity.ok(items);
+    }
+    @PostMapping("/api/cart/remove")
+@ResponseBody
+public ResponseEntity<?> removeFromCart(
+        @RequestParam("variantId") Integer variantId,
+        HttpSession session) {
+
+    Member loggedInUser = (Member) session.getAttribute("loggedInUser");
+    if (loggedInUser == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập");
+    }
+
+    Optional<ProductVariant> variantOpt = productVariantRepository.findById(variantId);
+    if (variantOpt.isEmpty()) {
+        return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
+    }
+
+    Optional<Cart> existingCart = cartRepository.findByMemberAndVariant(loggedInUser, variantOpt.get());
+    if (existingCart.isPresent()) {
+        cartRepository.delete(existingCart.get());
+    }
+
+    return ResponseEntity.ok().build();
+}
+@PostMapping("/api/cart/update")
+@ResponseBody
+public ResponseEntity<?> updateCartItem(
+        @RequestParam("variantId") Integer variantId,
+        @RequestParam("quantity") int quantity,
+        HttpSession session) {
+
+    Member loggedInUser = (Member) session.getAttribute("loggedInUser");
+    if (loggedInUser == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập");
+    }
+
+    Optional<ProductVariant> variantOpt = productVariantRepository.findById(variantId);
+    if (variantOpt.isEmpty()) {
+        return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
+    }
+
+    Optional<Cart> cartOpt = cartRepository.findByMemberAndVariant(loggedInUser, variantOpt.get());
+    if (cartOpt.isPresent()) {
+        if (quantity <= 0) {
+            cartRepository.delete(cartOpt.get());
+        } else {
+            Cart cart = cartOpt.get();
+            cart.setQuantity(quantity);
+            cartRepository.save(cart);
+        }
+    }
+
+    return ResponseEntity.ok().build();
+}
 }
