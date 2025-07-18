@@ -176,31 +176,38 @@ function updateMiniCart() {
     });
 }
 
+function updateCartCountUI(count) {
+  // Đảm bảo count luôn là số, mặc định 0 nếu undefined/null
+  const displayCount = Number(count) || 0;
+
+  // Cập nhật tất cả các phần tử .cart-count
+  document.querySelectorAll(".cart-count").forEach((el) => {
+    el.textContent = displayCount;
+  });
+
+  // Cập nhật các phần tử .cart-title
+  document.querySelectorAll(".cart-title").forEach((cartTitle) => {
+    cartTitle.innerHTML = `Giỏ hàng (<span class="cart-count">${displayCount}</span>)`;
+  });
+}
+
+// Cập nhật hàm updateCartCount để đảm bảo luôn truyền số
 function updateCartCount(count) {
   // Nếu count không được truyền vào, thì gọi API để lấy
   if (count === undefined) {
     fetch("/api/cart/count")
       .then((response) => response.json())
       .then((data) => {
-        // Giả sử backend trả về { count: 0 }
-        updateCartCountUI(data.count);
+        // Truyền data.count hoặc 0 nếu không có
+        updateCartCountUI(data.count || 0);
+      })
+      .catch(() => {
+        // Nếu có lỗi khi gọi API, vẫn hiển thị 0
+        updateCartCountUI(0);
       });
   } else {
-    updateCartCountUI(count);
-  }
-}
-
-function updateCartCountUI(count) {
-  const el = document.querySelector(".cart-count");
-  if (el) el.textContent = count;
-
-  const cartTitle = document.querySelector(".cart-title");
-  if (cartTitle) {
-    if (count === 0) {
-      cartTitle.textContent = "Chưa có sản phẩm";
-    } else {
-      cartTitle.textContent = `Giỏ hàng (${count})`;
-    }
+    // Truyền count hoặc 0 nếu count là undefined/null
+    updateCartCountUI(count || 0);
   }
 }
 function formatCurrency(number) {
@@ -241,12 +248,8 @@ function removeFromCart(variantId) {
         .then(() => {
           updateMiniCart();
           updateCartCount();
-          Swal.fire({
-            icon: 'success',
-            title: 'Đã xóa sản phẩm',
-            showConfirmButton: false,
-            timer: 1200
-          });
+          // ✅ Xóa sản phẩm khỏi DOM
+          document.getElementById(`cart-item-${variantId}`)?.remove();
         })
         .catch((err) => {
           Swal.fire({
@@ -260,7 +263,15 @@ function removeFromCart(variantId) {
 }
 
 
+
 function updateQuantity(variantId, newQty) {
+  if (newQty < 1) {
+    // Nếu số lượng nhỏ hơn 1 thì xóa luôn, KHÔNG hỏi xác nhận
+    removeFromCart(variantId);
+    return;
+  }
+
+  // Nếu số lượng hợp lệ, thì cập nhật
   fetch("/api/cart/update", {
     method: "POST",
     headers: {
@@ -278,3 +289,4 @@ function updateQuantity(variantId, newQty) {
     })
     .catch((err) => alert("❌ " + err.message));
 }
+
