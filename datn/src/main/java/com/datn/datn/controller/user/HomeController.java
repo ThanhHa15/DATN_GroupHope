@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +31,7 @@ import com.datn.datn.model.Member;
 import com.datn.datn.model.ProductVariant;
 import com.datn.datn.repository.CartRepository;
 import com.datn.datn.repository.MemberRepository;
+import com.datn.datn.repository.ProductVariantRepository;
 import com.datn.datn.model.Product;
 import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.EmailService;
@@ -49,6 +52,9 @@ public class HomeController {
     private EmailService emailService;
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private ProductVariantRepository productVariantRepository;
 
     @Autowired
     private CartRepository cartRepository;
