@@ -793,7 +793,7 @@
 
               <div class="flex items-center justify-between">
                 <div>
-                  <<<<<<< HEAD <!-- Nếu có giảm -->
+                  <!-- Nếu có giảm -->
                     <span
                       th:if="${product.discountedPrice != null and product.price != null and product.discountedPrice < product.price}"
                       class="flex items-center gap-2">
@@ -812,13 +812,7 @@
                       <span class="text-lg font-bold text-red-600"
                         th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
                     </span>
-                    =======
-                    <span class="text-lg font-bold text-red-600"
-                      th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}">
-                      33.990.000₫
-                    </span>
-                    <span class="text-sm text-gray-500 line-through ml-2 ">34.990.000₫</span>
-                    >>>>>>> master
+                  
                 </div>
 
                 <!-- Fallback cho mobile -->
@@ -827,7 +821,7 @@
                   <i class="ri-shopping-cart-line"></i>
                 </button>
               </div>
-              <<<<<<< HEAD=======>>>>>>> master
+              
             </div>
 
             <!-- Overlay hover -->
@@ -836,7 +830,7 @@
             </div>
           </div>
 
-          <<<<<<< HEAD <!-- Nếu không có sản phẩm -->
+          <!-- Nếu không có sản phẩm -->
             <div th:if="${#lists.isEmpty(products)}" class="w-full text-center py-12 " style="margin-left: 500px;">
               <img
                 src="https://i.postimg.cc/nrf4Qjsw/pngtree-business-web-error-404-concept-illustration-png-image-3507632-removebg-preview.png"
@@ -853,19 +847,7 @@
         </button>
       </div>
 
-      =======
-      <!-- Hover overlay effect -->
-      <div
-        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300 pointer-events-none">
-      </div>
-    </div>
-    </div>
-    <!-- Nút "Xem tất cả" sẽ dẫn đến trang danh sách sản phẩm khác -->
-    <button class="xem-tat-ca-btn" style="margin-top: 20px">
-      <a href="products">Xem toàn bộ sản phẩm</a>
-      <i class="arrow-icon fas fa-arrow-right"></i>
-    </button>
-    >>>>>>> master
+    
     </div>
   </section>
 
