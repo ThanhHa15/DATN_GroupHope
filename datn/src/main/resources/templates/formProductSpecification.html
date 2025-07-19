@@ -117,7 +117,9 @@
 </head>
 
 <body>
-  <div th:replace="~{dashboard :: nav}"></div>
+  <div style="margin-top: 30px; margin-left: 18px;">
+    <div th:replace="~{dashboard :: nav}" ></div>
+  </div>
   <h2>Thêm thông số kỹ thuật</h2>
 
   <form th:action="@{/specification/save}" method="post" enctype="multipart/form-data" accept-charset="UTF-8">

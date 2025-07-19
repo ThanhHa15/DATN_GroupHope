@@ -60,6 +60,11 @@
 </head>
 
 <body>
+    <div style="margin-top: 25px; margin-left: -135px; scale: 0.8;">
+        <div th:replace="~{dashboard :: nav}"></div>
+    </div>
+
+
     <div class="container mt-4">
         <h2 class="mb-4 text-primary fw-bold">Quản lý nhân viên</h2>
 
@@ -240,7 +245,7 @@
                         <td
                             th:text="${emp.birthday != null ? #temporals.format(emp.birthday, 'MM/dd/yyyy') : 'Chưa cập nhật'}">
                         </td>
-                        
+
 
                         <td>
                             <span th:if="${emp.role == 'ADMIN'}" class="badge bg-primary">Quản Lý</span>
