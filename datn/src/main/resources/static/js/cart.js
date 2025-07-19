@@ -36,6 +36,8 @@ function showNotification(message, type = "success") {
 
 function addToCart(button) {
   const variantId = button.getAttribute("data-variant-id");
+  // Lấy số lượng từ input (thêm dòng này)
+  const quantity = document.getElementById("quantity")?.value || 1;
 
   // Kiểm tra số lượng loại sản phẩm hiện có
   fetch("/api/cart/items")
@@ -55,13 +57,13 @@ function addToCart(button) {
         return Promise.reject(new Error("Đạt giới hạn 10 loại sản phẩm"));
       }
 
-      // Nếu OK thì thêm vào giỏ
+      // Nếu OK thì thêm vào giỏ (sửa quantity=1 thành quantity=${quantity})
       return fetch("/api/cart/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `variantId=${variantId}&quantity=1`,
+        body: `variantId=${variantId}&quantity=${quantity}`,
       });
     })
     .then((response) => {
@@ -289,6 +291,8 @@ function removeFromCart(variantId) {
           updateCartCount();
           // ✅ Xóa sản phẩm khỏi DOM
           document.getElementById(`cart-item-${variantId}`)?.remove();
+          // ✅ Hiển thị thông báo xóa thành công
+          showNotification("Đã xóa sản phẩm khỏi giỏ hàng");
         })
         .catch((err) => {
           Swal.fire({

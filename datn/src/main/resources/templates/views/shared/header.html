@@ -93,15 +93,39 @@
 
               </div>
             </div>
+
             <!-- Search bar -->
-            <div class="flex items-center w-full max-w-md rounded-md overflow-hidden bg-white shadow"
-              style="margin-left: 20px">
-              <input type="text" placeholder="Bạn cần tìm gì..."
-                class="w-full px-4 py-2 text-black focus:outline-none" />
-              <button class="bg-white px-4 py-2 hover:bg-[#ffc400] transition duration-200 group" title="Tìm kiếm">
-                <i class="fa-solid fa-magnifying-glass text-[#000f8f] group-hover:text-black"></i>
-              </button>
+            <style>
+              #suggestion-box {
+                max-height: 300px;
+                overflow-y: auto;
+                width: 100%;
+                top: 100%;
+                left: 0;
+              }
+
+              .suggestion-item {
+                transition: background-color 0.2s;
+              }
+            </style>
+            <div class="relative w-full max-w-md" style="margin-left: 20px;">
+              <form id="search-form" th:action="@{/products}" method="get"
+                class="flex items-center rounded-md overflow-hidden bg-white shadow">
+                <input type="text" name="keyword" placeholder="Bạn cần tìm gì..."
+                  class="w-full px-4 py-2 text-black focus:outline-none"
+                  th:value="${param.keyword}" />
+                <button type="submit" class="bg-white px-4 py-2 hover:bg-[#ffc400] transition duration-200 group"
+                  title="Tìm kiếm">
+                  <i class="fa-solid fa-magnifying-glass text-[#000f8f] group-hover:text-black"></i>
+                </button>
+              </form>
+
+              <!-- Đây là hộp gợi ý -->
+              <div id="suggestion-box"
+                class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-b-md shadow z-50"
+                style="display: none; position: absolute; z-index: 9999; color: black;"></div>
             </div>
+
           </div>
         </div>
 
@@ -205,6 +229,7 @@
 
       <script th:src="@{/js/cart.js}"></script>
       <script th:src="@{/js/notica.js}"></script>
+      <script th:src="@{/js/suggestio.js}"></script>
     </header>
 
     <nav class="main-nav">
@@ -362,6 +387,7 @@
       });
     }
   </script>
+
 </body>
 
 </html>

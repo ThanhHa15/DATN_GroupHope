@@ -174,112 +174,113 @@
   </main>
   <!-- Footer -->
   <div th:insert="views/shared/footer :: footerFragment"></div>
-  
+
   <script th:src="@{/js/cart.js}"></script>
   <script>
-      // Sử dụng lại các hàm từ file js của bạn
-      function updateCart() {
-        updateMiniCart();
-        updateCartCount();
+    // Sử dụng lại các hàm từ file js của bạn
+    function updateCart() {
+      updateMiniCart();
+      updateCartCount();
 
-        // Cập nhật lại trang cart (nếu đang ở trang cart)
-        if (window.location.pathname === "/cart") {
-          window.location.reload();
-        }
+      // Cập nhật lại trang cart (nếu đang ở trang cart)
+      if (window.location.pathname === "/cart") {
+        window.location.reload();
       }
+    }
 
-      // Xử lý sự kiện cho trang cart
-      document.addEventListener("DOMContentLoaded", function () {
-        // Xử lý nút xóa
-        document.querySelectorAll(".remove-btn").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const variantId = this.getAttribute("data-variant-id");
-            removeFromCart(variantId);
-          });
-        });
-
-        // Xử lý nút giảm số lượng
-        document.querySelectorAll(".decrease-btn").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const variantId = this.getAttribute("data-variant-id");
-            const input = this.nextElementSibling;
-            const newQty = parseInt(input.value) - 1;
-            updateQuantity(variantId, newQty);
-          });
-        });
-
-        // Xử lý nút tăng số lượng
-        document.querySelectorAll(".increase-btn").forEach((btn) => {
-          btn.addEventListener("click", function () {
-            const variantId = this.getAttribute("data-variant-id");
-            const input = this.previousElementSibling;
-            const newQty = parseInt(input.value) + 1;
-            updateQuantity(variantId, newQty);
-          });
+    // Xử lý sự kiện cho trang cart
+    document.addEventListener("DOMContentLoaded", function () {
+      // Xử lý nút xóa
+      document.querySelectorAll(".remove-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const variantId = this.getAttribute("data-variant-id");
+          removeFromCart(variantId);
         });
       });
 
-      // Cập nhật các hàm từ file js để gọi updateCart() thay vì updateMiniCart()
-      function removeFromCart(variantId) {
-  Swal.fire({
-    title: 'Xác nhận xóa?',
-    text: 'Bạn có chắc muốn xóa sản phẩm này không?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Xóa',
-    cancelButtonText: 'Hủy'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      fetch("/api/cart/remove", {
+      // Xử lý nút giảm số lượng
+      document.querySelectorAll(".decrease-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const variantId = this.getAttribute("data-variant-id");
+          const input = this.nextElementSibling;
+          const newQty = parseInt(input.value) - 1;
+          updateQuantity(variantId, newQty);
+        });
+      });
+
+      // Xử lý nút tăng số lượng
+      document.querySelectorAll(".increase-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const variantId = this.getAttribute("data-variant-id");
+          const input = this.previousElementSibling;
+          const newQty = parseInt(input.value) + 1;
+          updateQuantity(variantId, newQty);
+        });
+      });
+    });
+
+    // Cập nhật các hàm từ file js để gọi updateCart() thay vì updateMiniCart()
+    function removeFromCart(variantId) {
+      Swal.fire({
+        title: 'Xác nhận xóa?',
+        text: 'Bạn có chắc muốn xóa sản phẩm này không?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch("/api/cart/remove", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `variantId=${variantId}`,
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error("Lỗi khi xóa sản phẩm");
+              return res.text();
+            })
+            .then(() => {
+              updateMiniCart();
+              updateCart();
+              // ✅ Xóa sản phẩm khỏi DOM
+              document.getElementById(`cart-item-${variantId}`)?.remove();
+              showNotification("Đã xóa sản phẩm khỏi giỏ hàng");
+            })
+            .catch((err) => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: err.message
+              });
+            });
+        }
+      });
+    }
+
+    function updateQuantity(variantId, newQty) {
+      if (newQty < 1) {
+        removeFromCart(variantId);
+        return;
+      }
+
+      fetch("/api/cart/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `variantId=${variantId}`,
+        body: `variantId=${variantId}&quantity=${newQty}`,
       })
         .then((res) => {
-          if (!res.ok) throw new Error("Lỗi khi xóa sản phẩm");
-          return res.text();
-        })
-        .then(() => {
-          updateMiniCart();
+          if (!res.ok) throw new Error("Không thể cập nhật số lượng");
           updateCart();
-          // ✅ Xóa sản phẩm khỏi DOM
-          document.getElementById(`cart-item-${variantId}`)?.remove();
         })
-        .catch((err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: err.message
-          });
-        });
+        .catch((err) => alert("❌ " + err.message));
     }
-  });
-}
-
-      function updateQuantity(variantId, newQty) {
-        if (newQty < 1) {
-          removeFromCart(variantId);
-          return;
-        }
-
-        fetch("/api/cart/update", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: `variantId=${variantId}&quantity=${newQty}`,
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("Không thể cập nhật số lượng");
-            updateCart();
-          })
-          .catch((err) => alert("❌ " + err.message));
-      }
-    </script>
+  </script>
 
 </body>
 

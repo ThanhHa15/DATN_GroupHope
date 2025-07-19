@@ -53,6 +53,7 @@ public class ProductController {
             @RequestParam(defaultValue = "15") int size,
             @RequestParam(required = false) Boolean discounted,
             @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String keyword,
             Model model, HttpSession session,
             @ModelAttribute("message") String message) {
 
@@ -70,6 +71,14 @@ public class ProductController {
                             map -> map.values().stream().collect(Collectors.toList())));
         } else {
             variants = productVariantService.findUniqueVariantsByProductAndStorage();
+        }
+
+        // 🔍 Lọc theo từ khóa tìm kiếm (tên sản phẩm)
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String lowerKeyword = keyword.toLowerCase();
+            variants = variants.stream()
+                    .filter(v -> v.getProduct().getProductName().toLowerCase().contains(lowerKeyword))
+                    .collect(Collectors.toList());
         }
 
         // 🧠 Thêm danh sách wishlistIds nếu đã đăng nhập
@@ -113,11 +122,30 @@ public class ProductController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("sort", sort);
         model.addAttribute("isDiscounted", discounted != null ? discounted : false);
+        model.addAttribute("keyword", keyword);
 
         if (message != null && !message.isEmpty()) {
             model.addAttribute("message", message); // thêm vào model
         }
         return "views/user/products";
+    }
+
+    @GetMapping("/search-suggestions")
+    @ResponseBody
+    public List<String> getSearchSuggestions(@RequestParam("query") String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return List.of(); // Không gợi ý nếu rỗng
+        }
+
+        String lowerQuery = query.toLowerCase();
+
+        // Lấy tất cả productName chứa từ khóa (giới hạn 10 gợi ý)
+        return productService.getAll().stream()
+                .map(Product::getProductName)
+                .filter(name -> name != null && name.toLowerCase().contains(lowerQuery))
+                .distinct()
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
 }
