@@ -13,7 +13,7 @@
 }
 
 /* Khi hiện ra */
-.notification.show {    
+.notification.show {
   transform: translateX(0);
   opacity: 1;
 }
@@ -22,4 +22,24 @@
 .notification.fade-out {
   opacity: 0;
   transform: translateX(100%);
+}
+.group .absolute.z-50.p-4 {
+  max-height: 70vh; /* Giới hạn chiều cao tối đa */
+  overflow-y: auto; /* Thêm thanh cuộn khi nội dung vượt quá */
+  width: 350px; /* Chiều rộng cố định */
+}
+
+/* Tùy chỉnh thanh cuộn cho đẹp */
+.group .absolute.z-50.p-4::-webkit-scrollbar {
+  width: 6px;
+}
+.group .absolute.z-50.p-4::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.group .absolute.z-50.p-4::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+.group .absolute.z-50.p-4::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

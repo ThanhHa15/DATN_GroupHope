@@ -37,29 +37,50 @@ function showNotification(message, type = "success") {
 function addToCart(button) {
   const variantId = button.getAttribute("data-variant-id");
 
-  fetch("/api/cart/add", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: `variantId=${variantId}&quantity=1`,
-  })
+  // Kiểm tra số lượng loại sản phẩm hiện có
+  fetch("/api/cart/items")
+    .then((response) => {
+      if (response.status === 401) return [];
+      return response.json();
+    })
+    .then((items) => {
+      if (!Array.isArray(items)) items = [];
+
+      // Kiểm tra nếu đã có 10 loại sản phẩm và sản phẩm mới chưa có trong giỏ
+      if (
+        items.length >= 10 &&
+        !items.some((item) => item.variantId == variantId)
+      ) {
+        showNotification("❌ Giỏ hàng đã đạt tối đa 10 loại sản phẩm", "error");
+        return Promise.reject(new Error("Đạt giới hạn 10 loại sản phẩm"));
+      }
+
+      // Nếu OK thì thêm vào giỏ
+      return fetch("/api/cart/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `variantId=${variantId}&quantity=1`,
+      });
+    })
     .then((response) => {
       if (!response.ok) {
         return response.text().then((text) => {
           throw new Error(text);
         });
       }
-      return response.text(); // OK
+      return response.text();
     })
     .then((data) => {
       showNotification("Đã thêm sản phẩm vào giỏ hàng");
-
       updateCartCount();
       updateMiniCart();
     })
     .catch((error) => {
-      showNotification("❌ Lỗi: " + error.message, "error");
+      if (error.message !== "Đạt giới hạn 10 loại sản phẩm") {
+        showNotification("❌ Lỗi: " + error.message, "error");
+      }
     });
 }
 
@@ -109,6 +130,24 @@ function updateMiniCart() {
           </div>
         `;
         return;
+      }
+      if (items.length >= 10) {
+        container.innerHTML += `
+          <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-yellow-700">
+                  Giỏ hàng đã đạt tối đa 10 loại sản phẩm. Bạn không thể thêm loại mới.
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
       }
 
       let total = 0;
@@ -224,14 +263,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function removeFromCart(variantId) {
   Swal.fire({
-    title: 'Xác nhận xóa?',
-    text: 'Bạn có chắc muốn xóa sản phẩm này không?',
-    icon: 'warning',
+    title: "Xác nhận xóa?",
+    text: "Bạn có chắc muốn xóa sản phẩm này không?",
+    icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Xóa',
-    cancelButtonText: 'Hủy'
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Xóa",
+    cancelButtonText: "Hủy",
   }).then((result) => {
     if (result.isConfirmed) {
       fetch("/api/cart/remove", {
@@ -253,16 +292,14 @@ function removeFromCart(variantId) {
         })
         .catch((err) => {
           Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: err.message
+            icon: "error",
+            title: "Lỗi",
+            text: err.message,
           });
         });
     }
   });
 }
-
-
 
 function updateQuantity(variantId, newQty) {
   if (newQty < 1) {
@@ -289,4 +326,3 @@ function updateQuantity(variantId, newQty) {
     })
     .catch((err) => alert("❌ " + err.message));
 }
-
