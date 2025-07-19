@@ -92,6 +92,28 @@
       text-decoration: underline;
     }
   </style>
+  <style>
+    .spec-row {
+      display: none;
+    }
+
+    .product-header {
+      cursor: pointer;
+      background-color: #f9f9f9;
+      font-weight: bold;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+  </style>
 </head>
 
 <body>
@@ -359,7 +381,7 @@
   <hr />
 
   <h3>Danh sách thông số đã lưu</h3>
-  <table border="1" cellspacing="0" cellpadding="6" class="spec-table">
+  <table class="spec-table">
     <thead>
       <tr>
         <th>Sản phẩm</th>
@@ -367,14 +389,20 @@
         <th>Giá trị</th>
       </tr>
     </thead>
-    <tbody>
-      <tr th:each="s : ${specList}">
-        <td th:text="${productIdToNameMap.get(s.productid)}"></td>
-        <td th:text="${s.specKey}"></td>
+    <tbody th:each="entry : ${groupedSpecList}">
+      <!-- Dòng tiêu đề sản phẩm -->
+      <tr class="product-header" th:onclick="|toggleSpecs('group-' + ${entry.key})|">
+        <td th:text="${productIdToNameMap.get(entry.key)}" colspan="3"></td>
+      </tr>
+
+      <!-- Các dòng thông số -->
+      <tr th:each="spec : ${entry.value}" th:id="|group-${spec.productid}|" class="spec-row">
+        <td></td>
+        <td th:text="${spec.specKey}"></td>
         <td>
           <form th:action="@{/specification/update}" method="post" class="spec-edit-form">
-            <input type="hidden" name="specId" th:value="${s.specId}" />
-            <input type="text" name="specValue" th:value="${s.specValue}" />
+            <input type="hidden" name="specId" th:value="${spec.specId}" />
+            <input type="text" name="specValue" th:value="${spec.specValue}" />
             <button type="submit">Cập nhật</button>
           </form>
         </td>
@@ -418,6 +446,16 @@
 
     document.addEventListener("DOMContentLoaded", showFieldsByProductType);
   </script>
+
+  <script>
+    function toggleSpecs(groupIdPrefix) {
+      const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
+      rows.forEach(row => {
+        row.style.display = row.style.display === 'table-row' ? 'none' : 'table-row';
+      });
+    }
+  </script>
+
 </body>
 
 </html>

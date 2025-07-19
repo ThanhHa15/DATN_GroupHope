@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/specification")
@@ -28,14 +29,19 @@ public class ProductSpecificationController {
         List<Product> products = productService.getAll();
         model.addAttribute("products", products);
 
-        // Create a map of productId (as Integer) to productName
+        // Map productId -> productName
         Map<Integer, String> productIdToNameMap = new HashMap<>();
         for (Product product : products) {
             productIdToNameMap.put(product.getProductID().intValue(), product.getProductName());
         }
-
         model.addAttribute("productIdToNameMap", productIdToNameMap);
-        model.addAttribute("specList", specificationService.findAll());
+
+        // Group spec by productId
+        List<ProductSpecification> specList = specificationService.findAll();
+        Map<Integer, List<ProductSpecification>> groupedSpecList = specList.stream()
+                .collect(Collectors.groupingBy(ProductSpecification::getProductid));
+        model.addAttribute("groupedSpecList", groupedSpecList);
+
         return "formProductSpecification";
     }
 
