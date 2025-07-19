@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Quản lý voucher</title>
+  <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div th:replace="~{dashboard :: nav}"></div>
+
+  <h2>🎟️ Thêm voucher</h2>
+  <form th:action="@{/vouchers/save}" method="post" th:object="${voucher}" class="space-y-4">
+    <input type="hidden" th:field="*{id}">
+
+    <div>
+      <label class="block text-gray-700">Mã Code</label>
+      <input type="text" th:field="*{code}" class="w-full border rounded p-2" required>
+    </div>
+
+    <div>
+      <label class="block text-gray-700">Giảm (%)</label>
+      <input type="number" min="0" max="100" step="1" th:field="*{discountPercent}" class="w-full border rounded p-2"
+        required>
+    </div>
+
+    <div>
+      <label class="block text-gray-700">Giá tối thiểu (VNĐ)</label>
+      <!-- Hiển thị giá định dạng -->
+      <input type="text" id="minPriceDisplay"
+        th:value="${voucher.minimumPrice != null ? #numbers.formatDecimal(voucher.minimumPrice, 0, 'COMMA', 0, 'POINT') : ''}"
+        class="w-full border rounded p-2" required>
+
+      <!-- Hidden field để binding dữ liệu về controller -->
+      <input type="hidden" id="minPriceHidden" th:field="*{minimumPrice}" />
+    </div>
+
+
+    <div>
+      <label class="block text-gray-700">Số lượng</label>
+      <input type="number" min="1" th:field="*{quantity}" class="w-full border rounded p-2" required>
+    </div>
+
+    <div>
+      <label class="block text-gray-700">Ngày bắt đầu</label>
+      <input type="date" th:field="*{startDate}" class="w-full border rounded p-2" required>
+    </div>
+
+    <div>
+      <label class="block text-gray-700">Ngày kết thúc</label>
+      <input type="date" th:field="*{endDate}" class="w-full border rounded p-2" required>
+    </div>
+
+    <div class="flex justify-end">
+      <button type="submit" class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">
+        Lưu Voucher
+      </button>
+    </div>
+  </form>
+  <div th:if="${error}" class="text-red-500 font-semibold mb-2">
+    <p th:text="${error}"></p>
+  </div>
+
+  </div>
+
+  <div class="max-w-3xl mx-auto mt-10 bg-white p-6 shadow-md rounded-lg">
+    <h2 class="text-xl font-semibold mb-4">Danh sách Voucher</h2>
+    <table class="w-full table-auto border">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="px-4 py-2 border">Mã</th>
+          <th class="px-4 py-2 border">Giảm (%)</th>
+          <th class="px-4 py-2 border">Giá tối thiểu</th>
+          <th class="px-4 py-2 border">Số lượng</th>
+          <th class="px-4 py-2 border">Bắt đầu</th>
+          <th class="px-4 py-2 border">Kết thúc</th>
+          <th class="px-4 py-2 border">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="v : ${vouchers}">
+          <td class="border px-4 py-2" th:text="${v.code}"></td>
+          <td class="border px-4 py-2" th:text="${v.discountPercent} + '%'"></td>
+          <td class="border px-4 py-2" th:text="${v.minimumPrice}"></td>
+          <td class="border px-4 py-2" th:text="${v.quantity}"></td>
+          <td class="border px-4 py-2" th:text="${v.startDate}"></td>
+          <td class="border px-4 py-2" th:text="${v.endDate}"></td>
+          <td class="border px-4 py-2 space-x-2">
+            <a th:href="@{/vouchers/edit/{id}(id=${v.id})}" class="text-blue-600 hover:underline">Sửa</a>
+            <a th:href="@{/vouchers/delete/{id}(id=${v.id})}" class="text-red-600 hover:underline"
+              onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+
+</html>
+<script>
+  // Format về số (remove dấu phẩy) khi nhập giá
+  document.getElementById('minPriceDisplay').addEventListener('input', function () {
+    const raw = this.value.replace(/,/g, '').replace(/\D/g, '');
+    const formatted = Number(raw).toLocaleString('en-US');
+    this.value = formatted;
+
+    document.getElementById('minPriceHidden').value = raw;
+  });
+</script>

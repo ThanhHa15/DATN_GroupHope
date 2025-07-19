@@ -57,7 +57,7 @@ public class ProductVariant {
     private BigDecimal discountedPrice;
 
     @Transient
-    public BigDecimal getDiscountedPrice() {
+    public BigDecimal getDiscountedPrice() { // Tính giá đã giảm
         LocalDate today = LocalDate.now();
 
         if (price == null)
@@ -75,7 +75,7 @@ public class ProductVariant {
     @Transient
     private Integer productId;
 
-    public Integer getProductId() {
+    public Integer getProductId() { // Trả về productId nếu có, nếu không thì lấy từ product
         return productId != null ? productId : (product != null ? product.getProductID() : null);
     }
 
