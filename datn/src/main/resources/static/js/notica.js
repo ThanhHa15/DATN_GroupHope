@@ -26,7 +26,7 @@
             showNotification(data.message, "success");
           })
           .catch(err => {
-            showNotification("Có lỗi xảy ra!", "error");
+            showNotification("Vui lòng đăng nhập!", "error");
           });
       });
     });
