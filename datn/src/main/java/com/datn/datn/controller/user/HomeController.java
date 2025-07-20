@@ -405,6 +405,7 @@ public class HomeController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Vui lòng đăng nhập");
         }
 
+        // ✅ Lấy variant trước để kiểm tra tồn kho
         Optional<ProductVariant> variantOpt = productVariantRepository.findById(variantId);
         if (variantOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
@@ -412,16 +413,32 @@ public class HomeController {
 
         ProductVariant variant = variantOpt.get();
 
-        // Kiểm tra nếu sản phẩm đã có trong giỏ
+        // ✅ Kiểm tra tồn kho
+        if (variant.getQuantityInStock() == 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Sản phẩm đã hết hàng");
+        }
+
+        if (variant.getQuantityInStock() < quantity) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Số lượng vượt quá số lượng tồn kho");
+        }
+
+        // ✅ Kiểm tra nếu sản phẩm đã có trong giỏ
         Optional<Cart> existingCart = cartRepository.findByMemberAndVariant(loggedInUser, variant);
 
         if (existingCart.isPresent()) {
-            // Cập nhật số lượng nếu đã có
             Cart cart = existingCart.get();
-            cart.setQuantity(cart.getQuantity() + quantity);
+            int newQty = cart.getQuantity() + quantity;
+
+            if (newQty > variant.getQuantityInStock()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Tổng số lượng vượt quá số lượng tồn kho");
+            }
+
+            cart.setQuantity(newQty);
             cartRepository.save(cart);
         } else {
-            // Thêm mới vào giỏ
             Cart cart = new Cart();
             cart.setMember(loggedInUser);
             cart.setVariant(variant);
@@ -506,7 +523,13 @@ public class HomeController {
             return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
         }
 
-        Optional<Cart> cartOpt = cartRepository.findByMemberAndVariant(loggedInUser, variantOpt.get());
+        ProductVariant variant = variantOpt.get();
+
+        if (quantity > variant.getQuantityInStock()) {
+            return ResponseEntity.badRequest().body("Số lượng vượt quá tồn kho (" + variant.getQuantityInStock() + ")");
+        }
+
+        Optional<Cart> cartOpt = cartRepository.findByMemberAndVariant(loggedInUser, variant);
         if (cartOpt.isPresent()) {
             if (quantity <= 0) {
                 cartRepository.delete(cartOpt.get());
@@ -519,4 +542,5 @@ public class HomeController {
 
         return ResponseEntity.ok().build();
     }
+
 }

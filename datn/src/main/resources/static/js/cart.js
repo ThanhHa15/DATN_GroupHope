@@ -36,10 +36,8 @@ function showNotification(message, type = "success") {
 
 function addToCart(button) {
   const variantId = button.getAttribute("data-variant-id");
-  // Lấy số lượng từ input (thêm dòng này)
   const quantity = document.getElementById("quantity")?.value || 1;
 
-  // Kiểm tra số lượng loại sản phẩm hiện có
   fetch("/api/cart/items")
     .then((response) => {
       if (response.status === 401) return [];
@@ -48,7 +46,6 @@ function addToCart(button) {
     .then((items) => {
       if (!Array.isArray(items)) items = [];
 
-      // Kiểm tra nếu đã có 10 loại sản phẩm và sản phẩm mới chưa có trong giỏ
       if (
         items.length >= 10 &&
         !items.some((item) => item.variantId == variantId)
@@ -57,7 +54,6 @@ function addToCart(button) {
         return Promise.reject(new Error("Đạt giới hạn 10 loại sản phẩm"));
       }
 
-      // Nếu OK thì thêm vào giỏ (sửa quantity=1 thành quantity=${quantity})
       return fetch("/api/cart/add", {
         method: "POST",
         headers: {
@@ -69,7 +65,7 @@ function addToCart(button) {
     .then((response) => {
       if (!response.ok) {
         return response.text().then((text) => {
-          throw new Error(text);
+          throw new Error(text); // <-- nhận lỗi từ backend
         });
       }
       return response.text();
@@ -81,10 +77,11 @@ function addToCart(button) {
     })
     .catch((error) => {
       if (error.message !== "Đạt giới hạn 10 loại sản phẩm") {
-        showNotification("❌ Lỗi: " + error.message, "error");
+        showNotification("❌ " + error.message, "error");
       }
     });
 }
+
 
 function updateCartCount() {
   fetch("/api/cart/count")
@@ -306,13 +303,15 @@ function removeFromCart(variantId) {
 }
 
 function updateQuantity(variantId, newQty) {
+  // Lưu giá trị cũ để khôi phục nếu có lỗi
+  const inputElement = document.querySelector(`input[data-variant-id="${variantId}"]`);
+  const oldQty = inputElement ? inputElement.value : null;
+
   if (newQty < 1) {
-    // Nếu số lượng nhỏ hơn 1 thì xóa luôn, KHÔNG hỏi xác nhận
     removeFromCart(variantId);
     return;
   }
 
-  // Nếu số lượng hợp lệ, thì cập nhật
   fetch("/api/cart/update", {
     method: "POST",
     headers: {
@@ -327,6 +326,16 @@ function updateQuantity(variantId, newQty) {
     .then(() => {
       updateMiniCart();
       updateCartCount();
+      // Thông báo thành công nếu cần
+      // showNotification("Cập nhật số lượng thành công", "success");
     })
-    .catch((err) => alert("❌ " + err.message));
+    .catch((err) => {
+      console.error("Không thể cập nhật số lượng:", err);
+      
+      // Khôi phục giá trị cũ trên giao diện
+      if (inputElement) inputElement.value = oldQty;
+      
+      // Hiển thị thông báo lỗi màu đỏ
+      showNotification("Không thể cập nhật số lượng", "error");
+    });
 }

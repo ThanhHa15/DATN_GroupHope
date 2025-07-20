@@ -64,7 +64,7 @@
   <div th:insert="views/shared/chatbot :: siteChatbot"></div>
   <!-- Zalo icon -->
   <div th:insert="views/shared/zalo :: siteZalo"></div>
-  
+
   <main class="container mx-auto mt-3 h-[auto] bg-white rounded-lg p-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]"
     style="max-width: 1250px; margin-bottom: 60px">
     <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
@@ -265,6 +265,10 @@
     }
 
     function updateQuantity(variantId, newQty) {
+      // Lưu giá trị cũ để khôi phục nếu có lỗi
+      const inputElement = document.querySelector(`input[data-variant-id="${variantId}"]`);
+      const oldQty = inputElement ? inputElement.value : null;
+
       if (newQty < 1) {
         removeFromCart(variantId);
         return;
@@ -279,9 +283,24 @@
       })
         .then((res) => {
           if (!res.ok) throw new Error("Không thể cập nhật số lượng");
-          updateCart();
+          return res.text();
         })
-        .catch((err) => alert("❌ " + err.message));
+        .then(() => {
+          updateMiniCart();
+          updateCartCount();
+          updateCart();
+          // Thông báo thành công nếu cần
+          // showNotification("Cập nhật số lượng thành công", "success");
+        })
+        .catch((err) => {
+          console.error("Không thể cập nhật số lượng:", err);
+
+          // Khôi phục giá trị cũ trên giao diện
+          if (inputElement) inputElement.value = oldQty;
+
+          // Hiển thị thông báo lỗi màu đỏ
+          showNotification("Không thể cập nhật số lượng", "error");
+        });
     }
   </script>
 
