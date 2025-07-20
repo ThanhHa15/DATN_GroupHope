@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +143,14 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         return uniqueVariants.values().stream()
                 .limit(6)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductVariant> filterByStorage(String[] storages) {
+        if (storages == null || storages.length == 0) {
+            return repo.findAll();
+        }
+        return repo.findByStorages(Arrays.asList(storages));
     }
 
 }

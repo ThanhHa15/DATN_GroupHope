@@ -36,7 +36,6 @@ public interface ProductVariantService {
 
     List<ProductVariant> find6UniqueOtherVariants(Integer excludeVariantId, Integer excludeProductId);
 
-
-
+    List<ProductVariant> filterByStorage(String[] storages);
 
 }

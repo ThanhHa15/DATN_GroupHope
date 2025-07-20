@@ -51,6 +51,9 @@ public class ProductController {
     public String listProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "15") int size,
+            @RequestParam(required = false) List<String> price,
+            @RequestParam(required = false) List<String> type,
+            @RequestParam(required = false) List<String> storage,
             @RequestParam(required = false) Boolean discounted,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String keyword,
@@ -59,7 +62,7 @@ public class ProductController {
 
         List<ProductVariant> variants;
 
-        if (Boolean.TRUE.equals(discounted)) {
+        if (Boolean.TRUE.equals(discounted)) { // Kiểm tra nếu có lọc theo giảm giá
             variants = productVariantService.findDiscountedVariants()
                     .stream()
                     .collect(Collectors.collectingAndThen(
@@ -71,6 +74,72 @@ public class ProductController {
                             map -> map.values().stream().collect(Collectors.toList())));
         } else {
             variants = productVariantService.findUniqueVariantsByProductAndStorage();
+        }
+
+        // Thêm danh sách danh mục vào model
+        List<Category> allCategories = categoryService.getAll();
+        model.addAttribute("allCategories", allCategories);
+
+        // Log để debug
+        System.out.println("All categories:");
+        allCategories.forEach(c -> System.out.println(c.getCategoryID() + ": " + c.getName()));
+
+        // 🧮 Lọc theo loại
+        if (type != null && !type.isEmpty()) {
+            System.out.println("Đang lọc theo danh mục: " + type);
+
+            variants = variants.stream()
+                    .filter(v -> {
+                        if (v.getProduct() == null || v.getProduct().getCategory() == null) {
+                            System.out.println(
+                                    "Sản phẩm " + (v.getProduct() != null ? v.getProduct().getProductName() : "null")
+                                            + " không có category");
+                            return false;
+                        }
+
+                        String dbCategoryName = v.getProduct().getCategory().getName().trim();
+                        boolean match = type.stream()
+                                .anyMatch(t -> t.trim().equalsIgnoreCase(dbCategoryName));
+
+                        System.out.println("Kiểm tra: " + v.getProduct().getProductName()
+                                + " - Category: " + dbCategoryName
+                                + " - Match: " + match);
+
+                        return match;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        // 💾 Lọc theo dung lượng
+        if (storage != null && !storage.isEmpty()) {
+            variants = variants.stream()
+                    .filter(v -> v.getStorage() != null && storage.contains(v.getStorage()))
+                    .collect(Collectors.toList());
+        }
+
+        // 💰 Lọc theo giá
+        if (price != null && !price.isEmpty()) {
+            variants = variants.stream().filter(v -> {
+                BigDecimal priceValue = v.getDiscountedPrice() != null ? v.getDiscountedPrice() : BigDecimal.ZERO;
+                return price.stream().anyMatch(p -> {
+                    switch (p) {
+                        case "Dưới 5 triệu":
+                            return priceValue.compareTo(BigDecimal.valueOf(5_000_000)) < 0;
+                        case "5 - 10 triệu":
+                            return priceValue.compareTo(BigDecimal.valueOf(5_000_000)) >= 0 &&
+                                    priceValue.compareTo(BigDecimal.valueOf(10_000_000)) <= 0;
+                        case "10 - 15 triệu":
+                            return priceValue.compareTo(BigDecimal.valueOf(10_000_000)) > 0 &&
+                                    priceValue.compareTo(BigDecimal.valueOf(15_000_000)) <= 0;
+                        case "15 - 20 triệu":
+                            return priceValue.compareTo(BigDecimal.valueOf(15_000_000)) > 0 &&
+                                    priceValue.compareTo(BigDecimal.valueOf(20_000_000)) <= 0;
+                        case "Trên 20 triệu":
+                            return priceValue.compareTo(BigDecimal.valueOf(20_000_000)) > 0;
+                    }
+                    return false;
+                });
+            }).collect(Collectors.toList());
         }
 
         // 🔍 Lọc theo từ khóa tìm kiếm (tên sản phẩm)
@@ -117,6 +186,10 @@ public class ProductController {
         int toIndex = Math.min(fromIndex + size, totalItems);
         List<ProductVariant> pagedVariants = variants.subList(fromIndex, toIndex);
 
+
+        model.addAttribute("selectedPrices", price);
+        model.addAttribute("selectedTypes", type);
+        model.addAttribute("selectedStorages", storage);
         model.addAttribute("products", pagedVariants);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);

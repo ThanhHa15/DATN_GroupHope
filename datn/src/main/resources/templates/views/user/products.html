@@ -367,79 +367,81 @@
 
                     <!-- Các bộ lọc sản phẩm -->
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
+                        <!-- Lọc theo mức giá -->
                         <div class="dropdown relative">
                             <button
-                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white !whitespace-nowrap">
-                                <span>Chọn mức giá</span>
+                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white whitespace-nowrap">
+                                <span>Mức giá</span>
                                 <i class="ri-arrow-down-s-line"></i>
                             </button>
-
-                            <div class="dropdown-content mt-0 left-0">
+                            <div class="dropdown-content mt-0 left-0 bg-white z-20">
                                 <div class="p-3">
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="price1" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="Dưới 5 triệu">
-                                        <label for="price1">Dưới 5 triệu</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="price2" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="5 - 10 triệu">
-                                        <label for="price2">5 - 10 triệu</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="price3" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="10 - 15 triệu">
-                                        <label for="price3">10 - 15 triệu</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="price4" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="15 - 20 triệu">
-                                        <label for="price4">15 - 20 triệu</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="price5" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="Trên 20 triệu">
-                                        <label for="price5">Trên 20 triệu</label>
+                                    <div
+                                        th:each="priceOption : ${T(java.util.List).of('Dưới 5 triệu', '5 - 10 triệu', '10 - 15 triệu', '15 - 20 triệu', 'Trên 20 triệu')}">
+                                        <div class="flex items-center mb-2">
+                                            <input type="checkbox" th:id="'price' + ${priceOption.hashCode()}"
+                                                class="mr-2 filter-checkbox" data-category="price"
+                                                th:attr="data-value=${priceOption}"
+                                                th:checked="${selectedPrices != null and selectedPrices.contains(priceOption)}">
+                                            <label th:for="'price' + ${priceOption.hashCode()}"
+                                                th:text="${priceOption}"></label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
+                        <!-- Lọc theo loại -->
                         <div class="dropdown relative">
                             <button
-                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white !whitespace-nowrap">
+                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white whitespace-nowrap">
                                 <span>Loại</span>
                                 <i class="ri-arrow-down-s-line"></i>
                             </button>
-
-                            <div class="dropdown-content mt-0 left-0">
+                            <div class="dropdown-content mt-0 left-0 bg-white z-20">
                                 <div class="p-3">
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="type1" class="mr-2 filter-checkbox"
-                                            data-category="type" data-value="iPhone">
-                                        <label for="type1">iPhone</label>
+                                    <div
+                                        th:each="typeOption : ${T(java.util.List).of('iPhone', 'iPad', 'MacBook', 'Apple Watch', 'AirPods', 'Phụ kiện')}">
+                                        <div class="flex items-center mb-2">
+                                            <input type="checkbox" th:id="'type' + ${typeOption.hashCode()}"
+                                                class="mr-2 filter-checkbox" data-category="type"
+                                                th:attr="data-value=${typeOption}"
+                                                th:checked="${selectedTypes != null and selectedTypes.contains(typeOption)}">
+                                            <label th:for="'type' + ${typeOption.hashCode()}"
+                                                th:text="${typeOption}"></label>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="type2" class="mr-2 filter-checkbox"
-                                            data-category="type" data-value="iPad">
-                                        <label for="type2">iPad</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="type3" class="mr-2 filter-checkbox"
-                                            data-category="type" data-value="MacBook">
-                                        <label for="type3">MacBook</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="type4" class="mr-2 filter-checkbox"
-                                            data-category="type" data-value="Apple Watch">
-                                        <label for="type4">Apple Watch</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lọc theo dung lượng -->
+                        <div class="dropdown relative">
+                            <button
+                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white whitespace-nowrap">
+                                <span>Dung lượng</span>
+                                <i class="ri-arrow-down-s-line"></i>
+                            </button>
+                            <div class="dropdown-content mt-0 left-0 bg-white z-20">
+                                <div class="p-3">
+                                    <div
+                                        th:each="storageOption : ${T(java.util.List).of('64GB', '128GB', '256GB', '512GB', '1TB')}">
+                                        <div class="flex items-center mb-2">
+                                            <input type="checkbox" th:id="'storage' + ${storageOption.hashCode()}"
+                                                class="mr-2 filter-checkbox" data-category="storage"
+                                                th:attr="data-value=${storageOption}"
+                                                th:checked="${selectedStorages != null and selectedStorages.contains(storageOption)}">
+                                            <label th:for="'storage' + ${storageOption.hashCode()}"
+                                                th:text="${storageOption}"></label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                     </div>
+
                 </div>
 
                 <div class="bg-white rounded-lg shadow-sm p-6 mb-8" style="margin-left: -23px;">
@@ -576,6 +578,10 @@
                                 <h3 class="h-[70px] font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
                                     th:text="${product.product.productName + ' ' + product.storage + ' - Chính hãng VN'}">
                                 </h3>
+                                <!-- Thêm dòng hiển thị danh mục -->
+                                <span class="text-sm text-blue-600 font-medium"
+                                    th:text="${product.product.category?.name}" style="display: none;"></span>
+
                             </a>
 
                             <div class="flex items-center mb-2">
@@ -678,20 +684,9 @@
 </body>
 
 </html>
-<script id="filter-dropdowns"> // Xử lý sự kiện cho các checkbox trong bộ lọc
-    document.addEventListener('DOMContentLoaded', function () {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                // Here you would normally implement filter logic
-                console.log(`Filter ${this.id} is ${this.checked ? 'checked' : 'unchecked'}`);
-            });
-        });
-    });
-</script>
-
-<script> // Xử lý bộ lọc và hiển thị các bộ lọc đã chọn
+<script>
+    // Xử lý bộ lọc và hiển thị các bộ lọc đã chọn
     document.addEventListener('DOMContentLoaded', function () {
         const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
         const selectedFiltersContainer = document.getElementById('selected-filters');
@@ -702,9 +697,49 @@
         const selectedFilters = {
             price: [],
             type: [],
-            storage: [],
-            ram: []
+            storage: []
         };
+
+        // Đọc tham số từ URL khi trang tải
+        function readFiltersFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            ['price', 'type', 'storage'].forEach(category => {
+                selectedFilters[category] = urlParams.getAll(category);
+            });
+        }
+
+        // Áp dụng bộ lọc vào các checkbox
+        function applyFiltersToCheckboxes() {
+            filterCheckboxes.forEach(checkbox => {
+                const category = checkbox.dataset.category;
+                const value = checkbox.dataset.value;
+                checkbox.checked = selectedFilters[category].includes(value);
+            });
+            updateSelectedFiltersDisplay();
+        }
+
+        // Hàm cập nhật URL với các tham số lọc
+        function updateURLWithFilters() {
+            const url = new URL(window.location.href);
+
+            // Xóa các tham số lọc cũ
+            ['price', 'type', 'storage'].forEach(param => {
+                url.searchParams.delete(param);
+            });
+
+            // Thêm các tham số lọc mới
+            for (const category in selectedFilters) {
+                if (selectedFilters[category].length > 0) {
+                    selectedFilters[category].forEach(value => {
+                        url.searchParams.append(category, value);
+                    });
+                }
+            }
+
+            // Tải lại trang với các tham số lọc mới
+            window.location.href = url.toString();
+        }
 
         // Xử lý sự kiện khi checkbox thay đổi
         filterCheckboxes.forEach(checkbox => {
@@ -713,16 +748,15 @@
                 const value = this.dataset.value;
 
                 if (this.checked) {
-                    // Thêm vào danh sách đã chọn nếu chưa có
                     if (!selectedFilters[category].includes(value)) {
                         selectedFilters[category].push(value);
                     }
                 } else {
-                    // Loại bỏ khỏi danh sách đã chọn
                     selectedFilters[category] = selectedFilters[category].filter(item => item !== value);
                 }
 
                 updateSelectedFiltersDisplay();
+                updateURLWithFilters();
             });
         });
 
@@ -739,6 +773,7 @@
             }
 
             updateSelectedFiltersDisplay();
+            updateURLWithFilters();
         });
 
         // Cập nhật hiển thị các bộ lọc đã chọn
@@ -787,9 +822,14 @@
                     }
 
                     updateSelectedFiltersDisplay();
+                    updateURLWithFilters();
                 });
             });
         }
+
+        // Đọc và áp dụng bộ lọc khi trang tải
+        readFiltersFromURL();
+        applyFiltersToCheckboxes();
     });
 </script>
 
@@ -846,4 +886,3 @@
     });
     /*]]>*/
 </script>
-
