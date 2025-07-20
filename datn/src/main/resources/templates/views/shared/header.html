@@ -71,27 +71,30 @@
                 <span>Danh mục</span>
               </button>
               <!-- // Dropdown menu  -->
-              <div class="category-dropdown">
-                <a href="/product">
-                  <i class="fas fa-mobile-alt"></i> Điện thoại
+              <div class="category-dropdown space-y-2">
+                <a href="products?type=ipad">
+                  <i class="fas fa-mobile-alt"></i> iPhone
                 </a>
-                <a href="/audio">
-                  <i class="fas fa-headphones"></i> Âm thanh
+                <a href="products?type=ipad">
+                  <i class="fas fa-tablet-alt"></i> iPad
                 </a>
-                <a href="/tablet">
-                  <i class="fas fa-tablet-alt"></i> Tablet
+                <a href="products?type=macbook">
+                  <i class="fas fa-laptop"></i> Macbook
                 </a>
-                <a href="/accessories">
-                  <i class="fas fa-plug"></i> Phụ kiện
+                <a href="products?type=watch">
+                  <i class="fas fa-stopwatch"></i> Watch
                 </a>
-                <a href="/watch">
-                  <i class="fas fa-stopwatch"></i> Đồng hồ
+                <a href="products?type=airpods">
+                  <i class="fas fa-headphones-alt"></i> AirPods
                 </a>
-                <a href="/laptop">
-                  <i class="fas fa-laptop"></i> Laptop
+                <a href="products?type=Ốp+lưng+%26+Bao+da">
+                  <i class="fas fa-shield-alt"></i> Ốp lưng & Bao da
                 </a>
-
+                <a href="products?type=Sạc+%26+cáp">
+                  <i class="fas fa-charging-station"></i> Sạc & cáp
+                </a>
               </div>
+
             </div>
 
             <!-- Search bar -->
@@ -112,8 +115,7 @@
               <form id="search-form" th:action="@{/products}" method="get"
                 class="flex items-center rounded-md overflow-hidden bg-white shadow">
                 <input type="text" name="keyword" placeholder="Bạn cần tìm gì..."
-                  class="w-full px-4 py-2 text-black focus:outline-none"
-                  th:value="${param.keyword}" />
+                  class="w-full px-4 py-2 text-black focus:outline-none" th:value="${param.keyword}" />
                 <button type="submit" class="bg-white px-4 py-2 hover:bg-[#ffc400] transition duration-200 group"
                   title="Tìm kiếm">
                   <i class="fa-solid fa-magnifying-glass text-[#000f8f] group-hover:text-black"></i>
