@@ -15,7 +15,7 @@
         .chatbot-toggle {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #000f8f, #c6d8ff);
+            background: #000f8f;
             color: white;
             border-radius: 50%;
             display: flex;
