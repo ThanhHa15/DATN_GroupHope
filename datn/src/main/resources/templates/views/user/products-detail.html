@@ -261,8 +261,6 @@
                 <h2 class="text-[16px] text-gray-800 font-medium mb-2" style="font-weight: 600; margin-bottom: 5px;">
                   Dung lượng:</h2>
                 <div class="flex gap-4 flex-wrap">
-
-                  <!-- Lặp qua các phiên bản dung lượng -->
                   <!-- Chỉ hiển thị nếu có dung lượng -->
                   <div th:each="variant : ${uniqueVariantsByStorage}"
                     th:if="${variant.storage != null and !#strings.isEmpty(variant.storage)}" class="w-full sm:w-auto">

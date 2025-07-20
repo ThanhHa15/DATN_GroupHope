@@ -278,7 +278,7 @@
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 px-4">
         <!-- Danh mục iPhone -->
-        <div
+        <a href="/products?type=iPhone"
           class="category-card bg-[white] p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
@@ -289,10 +289,10 @@
               Nhiều ưu đãi cho iPhone 15
             </p>
           </div>
-        </div>
+        </a>
 
         <!-- Danh mục iPad -->
-        <div
+        <a href="/products?type=iPad"
           class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
@@ -303,35 +303,35 @@
               Giảm giá cực sốc
             </p>
           </div>
-        </div>
+        </a>
 
         <!-- Danh mục Mac -->
-        <div
+        <a href="/products?type=MacBook"
           class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/macmau.webp}" alt="Mac icon" class="category-image" />
             </div>
-            <h3 class="font-bold text-2xl mb-1">Mac</h3>
+            <h3 class="font-bold text-2xl mb-1">MacBook</h3>
             <p class="text-base text-blue-800 font-semibold">
               Giá tốt mỗi ngày
             </p>
           </div>
-        </div>
+        </a>
 
-        <!-- Danh mục Watch -->
-        <div
+        <!-- Danh mục Airpods -->
+        <a href="/products?type=Airpods"
           class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/airpodsmau.webp}" alt="Watch icon" class="category-image" />
             </div>
-            <h3 class="font-bold text-2xl mb-1">Watch</h3>
+            <h3 class="font-bold text-2xl mb-1">Airpods</h3>
             <p class="text-base text-blue-800 font-semibold">
               Ưu đãi cực khủng
             </p>
           </div>
-        </div>
+        </a>
       </div>
     </div>
 
@@ -465,7 +465,7 @@
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 px-4">
         <!-- Phụ kiện 1 - Ốp lưng -->
-        <div
+        <a href="/products?type=Ốp+lưng+%26+Bao+da"
           class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
@@ -476,10 +476,10 @@
               Đa dạng mẫu mã
             </p>
           </div>
-        </div>
+        </a>
 
         <!-- Phụ kiện 2 - Cáp sạc -->
-        <div
+        <a href="/products?type=Sạc+%26+cáp"
           class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
@@ -490,21 +490,21 @@
               Chính hãng 100%
             </p>
           </div>
-        </div>
+        </a>
 
-        <!-- Phụ kiện 3 - Tai nghe -->
-        <div
+        <!-- Phụ kiện 3 - watch -->
+        <a href="/products?type=Watch"
           class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
-              <img th:src="@{/images/image copy 8.png}" alt="Pin dự phòng" class="category-image" />
+              <img src="https://bizweb.dktcdn.net/100/502/883/products/220817045837-s7-lte-nhom-su-blue.png?v=1700214386510" alt="Pin dự phòng" class="category-image" />
             </div>
-            <h3 class="font-bold text-2xl mb-1">Pin dự phòng</h3>
+            <h3 class="font-bold text-2xl mb-1">Watch</h3>
             <p class="text-base text-blue-800 font-semibold">
               Dung lượng cao
             </p>
           </div>
-        </div>
+        </a>
 
         <!-- Phụ kiện 4 - Miếng dán màn hình -->
         <div
@@ -534,7 +534,7 @@
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <script> 
+  <script>
     $(document).ready(function () {
       // Category filter functionality
       $("#categorySelect").change(function () {
@@ -592,4 +592,3 @@
     });
   });
 </script>
-
