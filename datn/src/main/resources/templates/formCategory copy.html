@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quản lý danh mục</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+      body {
+      font-family: "Inter", sans-serif;
+        background-color: #f0f3f7; 
+        margin: 0; 
+      }
+      .container3 {
+        padding: 20px;
+        width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        gap: 20px;
+        flex-direction: row;
+         margin-left: 250px;
+      }
+      h2 {
+        margin-bottom: 20px;
+        font-weight: 600;
+        color: #5f9cd8;
+      }
+
+      form {
+        background-color: #ffffff;
+        height: 200px;  
+        border-radius: 5px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.3s ease;
+        width: 45%;
+      }
+
+      label {
+        font-weight: 500;
+      }
+
+      input[type="text"] {
+        width: 96%;
+        height: 20px;
+        
+        margin: 3px;
+        
+        border: 1px solid #dcdde1;
+        border-radius: 3px;
+        transition: border-color 0.3s, box-shadow 0.2s;
+        font-size: 15px;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s, transform 0.1s;
+      }
+
+      .submit-btn {
+        /* background-color: #2ecc71; */
+        color: black;
+        margin-left: 10px;
+      }
+
+      .submit-btn:hover {
+        /* background-color: #27ae60; */
+        transform: scale(1.02);
+      }
+
+      .edit-btn {
+        border: #34495e;
+        background: none;
+        color: rgb(137, 135, 135);
+        width: 20px;
+      }
+
+      /* .edit-btn:hover {
+         /* background: #ffffff; */
+        /* transform: scale(1.02);
+      } */ 
+
+      .delete-btn {
+       background: none;
+        color: rgb(137, 135, 135);
+        border: none;
+        width: 20px;
+      }
+
+      /* .delete-btn:hover { */
+        /* background-color: #c0392b; */
+        /* transform: scale(1.02);
+      } */
+      table {
+        margin-top: 100px;
+        width: 1000px;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+       
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        text-align: center;
+        border-bottom: 1px solid #eceaea;
+      }
+
+      th {
+        background-color: #f8fbff;
+        font-weight: 600;
+        color: #34495e;
+      }
+
+      tr:hover {
+        background-color: #f0f9ff;
+      }
+
+      .action-buttons button {
+        margin: 0 4px;
+      }
+      td > a{
+        margin: 0px;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div th:replace="nav :: na"></div>
+    <div th:replace="header :: header"></div>
+    <div class="container3">
+<table>
+   
+      <thead>
+        <tr>
+         
+          <th>Tên danh mục</th>
+          <th>Xóa</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="c, iterStat : ${categories}">
+          <td>Ipad </td>
+          
+
+          <!-- <td th:text="${iterStat.index + 1}"></td>
+          <td th:text="${c.name}"></td> -->
+          <td>
+            <a th:href="@{/categories/edit/{id}(id=${c.categoryID})}">
+              <button class="edit-btn" type="button">Sửa</button>
+            </a>
+         
+            <a
+              th:href="@{/categories/delete/{id}(id=${c.categoryID})}"
+              th:onclick="'return confirm(\'Xóa danh mục?\')'"
+            >
+              <button class="delete-btn" type="button">Xóa</button>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <form style="margin-top: 100px;" th:action="@{/categories/add}" method="post" th:object="${category}">
+      <h2>Thêm danh mục</h2>
+      <input type="hidden" th:field="*{categoryID}" />
+      <label for="name">Tên danh mục</label>
+      <input type="text" id="name" th:field="*{name}" required />
+      <br /><br />
+      <button type="submit" class="submit-btn">Lưu danh mục</button>
+    </form>
+</div>
+    
+  </body>
+</html>

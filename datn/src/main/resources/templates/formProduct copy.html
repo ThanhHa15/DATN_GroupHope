@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Thêm sản phẩm</title>
+  <style>
+    body {
+     font-family: "Inter", sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    /* .sidebar {
+      width: 220px;
+      background-color: #34495e;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+    } */
+
+    .content {
+      margin-left: 220px;
+      padding: 30px;
+      width: 100%;
+    }
+
+    .card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    h2, h3 {
+      margin-bottom: 15px;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    input[type="file"] {
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .edit-btn {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .edit-btn:hover {
+      background-color: #2980b9;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .submit-btn {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .submit-btn:hover {
+      background-color: #27ae60;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+/* 
+    th {
+      background-color: #f0f0f0;
+    } */
+
+    /* tr:hover {
+      background-color: #f9f9f9;
+    } */
+  </style>
+</head>
+
+<body>
+ 
+  <div class="container">
+    <div th:replace="nav :: na"></div>
+    <div th:replace="header :: header"></div>
+
+    <div class="content">
+      <!-- FORM: Thêm sản phẩm -->
+      <div class="card">
+        <h2>📝 Thêm sản phẩm</h2>
+        <form th:action="@{/admin-products/add}" method="post" enctype="multipart/form-data" th:object="${product}">
+          <input type="hidden" th:field="*{productID}" />
+
+          <label>Tên sản phẩm:</label>
+          <input type="text" th:field="*{productName}" required />
+
+          <label>Loại (ID):</label>
+          <select th:field="*{category.categoryID}" required>
+            <option value="" selected>-- Chọn danh mục --</option>
+            <option th:each="c : ${categories}" th:value="${c.categoryID}" th:text="${c.name}"></option>
+          </select>
+
+          <label>Mô tả:</label>
+          <textarea th:field="*{description}" rows="3"></textarea>
+
+          <label>Ảnh:</label>
+          <input type="file" name="imageFile" />
+
+          <button type="submit" class="submit-btn">Lưu sản phẩm</button>
+        </form>
+      </div>
+
+      <!-- TABLE: Danh sách sản phẩm -->
+      <div class="card">
+        <h3>📋 Danh sách sản phẩm</h3>
+        <div class="cart-item">
+        <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Tìm kiếm..." />
+      </div>
+      <div>
+        <ul> Tất cả danh mục 
+          <li> thêm</li>
+      
+          <li> sửa</li>
+          <li> xóa</li>
+        </ul>
+      </div>
+      </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Tên sản phẩm</th>
+              <th>Loại</th>
+              <th>Mô tả</th>
+              <th>Ảnh</th>
+              <th>Sửa</th>
+              <th>Xóa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="p, iter : ${products}">
+              <td th:text="${iter.index + 1}"></td>
+              <td th:text="${p.productName}"></td>
+              <td th:text="${p.category.name}"></td>
+              <td th:text="${p.description}"></td>
+              <td>
+                <img th:src="@{'/images/' + ${p.imageUrl}}" width="60" />
+              </td>
+              <td>
+                <a th:href="@{'/admin-products/edit/' + ${p.productID}}">
+                  <button class="edit-btn" type="button">Sửa</button>
+                </a>
+              </td>
+              <td>
+                <a th:href="@{'/admin-products/delete/' + ${p.productID}}" onclick="return confirm('Xóa sản phẩm?')">
+                  <button class="delete-btn" type="button">Xóa</button>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

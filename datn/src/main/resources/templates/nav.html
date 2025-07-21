@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sidebar</title>
+  </head>
+  <body>
+    <div th:fragment="na">
+      <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+      <style>
+        img {
+          
+         margin-bottom: 30px;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 250px;
+          height: 100vh;
+          background: #3f4d67;
+          padding: 20px;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          z-index: 1000;
+          box-shadow: 7px 7px 7px 7px rgb(215, 214, 214);
+        }
+
+        .sidebar ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .sidebar li a {
+          display: block;
+          width: 245px;
+          padding: 12px 16px ;
+          /* background-color: #2c3e50; */
+          color: rgb(228, 228, 228);
+          border: none;
+          border-radius: 4px;
+          text-decoration: none;
+          text-align: left;
+          transition: background-color 0.3s, transform 0.1s;
+          box-sizing: border-box;
+          margin-left: -20px;
+        }
+
+        .sidebar li a:hover {
+          background-color: #3e5b77;
+          /* transform: translateX(2px); */
+       box-shadow: inset 5px 0 0 #699ae9; /* Viền trái bên trong */
+          /* font-weight: bold;
+          font-size: 14px; */
+        }
+       
+        .fa {
+          margin-right: 20px;
+        }
+        .dropdown-menu {
+  display: none;
+  padding-left: 20px;
+}
+.sidebar ul ul {
+  display: none;
+  padding-left: 20px;
+  border-left: 2px solid #5d6d87;
+   margin-top: 5px; 
+  margin-bottom: 5px; 
+  border-radius: 4px;
+}
+.sidebar ul ul li a {
+  /* font-size: 10px; */
+  padding: 10px 20px;
+  width: 200px;
+  margin-left: -10px;
+
+}
+.sidebar li:hover > ul {
+  display: block;
+
+}
+      </style>
+      <nav class="sidebar">
+        <img src="images/img.png" alt="" />
+        <ul>
+          <li><a th:href="@{/dashboard}"><i class="fa fa-home"></i>Trang chủ</a></li>
+  <li><a th:href="@{/categories}"><i class="fa fa-folder"></i> Quản lý danh mục</a></li>
+  <li>
+  <a href="javascript:void(0)"  class="dropdown-toggle"><i class="fa fa-cart-shopping"></i> Quản lý sản phẩm</a>
+  <ul class="dropdown-menu">
+    <li><a th:href="@{/variants}"></i> Quản lý phiên bản</a></li>
+    <li><a th:href="@{/specification}"> Thông số kỹ thuật</a></li>
+  </ul>
+</li>
+  <li><a th:href="@{/orders}"><i class="fa fa-box"></i> Quản lý đơn hàng</a></li>
+  <li><a th:href="@{/users}"><i class="fa fa-user"></i> Quản lý người dùng</a></li>
+  <li><a th:href="@{/statistics}"><i class="fa fa-chart-bar"></i> Thống kê</a></li>
+  <li><a th:href="@{/settings}"><i class="fa fa-gear"></i> Cài đặt</a></li>
+  <li><a th:href="@{/logout}"><i class="fa fa-sign-out-alt"></i> Đăng xuất</a></li>
+</ul>
+
+      </nav>
+      <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggles = document.querySelectorAll(".dropdown-toggle");
+    toggles.forEach(toggle => {
+      toggle.addEventListener("click", function () {
+        const submenu = this.nextElementSibling;
+        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+      });
+    });
+  });
+</script>
+    </div>
+  </body>
+</html>

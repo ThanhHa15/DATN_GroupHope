@@ -1,127 +1,185 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Thêm phiên bản</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 30px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        
-        th {
-            background-color: #f2f2f2;
-        }
-        
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        
-        form {
-            margin-top: 20px;
-            max-width: 600px;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        input[type="text"],
-        input[type="number"],
-        input[type="file"],
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        
-        button {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        
-        .edit-btn {
-            background-color: #2980b9;
-            color: white;
-        }
-        
-        .delete-btn {
-            background-color: #e74c3c;
-            color: white;
-        }
-        
-        .save-btn {
-            background-color: #2ecc71;
-            color: white;
-        }
-        
-        .product-image {
-            height: 50px;
-            display: block;
-            margin: 0 auto;
-        }
-        
-        .discounted-price {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        
-        .original-price {
-            color: #95a5a6;
-            text-decoration: line-through;
-            font-size: 0.9em;
-        }
-    </style>
-</head>
-<body>
-  <div th:replace="~{dashboard :: nav}"></div>
 
-  <h2>🧩 Thêm / Cập nhật phiên bản sản phẩm</h2>
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm phiên bản</title>
+  <style>
+    body {
+     font-family: "Inter", sans-serif;
+      margin: 30px;
+      background: #f0f3f7;
+    }
+
+    table {
+      width: 1210px;
+      border-collapse: collapse;
+      margin-top: 20px;
+     
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    h2{
+      margin-top: 100px;
+      margin-left: 300px;
+      text-align: center;
+    }
+    h1 {
+      text-align: left;
+      color: #5f9cd8;
+      margin-bottom: 20px;
+    }
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    form {
+      margin-top: 20px;
+      max-width: 400px;
+     
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select {
+      
+      width: 120%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      /* border-radius: 4px; */
+      box-sizing: border-box;
+      height: 40px;
+    }
+
+    button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .edit-btn {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .save-btn {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .product-image {
+      height: 50px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .discounted-price {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .original-price {
+      color: #95a5a6;
+      text-decoration: line-through;
+      font-size: 0.9em;
+    }
+.container2 {
+ display: flex;
+ margin-left: 250px;
+ background:white ;
+ height: 550px;
+}
+form{
+  flex-direction: row;
+}
+.container2 form:first-child{
+  flex: 1;
+  margin-right: 200px;
+  margin-left: 60px;
+}
+.container2 form:last-child{
+  flex: 2;
+}
+/* .container2 form:first-child > input {
+   margin-top: 10px;
+   height: 10px;
+   
+} */
+  .container2 form:last-child > input {
+   margin-top: 10px;
+   height: 40px;
+   
+}
+ .container2 form:last-child > label + select +select  {
+   margin-top: 30px;
+   height: 40px;
+   
+}
+  </style>
+</head>
+
+<body>
+  <div th:replace="nav :: na"></div>
+    <div th:replace="header :: header"></div>
+
+  <h1>Thêm / Cập nhật phiên bản sản phẩm</h1>
+  <div class="container2">
+    <!-- <p>Chọn sản phẩm và điền thông tin phiên bản mới.</p> -->
   <form th:action="@{/variants/add}" method="post" th:object="${variant}" enctype="multipart/form-data">
     <input type="hidden" th:field="*{variantID}" />
-    
+
     <div class="form-group">
-      <label>Sản phẩm:</label>
-      <select th:field="*{product.productID}" required>
-        <option value="" disabled selected>-- Chọn sản phẩm --</option>
-        <option th:each="p : ${products}" 
-                th:value="${p.productID}" 
-                th:text="${p.productName}"></option>
+      <label for="product">Sản phẩm:</label>
+      <select th:field="*{product.productID}" class="form-control" required>
+        <!-- Mặc định: không thể chọn lại, không thể submit -->
+        <option value="" selected  >Chọn sản phẩm </option>
+        <!-- Lặp danh sách sản phẩm -->
+        <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.productName}">
+        </option>
       </select>
     </div>
-    
+
+
+
     <div class="form-group">
       <label>Màu:</label>
       <input type="text" th:field="*{color}" required />
     </div>
-    
+
     <div class="form-group">
       <label>Dung lượng:</label>
-      <select th:field="*{storage}" >
-        <option value=""  selected>-- Chọn dung lượng --</option>
+      <select th:field="*{storage}">
+        <option value="" selected> Chọn dung lượng</option>
         <option value="128GB">128GB</option>
         <option value="256GB">256GB</option>
         <option value="512GB">512GB</option>
@@ -129,35 +187,37 @@
         <option value="2TB">2TB</option>
       </select>
     </div>
-    
+
     <div class="form-group">
       <label>Số lượng:</label>
       <input type="number" th:field="*{quantityInStock}" required min="0" />
     </div>
-    
+
     <div class="form-group">
       <label>Giá gốc (VNĐ):</label>
-      <input type="text" id="priceInput" th:value="${variant.price != null ? #numbers.formatDecimal(variant.price, 0, 'COMMA', 0, 'POINT') : ''}" />
+      <input type="text" id="priceInput"
+        th:value="${variant.price != null ? #numbers.formatDecimal(variant.price, 0, 'COMMA', 0, 'POINT') : ''}" />
       <input type="hidden" th:field="*{price}" id="priceHidden" />
     </div>
-    
+
     <div class="form-group">
       <label>Hình ảnh:</label>
       <input type="file" name="imageFile" accept="image/*" />
       <span th:if="${variant.imagesno2 != null}">
-        <img th:src="@{'/images/' + ${variant.imagesno2}}" class="product-image" style="max-height: 100px; margin-top: 10px;"/>
+        <img th:src="@{'/images/' + ${variant.imagesno2}}" class="product-image"
+          style="max-height: 100px; margin-top: 10px;" />
       </span>
     </div>
-    
+
     <button type="submit" class="save-btn">Lưu phiên bản</button>
-  </form>
+  </form> <br>
 
 
   <form th:action="@{/admin/discount/apply}" method="post" class="space-y-4">
     <label for="">Giảm giá sản phẩm</label><br>
 
     <!-- Chọn sản phẩm -->
-    <select name="productId" id="productSelect" required>
+    <select name="productId" id="productSelect" required style="margin-bottom: 40px;">
       <option value="">-- Chọn sản phẩm --</option>
       <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.productName}"
         th:attr="data-storages=${p.storages}">
@@ -165,12 +225,12 @@
     </select>
 
     <!-- Chọn dung lượng (lọc theo sản phẩm) -->
-    <select name="storage" id="storageSelect" >
+    <select name="storage" id="storageSelect" style="margin-bottom: 40px;">
       <option value="">-- Chọn dung lượng --</option>
     </select>
 
     <!-- Nhập phần trăm giảm giá -->
-    <input type="number" name="discount" placeholder="Phần trăm giảm (vd: 10)" min="0" max="100" required />
+    <input type="number" name="discount" placeholder="Phần trăm giảm (vd: 10)" min="0" max="100" required style="margin-bottom: 40px;"/>
 
     <!-- Chọn ngày bắt đầu và kết thúc -->
     <input type="date" name="startDate" min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required />
@@ -190,9 +250,15 @@
       <p th:text="${success}"></p>
     </div>
   </form>
+  </div>
+  
 
 
-  <h3>📋 Danh sách phiên bản</h3>
+
+
+<div style="background:#ffffff; margin-left: 250px;margin-top: 10px; border-radius: 4px; "  >
+
+  <h2 style="margin-left: 30px;">📋 Danh sách phiên bản</h2>
   <table>
     <thead>
       <tr>
@@ -261,26 +327,27 @@
     </tbody>
 
   </table>
+  </div>
 </body>
 
 </html>
- <script>
-    // Xử lý định dạng giá tiền
-    const priceInput = document.getElementById('priceInput');
-    const priceHidden = document.getElementById('priceHidden');
+<script>
+  // Xử lý định dạng giá tiền
+  const priceInput = document.getElementById('priceInput');
+  const priceHidden = document.getElementById('priceHidden');
 
-    priceInput.addEventListener('input', function() {
-        let raw = this.value.replace(/\D/g, '');
-        let formatted = new Intl.NumberFormat('vi-VN').format(raw);
-        this.value = formatted;
-        priceHidden.value = raw;
-    });
+  priceInput.addEventListener('input', function () {
+    let raw = this.value.replace(/\D/g, '');
+    let formatted = new Intl.NumberFormat('vi-VN').format(raw);
+    this.value = formatted;
+    priceHidden.value = raw;
+  });
 
-    // Khởi tạo giá trị nếu có
-    if (priceHidden.value) {
-        priceInput.value = new Intl.NumberFormat('vi-VN').format(priceHidden.value);
-    }
-  </script>
+  // Khởi tạo giá trị nếu có
+  if (priceHidden.value) {
+    priceInput.value = new Intl.NumberFormat('vi-VN').format(priceHidden.value);
+  }
+</script>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
