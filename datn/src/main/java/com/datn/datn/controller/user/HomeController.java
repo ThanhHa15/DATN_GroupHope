@@ -216,4 +216,9 @@ public class HomeController {
     public String address(Model model, HttpSession session) {
         return "views/shared/address";
     }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model, HttpSession session) {
+        return "lll";
+    }
 }
