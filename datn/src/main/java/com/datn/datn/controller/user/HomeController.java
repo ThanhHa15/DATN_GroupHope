@@ -320,10 +320,6 @@ public class HomeController {
         return "views/user/cart";
     }
 
-    @GetMapping("/checkout")
-    public String checkout(Model model, HttpSession session) {
-        return "views/user/checkout";
-    }
 
     @GetMapping("/order")
     public String order(Model model, HttpSession session) {

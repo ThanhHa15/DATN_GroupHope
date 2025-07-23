@@ -95,10 +95,12 @@
             <table class="min-w-full table-auto text-left">
                 <thead class="bg-gray-100">
                     <tr>
+
                         <th class="p-3">STT</th>
+                        <th class="p-3">Ảnh</th>
                         <th class="p-1 w-[150px]">Sản phẩm</th>
                         <th class="p-3">Màu</th>
-                        <th class="p-3">Ảnh</th>
+
                         <th class="p-3">Dung lượng</th>
                         <th class="p-0 w-[180px] pr-14">Giảm (%)</th>
                         <th class="pr-15">Giá</th>
@@ -108,15 +110,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="v, stat : ${variants}"
-                        class="border-t odd:bg-white even:bg-gray-300 hover:bg-yellow-100">
+                    <tr th:each="v, stat : ${variants}" class="border-t odd:bg-white even:bg-gray-300 ">
                         <td class="p-3" th:text="${stat.index + 1}"></td>
-                        <td class="p-1" th:text="${v.product.productName}"></td>
-                        <td class="p-3" th:text="${v.color}"></td>
                         <td>
                             <img th:src="@{'/images/' + ${v.imagesno2}}" alt="ảnh"
                                 class="w-12 h-12 object-contain rounded-xl shadow" />
                         </td>
+                        <td class="p-1" th:text="${v.product.productName}"></td>
+                        <td class="p-3" th:text="${v.color}"></td>
+
                         <td class="py-4 pl-9" th:text="${v.storage}"></td>
                         <td class="p-3" th:text="${v.discount != null ? v.discount + '%' : '0%'}"></td>
                         <td class="pl-left">

@@ -37,9 +37,11 @@
         z-index: 1000;
         /* 👇 Đổ bóng bên phải */
         box-shadow: 4px 0 8px rgba(0, 0, 0, 0.5);
-         overflow-y: auto; /* Cho phép cuộn dọc khi cần */
-    display: flex;
-    flex-direction: column; /* Sắp xếp các phần tử theo chiều dọc */
+        overflow-y: auto;
+        /* Cho phép cuộn dọc khi cần */
+        display: flex;
+        flex-direction: column;
+        /* Sắp xếp các phần tử theo chiều dọc */
       }
 
 
@@ -108,35 +110,40 @@
         color: white;
         font-weight: 500;
       }
-      .sidebar > img {
-    flex-shrink: 0; /* Ngăn hình ảnh bị co lại */
-  }
 
-  .sidebar > ul {
-    flex-grow: 1; /* Cho phép danh sách mở rộng */
-    overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
-    padding-bottom: 20px; /* Thêm khoảng trống ở dưới */
-    scrollbar-width: none;
-  }
+      .sidebar>img {
+        flex-shrink: 0;
+        /* Ngăn hình ảnh bị co lại */
+      }
 
-  /* Ẩn thanh cuộn trên WebKit (Chrome, Safari) */
-  .sidebar::-webkit-scrollbar {
-    display: none;
-  }
+      .sidebar>ul {
+        flex-grow: 1;
+        /* Cho phép danh sách mở rộng */
+        overflow-y: auto;
+        /* Cho phép cuộn nếu nội dung quá dài */
+        padding-bottom: 20px;
+        /* Thêm khoảng trống ở dưới */
+        scrollbar-width: none;
+      }
+
+      /* Ẩn thanh cuộn trên WebKit (Chrome, Safari) */
+      .sidebar::-webkit-scrollbar {
+        display: none;
+      }
 
 
-  .sidebar::-webkit-scrollbar-track {
-    background: #3a465e;
-  }
+      .sidebar::-webkit-scrollbar-track {
+        background: #3a465e;
+      }
 
-  .sidebar::-webkit-scrollbar-thumb {
-    background: #5d6d87;
-    border-radius: 3px;
-  }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: #5d6d87;
+        border-radius: 3px;
+      }
 
-  .sidebar::-webkit-scrollbar-thumb:hover {
-    background: #699ae9;
-  }
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: #699ae9;
+      }
     </style>
     <nav class="sidebar">
       <img src="https://i.postimg.cc/TPyYJ3MY/image-removebg-preview-2.png" alt="" />
@@ -165,19 +172,20 @@
                 bản</a>
               <a th:href="@{/specification}" class="block p-2 hover:bg-gray-200"><i class="fas fa-cog"></i>Thông số kỹ
                 thuật</a>
-              <a th:href="@{/discount}" class="block p-2 hover:bg-gray-200"><i class="fas fa-tags "></i>Giảm giá sản phẩm</a>
+              <a th:href="@{/discount}" class="block p-2 hover:bg-gray-200"><i class="fas fa-tags "></i>Giảm giá sản
+                phẩm</a>
             </div>
           </div>
         </li>
 
-        <li><a th:href="@{/icons}"><i class="fa fa-solid fa-ticket"></i>Quản lý voucher</a></li>
+        <li><a th:href="@{/vouchers}"><i class="fa fa-solid fa-ticket"></i>Quản lý voucher</a></li>
 
         <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng đơn hàng</p>
         <li><a th:href="@{/login}"><i class="fa fas fa-boxes"></i>Quản lý đơn hàng</a></li>
         <li><a th:href="@{/register}"><i class="fa fa-user-plus"></i>Demo</a></li>
 
         <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng người dùng</p>
-        <li><a th:href="@{/login}"> <i class="fa fas fa-users"></i>Quản lý khách hàng</a></li>
+        <li><a th:href="@{/admin/users}"> <i class="fa fas fa-users"></i>Quản lý khách hàng</a></li>
         <li><a th:href="@{/register}"> <i class="fa fas fa-id-badge"></i>Quản lý nhân viên</a></li>
 
         <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng Thống kê & báo
