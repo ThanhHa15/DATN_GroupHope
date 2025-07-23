@@ -37,6 +37,9 @@
         z-index: 1000;
         /* 👇 Đổ bóng bên phải */
         box-shadow: 4px 0 8px rgba(0, 0, 0, 0.5);
+         overflow-y: auto; /* Cho phép cuộn dọc khi cần */
+    display: flex;
+    flex-direction: column; /* Sắp xếp các phần tử theo chiều dọc */
       }
 
 
@@ -105,6 +108,35 @@
         color: white;
         font-weight: 500;
       }
+      .sidebar > img {
+    flex-shrink: 0; /* Ngăn hình ảnh bị co lại */
+  }
+
+  .sidebar > ul {
+    flex-grow: 1; /* Cho phép danh sách mở rộng */
+    overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
+    padding-bottom: 20px; /* Thêm khoảng trống ở dưới */
+    scrollbar-width: none;
+  }
+
+  /* Ẩn thanh cuộn trên WebKit (Chrome, Safari) */
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+
+  .sidebar::-webkit-scrollbar-track {
+    background: #3a465e;
+  }
+
+  .sidebar::-webkit-scrollbar-thumb {
+    background: #5d6d87;
+    border-radius: 3px;
+  }
+
+  .sidebar::-webkit-scrollbar-thumb:hover {
+    background: #699ae9;
+  }
     </style>
     <nav class="sidebar">
       <img src="https://i.postimg.cc/TPyYJ3MY/image-removebg-preview-2.png" alt="" />
