@@ -73,16 +73,48 @@
             </nav>
           </aside>
 
-          <!-- Main Content -->
           <main class="flex-1 p-6 md:p-8">
-            <h1 class="text-xl font-bold text-gray-800 mb-6 -mt-3" >THÔNG TIN CÁ NHÂN</h1>
-              <div class="space-y-3 text-base text-gray-800">
-                <p><span class="font-semibold">Họ tên:</span> user name</p>
-                <p><span class="font-semibold">Email:</span> ZXCVBNM@gmail.com</p>
-                <p><span class="font-semibold">Điện thoại:</span> +84 987654325</p>
-                <p><span class="font-semibold">Địa chỉ:</span> 12 Tôn Bản, Thị xã Sơn Tây, Hà Nội, Vietnam</p>
+          <h1 class="text-xl font-bold text-gray-800 mb-6 -mt-3">THÔNG TIN CÁ NHÂN</h1>
+          <div class="space-y-4 text-base text-gray-800">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold w-28 shrink-0">Họ tên:</span>
+              <input type="text" th:value="${member.fullname}" readonly
+                    class="border border-gray-300 px-3 py-2 rounded-md w-[200px] bg-gray-100" />
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-semibold w-28 shrink-0">Mật khẩu:</span>
+              <div class="relative w-[200px]">
+                <input id="password-field" type="password"
+                      th:value="${member.password}" readonly
+                      class="border border-gray-300 px-3 py-2 rounded-md w-full pr-10 bg-gray-100" />
+                <i id="toggle-password"
+                  class="ri-eye-line absolute top-1/2 right-3 -translate-y-1/2 text-gray-600 cursor-pointer"></i>
               </div>
-          </main>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-semibold w-28 shrink-0">Email:</span>
+              <input type="text" th:value="${member.email}" readonly
+                    class="border border-gray-300 px-3 py-2 rounded-md w-[200px] bg-gray-100" />
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-semibold w-28 shrink-0">Điện thoại:</span>
+              <input type="text" th:value="${member.phone}" readonly
+                    class="border border-gray-300 px-3 py-2 rounded-md w-[200px] bg-gray-100" />
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-semibold w-28 shrink-0">Ngày sinh:</span>
+              <input type="text" th:value="${member.birthday}" readonly
+                    class="border border-gray-300 px-3 py-2 rounded-md w-[200px] bg-gray-100" />
+            </div>
+          </div>
+          <div class="mt-6">
+          <div class="flex justify-end mt-6">
+          <a href="editInf"
+            class="inline-block bg-primary text-white font-medium px-5 py-2 rounded-button hover:bg-red-600 transition">
+            <i class="ri-edit-line mr-2"></i> Chỉnh sửa thông tin
+          </a>
+        </div>
+        </main>
       </div>
     </div>
     <!-- Footer -->
@@ -189,3 +221,18 @@
         }
       });
     </script>
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("toggle-password");
+    const input = document.getElementById("password-field");
+
+    toggle.addEventListener("click", function () {
+      const isHidden = input.type === "password";
+
+      input.type = isHidden ? "text" : "password";
+      toggle.classList.toggle("ri-eye-line", !isHidden);
+      toggle.classList.toggle("ri-eye-off-line", isHidden);
+    });
+  });
+</script>
+

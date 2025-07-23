@@ -1,123 +1,267 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sidebar</title>
-  </head>
-  <body>
-    <div th:fragment="na">
-      <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-/>
-      <style>
-        img {
-          
-         margin-bottom: 30px;
-        }
-        .sidebar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 250px;
-          height: 100vh;
-          background: #3f4d67;
-          padding: 20px;
-          box-sizing: border-box;
-          display: flex;
-          flex-direction: column;
-          z-index: 1000;
-          box-shadow: 7px 7px 7px 7px rgb(215, 214, 214);
-        }
 
-        .sidebar ul {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sidebar</title>
+</head>
 
-        .sidebar li a {
-          display: block;
-          width: 245px;
-          padding: 12px 16px ;
-          /* background-color: #2c3e50; */
-          color: rgb(228, 228, 228);
-          border: none;
-          border-radius: 4px;
-          text-decoration: none;
-          text-align: left;
-          transition: background-color 0.3s, transform 0.1s;
-          box-sizing: border-box;
-          margin-left: -20px;
-        }
+<body>
+  <div th:fragment="na">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-        .sidebar li a:hover {
-          background-color: #3e5b77;
-          /* transform: translateX(2px); */
-       box-shadow: inset 5px 0 0 #699ae9; /* Viền trái bên trong */
-          /* font-weight: bold;
-          font-size: 14px; */
-        }
-       
-        .fa {
-          margin-right: 20px;
-        }
-        .dropdown-menu {
-  display: none;
-  padding-left: 20px;
-}
-.sidebar ul ul {
-  display: none;
-  padding-left: 20px;
-  border-left: 2px solid #5d6d87;
-   margin-top: 5px; 
-  margin-bottom: 5px; 
-  border-radius: 4px;
-}
-.sidebar ul ul li a {
-  /* font-size: 10px; */
-  padding: 10px 20px;
-  width: 200px;
-  margin-left: -10px;
+    <style>
+      img {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        filter: contrast(1.2);
+        /* Tăng độ tương phản lên 120% */
+        transition: filter 0.3s ease;
+        /* Thêm hiệu ứng mượt khi hover */
+      }
 
-}
-.sidebar li:hover > ul {
-  display: block;
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
 
-}
-      </style>
-      <nav class="sidebar">
-        <img src="images/img.png" alt="" />
-        <ul>
-          <li><a th:href="@{/dashboard}"><i class="fa fa-home"></i>Trang chủ</a></li>
-  <li><a th:href="@{/categories}"><i class="fa fa-folder"></i> Quản lý danh mục</a></li>
-  <li>
-  <a href="javascript:void(0)"  class="dropdown-toggle"><i class="fa fa-cart-shopping"></i> Quản lý sản phẩm</a>
-  <ul class="dropdown-menu">
-    <li><a th:href="@{/variants}"></i> Quản lý phiên bản</a></li>
-    <li><a th:href="@{/specification}"> Thông số kỹ thuật</a></li>
-  </ul>
-</li>
-  <li><a th:href="@{/orders}"><i class="fa fa-box"></i> Quản lý đơn hàng</a></li>
-  <li><a th:href="@{/users}"><i class="fa fa-user"></i> Quản lý người dùng</a></li>
-  <li><a th:href="@{/statistics}"><i class="fa fa-chart-bar"></i> Thống kê</a></li>
-  <li><a th:href="@{/settings}"><i class="fa fa-gear"></i> Cài đặt</a></li>
-  <li><a th:href="@{/logout}"><i class="fa fa-sign-out-alt"></i> Đăng xuất</a></li>
-</ul>
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        background: #3f4d67;
+        z-index: 1000;
+        /* 👇 Đổ bóng bên phải */
+        box-shadow: 4px 0 8px rgba(0, 0, 0, 0.5);
+         overflow-y: auto; /* Cho phép cuộn dọc khi cần */
+    display: flex;
+    flex-direction: column; /* Sắp xếp các phần tử theo chiều dọc */
+      }
 
-      </nav>
-      <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggles = document.querySelectorAll(".dropdown-toggle");
-    toggles.forEach(toggle => {
-      toggle.addEventListener("click", function () {
-        const submenu = this.nextElementSibling;
-        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+
+      .sidebar li i {
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar li a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #cfd8e3;
+        padding: 10px 16px;
+        font-weight: 400;
+        transition: all 0.3s ease;
+
+      }
+
+      .sidebar li a:hover {
+        background-color: #485870;
+        box-shadow: inset 3px 0 0 #699ae9;
+        color: white;
+      }
+
+      .fa {
+        margin-right: 20px;
+      }
+
+      .dropdown-menu {
+        display: none;
+        padding-left: 20px;
+      }
+
+      .sidebar ul ul {
+        display: none;
+        padding-left: 20px;
+        border-left: 2px solid #5d6d87;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        border-radius: 0;
+        /* Đổi từ 4px thành 0 */
+      }
+
+      .sidebar ul ul li a {
+        padding: 10px 20px;
+        width: 200px;
+        margin-left: -10px;
+        border-radius: 0;
+        /* Đổi từ 4px thành 0 */
+      }
+
+
+      /* Sửa lại phần active */
+      .sidebar li a.active {
+        background-color: #4a556c;
+        border-left: 4px solid #699ae9;
+        color: white;
+        font-weight: 500;
+      }
+      .sidebar > img {
+    flex-shrink: 0; /* Ngăn hình ảnh bị co lại */
+  }
+
+  .sidebar > ul {
+    flex-grow: 1; /* Cho phép danh sách mở rộng */
+    overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
+    padding-bottom: 20px; /* Thêm khoảng trống ở dưới */
+    scrollbar-width: none;
+  }
+
+  /* Ẩn thanh cuộn trên WebKit (Chrome, Safari) */
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+
+  .sidebar::-webkit-scrollbar-track {
+    background: #3a465e;
+  }
+
+  .sidebar::-webkit-scrollbar-thumb {
+    background: #5d6d87;
+    border-radius: 3px;
+  }
+
+  .sidebar::-webkit-scrollbar-thumb:hover {
+    background: #699ae9;
+  }
+    </style>
+    <nav class="sidebar">
+      <img src="https://i.postimg.cc/TPyYJ3MY/image-removebg-preview-2.png" alt="" />
+      <ul>
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng điều khiển</p>
+        <li><a th:href="@{/dashboard}"><i class="fa fa-home"></i>Tổng quan</a></li>
+
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng sản phẩm</p>
+        <li><a th:href="@{/categories}"><i class="fa fa-solid fa-list"></i>Quản lý danh mục</a></li>
+
+        <li>
+          <a th:href="@{/admin-products}" class="flex items-center justify-between p-2 hover:bg-gray-100"
+            id="product-manager">
+            <i class="fa fas fa-box"></i>
+            <span>Quản lý sản phẩm</span>
+            <i class="fa fa-chevron-right ml-auto transition-transform duration-100" id="chevron"
+              style="margin-right: 5px;"></i>
+          </a>
+
+          <!-- Các trường mở rộng -->
+          <div class="hidden pl-4 bg-gray-700" id="extra-fields">
+            <div class="py-2" style="margin-left: 35px;">
+              <a th:href="@{/admin-products}" class="block p-2 hover:bg-gray-200"><i class="fa-solid fa-mobile"></i>Sản
+                phẩm</a>
+              <a th:href="@{/variants}" class="block p-2 hover:bg-gray-200"><i class="fas fa-code-branch"></i>Phiên
+                bản</a>
+              <a th:href="@{/specification}" class="block p-2 hover:bg-gray-200"><i class="fas fa-cog"></i>Thông số kỹ
+                thuật</a>
+              <a th:href="@{/discount}" class="block p-2 hover:bg-gray-200"><i class="fas fa-tags "></i>Giảm giá sản phẩm</a>
+            </div>
+          </div>
+        </li>
+
+        <li><a th:href="@{/icons}"><i class="fa fa-solid fa-ticket"></i>Quản lý voucher</a></li>
+
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng đơn hàng</p>
+        <li><a th:href="@{/login}"><i class="fa fas fa-boxes"></i>Quản lý đơn hàng</a></li>
+        <li><a th:href="@{/register}"><i class="fa fa-user-plus"></i>Demo</a></li>
+
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng người dùng</p>
+        <li><a th:href="@{/login}"> <i class="fa fas fa-users"></i>Quản lý khách hàng</a></li>
+        <li><a th:href="@{/register}"> <i class="fa fas fa-id-badge"></i>Quản lý nhân viên</a></li>
+
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng Thống kê & báo
+          cáo</p>
+        <li><a th:href="@{/login}"><i class="fa fas fa-chart-line"></i>Doanh thu</a></li>
+        <li><a th:href="@{/register}"><i class="fa fas fa-trophy"></i>Sản phẩm bán chạy</a></li>
+
+      </ul>
+
+
+    </nav>
+
+    <script>
+      function toggleDropdown(id) {
+        const dropdown = document.getElementById(id);
+        dropdown.classList.toggle('hidden');
+      }
+    </script>
+
+    <script>
+      document.getElementById('product-manager').addEventListener('click', function (e) {
+        e.preventDefault(); // Ngăn chặn chuyển trang
+
+        const extraFields = document.getElementById('extra-fields');
+        const chevron = document.getElementById('chevron');
+
+        // Toggle hiển thị các trường
+        extraFields.classList.toggle('hidden');
+
+        // Xoay icon chevron
+        chevron.classList.toggle('rotate-90');
+
+        // Nếu bạn muốn thực sự chuyển trang khi click lần nữa
+        // có thể thêm logic ở đây
       });
-    });
-  });
-</script>
-    </div>
-  </body>
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const currentUrl = window.location.pathname;
+
+        document.querySelectorAll(".sidebar li a").forEach(link => {
+          const href = link.getAttribute("href");
+
+          if (href === currentUrl) {
+            link.classList.add("active");
+          }
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const currentUrl = window.location.pathname;
+
+        // Kiểm tra nếu URL hiện tại là 1 trong các trang con của dropdown
+        const dropdownUrls = [
+          '/admin-products',
+          '/specification',
+          '/variants', // thêm nếu bạn có
+          '/discount'
+        ];
+
+        if (dropdownUrls.includes(currentUrl)) {
+          // Mở dropdown
+          const extraFields = document.getElementById('extra-fields');
+          const chevron = document.getElementById('chevron');
+
+          extraFields.classList.remove('hidden');
+          chevron.classList.add('rotate-90');
+        }
+
+        // Highlight link đang active
+        document.querySelectorAll(".sidebar li a").forEach(link => {
+          const href = link.getAttribute("href");
+
+          if (href === currentUrl) {
+            link.classList.add("active");
+          }
+        });
+      });
+    </script>
+
+
+
+  </div>
+</body>
+
 </html>

@@ -1,268 +1,395 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Header mẫu</title>
-    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <script>tailwind.config={theme:{extend:{colors:{primary:'#e11d48',secondary:'#f97316'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/shared/footer.css">
-    <link rel="stylesheet" href="/css/shared/header.css">
-  </head>
 
-  <body>
-    <div th:fragment="siteHeader" class="fixed top-0 left-0 w-full z-50 bg-white shadow-md" >
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <header class="header">
-        <div class="header-container">
-          <div class="logo-section">
-            <div class="logo" style="margin-left: -37px;">
-              <a href="/">
-                <img th:src="@{/images/final.png}" alt="Logo" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Header mẫu</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: "#e11d48", secondary: "#f97316" },
+          borderRadius: {
+            none: "0px",
+            sm: "4px",
+            DEFAULT: "8px",
+            md: "12px",
+            lg: "16px",
+            xl: "20px",
+            "2xl": "24px",
+            "3xl": "32px",
+            full: "9999px",
+            button: "8px",
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/shared/footer.css" />
+  <link rel="stylesheet" href="/css/shared/header.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<body>
+
+  <div th:fragment="siteHeader" class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <header class="header">
+      <link rel="stylesheet" th:href="@{/css/cart.css}" />
+      <link rel="stylesheet" th:href="@{/css/notica.css}" />
+      <div class="header-container">
+        <div class="logo-section">
+          <div class="logo" style="margin-left: -37px">
+            <a href="/">
+              <img th:src="@{/images/final.png}" alt="Logo" />
+            </a>
+          </div>
+
+          <div class="search-group">
+            <div class="category-menu">
+              <button class="category-btn" style="
+                    width: 130px;
+                    margin-left: -20px;
+                    background: rgba(255, 255, 255, 0.188);
+                    backdrop-filter: blur(6px);
+                    -webkit-backdrop-filter: blur(6px);
+                    color: white;
+                    transition: background 0.3s ease;
+                  ">
+                <!-- Thêm hiệu ứng chuyển đổi mượt mà -->
+                <i class="fas fa-list"></i>
+                <span>Danh mục</span>
+              </button>
+              <!-- // Dropdown menu  -->
+              <div class="category-dropdown space-y-2">
+                <a href="products?type=ipad">
+                  <i class="fas fa-mobile-alt"></i> iPhone
+                </a>
+                <a href="products?type=ipad">
+                  <i class="fas fa-tablet-alt"></i> iPad
+                </a>
+                <a href="products?type=macbook">
+                  <i class="fas fa-laptop"></i> Macbook
+                </a>
+                <a href="products?type=watch">
+                  <i class="fas fa-stopwatch"></i> Watch
+                </a>
+                <a href="products?type=airpods">
+                  <i class="fas fa-headphones-alt"></i> AirPods
+                </a>
+                <a href="products?type=Ốp+lưng+%26+Bao+da">
+                  <i class="fas fa-shield-alt"></i> Ốp lưng & Bao da
+                </a>
+                <a href="products?type=Sạc+%26+cáp">
+                  <i class="fas fa-charging-station"></i> Sạc & cáp
+                </a>
+              </div>
+
             </div>
 
-            <div class="search-group">
-              <div class="category-menu">
-                <button class="category-btn" 
-                          style="width: 130px; margin-left: -20px; 
-                                background: rgba(255, 255, 255, 0.188); 
-                                backdrop-filter: blur(6px); 
-                                -webkit-backdrop-filter: blur(6px); 
-                                color: white;
-                                transition: background 0.3s ease;"> <!-- Thêm hiệu ứng chuyển đổi mượt mà -->
-                      <i class="fas fa-list"></i>
-                      <span>Danh mục</span>
-                  </button>
-                  <!-- // Dropdown menu  -->
-                  <div class="category-dropdown">
-                    <a href="product"><i class="fas fa-mobile-alt"></i> Điện thoại</a>
-                    <a href="#"><i class="fas fa-laptop"></i> Laptop</a>
-                    <a href="#"><i class="fas fa-tablet-alt"></i> Tablet</a>
-                    <a href="#"><i class="fas fa-headphones"></i> Phụ kiện</a>
-                    <a href="#"><i class="fas fa-clock"></i> Đồng hồ</a>
-                    <a href="#"><i class="fas fa-home"></i> Điện gia dụng</a>
-                    <a href="#"><i class="fas fa-tv"></i> TV</a>
-                    <a href="#"><i class="fas fa-gamepad"></i> Gaming</a>
-                  </div>
-              </div>
-              <!-- Search bar -->
-              <div class="flex items-center w-full max-w-md rounded-md overflow-hidden bg-white shadow" style="margin-left: 20px;">
-                <input 
-                  type="text"
-                  placeholder="Bạn cần tìm gì..."
-                  class="w-full px-4 py-2 text-black focus:outline-none"
-                />
-                <button 
-                  class="bg-white px-4 py-2 hover:bg-[#ffc400] transition duration-200 group"
-                  title="Tìm kiếm"
-                >
+            <!-- Search bar -->
+            <style>
+              #suggestion-box {
+                max-height: 300px;
+                overflow-y: auto;
+                width: 100%;
+                top: 100%;
+                left: 0;
+              }
+
+              .suggestion-item {
+                transition: background-color 0.2s;
+              }
+            </style>
+            <div class="relative w-full max-w-md" style="margin-left: 20px;">
+              <form id="search-form" th:action="@{/products}" method="get"
+                class="flex items-center rounded-md overflow-hidden bg-white shadow">
+                <input type="text" name="keyword" placeholder="Bạn cần tìm gì..."
+                  class="w-full px-4 py-2 text-black focus:outline-none" th:value="${param.keyword}" />
+                <button type="submit" class="bg-white px-4 py-2 hover:bg-[#ffc400] transition duration-200 group"
+                  title="Tìm kiếm">
                   <i class="fa-solid fa-magnifying-glass text-[#000f8f] group-hover:text-black"></i>
                 </button>
+              </form>
+
+              <!-- Đây là hộp gợi ý -->
+              <div id="suggestion-box"
+                class="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-b-md shadow z-50"
+                style="display: none; position: absolute; z-index: 9999; color: black;"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="right-section" style="margin-right: -5px">
+          <div class="nav-icon flex items-center gap-2 cursor-pointer group">
+            <i class="fa-solid fa-phone"></i>
+            <span class="group-hover:text-[#ffa600] transition-colors">1900 000</span>
+          </div>
+
+          <div class="nav-icon flex items-center gap-2 cursor-pointer group">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span class="group-hover:text-[#ffa600] transition-colors">Địa chỉ</span>
+          </div>
+
+          <a href="/order" class="flex items-center gap-2 cursor-pointer group nav-icon">
+            <i class="fas fa-clipboard-list"></i>
+            <span class="group-hover:text-[#ffa600] transition-colors">Đơn hàng</span>
+          </a>
+
+          <!-- Bọc trong group để hover -->
+          <div class="relative group">
+            <!-- Nút giỏ hàng -->
+            <a href="/cart">
+              <div class="nav-icon flex items-center gap-2 cursor-pointer">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="group-hover:text-[#ffa600] transition-colors">Giỏ hàng (<span class="cart-count">0</span>)
+                </span>
               </div>
+            </a>
+
+            <!-- Giỏ hàng mini -->
+            <div
+              class="absolute right-0 mt-2 w-[350px] bg-white rounded-lg shadow-lg border z-50 p-4 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all">
+              <div th:if="${#lists.isEmpty(cartItems)}">
+                <div class="text-center text-xl font-semibold text-gray-700 py-6">
+                  Chưa có sản phẩm
+                </div>
+              </div>
+
+
+              <div th:if="${!#lists.isEmpty(cartItems)}"></div>
             </div>
           </div>
 
-          <div class="right-section" style="margin-right: -5px;">
-              <div class="nav-icon flex items-center gap-2 cursor-pointer group">
-                <i class="fa-solid fa-phone"></i>
-                <span class="group-hover:text-[#ffa600] transition-colors">1900 000</span>
+          <!-- Dropdown cho thông tin người dùng -->
+          <div class="relative group cursor-pointer">
+            <!-- Nút chính -->
+            <div
+              class="nav-icon flex items-center gap-2 px-3 py-2 rounded transition-all group-hover:bg-[#ffa600] group-hover:text-white">
+              <i class="fas fa-user transition-all"></i>
+              <span class="transition-all">
+                <span th:if="${loggedInUser != null}"
+                  class="inline-block max-w-[100px] truncate overflow-hidden text-white text-sm font-medium italic"
+                  th:text="'Chào, ' + ${loggedInUser.fullname}">
+                  Tài khoản
+                </span>
+
+                <span th:if="${loggedInUser == null}">Thông tin</span>
+              </span>
+            </div>
+
+            <!-- Dropdown -->
+            <div
+              class="absolute right-0 mt-2 bg-white border rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all z-50 w-60 overflow-hidden">
+              <!-- Nếu CHƯA đăng nhập -->
+              <div th:if="${loggedInUser == null}">
+                <a href="/login"
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
+                  <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                </a>
+                <a href="/register"
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
+                  <i class="fas fa-user-plus"></i> Đăng ký
+                </a>
               </div>
 
-              <div class="nav-icon flex items-center gap-2 cursor-pointer group">
-                <i class="fa-solid fa-map-location-dot"></i>
-                <span class="group-hover:text-[#ffa600] transition-colors">Địa chỉ</span>
-              </div>
-
-              <a href="/order" class="flex items-center gap-2 cursor-pointer group nav-icon">
-                <i class="fas fa-clipboard-list"></i>
-                <span class="group-hover:text-[#ffa600] transition-colors">Đơn hàng</span>
-              </a>
-
-
-              <!-- Bọc trong group để hover -->
-              <div class="relative group">
-                <!-- Nút giỏ hàng -->
-                <a href="cart">
-                  <div class="nav-icon flex items-center gap-2 cursor-pointer">
-                    
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="group-hover:text-[#ffa600] transition-colors">Giỏ hàng (2)</span>
-                  </div>
+              <!-- Nếu ĐÃ đăng nhập -->
+              <div th:if="${loggedInUser != null}">
+                <a href="/info"
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
+                  <i class="fas fa-user-cog"></i> Tài khoản
+                </a>
+                <a href="/wishlist"
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
+                  <i class="fas fa-heart"></i> Danh sách yêu thích
                 </a>
 
-                <!-- Giỏ hàng mini -->
-                <div class="absolute right-0 mt-2 w-[350px] bg-white rounded-lg shadow-lg border z-50 p-4 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all">
-                  <!-- Sản phẩm 1 -->
-                  <div class="flex gap-3 border-b pb-2 mb-2">
-                    <img src="https://bizweb.dktcdn.net/thumb/compact/100/502/883/products/230225044129-z4137191702518-058b-7c6d0c7a-a87b-46da-a4dc-bae4cd7cb08a-31e2c29c-d083-4f09-b2af-7dd77c8875f2.png" class="w-14 h-14 object-cover rounded" alt="sp1" />
-                    <div class="flex-1">
-                      <p class="font-semibold text-sm text-black">iPhone 14 Plus 512GB - Chính hãng VN/A</p>
-                      <p class="text-xs text-gray-600">Trắng</p>
-                      <a href="#" class="text-red-600 text-sm">Xóa</a>
-                      <div class="flex items-center mt-1 text-sm">
-                        <span class="mr-2">Số lượng</span>
-                        <div class="flex items-center border rounded px-1">
-                          <button class="px-2 text-white bg-[#000f8f]">-</button>
-                          <span class="px-2 text-black">1</span>
-                          <button class="px-2 text-white bg-[#000f8f]">+</button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="text-red-600 font-bold text-right text-sm">25.490.000₫</div>
-                  </div>
+                <a href="/logout" onclick="handleLogout()"
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
+                  <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </a>
+                <form id="logoutForm" method="GET" action="/logout" style="display: none;"></form>
 
-                  <!-- Sản phẩm 2 -->
-                  <div class="flex gap-3 border-b pb-2 mb-2">
-                    <img src="https://bizweb.dktcdn.net/thumb/compact/100/502/883/products/230913060526-iphone-15-pro-max-n-1-59f45888-19c4-48c6-9803-1d3828deeba9-eab63bca-5bbf-4dc6-ac81-6b49a59aadf2.png" class="w-14 h-14 object-cover rounded" alt="sp2" />
-                    <div class="flex-1">
-                      <p class="font-semibold text-sm text-black">iPhone 15 Pro Max 1TB - Chính hãng VN/A</p>
-                      <p class="text-xs text-gray-600">Titan</p>
-                      <a href="#" class="text-red-600 text-sm">Xóa</a>
-                      <div class="flex items-center mt-1 text-sm">
-                        <span class="mr-2">Số lượng</span>
-                        <div class="flex items-center border rounded px-1">
-                          <button class="px-2 text-white bg-[#000f8f]">-</button>
-                          <span class="px-2 text-black">1</span>
-                          <button class="px-2 text-white bg-[#000f8f]">+</button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="text-red-600 font-bold text-right text-sm">45.590.000₫</div>
-                  </div>
-
-                  <!-- Tổng tiền -->
-                  <div class="flex justify-between font-semibold text-base mt-2">
-                    <span class="text-black">Tổng tiền:</span>
-                    <span class="text-red-600">71.080.000₫</span>
-                  </div>
-
-                  <!-- Nút thanh toán -->
-                  <a href="/checkout" class="block mt-4 text-center bg-[#000f8f] text-white py-2 rounded hover:bg-[#001baf] transition">
-                    Thanh toán
-                  </a>
-                </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="notification-container" style="position: fixed; top: 160px; right: 20px; z-index: 9999;">
+      </div>
 
+      <script th:src="@{/js/cart.js}"></script>
+      <script th:src="@{/js/notica.js}"></script>
+      <script th:src="@{/js/suggestio.js}"></script>
+    </header>
 
-              <!-- Dropdown cho thông tin người dùng -->
-              <div class="relative group cursor-pointer">
-                <!-- Nút chính -->
-                <div class="nav-icon flex items-center gap-2 px-3 py-2 rounded transition-all group-hover:bg-[#ffa600] group-hover:text-white">
-                  <i class="fas fa-user transition-all"></i>
-                  <span class="transition-all">Thông tin</span>
-                </div>
-
-                <!-- Dropdown -->
-                <div class="absolute right-0 mt-2 bg-white border rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all z-50 w-40 overflow-hidden">
-                  <a href="/login"
-                    class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] first:rounded-t transition-colors">
-                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
-                  </a>
-                  <a href="/register"
-                    class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] last:rounded-b transition-colors">
-                    <i class="fas fa-user-plus"></i> Đăng ký
-                  </a>
-                  <a href="/info"
-                    class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] last:rounded-b transition-colors">
-                    <i class="fas fa-user-cog"></i> Tài khoản 
-                  </a>
-                </div>
+    <nav class="main-nav">
+      <div class="nav-container max-w-screen-xl mx-auto">
+        <ul class="nav-links">
+          <li>
+            <a href="/home">Trang chủ</a>
+          </li>
+          <li>
+            <a href="/introduction">Giới thiệu</a>
+          </li>
+          <li class="has-dropdown">
+            <a href="/products">Sản phẩm <i class="fas fa-caret-down dropdown-icon"></i></a>
+            <div class="dropdown-menu">
+              <div class="dropdown-column">
+                <h3>
+                  <a href="#" class="dropdown-header" style="
+                        font-size: 20px;
+                        color: rgb(0, 0, 141);
+                        font-weight: 600;
+                      ">iPhone</a>
+                </h3>
+                <ul>
+                  <li><a href="#">iPhone 15 Series</a></li>
+                  <li><a href="#">iPhone 14 Series</a></li>
+                  <li><a href="#">iPhone 13</a></li>
+                  <li><a href="#">iPhone 12</a></li>
+                  <li><a href="#">iPhone 11</a></li>
+                </ul>
               </div>
-          </div>
-      
-        </header>
-    
-        <nav class="main-nav ">
-          <div class="nav-container max-w-screen-xl mx-auto">
-            <ul class="nav-links">
-              <li>
-                <a href="/home">Trang chủ</a>
-              </li>
-              <li>
-                <a href="introduction">Giới thiệu</a>
-              </li>
-              <li class="has-dropdown">
-                    <a href="products">Sản phẩm <i class="fas fa-caret-down dropdown-icon"></i></a>
-                    <div class="dropdown-menu">
-        <div class="dropdown-column">
-            <h3><a href="#" class="dropdown-header" style="font-size: 20px; color: rgb(0, 0, 141); font-weight: 600;">iPhone</a></h3>
-            <ul>
-                <li><a href="#">iPhone 15 Series</a></li>
-                <li><a href="#">iPhone 14 Series</a></li>
-                <li><a href="#">iPhone 13</a></li>
-                <li><a href="#">iPhone 12</a></li>
-                <li><a href="#">iPhone 11</a></li>
-            </ul>
-        </div>
-        <div class="dropdown-column">
-            <h3><a href="#" class="dropdown-header" style="font-size: 20px; color: rgb(0, 0, 141); font-weight: 600;">iPad</a></h3>
-            <ul>
-                <li><a href="#">iPad Pro</a></li>
-                <li><a href="#">iPad Air</a></li>
-                <li><a href="#">iPad Gen 10</a></li>
-                <li><a href="#">iPad Gen 9</a></li>
-                <li><a href="#">iPad mini</a></li>
-            </ul>
-        </div>
-        <div class="dropdown-column">
-            <h3><a href="#" class="dropdown-header" style="font-size: 20px; color: rgb(0, 0, 141); font-weight: 600;">Watch</a></h3>
-            <ul>
-                <li><a href="#">Apple Watch Ultra</a></li>
-                <li><a href="#">Apple Watch S7</a></li>
-                <li><a href="#">Apple Watch SE</a></li>
-                <li><a href="#">Apple Watch S8</a></li>
-                <li><a href="#">Apple Watch S9</a></li>
-            </ul>
-        </div>
-        <div class="dropdown-column">
-            <h3><a href="#" class="dropdown-header" style="font-size: 20px; color: rgb(0, 0, 141); font-weight: 600;">Mac</a></h3>
-            <ul>
-                <li><a href="#">MacBook</a></li>
-                <li><a href="#">Mac Studio</a></li>
-                <li><a href="#">iMac</a></li>
-                <li><a href="#">Mac mini</a></li>
-                <li><a href="#">Apple TV</a></li>
-            </ul>
-        </div>
-        <div class="dropdown-column">
-            <h3><a href="#" class="dropdown-header" style="font-size: 20px; color: rgb(0, 0, 141); font-weight: 600;">Âm thanh</a></h3>
-            <ul>
-                <li><a href="#">Loa</a></li>
-                <li><a href="#">Tai nghe</a></li>
-                <li><a href="#">AirPods</a></li>
-            </ul>
-        </div>
-        <div class="dropdown-column">
-            <h3><a href="#" class="dropdown-header" style="font-size: 20px; color: rgb(0, 0, 141); font-weight: 600;">Phụ kiện</a></h3>
-            <ul>
-                <li><a href="#">Phụ kiện Apple</a></li>
-                <li><a href="#">Cốc - Cáp</a></li>
-                <li><a href="#">Sạc dự phòng</a></li>
-                <li><a href="#">Bao da - Ốp lưng</a></li>
-                <li><a href="#">Dán cường lực</a></li>
-            </ul>
-        </div>
-    </div>
-                </li>
-              <li>
-                <a href="#">Câu hỏi thường gặp</a>
-              </li>
-              <li>
-                <a href="formGuarantee">Tra cứu bảo hành</a>
-              </li>
-            
-              <li>
-                <a href="">Liên hệ</a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-       
-    </div>
-  </body>
+              <div class="dropdown-column">
+                <h3>
+                  <a href="#" class="dropdown-header" style="
+                        font-size: 20px;
+                        color: rgb(0, 0, 141);
+                        font-weight: 600;
+                      ">iPad</a>
+                </h3>
+                <ul>
+                  <li><a href="#">iPad Pro</a></li>
+                  <li><a href="#">iPad Air</a></li>
+                  <li><a href="#">iPad Gen 10</a></li>
+                  <li><a href="#">iPad Gen 9</a></li>
+                  <li><a href="#">iPad mini</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-column">
+                <h3>
+                  <a href="#" class="dropdown-header" style="
+                        font-size: 20px;
+                        color: rgb(0, 0, 141);
+                        font-weight: 600;
+                      ">Watch</a>
+                </h3>
+                <ul>
+                  <li><a href="#">Apple Watch Ultra</a></li>
+                  <li><a href="#">Apple Watch S7</a></li>
+                  <li><a href="#">Apple Watch SE</a></li>
+                  <li><a href="#">Apple Watch S8</a></li>
+                  <li><a href="#">Apple Watch S9</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-column">
+                <h3>
+                  <a href="#" class="dropdown-header" style="
+                        font-size: 20px;
+                        color: rgb(0, 0, 141);
+                        font-weight: 600;
+                      ">Mac</a>
+                </h3>
+                <ul>
+                  <li><a href="#">MacBook</a></li>
+                  <li><a href="#">Mac Studio</a></li>
+                  <li><a href="#">iMac</a></li>
+                  <li><a href="#">Mac mini</a></li>
+                  <li><a href="#">Apple TV</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-column">
+                <h3>
+                  <a href="#" class="dropdown-header" style="
+                        font-size: 20px;
+                        color: rgb(0, 0, 141);
+                        font-weight: 600;
+                      ">Âm thanh</a>
+                </h3>
+                <ul>
+                  <li><a href="#">Loa</a></li>
+                  <li><a href="#">Tai nghe</a></li>
+                  <li><a href="#">AirPods</a></li>
+                </ul>
+              </div>
+              <div class="dropdown-column">
+                <h3>
+                  <a href="#" class="dropdown-header" style="
+                        font-size: 20px;
+                        color: rgb(0, 0, 141);
+                        font-weight: 600;
+                      ">Phụ kiện</a>
+                </h3>
+                <ul>
+                  <li><a href="#">Phụ kiện Apple</a></li>
+                  <li><a href="#">Cốc - Cáp</a></li>
+                  <li><a href="#">Sạc dự phòng</a></li>
+                  <li><a href="#">Bao da - Ốp lưng</a></li>
+                  <li><a href="#">Dán cường lực</a></li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li>
+            <a href="#">Câu hỏi thường gặp</a>
+          </li>
+          <li>
+            <a href="/formGuarantee">Tra cứu bảo hành</a>
+          </li>
+
+          <li>
+            <a href="">Liên hệ</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div id="notification-container" style="position: fixed; top: 160px; right: 10px; z-index: 9999"></div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    function handleLogout() {
+      Swal.fire({
+        title: "Xác nhận đăng xuất",
+        text: "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Đăng xuất",
+        cancelButtonText: "Ở lại",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        reverseButtons: true,
+        focusCancel: true,
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Hiển thị loading khi đang xử lý
+          Swal.fire({
+            title: "Đang đăng xuất...",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
+          // Submit form đăng xuất
+          document.getElementById("logoutForm").submit();
+        }
+      });
+    }
+  </script>
+
+</body>
+
 </html>

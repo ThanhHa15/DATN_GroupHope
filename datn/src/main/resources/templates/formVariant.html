@@ -2,34 +2,42 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Thêm phiên bản</title>
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
   <style>
     body {
-     font-family: "Inter", sans-serif;
-      margin: 30px;
-      background: #f0f3f7;
+      background-color: #f0f3f7;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      color: #2c3e50;
     }
 
-    table {
-      width: 1210px;
-      border-collapse: collapse;
-      margin-top: 20px;
-     
-      background-color: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    h2{
-      margin-top: 100px;
-      margin-left: 300px;
+   
+    h2 {
+      margin-top: 130px;
+      margin-left: 360px;
       text-align: center;
     }
-    h1 {
-      text-align: left;
-      color: #5f9cd8;
-      margin-bottom: 20px;
+
+    div+h1 {
+      font-size: 23px;
+      margin-top: 73px;
+      margin-left: 295px;
+      margin-bottom: 10px;
     }
+
     th,
     td {
       border: 1px solid #ddd;
@@ -45,11 +53,7 @@
       background-color: #f9f9f9;
     }
 
-    form {
-      margin-top: 20px;
-      max-width: 400px;
-     
-    }
+    
 
     .form-group {
       margin-bottom: 15px;
@@ -65,8 +69,7 @@
     input[type="number"],
     input[type="file"],
     select {
-      
-      width: 120%;
+      /* width: 120%; */
       padding: 10px;
       border: 1px solid #ddd;
       /* border-radius: 4px; */
@@ -95,6 +98,7 @@
     .save-btn {
       background-color: #2ecc71;
       color: white;
+      padding: 5px;
     }
 
     .product-image {
@@ -113,239 +117,393 @@
       text-decoration: line-through;
       font-size: 0.9em;
     }
-.container2 {
- display: flex;
- margin-left: 250px;
- background:white ;
- height: 550px;
-}
-form{
-  flex-direction: row;
-}
-.container2 form:first-child{
-  flex: 1;
-  margin-right: 200px;
-  margin-left: 60px;
-}
-.container2 form:last-child{
-  flex: 2;
-}
-/* .container2 form:first-child > input {
-   margin-top: 10px;
-   height: 10px;
-   
-} */
-  .container2 form:last-child > input {
-   margin-top: 10px;
-   height: 40px;
-   
-}
- .container2 form:last-child > label + select +select  {
-   margin-top: 30px;
-   height: 40px;
-   
-}
+
+    .container2 {
+      width: 1200px;
+      /* margin-top: 100px; */
+      display: flex;
+      margin-left: 295px;
+      background:white ;
+      height: 450px;
+      border-radius: 10px;
+      margin-bottom: 59px;
+      box-shadow: 20px 15px 15px  rgba(rgb(56, 56, 56)) ;
+      
+    }
+
+    form {
+      flex-direction: row;
+    }
+
+    .container2 form:first-child {
+      flex: 1;
+     
+      margin-left: 40px;
+      
+    }
+
+    .container2 form:last-child {
+      flex: 2;
+        margin-right: 40px;
+    }
+
+    /* .container2 form:last-child>input {
+      margin-top: 10px;
+      height: 40px;
+    } */
+
+    /* .container2 form:last-child>label+select+select {
+      margin-top: 30px;
+      height: 40px;
+    } */
+
+    /* .form-container2 {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+      border: 1px solid #ddd;
+      margin-right: 20px;
+      width: 42%;
+      height: 600px;
+      box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1);
+
+    } */
   </style>
 </head>
 
 <body>
   <div th:replace="nav :: na"></div>
-    <div th:replace="header :: header"></div>
+  <div th:replace="header :: header"></div>
 
   <h1>Thêm / Cập nhật phiên bản sản phẩm</h1>
-  <div class="container2">
-    <!-- <p>Chọn sản phẩm và điền thông tin phiên bản mới.</p> -->
-  <form th:action="@{/variants/add}" method="post" th:object="${variant}" enctype="multipart/form-data">
-    <input type="hidden" th:field="*{variantID}" />
+  <div class="container2 ">
+    <!-- <div class="form-container2 "> -->
+      <form th:action="@{/variants/add}" method="post" th:object="${variant}" enctype="multipart/form-data">
+        <h2 style="font-size: 20px; margin-bottom: 20px; margin-top: 10px; font-weight: bold;">Phiên bản sản phẩm</h2>
+        <input type="hidden" th:field="*{variantID}" />
 
-    <div class="form-group">
-      <label for="product">Sản phẩm:</label>
-      <select th:field="*{product.productID}" class="form-control" required>
-        <!-- Mặc định: không thể chọn lại, không thể submit -->
-        <option value="" selected  >Chọn sản phẩm </option>
-        <!-- Lặp danh sách sản phẩm -->
-        <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.productName}">
-        </option>
-      </select>
+        <div class="form-grid">
+          <!-- Column 1 -->
+          <div class="form-column">
+            <div class="form-group">
+              <label for="product">Sản phẩm:</label>
+              <select th:field="*{product.productID}" class="form-control" required>
+                <option value="" selected>Chọn sản phẩm</option>
+                <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.productName}"></option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Màu:</label>
+              <input type="text" placeholder="Màu" th:field="*{color}" required />
+            </div>
+
+            <div class="form-group">
+              <label>Dung lượng:</label>
+              <select th:field="*{storage}">
+                <option value="" selected>Chọn dung lượng</option>
+                <option value="128GB">128GB</option>
+                <option value="256GB">256GB</option>
+                <option value="512GB">512GB</option>
+                <option value="1TB">1TB</option>
+                <option value="2TB">2TB</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="form-column">
+            <div class="form-group">
+              <label>Số lượng:</label>
+              <input type="number" th:field="*{quantityInStock}" required min="0" placeholder="Số lượng" />
+            </div>
+
+            <div class="form-group">
+              <label>Giá gốc (VNĐ):</label>
+              <input type="text" id="priceInput" placeholder="Giá gốc" th:field="*{price}" required
+                th:value="${variant.price != null ? #numbers.formatDecimal(variant.price, 0, 'COMMA', 0, 'POINT') : ''}" />
+              <input type="hidden" th:field="*{price}" id="priceHidden" />
+            </div>
+
+            <div class="form-group">
+              <label>Hình ảnh:</label>
+              <input type="file" name="imageFile" accept="image/*" style="border: none" />
+              <div class="image-preview">
+                <span th:if="${variant.imagesno2 != null}">
+                  <img th:src="@{'/images/' + ${variant.imagesno2}}" class="product-image" />
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="save-btn">Lưu phiên bản</button>
+        </div>
+      </form>
     </div>
 
+    <style>
+      /* .form-container2 {
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      } */
 
+      .form-grid {
+        display: flex;
+        gap: 30px;
+      }
 
-    <div class="form-group">
-      <label>Màu:</label>
-      <input type="text" th:field="*{color}" required />
-    </div>
+      .form-column {
+        flex: 1;
+      }
 
-    <div class="form-group">
-      <label>Dung lượng:</label>
-      <select th:field="*{storage}">
-        <option value="" selected> Chọn dung lượng</option>
-        <option value="128GB">128GB</option>
-        <option value="256GB">256GB</option>
-        <option value="512GB">512GB</option>
-        <option value="1TB">1TB</option>
-        <option value="2TB">2TB</option>
-      </select>
-    </div>
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-    <div class="form-group">
-      <label>Số lượng:</label>
-      <input type="number" th:field="*{quantityInStock}" required min="0" />
-    </div>
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
 
-    <div class="form-group">
-      <label>Giá gốc (VNĐ):</label>
-      <input type="text" id="priceInput"
-        th:value="${variant.price != null ? #numbers.formatDecimal(variant.price, 0, 'COMMA', 0, 'POINT') : ''}" />
-      <input type="hidden" th:field="*{price}" id="priceHidden" />
-    </div>
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
 
-    <div class="form-group">
-      <label>Hình ảnh:</label>
-      <input type="file" name="imageFile" accept="image/*" />
-      <span th:if="${variant.imagesno2 != null}">
-        <img th:src="@{'/images/' + ${variant.imagesno2}}" class="product-image"
-          style="max-height: 100px; margin-top: 10px;" />
-      </span>
-    </div>
+      .image-preview {
+        margin-top: 10px;
+      }
 
-    <button type="submit" class="save-btn">Lưu phiên bản</button>
-  </form> <br>
+      .product-image {
+        max-height: 100px;
+        max-width: 100%;
+        border: 1px solid #eee;
+      }
 
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
 
-  <form th:action="@{/admin/discount/apply}" method="post" class="space-y-4">
-    <label for="">Giảm giá sản phẩm</label><br>
+      .save-btn {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
 
-    <!-- Chọn sản phẩm -->
-    <select name="productId" id="productSelect" required style="margin-bottom: 40px;">
-      <option value="">-- Chọn sản phẩm --</option>
-      <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.productName}"
-        th:attr="data-storages=${p.storages}">
-      </option>
-    </select>
+      .save-btn:hover {
+        background-color: #45a049;
+      }
+    </style>
+    <style>
+      table,
+      th,
+      td {
+        border: none !important;
+      }
+    </style>
 
-    <!-- Chọn dung lượng (lọc theo sản phẩm) -->
-    <select name="storage" id="storageSelect" style="margin-bottom: 40px;">
-      <option value="">-- Chọn dung lượng --</option>
-    </select>
-
-    <!-- Nhập phần trăm giảm giá -->
-    <input type="number" name="discount" placeholder="Phần trăm giảm (vd: 10)" min="0" max="100" required style="margin-bottom: 40px;"/>
-
-    <!-- Chọn ngày bắt đầu và kết thúc -->
-    <input type="date" name="startDate" min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required />
-    <input type="date" name="endDate" min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required />
-
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
-      Áp dụng giảm giá
-    </button>
-
-    <!-- Hiển thị thông báo lỗi -->
-    <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-      <p th:text="${error}"></p>
-    </div>
-
-    <!-- Hiển thị thông báo thành công -->
-    <div th:if="${success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
-      <p th:text="${success}"></p>
-    </div>
-  </form>
   </div>
-  
 
 
 
+  <div style="margin-left: 295px; margin-top: 50px; ">
+    <div class="flex min-h-screen">
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col">
+        <main class="flex-1 p-6 overflow-auto w-[1240px]" style="margin-top: -30px ; margin-left: -20px;">
+          <!-- Products Section -->
+          <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+              <div class="flex justify-between items-center">
+                <h2 class="text-xl font-semibold">Danh sách sản phẩm</h2>
+              </div>
+            </div>
 
-<div style="background:#ffffff; margin-left: 250px;margin-top: 10px; border-radius: 4px; "  >
+            <div class="p-6">
+              <!-- Search and Filter -->
+              <div class="flex flex-wrap gap-4 mb-6">
+                <div class="flex-1 min-w-[240px]">
+                  <div class="relative">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..."
+                      class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                   <div class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center ml-2">
+                     <i class="ri-search-line text-gray-400"></i>
+                  </div>
+                    
+                  </div>
+                </div>
+                <div class="w-48">
+                  <div class="relative">
+                    <select
+                      class="w-full pl-4 pr-10  border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                      <option value="">Tất cả danh mục</option>
+                      <option value="smartphone">Điện thoại</option>
+                      <option value="accessories">Phụ kiện</option>
+                      <option value="tablet">Máy tính bảng</option>
+                    </select>
+                    <div
+                      class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                      <i class="ri-arrow-down-s-line text-gray-400"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-48">
+                  <div class="relative">
+                    <select
+                      class="w-full pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                      <option value="">Trạng thái</option>
+                      <option value="active">Đang bán</option>
+                      <option value="outofstock">Hết hàng</option>
+                      <option value="hidden">Ẩn</option>
+                    </select>
+                    <div
+                      class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                      <i class="ri-arrow-down-s-line text-gray-400"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-  <h2 style="margin-left: 30px;">📋 Danh sách phiên bản</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>STT</th>
-        <th>Sản phẩm</th>
-        <th>Hình ảnh</th>
-        <th>Màu</th>
-        <th>Dung lượng</th>
-        <th>Giá</th>
-        <th>Số lượng</th>
-        <th>Giảm giá</th>
-        <th>Bắt đầu</th>
-        <th>Kết thúc</th>
-        <th>Thao tác</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:each="v, stat : ${variants}">
-        <td th:text="${stat.index + 1}"></td>
-        <td th:text="${v.product.productName}"></td>
+              <!-- Products Table -->
+              <div class="overflow-x-auto">
+                <table class="w-[1130px]">
+                  <thead>
+                    <tr>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-md font-bold text-gray-700 uppercase tracking-wider">
+                        STT</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-md font-bold text-gray-700 uppercase tracking-wider">
+                        Ảnh</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-left text-md font-bold text-gray-700 uppercase tracking-wider w-[200px]">
+                        Sản phẩm</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-left text-md font-bold text-gray-700 uppercase tracking-wider">
+                        Màu</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-left text-md font-bold text-gray-700 uppercase tracking-wider">
+                        Dung lượng</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-left text-md font-bold text-gray-700 uppercase tracking-wider">
+                        Giá</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-md font-bold text-gray-700 uppercase tracking-wider">
+                        Số lượng</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-md font-bold text-gray-700 uppercase tracking-wider">
+                        Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-300 text-sm text-gray-700">
+                    <tr th:each="v, stat : ${variants}">
+                      <td th:text="${stat.index + 1}" class="px-4 py-4 text-center text-base font-small"></td>
+                      <td class="px-4 py-4 text-center">
+                        <img class="w-[70px] h-[70px] object-cover rounded mx-auto"
+                          th:src="@{'/images/' + ${v.imagesno2}}" alt="ảnh" />
+                      </td>
+                      <td class="px-4 py-4 text-left text-base font-small w-[200px] break-words"
+                        th:text="${v.product.productName}"></td>
+                      <td th:text="${v.color}" class="px-4 py-4 text-left text-base font-small"></td>
+                      <td th:text="${v.storage}" class="px-4 py-4 text-left text-base font-small"></td>
+                      <td class="px-4 py-4 text-left text-base font-small">
+                        <div th:if="${v.discountedPrice < v.price}">
+                          <div class="text-red-600 font-semibold text-lg"
+                            th:text="${#numbers.formatDecimal(v.discountedPrice, 0, 'POINT', 0, 'COMMA') + 'đ'}"></div>
+                          <div class="text-gray-400 line-through text-sm italic"
+                            th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA') + 'đ'}"></div>
+                        </div>
+                        <div th:if="${v.discountedPrice == v.price}">
+                          <span th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA') + 'đ'}"></span>
+                        </div>
+                      </td>
+                      <td th:text="${v.quantityInStock}" class="px-4 py-4 text-center text-base font-small"></td>
+                      <td class="px-4 py-4">
+                        <div class="flex justify-center gap-2">
+                          <a th:href="@{/variants/edit/{id}(id=${v.variantID})}" title="Sửa"
+                            class="text-blue-600 hover:text-blue-800">
+                            <div class="w-8 h-8 flex items-center justify-center text-xl">
+                              <i class="ri-edit-line"></i>
+                            </div>
+                          </a>
+                          <a th:href="@{/variants/delete/{id}(id=${v.variantID})}" title="Xóa"
+                            onclick="return confirm('Xóa phiên bản?')" class="text-red-500 hover:text-red-700">
+                            <div class="w-8 h-8 flex items-center justify-center text-xl">
+                              <i class="ri-delete-bin-line"></i>
+                            </div>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-        <td>
-          <img th:src="@{'/images/' + ${v.imagesno2}}" alt="ảnh" style="height: 50px" />
-        </td>
 
-        <td th:text="${v.color}"></td>
-        <td th:text="${v.storage}"></td>
+              <!-- Pagination -->
+              <div class="flex items-center justify-between mt-6">
+                <div class="text-sm text-gray-500">
+                  Hiển thị 1-6 của 24 sản phẩm
+                </div>
+                <div class="flex space-x-2">
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap">Trước</button>
+                  <button
+                    class="px-3 py-1 border border-primary bg-primary text-white rounded-button whitespace-nowrap">1</button>
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">2</button>
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">3</button>
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">4</button>
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">Tiếp</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <!-- Giá hiển thị: có giảm thì hiện 2 dòng, không giảm thì 1 dòng -->
-        <td>
-          <span th:if="${v.discountedPrice < v.price}">
-            <!-- Giá đã giảm: nổi bật -->
-            <span style="color: #dc2626; font-weight: bold; font-size: 1.125rem;"
-              th:text="${#numbers.formatDecimal(v.discountedPrice, 0, 0) + ' VNĐ'}">
-            </span>
-            <br />
-            <!-- Giá gốc: mờ hơn, nhỏ hơn -->
-            <span style="color: #9ca3af; text-decoration: line-through; font-size: 0.75rem; font-style: italic;"
-              th:text="${#numbers.formatDecimal(v.price, 0, 0) + ' VNĐ'}">
-            </span>
-          </span>
+          <!-- Sales Charts -->
+
+        </main>
+      </div>
 
 
-
-          <span th:if="${v.discountedPrice == v.price}">
-            <span th:text="${#numbers.formatDecimal(v.price, 0, 0) + ' VNĐ'}"></span>
-          </span>
-        </td>
-
-        <td th:text="${v.quantityInStock}"></td>
-
-
-        <td th:text="${v.discount != null ? v.discount + '%' : '0%'}"></td>
-        <td th:text="${v.discountStart}"></td>
-        <td th:text="${v.discountEnd}"></td>
-        <td>
-          <a th:href="@{/variants/edit/{id}(id=${v.variantID})}">
-            <button type="button" class="edit-btn">Sửa</button>
-          </a>
-          <a th:href="@{/variants/delete/{id}(id=${v.variantID})}" th:onclick="'return confirm(\'Xóa phiên bản?\')'">
-            <button type="button" class="delete-btn">Xóa</button>
-          </a>
-        </td>
-
-      </tr>
-    </tbody>
-
-  </table>
+    </div>
   </div>
+
 </body>
 
 </html>
 <script>
   // Xử lý định dạng giá tiền
-  const priceInput = document.getElementById('priceInput');
-  const priceHidden = document.getElementById('priceHidden');
+  const priceInput = document.getElementById("priceInput");
+  const priceHidden = document.getElementById("priceHidden");
 
-  priceInput.addEventListener('input', function () {
-    let raw = this.value.replace(/\D/g, '');
-    let formatted = new Intl.NumberFormat('vi-VN').format(raw);
+  priceInput.addEventListener("input", function () {
+    let raw = this.value.replace(/\D/g, "");
+    let formatted = new Intl.NumberFormat("vi-VN").format(raw);
     this.value = formatted;
     priceHidden.value = raw;
   });
 
   // Khởi tạo giá trị nếu có
   if (priceHidden.value) {
-    priceInput.value = new Intl.NumberFormat('vi-VN').format(priceHidden.value);
+    priceInput.value = new Intl.NumberFormat("vi-VN").format(priceHidden.value);
   }
 </script>
 
@@ -359,13 +517,21 @@ form{
       const storagesStr = selectedOption.getAttribute("data-storages");
 
       // Reset select
-      storageSelect.innerHTML = '<option value="">-- Chọn dung lượng --</option>';
+      storageSelect.innerHTML =
+        '<option value="">-- Chọn dung lượng --</option>';
 
       if (storagesStr) {
-        const cleaned = storagesStr.replaceAll('[', '').replaceAll(']', '').replaceAll("'", "").trim();
-        const storages = cleaned.split(',').map(s => s.trim()).filter(s => s);
+        const cleaned = storagesStr
+          .replaceAll("[", "")
+          .replaceAll("]", "")
+          .replaceAll("'", "")
+          .trim();
+        const storages = cleaned
+          .split(",")
+          .map((s) => s.trim())
+          .filter((s) => s);
 
-        storages.forEach(storage => {
+        storages.forEach((storage) => {
           const option = document.createElement("option");
           option.value = storage;
           option.textContent = storage;

@@ -57,23 +57,25 @@ public class ProductVariant {
     private BigDecimal discountedPrice;
 
     @Transient
-    public double getDiscountedPrice() {
+    public BigDecimal getDiscountedPrice() { // Tính giá đã giảm
         LocalDate today = LocalDate.now();
+
         if (price == null)
-            return 0;
+            return null;
 
         if (discount != null && discountStart != null && discountEnd != null &&
                 !today.isBefore(discountStart) && !today.isAfter(discountEnd)) {
-            return price * (1 - discount / 100.0);
+            BigDecimal discountRate = BigDecimal.valueOf(discount).divide(BigDecimal.valueOf(100));
+            return BigDecimal.valueOf(price).multiply(BigDecimal.ONE.subtract(discountRate));
         }
 
-        return price;
+        return BigDecimal.valueOf(price);
     }
 
     @Transient
     private Integer productId;
 
-    public Integer getProductId() {
+    public Integer getProductId() { // Trả về productId nếu có, nếu không thì lấy từ product
         return productId != null ? productId : (product != null ? product.getProductID() : null);
     }
 

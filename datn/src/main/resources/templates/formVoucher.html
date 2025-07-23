@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Quản lý voucher</title>
+  <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+       background-color: #f0f3f7;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      color: #2c3e50;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      /* border: 1px solid #ccc; */
+      padding: 10px;
+      text-align: center;
+    }
+
+    form {
+      margin: 20px;
+      
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+    .content2{
+    
+    margin-left: 300px;
+     background: #ffffff;
+     border-radius: 10px;
+     box-shadow: 6px 6px 6px 6px rgba(0, 0, 0, 0.1);
+     max-width: 1200px;
+     height: 330px;
+  }
+
+  div +h1{
+     margin-top: 75px;
+    margin-left: 300px;
+    font-size: 23px;
+  }
+  label {
+    font-weight: bold;
+    
+  }
+  /* form {
+    display: flex;
+    
+    gap: 20px;
+  }
+  .d1 {
+    flex: 1;
+    
+  }
+  .d1 {
+    flex: 2;
+    
+  } */
+   /* tr > td {
+    border-bottom:1px solid #792828;
+   } */
+  </style>
+  
+</head>
+
+<body>
+ <div th:replace="nav :: na"></div>
+    <div th:replace="header :: header"></div>
+
+   <h1> Thêm voucher</h1>
+ <div class="content2">
+  <form th:action="@{/vouchers/save}" method="post" th:object="${voucher}" class="flex flex-col gap-6">
+    
+    <!-- 2 cột nội dung -->
+    <div class="flex flex-col md:flex-row gap-8">
+      
+      <!-- Cột trái -->
+      <div class="flex-1 space-y-3">
+        <input type="hidden" th:field="*{id}">
+
+        <div>
+          <label class="block text-gray-700">Mã Code</label>
+          <input type="text" th:field="*{code}" class="w-full border rounded p-2" required>
+        </div>
+
+        <div>
+          <label class="block text-gray-700">Giảm (%)</label>
+          <input type="number" min="0" max="100" step="1" th:field="*{discountPercent}" class="w-full border rounded p-2" required>
+        </div>
+<div>
+          <label class="block text-gray-700">Ngày bắt đầu</label>
+          <input type="date" th:field="*{startDate}" class="w-full border rounded p-2" required>
+        </div>
+       
+      </div>
+
+      <!-- Cột phải -->
+      <div class="flex-1 space-y-3" style="margin-top: 10px;">
+        <div>
+          <label class="block text-gray-700">Số lượng</label>
+          <input type="number" min="1" th:field="*{quantity}" class="w-full border rounded p-2" required>
+        </div>
+ <div>
+          <label class="block text-gray-700">Giá tối thiểu (VNĐ)</label>
+          <input type="text" id="minPriceDisplay"
+            th:value="${voucher.minimumPrice != null ? #numbers.formatDecimal(voucher.minimumPrice, 0, 'COMMA', 0, 'POINT') : ''}"
+            class="w-full border rounded p-2" required>
+          <input type="hidden" id="minPriceHidden" th:field="*{minimumPrice}" />
+        </div>
+        
+
+        <div>
+          <label class="block text-gray-700">Ngày kết thúc</label>
+          <input type="date" th:field="*{endDate}" class="w-full border rounded p-2" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nút Submit dưới cùng -->
+    <div class="flex justify-end">
+     <button type="submit" class="bg-green-600 hover:bg-green-800 text-white px-4 py-2 rounded">
+        Lưu Voucher
+      </button>
+    </div>
+
+  </form>
+</div>
+
+  <div th:if="${error}" class="text-red-500 font-semibold mb-2">
+    <p th:text="${error}"></p>
+  </div>
+
+  </div>
+<div class="ml-[300px] mt-10 bg-white p-6 shadow-md rounded-lg max-w-[1200px]">
+  <h2 class="text-xl font-semibold mb-4">Danh sách Voucher</h2>
+
+ <table class="w-full table-auto">
+    <thead class="bg-gray-200 text-gray-500">
+      <tr>
+        <th class="px-4 py-2 font-normal text-center align-middle">Mã</th>
+        <th class="px-4 py-2 font-normal text-center align-middle">Giảm (%)</th>
+        <th class="px-4 py-2 font-normal text-center align-middle">Giá tối thiểu</th>
+        <th class="px-4 py-2 font-normal text-center align-middle">Số lượng</th>
+        <th class="px-4 py-2 font-normal text-center align-middle">Thời gian còn lại</th>
+        <th class="px-4 py-2 font-normal text-center align-middle">Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="v : ${vouchers}" class="hover:bg-yellow-100">
+        <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.code}"></td>
+        <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.discountPercent + '%'}"></td>
+        <td class="px-4 py-2 border-b border-gray-300 text-center align-middle format-price" th:text="${v.minimumPrice}"></td>
+        <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.quantity}"></td>
+        <td class="px-4 py-2 border-b border-gray-300 text-center align-middle countdown" 
+            th:attr="data-enddate=${v.endDate}">
+            <!-- Nội dung sẽ được điền bằng JavaScript -->
+        </td>
+        <td class="px-4 py-2 border-b border-gray-300 text-center align-middle space-x-2">
+          <a th:href="@{/vouchers/edit/{id}(id=${v.id})}" onclick="event.stopPropagation()">
+            <i class="fas fa-pen text-blue-600 cursor-pointer"></i>
+          </a>
+          <a th:href="@{/vouchers/delete/{id}(id=${v.id})}" onclick="return confirm('Bạn có chắc muốn xóa?')" class="ml-3">
+            <i class="fas fa-trash-alt text-red-600 cursor-pointer"></i>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+</table>
+
+</div>
+
+</body>
+
+</html>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Format giá tiền
+    const prices = document.querySelectorAll(".format-price");
+    prices.forEach(cell => {
+        let raw = cell.textContent.trim();
+        raw = raw.replaceAll('.', '').replace(',', '.');
+        const value = parseFloat(raw);
+        if (!isNaN(value)) {
+            cell.textContent = value.toLocaleString("vi-VN") + " đ";
+        }
+    });
+
+    // Tính thời gian đếm ngược và đổi màu
+    function updateCountdowns() {
+        const now = new Date();
+        const countdownElements = document.querySelectorAll('.countdown');
+        
+        countdownElements.forEach(element => {
+            const endDateStr = element.getAttribute('data-enddate');
+            const endDate = new Date(endDateStr);
+            
+            if (isNaN(endDate.getTime())) {
+                element.textContent = "Ngày không hợp lệ";
+                element.classList.add('text-red-500');
+                return;
+            }
+            
+            const diff = endDate - now;
+            
+            if (diff < 0) {
+                element.textContent = "Đã hết hạn";
+                element.classList.remove('text-green-500');
+                element.classList.add('text-red-500');
+                return;
+            }
+            
+            // Tính toán ngày, giờ, phút, giây
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            // Hiển thị kết quả
+            if (days > 0) {
+                element.textContent = `${days} ngày  ${hours} giờ  ${minutes} phút  `;
+            } else if (hours > 0) {
+                element.textContent = `${hours} giờ ${minutes} phút`;
+            } else if (minutes > 0) {
+                element.textContent = `${minutes}phút ${seconds}giây`;
+            } else {
+                element.textContent = `${seconds}giây`;
+            }
+            
+            // Đổi màu
+            element.classList.remove('text-red-500');
+            element.classList.add('text-green-500');
+        });
+    }
+    
+    // Cập nhật ngay lập tức và sau mỗi giây
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000);
+});
+</script>

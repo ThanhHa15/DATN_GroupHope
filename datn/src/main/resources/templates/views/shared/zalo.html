@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Icon Zalo Liên hệ</title>
+
+</head>
+
+<body>
+    <div th:fragment="siteZalo">
+        <style>
+            /* Hiệu ứng tỏa vòng */
+            @keyframes pulse-ring {
+                0% {
+                    transform: scale(0.9);
+                    opacity: 0.6;
+                }
+
+                50% {
+                    transform: scale(1.4);
+                    opacity: 0.2;
+                }
+
+                100% {
+                    transform: scale(1.9);
+                    opacity: 0;
+                }
+            }
+
+            /* Hiệu ứng lắc icon */
+            @keyframes shake {
+
+                0%,
+                100% {
+                    transform: rotate(0deg);
+                }
+
+                20% {
+                    transform: rotate(-60deg);
+                }
+
+                40% {
+                    transform: rotate(60deg);
+                }
+
+                60% {
+                    transform: rotate(-6deg);
+                }
+
+                80% {
+                    transform: rotate(6deg);
+                }
+            }
+
+            .zalo-wrapper {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                z-index: 999;
+            }
+
+            .pulse-ring {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 60px;
+                height: 60px;
+                background-color: rgba(0, 15, 143, 0.5);
+                border-radius: 50%;
+                animation: pulse-ring 1s infinite;
+            }
+
+            .zalo-icon {
+                position: relative;
+                width: 60px;
+                height: 60px;
+                background-color: #000f8f;
+                border-radius: 50%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                cursor: pointer;
+                color: white;
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            .zalo-icon img {
+                width: 28px;
+                height: 28px;
+                animation: shake 1.5s infinite;
+                margin-bottom: 4px;
+            }
+        </style>
+        <!-- Icon Zalo rung và vòng ngoài tỏa sáng -->
+        <div class="zalo-wrapper" style="margin-bottom: 80px;">
+            <span class="pulse-ring"></span>
+            <a href="https://zalo.me/0349221907" class="zalo-icon" target="_blank" title="Liên hệ Zalo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1024px-Icon_of_Zalo.svg.png"
+                    alt="Zalo Icon">
+                Liên hệ
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>

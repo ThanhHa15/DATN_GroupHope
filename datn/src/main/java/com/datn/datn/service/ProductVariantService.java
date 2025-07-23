@@ -34,5 +34,12 @@ public interface ProductVariantService {
 
     List<ProductVariant> findDiscountedVariants();
 
+    List<ProductVariant> find6UniqueOtherVariants(Integer excludeVariantId, Integer excludeProductId);
+
+    List<ProductVariant> filterByStorage(String[] storages);
+
+    void removeDiscount(Integer variantId);
+
+    void updateDiscount(Integer variantId, float discount, LocalDate start, LocalDate end);
 
 }

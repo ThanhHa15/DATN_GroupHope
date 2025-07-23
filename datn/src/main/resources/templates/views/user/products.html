@@ -12,8 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="/css/shared/footer.css">
     <link rel="stylesheet" href="/css/shared/header.css">
+    <link rel="stylesheet" href="/css/shared/chatbox.css">
     <style>
         :where([class^="ri-"])::before {
             content: "\f3c2";
@@ -178,6 +180,10 @@
 
     <!-- Header -->
     <div th:insert="views/shared/header :: siteHeader" style="margin-top: 130px;"></div>
+    <!-- chatbox -->
+    <div th:insert="views/shared/chatbot :: siteChatbot"></div>
+    <!-- Zalo icon -->
+    <div th:insert="views/shared/zalo :: siteZalo"></div>
 
     <div class="image-container" style=" margin-bottom: -20px;">
         <div class="image-wrapper" style="width: 612px;">
@@ -194,12 +200,13 @@
     <section class="py-8" style="margin-bottom: -40px; max-width: 1350px; margin: auto;">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"> <!-- Giảm gap xuống 3 -->
+
                 <!-- Item iPhone -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
+                <a href="/products?type=iPhone" class="flex flex-col items-center group transition-all duration-300">
                     <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
                         <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
+                    group-hover:shadow-lg group-hover:bg-blue-900">
                             <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/collections/230918040730-ip15pm1-23091816073.png?v=1700645552053"
                                 alt="iPhone"
                                 class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
@@ -216,7 +223,7 @@
                 </a>
 
                 <!-- Item iPad -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
+                <a href="/products?type=ipad" class="flex flex-col items-center group transition-all duration-300">
                     <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
                         <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
@@ -236,29 +243,8 @@
                     </div>
                 </a>
 
-                <!-- Item Watch -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
-                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
-                    <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
-                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
-                            <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/collections/aw-ultra-230217110022-2302251350.png?v=1700645603220"
-                                alt="iPhone"
-                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
-                        </div>
-                        <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
-                            style="font-size: 15px;">
-                            Watch
-                        </h3>
-                        <p class="text-center group-hover:text-blue-400 transition-colors"
-                            style="color: #000f8f; font-weight: 510;">
-                            (8 sản phẩm)
-                        </p>
-                    </div>
-                </a>
-
                 <!-- Item Mac -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
+                <a href="/products?type=Macbook" class="flex flex-col items-center group transition-all duration-300">
                     <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
                         <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
@@ -278,8 +264,29 @@
                     </div>
                 </a>
 
+                <!-- Item Watch -->
+                <a href="/products?type=Watch" class="flex flex-col items-center group transition-all duration-300">
+                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
+                    <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
+                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
+                                    group-hover:shadow-lg group-hover:bg-blue-900">
+                            <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/collections/aw-ultra-230217110022-2302251350.png?v=1700645603220"
+                                alt="iPhone"
+                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
+                        </div>
+                        <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
+                            style="font-size: 15px;">
+                            Watch
+                        </h3>
+                        <p class="text-center group-hover:text-blue-400 transition-colors"
+                            style="color: #000f8f; font-weight: 510;">
+                            (8 sản phẩm)
+                        </p>
+                    </div>
+                </a>
+
                 <!-- Item AirPods -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
+                <a href="/products?type=Airpods" class="flex flex-col items-center group transition-all duration-300">
                     <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
                         <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
@@ -298,18 +305,19 @@
                     </div>
                 </a>
 
-                <!-- Item Âm thanh -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
+                <!-- Item  Ốp lưng & Bao da -->
+                <a href="/products?type=Ốp+lưng+%26+Bao+da"
+                    class="flex flex-col items-center group transition-all duration-300">
                     <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
                         <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
                                     group-hover:shadow-lg group-hover:bg-blue-900">
-                            <img src="https://i.postimg.cc/QxP9d4RW/image-removebg-preview-1.png" alt="iPhone"
+                            <img src="https://i.postimg.cc/908SLn0j/oplungip13-removebg-preview.png" alt="iPhone"
                                 class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
                         </div>
                         <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
                             style="font-size: 15px;">
-                            Âm thanh
+                            Ốp lưng & Bao da
                         </h3>
                         <p class="text-center group-hover:text-blue-400 transition-colors"
                             style="color: #000f8f; font-weight: 510;">
@@ -318,8 +326,9 @@
                     </div>
                 </a>
 
-                <!-- Item Phụ kiện -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
+                <!-- Item Sạc & cáp -->
+                <a href="/products?type=Sạc+%26+cáp"
+                    class="flex flex-col items-center group transition-all duration-300">
                     <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
                         <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
@@ -329,7 +338,7 @@
                         </div>
                         <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
                             style="font-size: 15px;">
-                            Phụ kiện
+                            Sạc & cáp
                         </h3>
                         <p class="text-center group-hover:text-blue-400 transition-colors"
                             style="color: #000f8f; font-weight: 510;">
@@ -363,142 +372,81 @@
 
                     <!-- Các bộ lọc sản phẩm -->
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
+                        <!-- Lọc theo mức giá -->
                         <div class="dropdown relative">
                             <button
-                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white !whitespace-nowrap">
-                                <span>Chọn mức giá</span>
+                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white whitespace-nowrap">
+                                <span>Mức giá</span>
                                 <i class="ri-arrow-down-s-line"></i>
                             </button>
-
-                            <div class="dropdown-content mt-0 left-0">
+                            <div class="dropdown-content mt-0 left-0 bg-white z-20">
                                 <div class="p-3">
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="price1" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="Dưới 5 triệu">
-                                        <label for="price1">Dưới 5 triệu</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="price2" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="5 - 10 triệu">
-                                        <label for="price2">5 - 10 triệu</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="price3" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="10 - 15 triệu">
-                                        <label for="price3">10 - 15 triệu</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="price4" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="15 - 20 triệu">
-                                        <label for="price4">15 - 20 triệu</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="price5" class="mr-2 filter-checkbox"
-                                            data-category="price" data-value="Trên 20 triệu">
-                                        <label for="price5">Trên 20 triệu</label>
+                                    <div
+                                        th:each="priceOption : ${T(java.util.List).of('Dưới 5 triệu', '5 - 10 triệu', '10 - 15 triệu', '15 - 20 triệu', 'Trên 20 triệu')}">
+                                        <div class="flex items-center mb-2">
+                                            <input type="checkbox" th:id="'price' + ${priceOption.hashCode()}"
+                                                class="mr-2 filter-checkbox" data-category="price"
+                                                th:attr="data-value=${priceOption}"
+                                                th:checked="${selectedPrices != null and selectedPrices.contains(priceOption)}">
+                                            <label th:for="'price' + ${priceOption.hashCode()}"
+                                                th:text="${priceOption}"></label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
+                        <!-- Lọc theo loại -->
                         <div class="dropdown relative">
                             <button
-                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white !whitespace-nowrap">
+                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white whitespace-nowrap">
                                 <span>Loại</span>
                                 <i class="ri-arrow-down-s-line"></i>
                             </button>
-
-                            <div class="dropdown-content mt-0 left-0">
+                            <div class="dropdown-content mt-0 left-0 bg-white z-20">
                                 <div class="p-3">
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="type1" class="mr-2 filter-checkbox"
-                                            data-category="type" data-value="iPhone">
-                                        <label for="type1">iPhone</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="type2" class="mr-2 filter-checkbox"
-                                            data-category="type" data-value="iPad">
-                                        <label for="type2">iPad</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="type3" class="mr-2 filter-checkbox"
-                                            data-category="type" data-value="MacBook">
-                                        <label for="type3">MacBook</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="type4" class="mr-2 filter-checkbox"
-                                            data-category="type" data-value="Apple Watch">
-                                        <label for="type4">Apple Watch</label>
+                                    <div
+                                        th:each="typeOption : ${T(java.util.List).of('iPhone', 'iPad', 'MacBook', 'Watch', 'AirPods', 'Ốp lưng & Bao da', 'Sạc & cáp')}">
+                                        <div class="flex items-center mb-2">
+                                            <input type="checkbox" th:id="'type' + ${typeOption.hashCode()}"
+                                                class="mr-2 filter-checkbox" data-category="type"
+                                                th:attr="data-value=${typeOption}"
+                                                th:checked="${selectedTypes != null and selectedTypes.contains(typeOption)}">
+                                            <label th:for="'type' + ${typeOption.hashCode()}"
+                                                th:text="${typeOption}"></label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Lọc theo dung lượng -->
                         <div class="dropdown relative">
                             <button
-                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white !whitespace-nowrap">
-                                <span>Bộ nhớ trong</span>
+                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white whitespace-nowrap">
+                                <span>Dung lượng</span>
                                 <i class="ri-arrow-down-s-line"></i>
                             </button>
-                            <div class="dropdown-content mt-0 left-0">
+                            <div class="dropdown-content mt-0 left-0 bg-white z-20">
                                 <div class="p-3">
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="storage1" class="mr-2 filter-checkbox"
-                                            data-category="storage" data-value="64GB">
-                                        <label for="storage1">64GB</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="storage2" class="mr-2 filter-checkbox"
-                                            data-category="storage" data-value="128GB">
-                                        <label for="storage2">128GB</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="storage3" class="mr-2 filter-checkbox"
-                                            data-category="storage" data-value="256GB">
-                                        <label for="storage3">256GB</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="storage4" class="mr-2 filter-checkbox"
-                                            data-category="storage" data-value="512GB">
-                                        <label for="storage4">512GB</label>
+                                    <div
+                                        th:each="storageOption : ${T(java.util.List).of('64GB', '128GB', '256GB', '512GB', '1TB')}">
+                                        <div class="flex items-center mb-2">
+                                            <input type="checkbox" th:id="'storage' + ${storageOption.hashCode()}"
+                                                class="mr-2 filter-checkbox" data-category="storage"
+                                                th:attr="data-value=${storageOption}"
+                                                th:checked="${selectedStorages != null and selectedStorages.contains(storageOption)}">
+                                            <label th:for="'storage' + ${storageOption.hashCode()}"
+                                                th:text="${storageOption}"></label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="dropdown relative">
-                            <button
-                                class="w-full flex items-center justify-between border border-gray-300 rounded-button px-4 py-2 bg-white !whitespace-nowrap">
-                                <span>Dung lượng RAM</span>
-                                <i class="ri-arrow-down-s-line"></i>
-                            </button>
-                            <div class="dropdown-content mt-0 left-0">
-                                <div class="p-3">
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="ram1" class="mr-2 filter-checkbox"
-                                            data-category="ram" data-value="4GB">
-                                        <label for="ram1">4GB</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="ram2" class="mr-2 filter-checkbox"
-                                            data-category="ram" data-value="6GB">
-                                        <label for="ram2">6GB</label>
-                                    </div>
-                                    <div class="flex items-center mb-2">
-                                        <input type="checkbox" id="ram3" class="mr-2 filter-checkbox"
-                                            data-category="ram" data-value="8GB">
-                                        <label for="ram3">8GB</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="ram4" class="mr-2 filter-checkbox"
-                                            data-category="ram" data-value="16GB">
-                                        <label for="ram4">16GB</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+
                 </div>
 
                 <div class="bg-white rounded-lg shadow-sm p-6 mb-8" style="margin-left: -23px;">
@@ -508,49 +456,64 @@
                     </div>
 
                     <div class="flex flex-wrap gap-2" id="sort-buttons">
-                        <button
-                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap">
+                        <a th:href="@{/products(sort='name_asc')}"
+                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+                            th:classappend="${sort == 'name_asc'} ? ' border-primary text-primary' : ''">
                             Tên A-Z
-                            <span
-                                class="checkmark hidden absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                            <span th:classappend="${sort == 'name_asc'} ? '' : ' hidden'"
+                                class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
                                 <i class="ri-check-line text-xs"></i>
                             </span>
-                        </button>
-                        <button
-                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap">
+                        </a>
+
+                        <a th:href="@{/products(sort='name_desc')}"
+                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+                            th:classappend="${sort == 'name_desc'} ? ' border-primary text-primary' : ''">
                             Tên Z-A
-                            <span
-                                class="checkmark hidden absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                            <span th:classappend="${sort == 'name_desc'} ? '' : ' hidden'"
+                                class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
                                 <i class="ri-check-line text-xs"></i>
                             </span>
-                        </button>
-                        <button
-                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap">
+                        </a>
+
+                        <a th:href="@{/products(sort='price_asc')}"
+                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+                            th:classappend="${sort == 'price_asc'} ? ' border-primary text-primary' : ''">
                             Giá thấp đến cao
-                            <span
-                                class="checkmark hidden absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                            <span th:classappend="${sort == 'price_asc'} ? '' : ' hidden'"
+                                class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
                                 <i class="ri-check-line text-xs"></i>
                             </span>
-                        </button>
-                        <button
-                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap">
-                            Giá cao xuống thấp
-                            <span
-                                class="checkmark hidden absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
+                        </a>
+
+                        <a th:href="@{/products(sort='price_desc')}"
+                            class="sort-btn relative px-4 py-2 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition !whitespace-nowrap"
+                            th:classappend="${sort == 'price_desc'} ? ' border-primary text-primary' : ''">
+                            Giá cao đến thấp
+                            <span th:classappend="${sort == 'price_desc'} ? '' : ' hidden'"
+                                class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
                                 <i class="ri-check-line text-xs"></i>
                             </span>
-                        </button>
-                        <a href="/products?discounted=true">
+                        </a>
+
+                        <a th:href="@{/products(discounted=true)}">
                             <button
-                                class="sort-btn relative px-4 py-2 border border-gray-300 rounded hover:border-primary hover:text-primary transition">
+                                class="sort-btn relative px-4 py-2 border border-gray-300 rounded hover:border-primary hover:text-primary transition"
+                                th:classappend="${isDiscounted} ? ' border-primary text-primary' : ''">
                                 Sản phẩm đang giảm giá
-                                <span th:classappend="${isDiscounted} ? '' : 'hidden'"
+                                <span th:classappend="${isDiscounted} ? '' : ' hidden'"
                                     class="checkmark absolute top-0 left-0 -mt-1 -ml-1 bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">
                                     <i class="ri-check-line text-xs"></i>
                                 </span>
                             </button>
                         </a>
                     </div>
+
+                </div>
+
+                <!-- Hiển thị thông báo lỗi -->
+                <div th:if="${error != null}" class="w-full text-center text-red-600 font-semibold mb-4">
+                    <p th:text="${error}"></p>
                 </div>
 
                 <!-- Nếu không có sản phẩm -->
@@ -559,6 +522,7 @@
                         alt="No products" class="mx-auto w-[250px] h-auto  mb-4 " style="margin-top: -50px;" />
                     <p class="text-gray-800 text-lg">Không có sản phẩm nào được tìm thấy.</p>
                 </div>
+
 
                 <!-- Nếu có sản phẩm -->
                 <div th:unless="${#lists.isEmpty(products)}"
@@ -596,14 +560,19 @@
                             </a>
 
                             <!-- Wishlist -->
-                            <div
-                                class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-100">
-                                <i class="ri-heart-line text-gray-600 hover:text-primary transition-colors"></i>
+                            <div th:action="@{/add}" method="post" class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-md 
+             opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                <button type="button" class="wishlist-toggle w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-md
+         opacity-0 group-hover:opacity-100 transition-all duration-300" th:attr="data-variant-id=${product.variantID}">
+                                    <i th:class="${wishlistIds != null and wishlistIds.contains(product.variantID)} ?
+                'ri-heart-fill text-red-600' : 'ri-heart-line text-gray-600 hover:text-red-500'"></i>
+                                </button>
                             </div>
 
                             <!-- Nút giỏ hàng -->
                             <button
-                                class="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-[#000f8f] text-white rounded-full transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-in-out hover:bg-red-700 hover:scale-110 z-10">
+                                class="absolute right-2 bottom-2 w-10 h-10 flex items-center justify-center bg-[#000f8f] text-white rounded-full transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 ease-in-out hover:bg-red-700 hover:scale-110 z-10"
+                                th:attr="data-variant-id=${product.variantID}" onclick="addToCart(this)">
                                 <i class="ri-shopping-cart-line"></i>
                             </button>
                         </div>
@@ -611,9 +580,13 @@
                         <!-- Nội dung -->
                         <div class="p-4">
                             <a th:href="@{/detail/} + ${product.variantID}" class="block">
-                                <h3 class="font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
+                                <h3 class="h-[70px] font-medium text-gray-800 mb-1 hover:text-yellow-400 transition-colors duration-300"
                                     th:text="${product.product.productName + ' ' + product.storage + ' - Chính hãng VN'}">
                                 </h3>
+                                <!-- Thêm dòng hiển thị danh mục -->
+                                <span class="text-sm text-blue-600 font-medium"
+                                    th:text="${product.product.category?.name}" style="display: none;"></span>
+
                             </a>
 
                             <div class="flex items-center mb-2">
@@ -630,19 +603,23 @@
                                 <div>
                                     <!-- Nếu có giảm -->
                                     <span
-                                        th:if="${product.discountedPrice != null and product.price != null and product.discountedPrice < product.price}">
+                                        th:if="${product.discountedPrice != null and product.price != null and product.discountedPrice < product.price}"
+                                        class="flex items-center gap-2">
+
                                         <span class="text-lg font-bold text-red-600"
-                                            th:text="${#numbers.formatDecimal(product.discountedPrice, 0, 'COMMA', 0, 'POINT') + ' ₫'}"></span>
-                                        <br>
-                                        <span class="text-sm text-gray-500 line-through"
-                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' ₫'}"></span>
+                                            th:text="${#numbers.formatDecimal(product.discountedPrice, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
+
+                                        <span class=" text-gray-500 line-through"
+                                            style="font-size: 14px; margin-left: 110px; position: absolute;"
+                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
                                     </span>
+
 
                                     <!-- Nếu không giảm -->
                                     <span
                                         th:if="${product.discountedPrice == null or product.discountedPrice >= product.price}">
                                         <span class="text-lg font-bold text-red-600"
-                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + ' ₫'}"></span>
+                                            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + '₫'}"></span>
                                     </span>
                                 </div>
 
@@ -661,29 +638,45 @@
                     </div>
                 </div>
 
+                <!-- PHÂN TRANG -->
+                <div class="flex justify-center mt-6">
+                    <ul class="inline-flex items-center -space-x-px">
+                        <!-- Nút "Trước" -->
+                        <li th:if="${currentPage > 1}">
+                            <a th:href="@{/products(page=${currentPage - 1}, sort=${sort}, discounted=${isDiscounted})}"
+                                class="flex items-center px-3 py-2 ml-0 text-gray-700 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-50 hover:text-[#000f8f] transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7" />
+                                </svg>
+                                Trước
+                            </a>
+                        </li>
 
-                <!-- phân trang -->
-                <div class="flex justify-center mt-10">
-                    <nav class="flex items-center">
-                        <button
-                            class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-l-lg hover:border-[#000f8f] hover:text-[#000f8f] transition">
-                            <i class="ri-arrow-left-s-line"></i>
-                        </button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center border-t border-b border-gray-300 bg-[#000f8f] text-white">
-                            1
-                        </button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center border-t border-b border-gray-300 hover:bg-gray-50 transition">
-                            2
-                        </button>
-                        <button
-                            class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-r-lg hover:border-[#000f8f] hover:text-[#000f8f] transition">
-                            <i class="ri-arrow-right-s-line"></i>
-                        </button>
-                    </nav>
+                        <!-- Các số trang -->
+                        <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                            <a th:href="@{/products(page=${i}, sort=${sort}, discounted=${isDiscounted})}"
+                                th:text="${i}"
+                                th:classappend="${i == currentPage} ? 'z-10 bg-[#000f8f] border-[#000f8f] text-white hover:bg-[#000d7a]' : 'text-gray-700 bg-white hover:bg-gray-50 hover:text-[#000f8f]'"
+                                class="flex items-center px-4 py-2 border border-gray-300 leading-tight transition-colors">
+                            </a>
+                        </li>
+
+                        <!-- Nút "Sau" -->
+                        <li th:if="${currentPage < totalPages}">
+                            <a th:href="@{/products(page=${currentPage + 1}, sort=${sort}, discounted=${isDiscounted})}"
+                                class="flex items-center px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 hover:text-[#000f8f] transition-colors">
+                                Sau
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-
             </div>
         </div>
     </section>
@@ -696,20 +689,9 @@
 </body>
 
 </html>
-<script id="filter-dropdowns"> // Xử lý sự kiện cho các checkbox trong bộ lọc
-    document.addEventListener('DOMContentLoaded', function () {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                // Here you would normally implement filter logic
-                console.log(`Filter ${this.id} is ${this.checked ? 'checked' : 'unchecked'}`);
-            });
-        });
-    });
-</script>
-
-<script> // Xử lý bộ lọc và hiển thị các bộ lọc đã chọn
+<script>
+    // Xử lý bộ lọc và hiển thị các bộ lọc đã chọn
     document.addEventListener('DOMContentLoaded', function () {
         const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
         const selectedFiltersContainer = document.getElementById('selected-filters');
@@ -720,9 +702,49 @@
         const selectedFilters = {
             price: [],
             type: [],
-            storage: [],
-            ram: []
+            storage: []
         };
+
+        // Đọc tham số từ URL khi trang tải
+        function readFiltersFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            ['price', 'type', 'storage'].forEach(category => {
+                selectedFilters[category] = urlParams.getAll(category);
+            });
+        }
+
+        // Áp dụng bộ lọc vào các checkbox
+        function applyFiltersToCheckboxes() {
+            filterCheckboxes.forEach(checkbox => {
+                const category = checkbox.dataset.category;
+                const value = checkbox.dataset.value;
+                checkbox.checked = selectedFilters[category].includes(value);
+            });
+            updateSelectedFiltersDisplay();
+        }
+
+        // Hàm cập nhật URL với các tham số lọc
+        function updateURLWithFilters() {
+            const url = new URL(window.location.href);
+
+            // Xóa các tham số lọc cũ
+            ['price', 'type', 'storage'].forEach(param => {
+                url.searchParams.delete(param);
+            });
+
+            // Thêm các tham số lọc mới
+            for (const category in selectedFilters) {
+                if (selectedFilters[category].length > 0) {
+                    selectedFilters[category].forEach(value => {
+                        url.searchParams.append(category, value);
+                    });
+                }
+            }
+
+            // Tải lại trang với các tham số lọc mới
+            window.location.href = url.toString();
+        }
 
         // Xử lý sự kiện khi checkbox thay đổi
         filterCheckboxes.forEach(checkbox => {
@@ -731,16 +753,15 @@
                 const value = this.dataset.value;
 
                 if (this.checked) {
-                    // Thêm vào danh sách đã chọn nếu chưa có
                     if (!selectedFilters[category].includes(value)) {
                         selectedFilters[category].push(value);
                     }
                 } else {
-                    // Loại bỏ khỏi danh sách đã chọn
                     selectedFilters[category] = selectedFilters[category].filter(item => item !== value);
                 }
 
                 updateSelectedFiltersDisplay();
+                updateURLWithFilters();
             });
         });
 
@@ -757,6 +778,7 @@
             }
 
             updateSelectedFiltersDisplay();
+            updateURLWithFilters();
         });
 
         // Cập nhật hiển thị các bộ lọc đã chọn
@@ -805,28 +827,67 @@
                     }
 
                     updateSelectedFiltersDisplay();
+                    updateURLWithFilters();
                 });
             });
         }
+
+        // Đọc và áp dụng bộ lọc khi trang tải
+        readFiltersFromURL();
+        applyFiltersToCheckboxes();
     });
 </script>
 
-<script>// Hiệu ứng chuyển đổi trạng thái cho các nút sắp xếp
+
+<script> // Xử lý sự kiện cho nút wishlist
     document.addEventListener('DOMContentLoaded', function () {
-        const sortButtons = document.querySelectorAll('.sort-btn');
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const variantId = this.getAttribute('data-variant-id');
+                const userId = this.getAttribute('data-user-id');
 
-        sortButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Xóa trạng thái active của tất cả các button
-                sortButtons.forEach(btn => {
-                    btn.classList.remove('border-primary', 'text-primary');
-                    btn.querySelector('.checkmark').classList.add('hidden');
-                });
+                if (!userId) {
+                    window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+                    return;
+                }
 
-                // Thêm trạng thái active cho button được chọn
-                this.classList.add('border-primary', 'text-primary');
-                this.querySelector('.checkmark').classList.remove('hidden');
+                fetch(`/api/wishlist/toggle?userId=${userId}&productVariantId=${variantId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const icon = this.querySelector('i');
+                            if (data.added) {
+                                icon.classList.replace('ri-heart-line', 'ri-heart-fill');
+                                icon.classList.replace('text-gray-600', 'text-red-500');
+                                this.classList.add('active');
+                            } else {
+                                icon.classList.replace('ri-heart-fill', 'ri-heart-line');
+                                icon.classList.replace('text-red-500', 'text-gray-600');
+                                this.classList.remove('active');
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             });
         });
     });
+</script>
+
+<!-- Kiểm tra nếu có message -->
+<script th:if="${message != null and !#strings.isEmpty(message)}" th:inline="javascript">
+    /*<![CDATA[*/
+    let message = /*[[${message}]]*/ '';
+    Swal.fire({
+        icon: 'success',
+        title: message,
+        showConfirmButton: false,
+        timer: 1500
+    });
+    /*]]>*/
 </script>

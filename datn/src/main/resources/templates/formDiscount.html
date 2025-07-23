@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Giảm giá sản phẩm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+</style>
+
+<body class="bg-gray-100 text-gray-800">
+
+    <div th:replace="nav :: na"></div>
+    <div th:replace="header :: header"></div>
+
+    <div class="max-w-[1250px] mx-auto py-12 px-4" style="margin-left: 280px; margin-top: 40px;">
+        <h1 class="text-xl mb-6">Áp dụng giảm giá sản phẩm</h1>
+
+        <form th:action="@{/discount/apply}" method="post" class="bg-white rounded-xl shadow p-6 space-y-4">
+            <div>
+                <label for="productSelect" class="block font-medium mb-1">Sản phẩm</label>
+                <select name="productId" id="productSelect" class="w-full border rounded p-2" required>
+                    <option value="">-- Chọn sản phẩm --</option>
+                    <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.productName}"
+                        th:attr="data-storages=${p.storages}">
+                    </option>
+                </select>
+            </div>
+
+            <div>
+                <label for="storageSelect" class="block font-medium mb-1">Dung lượng</label>
+                <select name="storage" id="storageSelect" class="w-full border rounded p-2">
+                    <option value="">-- Chọn dung lượng --</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="discount" class="block font-medium mb-1">Phần trăm giảm</label>
+                <input type="number" name="discount" min="0" max="100" class="w-full border rounded p-2"
+                    placeholder="VD: 10 (%)" required>
+            </div>
+
+            <div class="flex space-x-4">
+                <div class="flex-1">
+                    <label for="startDate" class="block font-medium mb-1">Ngày bắt đầu</label>
+                    <input type="date" name="startDate" class="w-full border rounded p-2" required
+                        min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                </div>
+                <div class="flex-1">
+                    <label for="endDate" class="block font-medium mb-1">Ngày kết thúc</label>
+                    <input type="date" name="endDate" class="w-full border rounded p-2" required
+                        min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
+                </div>
+            </div>
+
+            <button type="submit" class="bg-green-500 text-white font-semibold px-4 py-2 rounded hover:bg-green-600">Áp
+                dụng giảm giá</button>
+
+            <!-- Thông báo lỗi -->
+            <script th:if="${error}" type="text/javascript">
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: '[[${error}]]',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+
+            <!-- Thông báo thành công -->
+            <script th:if="${success}" type="text/javascript">
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: '[[${success}]]',
+                    confirmButtonText: 'OK'
+                });
+            </script>
+        </form>
+
+        <!-- Danh sách phiên bản -->
+        <div class="mt-10 bg-white rounded-xl shadow overflow-x-auto">
+            <h2 class="text-xl font-semibold p-4 border-b">📋 Danh sách phiên bản và giảm giá</h2>
+            <table class="min-w-full table-auto text-left">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-3">STT</th>
+                        <th class="p-1 w-[150px]">Sản phẩm</th>
+                        <th class="p-3">Màu</th>
+                        <th class="p-3">Ảnh</th>
+                        <th class="p-3">Dung lượng</th>
+                        <th class="p-0 w-[180px] pr-14">Giảm (%)</th>
+                        <th class="pr-15">Giá</th>
+                        <!-- Đã ẩn 2 cột ngày -->
+                        <th class="p-3">Thời gian hiệu lực</th>
+                        <th class="p-3">Thao tác</th> <!-- Thêm cột mới -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="v, stat : ${variants}"
+                        class="border-t odd:bg-white even:bg-gray-300 ">
+                        <td class="p-3" th:text="${stat.index + 1}"></td>
+                        <td class="p-1" th:text="${v.product.productName}"></td>
+                        <td class="p-3" th:text="${v.color}"></td>
+                        <td>
+                            <img th:src="@{'/images/' + ${v.imagesno2}}" alt="ảnh"
+                                class="w-12 h-12 object-contain rounded-xl shadow" />
+                        </td>
+                        <td class="py-4 pl-9" th:text="${v.storage}"></td>
+                        <td class="p-3" th:text="${v.discount != null ? v.discount + '%' : '0%'}"></td>
+                        <td class="pl-left">
+                            <span th:if="${v.discountedPrice < v.price}">
+                                <span style="color: #dc2626; font-weight: bold; font-size: 1.125rem"
+                                    th:text="${#numbers.formatDecimal(v.discountedPrice, 0, 'POINT', 0, 'COMMA') + 'đ'}">
+                                </span>
+                                <br />
+                                <span style="
+                        color: #9ca3af;
+                        text-decoration: line-through;
+                        font-size: 0.75rem;
+                        font-style: italic;
+                    " th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA') + 'đ'}">
+                                </span>
+                            </span>
+                            <span th:if="${v.discountedPrice == v.price}">
+                                <span th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA') + 'đ'}"></span>
+                            </span>
+                        </td>
+                        <!-- Cột thời gian đếm ngược -->
+                        <td class="p-3 countdown-timer" th:attr="data-end-date=${v.discountEnd}">
+                            <span class="loading-text">Chưa giảm giá...</span>
+                        </td>
+                        <td class="p-3">
+                            <div class="flex space-x-2">
+                                <!-- Nút Sửa - Mở modal -->
+                                <button th:attr="data-id=${v.variantID}"
+                                    class="edit-btn text-blue-500 hover:text-blue-700">
+                                    <i class="ri-edit-2-line"></i>
+                                </button>
+
+                                <!-- Nút Xóa -->
+                                <form th:action="@{/discount/remove/{id}(id=${v.variantID})}" method="post"
+                                    class="delete-form">
+                                    <button type="button" class="text-red-500 hover:text-red-700 delete-btn">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h3 class="text-lg font-semibold mb-4">Sửa giảm giá</h3>
+                    <form id="editForm" method="post" th:action="@{/discount/update}">
+                        <input type="hidden" name="variantId" id="editVariantId">
+
+                        <div class="mb-4">
+                            <label class="block mb-2">Phần trăm giảm</label>
+                            <input type="number" name="discount" min="0" max="100" class="w-full border rounded p-2"
+                                required>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block mb-2">Ngày bắt đầu</label>
+                                <input type="date" name="startDate" class="w-full border rounded p-2" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Ngày kết thúc</label>
+                                <input type="date" name="endDate" class="w-full border rounded p-2" required>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="closeEditModal()"
+                                class="px-4 py-2 border rounded hover:bg-gray-100">
+                                Hủy
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- JavaScript xử lý -->
+            <script>
+                // Xử lý nút xóa
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const form = this.closest('.delete-form');
+                        Swal.fire({
+                            title: 'Xác nhận xóa?',
+                            text: "Bạn có chắc muốn xóa giảm giá này?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Xóa',
+                            cancelButtonText: 'Hủy'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+
+                // Xử lý nút sửa
+                let editModal = document.getElementById('editModal');
+
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const variantId = this.getAttribute('data-id');
+                        document.getElementById('editVariantId').value = variantId;
+
+                        // Lấy dữ liệu hiện tại (có thể thêm AJAX nếu cần)
+                        const row = this.closest('tr');
+                        const discount = row.querySelector('td:nth-child(6)').textContent.replace('%', '');
+                        const startDate = row.querySelector('td:nth-child(8)').getAttribute('data-start-date');
+                        const endDate = row.querySelector('td:nth-child(8)').getAttribute('data-end-date');
+
+                        const form = document.getElementById('editForm');
+                        form.querySelector('[name="discount"]').value = discount;
+                        form.querySelector('[name="startDate"]').value = startDate;
+                        form.querySelector('[name="endDate"]').value = endDate;
+
+                        editModal.classList.remove('hidden');
+                    });
+                });
+
+                function closeEditModal() {
+                    editModal.classList.add('hidden');
+                }
+            </script>
+
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function () {
+                    const countdownElements = document.querySelectorAll('.countdown-timer');
+
+                    countdownElements.forEach(function (element) {
+                        const endDateStr = element.getAttribute('data-end-date');
+                        if (!endDateStr) return;
+
+                        const endDate = new Date(endDateStr);
+                        const now = new Date();
+
+                        function updateCountdown() {
+                            const now = new Date();
+                            const diff = endDate - now;
+
+                            if (diff <= 0) {
+                                element.innerHTML = '<span style="color: #ef4444; font-weight: 500;">Đã kết thúc</span>';
+                                return;
+                            }
+
+                            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+                            element.innerHTML = `
+                    <span style="color: #16a34a; font-weight: 500;">
+                        ${days} ngày ${hours} giờ ${minutes} phút
+                    </span>
+                `;
+                        }
+
+                        updateCountdown();
+                        setInterval(updateCountdown, 60000); // Cập nhật mỗi phút
+                    });
+                });
+            </script>
+
+        </div>
+    </div>
+
+    <!-- Lọc dung lượng theo sản phẩm -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const productSelect = document.getElementById("productSelect");
+            const storageSelect = document.getElementById("storageSelect");
+
+            productSelect.addEventListener("change", function () {
+                const selected = this.options[this.selectedIndex];
+                const storagesStr = selected.getAttribute("data-storages");
+
+                storageSelect.innerHTML = '<option value="">-- Chọn dung lượng --</option>';
+
+                if (storagesStr) {
+                    const cleaned = storagesStr.replaceAll("[", "").replaceAll("]", "").replaceAll("'", "").trim();
+                    const storages = cleaned.split(",").map(s => s.trim()).filter(Boolean);
+                    storages.forEach(storage => {
+                        const option = document.createElement("option");
+                        option.value = storage;
+                        option.textContent = storage;
+                        storageSelect.appendChild(option);
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <title>Footer Dolaphone</title>
@@ -43,13 +44,33 @@
       animation: fadeSlideUp 3s ease forwards;
     }
 
-    .footer-top div:nth-child(1) { animation-delay: 0.2s; }
-    .footer-top div:nth-child(2) { animation-delay: 0.4s; }
-    .footer-top div:nth-child(3) { animation-delay: 0.6s; }
-    .footer-top div:nth-child(4) { animation-delay: 0.8s; }
-    .footer-top div:nth-child(5) { animation-delay: 1s; }
-    .footer-top div:nth-child(6) { animation-delay: 1.2s; }
-    .footer-top div:nth-child(7) { animation-delay: 1.4s; }
+    .footer-top div:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+
+    .footer-top div:nth-child(2) {
+      animation-delay: 0.4s;
+    }
+
+    .footer-top div:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    .footer-top div:nth-child(4) {
+      animation-delay: 0.8s;
+    }
+
+    .footer-top div:nth-child(5) {
+      animation-delay: 1s;
+    }
+
+    .footer-top div:nth-child(6) {
+      animation-delay: 1.2s;
+    }
+
+    .footer-top div:nth-child(7) {
+      animation-delay: 1.4s;
+    }
 
     .footer-bottom {
       display: flex;
@@ -66,9 +87,17 @@
       animation: fadeSlideUp 3s ease forwards;
     }
 
-    .footer-section:nth-child(1) { animation-delay: 0.3s; }
-    .footer-section:nth-child(2) { animation-delay: 0.6s; }
-    .footer-section:nth-child(3) { animation-delay: 0.9s; }
+    .footer-section:nth-child(1) {
+      animation-delay: 0.3s;
+    }
+
+    .footer-section:nth-child(2) {
+      animation-delay: 0.6s;
+    }
+
+    .footer-section:nth-child(3) {
+      animation-delay: 0.9s;
+    }
 
     .footer-section h3 {
       color: #001baf;
@@ -114,6 +143,7 @@
         opacity: 0;
         transform: translateY(30px);
       }
+
       100% {
         opacity: 1;
         transform: translateY(0);
@@ -121,66 +151,73 @@
     }
   </style>
 </head>
+
 <body>
 
-<div th:fragment="footerFragment">
+  <div th:fragment="footerFragment">
 
-  <!-- PHẦN MỚI: Thanh đăng ký email + kết nối mạng xã hội -->
-  <div class="w-full bg-[#000f8f] text-white px-6 py-4" style="margin-top: -40px;">
-    <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <!-- Form đăng ký -->
-      <div class="flex w-full md:max-w-md">
-        <input
-          type="email"
-          placeholder="Nhập email nhận tin khuyến mãi"
-          class="flex-1 px-4 py-2 rounded-l-full text-black focus:outline-none"
-        />
-        <button class="bg-yellow-400 text-white font-bold px-4 py-2 rounded-r-full hover:bg-yellow-500">
-          ĐĂNG KÝ
-        </button>
-      </div>
+    <!-- PHẦN MỚI: Thanh đăng ký email + kết nối mạng xã hội -->
+    <div class="w-full bg-[#000f8f] text-white px-6 py-4" style="margin-top: -40px;">
+      <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Form đăng ký -->
+        <div class="flex w-full md:max-w-md">
+          <input type="email" placeholder="Nhập email nhận tin khuyến mãi"
+            class="flex-1 px-4 py-2 rounded-l-full text-black focus:outline-none" />
+          <button class="bg-yellow-400 text-white font-bold px-4 py-2 rounded-r-full hover:bg-yellow-500">
+            ĐĂNG KÝ
+          </button>
+        </div>
 
-      <!-- Kết nối mạng xã hội -->
-      <div class="flex items-center gap-2 text-sm font-semibold text-white">
-        <span class="whitespace-nowrap">Kết nối với chúng tôi:</span>
-        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/zalo.png?1719764721426" alt="Zalo" class="h-6 w-6 object-contain" />
-        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/facebook.png?1719764721426" alt="Facebook" class="h-6 w-6 object-contain" />
-        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/youtube.png?1719764721426" alt="YouTube" class="h-6 w-6 object-contain" />
-        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/google.png?1719764721426" alt="Google" class="h-6 w-6 object-contain" />
+        <!-- Kết nối mạng xã hội -->
+        <div class="flex items-center gap-2 text-sm font-semibold text-white">
+          <span class="whitespace-nowrap">Kết nối với chúng tôi:</span>
+          <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/zalo.png?1719764721426" alt="Zalo"
+            class="h-6 w-6 object-contain" />
+          <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/facebook.png?1719764721426"
+            alt="Facebook" class="h-6 w-6 object-contain" />
+          <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/youtube.png?1719764721426" alt="YouTube"
+            class="h-6 w-6 object-contain" />
+          <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/google.png?1719764721426" alt="Google"
+            class="h-6 w-6 object-contain" />
+        </div>
       </div>
     </div>
-  </div>
 
-  <footer  style="background-color: #ffffff;"  >
-    <div class="footer-container">
+    <footer style="background-color: #ffffff;">
+      <div class="footer-container">
         <!-- PHẦN TRÊN -->
-        <div class="footer-top" style="margin: -0px auto 0 auto; background-color: #ebebeb; max-width: 1250px; border-radius: 12px;">
+        <div class="footer-top"
+          style="margin: -0px auto 0 auto; background-color: #ebebeb; max-width: 1250px; border-radius: 12px;">
           <div>
-            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_1.png?1719764721426" alt="Thanh toán khi nhận hàng" style="margin-left: 25px;">
+            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_1.png?1719764721426"
+              alt="Thanh toán khi nhận hàng" style="margin-left: 25px;">
             <p>Thanh toán<br>khi nhận hàng</p>
           </div>
           <div>
-            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_2.png?1719764721426" alt="Cam kết uy tín" style="margin-left: 35px;">
+            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_2.png?1719764721426"
+              alt="Cam kết uy tín" style="margin-left: 35px;">
             <p>Cam kết uy tín<br>hàng chính hãng</p>
           </div>
           <div>
-            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_3.png?1719764721426" alt="Giao hàng nhanh" style="margin-left: 15px;">
+            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_3.png?1719764721426"
+              alt="Giao hàng nhanh" style="margin-left: 15px;">
             <p>Giao hàng<br>miễn phí 2h</p>
           </div>
           <div>
-            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_4.png?1719764721426" alt="Đổi trả miễn phí" style="margin-left: 30px;">
+            <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/chinhsach_footer_4.png?1719764721426"
+              alt="Đổi trả miễn phí" style="margin-left: 30px;">
             <p>14 ngày đổi trả<br>miễn phí</p>
           </div>
           <div style="margin-top: 20px;">
-            <p><strong><i class="fas fa-question-circle"></i>  KHIẾU NẠI, GÓP Ý</strong></p>
+            <p><strong><i class="fas fa-question-circle"></i> KHIẾU NẠI, GÓP Ý</strong></p>
             <button>19000000</button>
           </div>
           <div style="margin-top: 20px;">
-            <p><strong><i class="fas fa-phone-alt"></i>  TƯ VẤN</strong></p>
+            <p><strong><i class="fas fa-phone-alt"></i> TƯ VẤN</strong></p>
             <button>19000000</button>
           </div>
           <div style="margin-top: 20px;">
-            <p><strong><i class="fas fa-map-marker-alt"></i>  TÌM CHI NHÁNH</strong></p>
+            <p><strong><i class="fas fa-map-marker-alt"></i> TÌM CHI NHÁNH</strong></p>
             <button>Hệ thống Hope</button>
           </div>
         </div>
@@ -188,38 +225,52 @@
         <div class="footer-bottom">
           <div class="footer-section">
             <img src="/images/l.png" alt="" style="width: 75%;  margin-top: -20px;">
-            <p style="font-size: 15px; opacity: 0.8;">Hệ thống bán lẻ smartphone, máy tính bảng, MacBook, thiết bị công nghệ chính hãng với giá tốt,  giao hàng nhanh miễn phí.</p>
-            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Địa chỉ:</strong> 70 Lữ Gia, Phường 15, Quận 11, TP.HCM</p>
-            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Điện thoại:</strong> 1900 6750</p>
-            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Email:</strong> support@sapo.vn</p>
+            <p style="font-size: 15px; opacity: 0.8;">Hệ thống bán lẻ smartphone, máy tính bảng, MacBook, thiết bị công
+              nghệ chính hãng với giá tốt, giao hàng nhanh miễn phí.</p>
+            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Địa chỉ:</strong> 70 Lữ Gia,
+              Phường 15, Quận 11, TP.HCM</p>
+            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Điện thoại:</strong> 1900 6750
+            </p>
+            <p style="font-size: 16px;"><strong style="color: #001baf; font-size: 17px;">Email:</strong> support@sapo.vn
+            </p>
           </div>
 
           <div class="footer-section" style="margin-left: 80px;">
             <h3 style="font-weight: 700; font-size: 24px;">MẠNG XÃ HỘI</h3>
-            <p><strong style="font-weight: 700; font-size: 16px;">MUA ONLINE (08:00 - 21:00 mỗi ngày)</strong><br><a href="#" style="color: #001baf;font-weight: 1000; font-size: 17px; ">19000000</a><br><i>Tất cả các ngày trong tuần (Trừ tết Âm Lịch)</i></p>
+            <p><strong style="font-weight: 700; font-size: 16px;">MUA ONLINE (08:00 - 21:00 mỗi ngày)</strong><br><a
+                href="#" style="color: #001baf;font-weight: 1000; font-size: 17px; ">19000000</a><br><i>Tất cả các ngày
+                trong tuần (Trừ tết Âm Lịch)</i></p>
             <br>
-            <p><strong style="font-weight: 700; font-size: 16px;">GÓP Ý & KHIẾU NẠI (08:30 - 20:30)</strong><br><a href="#" style="color: #001baf;font-weight: 1000; font-size: 17px; ">19006750</a><br><i>Tất cả các ngày trong tuần (Trừ tết Âm Lịch)</i></p>
+            <p><strong style="font-weight: 700; font-size: 16px;">GÓP Ý & KHIẾU NẠI (08:30 - 20:30)</strong><br><a
+                href="#" style="color: #001baf;font-weight: 1000; font-size: 17px; ">19006750</a><br><i>Tất cả các ngày
+                trong tuần (Trừ tết Âm Lịch)</i></p>
           </div>
 
           <div class="footer-section">
             <h3 style="font-weight: 700; font-size: 24px;">LIÊN KẾT SÀN</h3>
             <div class="footer-icons" style="display: flex; gap: 10px; align-items: center;">
-              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/shopee.png?1719764721426" alt="Shopee">
-              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/lazada.png?1719764721426" alt="Lazada">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/shopee.png?1719764721426"
+                alt="Shopee">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/lazada.png?1719764721426"
+                alt="Lazada">
               <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/tiki.png?1719764721426" alt="Tiki">
               <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/sendo.png?1719764721426" alt="Sendo">
             </div>
             <h3 style="font-weight: 700; font-size: 24px;">HÌNH THỨC THANH TOÁN</h3>
             <div class="footer-icons" style="display: flex; gap: 10px; align-items: center;">
-              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_1.png?1719764721426" alt="Tiền mặt">
-              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_2.png?1719764721426" alt="Chuyển khoản">
-              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_3.png?1719764721426" alt="Visa/Mastercard">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_1.png?1719764721426"
+                alt="Tiền mặt">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_2.png?1719764721426"
+                alt="Chuyển khoản">
+              <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/payment_3.png?1719764721426"
+                alt="Visa/Mastercard">
             </div>
           </div>
         </div>
-    </div>
-  </footer>
-</div>
+      </div>
+    </footer>
+  </div>
 
 </body>
+
 </html>
