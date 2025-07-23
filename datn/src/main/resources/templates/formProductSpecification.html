@@ -4,95 +4,53 @@
 <head>
   <meta charset="UTF-8" />
   <title>Thêm Thông số kỹ thuật</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { primary: '#1e88e5', secondary: '#f5f5f5' }, borderRadius: { 'none': '0px', 'sm': '4px', DEFAULT: '8px', 'md': '12px', 'lg': '16px', 'xl': '20px', '2xl': '24px', '3xl': '32px', 'full': '9999px', 'button': '8px' } } } }</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
   <style>
-    /* ===== BẢNG THÔNG SỐ ===== */
-    table.spec-table {
-      width: 100%;
+    body {
+      background-color: #f0f3f7;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      color: #2c3e50;
+    }
+
+    div+h2 {
+      margin-top: 100px;
+      margin-left: 295px;
+
+      font-size: 23px;
+    }
+
+    h3 {
+      margin-left: 270px;
+      color: #5f9cd8;
+    }
+
+    form {
+      max-width: 800px;
+      margin-left: 295px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      margin-left: 295px;
+
       border-collapse: collapse;
-      font-size: 15px;
+      margin-top: 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
-    table.spec-table thead {
-      background: #f5f5f5;
-    }
-
-    table.spec-table th,
-    table.spec-table td {
-      border: 1px solid #e0e0e0;
-      padding: 8px 10px;
-      text-align: left;
-    }
-
-    /* ID, Product, Key nhỏ – Value rộng */
-    table.spec-table th:nth-child(1),
-    table.spec-table td:nth-child(1) {
-      width: 6%;
-    }
-
-    table.spec-table th:nth-child(2),
-    table.spec-table td:nth-child(2) {
-      width: 10%;
-    }
-
-    table.spec-table th:nth-child(3),
-    table.spec-table td:nth-child(3) {
-      width: 18%;
-    }
-
-    /* Cột giá trị chiếm ~40‑45% */
-    table.spec-table th:nth-child(4),
-    table.spec-table td:nth-child(4) {
-      width: 45%;
-    }
-
-    /* Cột thao tác còn lại */
-    table.spec-table th:nth-child(5),
-    table.spec-table td:nth-child(5) {
-      width: 10%;
-      text-align: center;
-    }
-
-    /* ===== Ô INPUT chỉnh sửa ===== */
-    .spec-edit-form {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .spec-edit-form input[type="text"] {
-      flex: 1;
-      /* tự giãn đầy cột */
-      min-width: 180px;
-      padding: 6px 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    .spec-edit-form button {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      background: #1976d2;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .spec-edit-form button:hover {
-      background: #155a9e;
-    }
-
-    /* Link xoá */
-    a.delete-link {
-      color: #d32f2f;
-      text-decoration: none;
-    }
-
-    a.delete-link:hover {
-      text-decoration: underline;
-    }
-  </style>
-  <style>
     .spec-row {
       display: none;
     }
@@ -104,7 +62,7 @@
     }
 
     .spec-table {
-      width: 100%;
+      width: 1200px;
       border-collapse: collapse;
     }
 
@@ -114,275 +72,390 @@
       padding: 8px;
     }
   </style>
+  <style>
+    .specification-form {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    textarea.form-control {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background-color: #f5f5f5;
+      padding: 15px 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .form-actions {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #0069d9;
+    }
+
+    select.form-control {
+      height: 38px;
+    }
+
+    /* Thêm CSS này vào phần style */
+    .spec-form label {
+      font-weight: 700;
+      /* Làm chữ đậm */
+      color: #2c3e50;
+      /* Màu xanh đậm chuyên nghiệp */
+      margin-bottom: 6px;
+      display: block;
+    }
+  </style>
 </head>
 
 <body>
-  <div style="margin-top: 30px; margin-left: 18px;">
-    <div th:replace="~{dashboard :: nav}" ></div>
-  </div>
-  <h2>Thêm thông số kỹ thuật</h2>
+  <div th:replace="nav :: na"></div>
+  <div th:replace="header :: header"></div>
 
-  <form th:action="@{/specification/save}" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+  <h1 style="margin-left: 300px; margin-top: 75px; font-size: 23px; margin-bottom: 18px;">Quản lý thông số kỹ thuật</h1>
+
+  <form th:action="@{/specification/save}" method="post" enctype="multipart/form-data" accept-charset="UTF-8"
+    class="specification-form" style="margin-left: 297px;">
     <!-- Select Product -->
-    <label>Chọn sản phẩm:</label>
-    <select id="productSelect" name="productid" onchange="showFieldsByProductType()" required>
-      <option value="" disabled selected>-- Chọn sản phẩm --</option>
-      <option th:each="p : ${products}" th:value="${p.productID}" th:data-type="${p.category.name.toLowerCase()}"
-        th:text="${p.productName}"></option>
-    </select>
-
-    <br /><br />
+    <div class="form-group">
+      <label for="productSelect" class="form-label">Chọn sản phẩm:</label>
+      <select id="productSelect" name="productid" class="form-control" onchange="showFieldsByProductType()" required>
+        <option value="" disabled selected>-- Chọn sản phẩm --</option>
+        <option th:each="p : ${products}" th:value="${p.productID}" th:data-type="${p.category.name.toLowerCase()}"
+          th:text="${p.productName}"></option>
+      </select>
+    </div>
 
     <!-- Iphone Form -->
-    <div id="form-type-iphone" class="spec-form" style="display: none">
-      <h3>Thông số iPhone</h3>
-      <div>
-        <label>Kích thước màn hình:</label>
-        <input type="text" name="specs['Kích thước màn hình']" />
+    <div id="form-type-iphone" class="spec-form card" style="display: none">
+      <div class="card-header">
+        <h3 style="font-size: 20px; font-weight: 600;">Thông số iPhone</h3>
       </div>
-      <div>
-        <label>Công nghệ màn hình:</label>
-        <input type="text" name="specs['Công nghệ màn hình']" />
-      </div>
-      <div>
-        <label>Camera sau:</label>
-        <input type="text" name="specs['Camera sau']" />
-      </div>
-      <div>
-        <label>Camera trước:</label>
-        <input type="text" name="specs['Camera trước']" />
-      </div>
-      <div>
-        <label>Chipset:</label>
-        <input type="text" name="specs['Chipset']" />
-      </div>
-      <div>
-        <label>Công nghệ NFC:</label>
-        <input type="text" name="specs['Công nghệ NFC']" />
-      </div>
-      <div>
-        <label>Dung lượng RAM:</label>
-        <input type="text" name="specs['Dung lượng RAM']" />
-      </div>
-      <div>
-        <label>Pin:</label>
-        <input type="text" name="specs['Pin']" />
-      </div>
-      <div>
-        <label>Thẻ SIM:</label>
-        <input type="text" name="specs['Thẻ SIM']" />
-      </div>
-      <div>
-        <label>Hệ điều hành:</label>
-        <input type="text" name="specs['Hệ điều hành']" />
-      </div>
-      <div>
-        <label>Độ phân giải màn hình:</label>
-        <input type="text" name="specs['Độ phân giải màn hình']" />
-      </div>
-      <div>
-        <label>Tính năng màn hình:</label>
-        <textarea name="specs['Tính năng màn hình']" rows="5"></textarea>
-      </div>
-      <div>
-        <label>Loại CPU:</label>
-        <input type="text" name="specs['Loại CPU']" />
+      <div class="card-body grid-container">
+        <div class="form-group">
+          <label>Kích thước màn hình:</label>
+          <input type="text" class="form-control" name="specs['Kích thước màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Công nghệ màn hình:</label>
+          <input type="text" class="form-control" name="specs['Công nghệ màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Camera sau:</label>
+          <input type="text" class="form-control" name="specs['Camera sau']" />
+        </div>
+        <div class="form-group">
+          <label>Camera trước:</label>
+          <input type="text" class="form-control" name="specs['Camera trước']" />
+        </div>
+        <div class="form-group">
+          <label>Chipset:</label>
+          <input type="text" class="form-control" name="specs['Chipset']" />
+        </div>
+        <div class="form-group">
+          <label>Công nghệ NFC:</label>
+          <input type="text" class="form-control" name="specs['Công nghệ NFC']" />
+        </div>
+        <div class="form-group">
+          <label>Dung lượng RAM:</label>
+          <input type="text" class="form-control" name="specs['Dung lượng RAM']" />
+        </div>
+        <div class="form-group">
+          <label>Pin:</label>
+          <input type="text" class="form-control" name="specs['Pin']" />
+        </div>
+        <div class="form-group">
+          <label>Thẻ SIM:</label>
+          <input type="text" class="form-control" name="specs['Thẻ SIM']" />
+        </div>
+        <div class="form-group">
+          <label>Hệ điều hành:</label>
+          <input type="text" class="form-control" name="specs['Hệ điều hành']" />
+        </div>
+        <div class="form-group">
+          <label>Độ phân giải màn hình:</label>
+          <input type="text" class="form-control" name="specs['Độ phân giải màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Loại CPU:</label>
+          <input type="text" class="form-control" name="specs['Loại CPU']" />
+        </div>
+        <div class="form-group">
+          <label>Tính năng màn hình:</label>
+          <textarea class="form-control" name="specs['Tính năng màn hình']" rows="2"></textarea>
+        </div>
+
       </div>
     </div>
 
     <!-- Ipad Form -->
-    <div id="form-type-ipad" class="spec-form" style="display: none">
-      <h3>Thông số iPad</h3>
+    <div id="form-type-ipad" class="spec-form card" style="display: none">
+      <div class="card-header">
+        <h3 style="font-size: 20px; font-weight: 600;">Thông số iPad</h3>
+      </div>
+      <div class="card-body grid-container">
+        <div class="form-group">
+          <label>Kích thước màn hình:</label>
+          <input type="text" class="form-control" name="specs['Kích thước màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Công nghệ màn hình:</label>
+          <input type="text" class="form-control" name="specs['Công nghệ màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Camera sau:</label>
+          <input type="text" class="form-control" name="specs['Camera sau']" />
+        </div>
+        <div class="form-group">
+          <label>Camera trước:</label>
+          <input type="text" class="form-control" name="specs['Camera trước']" />
+        </div>
+        <div class="form-group">
+          <label>Chipset:</label>
+          <input type="text" class="form-control" name="specs['Chipset']" />
+        </div>
+        <div class="form-group">
+          <label>Công nghệ NFC:</label>
+          <input type="text" class="form-control" name="specs['Công nghệ NFC']" />
+        </div>
+        <div class="form-group">
+          <label>Dung lượng RAM:</label>
+          <input type="text" class="form-control" name="specs['Dung lượng RAM']" />
+        </div>
+        <div class="form-group">
+          <label>Pin:</label>
+          <input type="text" class="form-control" name="specs['Pin']" />
+        </div>
+        <div class="form-group">
+          <label>Thẻ SIM:</label>
+          <input type="text" class="form-control" name="specs['Thẻ SIM']" />
+        </div>
+        <div class="form-group">
+          <label>Hệ điều hành:</label>
+          <input type="text" class="form-control" name="specs['Hệ điều hành']" />
+        </div>
+        <div class="form-group">
+          <label>Độ phân giải màn hình:</label>
+          <input type="text" class="form-control" name="specs['Độ phân giải màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Loại CPU:</label>
+          <input type="text" class="form-control" name="specs['Loại CPU']" />
+        </div>
+        <div class="form-group">
+          <label>Tính năng màn hình:</label>
+          <textarea class="form-control" name="specs['Tính năng màn hình']" rows="3"></textarea>
+        </div>
 
-      <div>
-        <label>Kích thước màn hình:</label>
-        <input type="text" name="specs['Kích thước màn hình']" />
-      </div>
-      <div>
-        <label>Công nghệ màn hình:</label>
-        <input type="text" name="specs['Công nghệ màn hình']" />
-      </div>
-      <div>
-        <label>Camera sau:</label>
-        <input type="text" name="specs['Camera sau']" />
-      </div>
-      <div>
-        <label>Camera trước:</label>
-        <input type="text" name="specs['Camera trước']" />
-      </div>
-      <div>
-        <label>Chipset:</label>
-        <input type="text" name="specs['Chipset']" />
-      </div>
-      <div>
-        <label>Công nghệ NFC:</label>
-        <input type="text" name="specs['Công nghệ NFC']" />
-      </div>
-      <div>
-        <label>Dung lượng RAM:</label>
-        <input type="text" name="specs['Dung lượng RAM']" />
-      </div>
-
-      <div>
-        <label>Pin:</label>
-        <input type="text" name="specs['Pin']" />
-      </div>
-      <div>
-        <label>Thẻ SIM:</label>
-        <input type="text" name="specs['Thẻ SIM']" />
-      </div>
-      <div>
-        <label>Hệ điều hành:</label>
-        <input type="text" name="specs['Hệ điều hành']" />
-      </div>
-      <div>
-        <label>Độ phân giải màn hình:</label>
-        <input type="text" name="specs['Độ phân giải màn hình']" />
-      </div>
-      <div>
-        <label>Tính năng màn hình:</label>
-        <textarea name="specs['Tính năng màn hình']" rows="5"></textarea>
-      </div>
-      <div>
-        <label>Loại CPU:</label>
-        <input type="text" name="specs['Loại CPU']" />
-      </div>
-      <div>
-        <label>Tương thích:</label>
-        <textarea name="specs['Tương thích']" rows="4"></textarea>
+        <div class="form-group">
+          <label>Tương thích:</label>
+          <textarea class="form-control" name="specs['Tương thích']" rows="3"></textarea>
+        </div>
       </div>
     </div>
 
     <!-- Macbook Form -->
-    <div id="form-type-macbook" class="spec-form" style="display: none">
-      <h3>Thông số MacBook</h3>
-
-      <div>
-        <label>Loại card đồ họa:</label>
-        <textarea name="specs['Loại card đồ họa']" rows="4"></textarea>
+    <div id="form-type-macbook" class="spec-form card" style="display: none">
+      <div class="card-header">
+        <h3 style="font-size: 20px; font-weight: 600;">Thông số MacBook</h3>
       </div>
-
-      <div>
-        <label>Dung lượng RAM:</label>
-        <input type="text" name="specs['Dung lượng RAM']" />
-      </div>
-      <div>
-        <label>Kích thước màn hình:</label>
-        <input type="text" name="specs['Kích thước màn hình']" />
-      </div>
-
-      <div>
-        <label>Công nghệ màn hình:</label>
-        <textarea name="specs['Công nghệ màn hình']" rows="4"></textarea>
-      </div>
-
-      <div>
-        <label>Pin:</label>
-        <textarea name="specs['Pin']" rows="3"></textarea>
-      </div>
-
-      <div>
-        <label>Hệ điều hành:</label>
-        <input type="text" name="specs['Hệ điều hành']" />
-      </div>
-
-      <div>
-        <label>Độ phân giải màn hình:</label>
-        <input type="text" name="specs['Độ phân giải màn hình']" />
-      </div>
-
-      <div>
-        <label>Loại CPU:</label>
-        <input type="text" name="specs['Loại CPU']" />
-      </div>
-
-      <div>
-        <label>Cổng giao tiếp:</label>
-        <textarea name="specs['Cổng giao tiếp']" rows="4"></textarea>
+      <div class="card-body grid-container">
+        <div class="form-group">
+          <label>Kích thước màn hình:</label>
+          <input type="text" class="form-control" name="specs['Kích thước màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Hệ điều hành:</label>
+          <input type="text" class="form-control" name="specs['Hệ điều hành']" />
+        </div>
+        <div class="form-group">
+          <label>Độ phân giải màn hình:</label>
+          <input type="text" class="form-control" name="specs['Độ phân giải màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Loại card đồ họa:</label>
+          <input class="form-control" name="specs['Loại card đồ họa']"></input>
+        </div>
+        <div class="form-group">
+          <label>Dung lượng RAM:</label>
+          <input type="text" class="form-control" name="specs['Dung lượng RAM']" />
+        </div>
+        <div class="form-group">
+          <label>Loại CPU:</label>
+          <input type="text" class="form-control" name="specs['Loại CPU']" />
+        </div>
+        <div class="form-group">
+          <label>Công nghệ màn hình:</label>
+          <textarea class="form-control" name="specs['Công nghệ màn hình']" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Pin:</label>
+          <textarea class="form-control" name="specs['Pin']" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Cổng giao tiếp:</label>
+          <textarea class="form-control" name="specs['Cổng giao tiếp']" rows="3"></textarea>
+        </div>
       </div>
     </div>
 
+    <!-- chưa làm -->
+
     <!-- Apple Watch Form -->
-    <div id="form-type-applewatch" class="spec-form" style="display: none">
-      <h3>Thông số Apple Watch</h3>
-      <div>
-        <label>Công nghệ màn hình:</label><input type="text" name="specs['Công nghệ màn hình']" />
+    <div id="form-type-applewatch" class="spec-form card" style="display: none">
+      <div class="card-header">
+        <h3>Thông số Apple Watch</h3>
       </div>
-      <div>
-        <label>Đường kính mặt:</label><input type="text" name="specs['Đường kính mặt']" />
-      </div>
-      <div>
-        <label>Kích thước cổ tay phù hợp:</label><input type="text" name="specs['Kích thước cổ tay phù hợp']" />
-      </div>
-      <div>
-        <label>Nghe, gọi:</label><input type="text" name="specs['Nghe, gọi']" />
-      </div>
-      <div>
-        <label>Tiện ích sức khoẻ:</label><input type="text" name="specs['Tiện ích sức khoẻ']" />
-      </div>
-      <div>
-        <label>Tương thích:</label><input type="text" name="specs['Tương thích']" />
-      </div>
-      <div>
-        <label>Thời lượng pin:</label><input type="text" name="specs['Thời lượng pin']" />
-      </div>
-      <div>
-        <label>Hãng sản xuất:</label><input type="text" name="specs['Hãng sản xuất']" />
+      <div class="card-body grid-container">
+        <div class="form-group">
+          <label>Công nghệ màn hình:</label>
+          <input type="text" class="form-control" name="specs['Công nghệ màn hình']" />
+        </div>
+        <div class="form-group">
+          <label>Đường kính mặt:</label>
+          <input type="text" class="form-control" name="specs['Đường kính mặt']" />
+        </div>
+        <div class="form-group">
+          <label>Kích thước cổ tay phù hợp:</label>
+          <input type="text" class="form-control" name="specs['Kích thước cổ tay phù hợp']" />
+        </div>
+        <div class="form-group">
+          <label>Nghe, gọi:</label>
+          <input type="text" class="form-control" name="specs['Nghe, gọi']" />
+        </div>
+        <div class="form-group">
+          <label>Tiện ích sức khoẻ:</label>
+          <input type="text" class="form-control" name="specs['Tiện ích sức khoẻ']" />
+        </div>
+        <div class="form-group">
+          <label>Tương thích:</label>
+          <input type="text" class="form-control" name="specs['Tương thích']" />
+        </div>
+        <div class="form-group">
+          <label>Thời lượng pin:</label>
+          <input type="text" class="form-control" name="specs['Thời lượng pin']" />
+        </div>
+        <div class="form-group">
+          <label>Hãng sản xuất:</label>
+          <input type="text" class="form-control" name="specs['Hãng sản xuất']" />
+        </div>
       </div>
     </div>
 
     <!-- AirPods Form -->
-    <div id="form-type-airpods" class="spec-form" style="display: none">
-      <h3>Thông số AirPods</h3>
-
-      <div>
-        <label>Kích thước:</label>
-        <input type="text" name="specs['Kích thước']" />
+    <div id="form-type-airpods" class="spec-form card" style="display: none">
+      <div class="card-header">
+        <h3>Thông số AirPods</h3>
       </div>
-
-      <div>
-        <label>Trọng lượng:</label>
-        <input type="text" name="specs['Trọng lượng']" />
-      </div>
-
-      <div>
-        <label>Công nghệ âm thanh:</label>
-        <input type="text" name="specs['Công nghệ âm thanh']" />
-      </div>
-
-      <div>
-        <label>Micro:</label>
-        <input type="text" name="specs['Micro']" />
-      </div>
-
-      <div>
-        <label>Thời lượng sử dụng:</label>
-        <input type="text" name="specs['Thời lượng sử dụng']" />
-      </div>
-
-      <div>
-        <label>Pin:</label>
-        <input type="text" name="specs['Pin']" />
-      </div>
-
-      <div>
-        <label>Phương thức điều khiển:</label>
-        <input type="text" name="specs['Phương thức điều khiển']" />
-      </div>
-
-      <div>
-        <label>Chipset:</label>
-        <input type="text" name="specs['Chipset']" />
+      <div class="card-body grid-container">
+        <div class="form-group">
+          <label>Kích thước:</label>
+          <input type="text" class="form-control" name="specs['Kích thước']" />
+        </div>
+        <div class="form-group">
+          <label>Trọng lượng:</label>
+          <input type="text" class="form-control" name="specs['Trọng lượng']" />
+        </div>
+        <div class="form-group">
+          <label>Công nghệ âm thanh:</label>
+          <input type="text" class="form-control" name="specs['Công nghệ âm thanh']" />
+        </div>
+        <div class="form-group">
+          <label>Micro:</label>
+          <input type="text" class="form-control" name="specs['Micro']" />
+        </div>
+        <div class="form-group">
+          <label>Thời lượng sử dụng:</label>
+          <input type="text" class="form-control" name="specs['Thời lượng sử dụng']" />
+        </div>
+        <div class="form-group">
+          <label>Pin:</label>
+          <input type="text" class="form-control" name="specs['Pin']" />
+        </div>
+        <div class="form-group">
+          <label>Phương thức điều khiển:</label>
+          <input type="text" class="form-control" name="specs['Phương thức điều khiển']" />
+        </div>
+        <div class="form-group">
+          <label>Chipset:</label>
+          <input type="text" class="form-control" name="specs['Chipset']" />
+        </div>
       </div>
     </div>
 
-
-    <br />
-    <button type="submit">Lưu thông số</button>
+    <div class="form-actions">
+      <button type="submit"
+        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg text-lg">Lưu thông
+        số</button>
+    </div>
   </form>
-  <hr />
+
 
   <h3>Danh sách thông số đã lưu</h3>
+  <style>
+    .spec-row {
+      display: none;
+      transition: all 0.3s ease;
+    }
+  </style>
+
   <table class="spec-table">
     <thead>
       <tr>
@@ -393,7 +466,7 @@
     </thead>
     <tbody th:each="entry : ${groupedSpecList}">
       <!-- Dòng tiêu đề sản phẩm -->
-      <tr class="product-header" th:onclick="|toggleSpecs('group-' + ${entry.key})|">
+      <tr class="product-header" style="cursor: pointer;" th:onclick="|toggleSpecs('group-' + ${entry.key})|">
         <td th:text="${productIdToNameMap.get(entry.key)}" colspan="3"></td>
       </tr>
 
@@ -411,6 +484,17 @@
       </tr>
     </tbody>
   </table>
+
+
+
+  <script>
+    function toggleSpecs(groupIdPrefix) {
+      const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
+      rows.forEach(row => {
+        row.style.display = row.style.display === 'table-row' ? 'none' : 'table-row';
+      });
+    }
+  </script>
 
   <script>
     function showFieldsByProductType() {
@@ -447,15 +531,6 @@
     }
 
     document.addEventListener("DOMContentLoaded", showFieldsByProductType);
-  </script>
-
-  <script>
-    function toggleSpecs(groupIdPrefix) {
-      const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
-      rows.forEach(row => {
-        row.style.display = row.style.display === 'table-row' ? 'none' : 'table-row';
-      });
-    }
   </script>
 
 </body>

@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +19,11 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Data
 @Entity
 @AllArgsConstructor
@@ -66,5 +69,13 @@ public class Member {
 
     @Column(nullable = false)
     private boolean active = true;
+
+    private String otp;
+    
+    @Column(name = "verified", nullable = false, columnDefinition = "TINYINT(1) default 0")
+    private boolean verified = false;
+
+    @Version
+    private Integer version;
 
 }

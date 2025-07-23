@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sidebar</title>
+</head>
+
+<body>
+  <div th:fragment="na">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+      img {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        filter: contrast(1.2);
+        /* Tăng độ tương phản lên 120% */
+        transition: filter 0.3s ease;
+        /* Thêm hiệu ứng mượt khi hover */
+      }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        background: #3f4d67;
+        z-index: 1000;
+        /* 👇 Đổ bóng bên phải */
+        box-shadow: 4px 0 8px rgba(0, 0, 0, 0.5);
+      }
+
+
+      .sidebar li i {
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar li a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #cfd8e3;
+        padding: 10px 16px;
+        font-weight: 400;
+        transition: all 0.3s ease;
+
+      }
+
+      .sidebar li a:hover {
+        background-color: #485870;
+        box-shadow: inset 3px 0 0 #699ae9;
+        color: white;
+      }
+
+      .fa {
+        margin-right: 20px;
+      }
+
+      .dropdown-menu {
+        display: none;
+        padding-left: 20px;
+      }
+
+      .sidebar ul ul {
+        display: none;
+        padding-left: 20px;
+        border-left: 2px solid #5d6d87;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        border-radius: 0;
+        /* Đổi từ 4px thành 0 */
+      }
+
+      .sidebar ul ul li a {
+        padding: 10px 20px;
+        width: 200px;
+        margin-left: -10px;
+        border-radius: 0;
+        /* Đổi từ 4px thành 0 */
+      }
+
+
+      /* Sửa lại phần active */
+      .sidebar li a.active {
+        background-color: #4a556c;
+        border-left: 4px solid #699ae9;
+        color: white;
+        font-weight: 500;
+      }
+    </style>
+    <nav class="sidebar">
+      <img src="https://i.postimg.cc/TPyYJ3MY/image-removebg-preview-2.png" alt="" />
+      <ul>
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng điều khiển</p>
+        <li><a th:href="@{/dashboard}"><i class="fa fa-home"></i>Tổng quan</a></li>
+
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng sản phẩm</p>
+        <li><a th:href="@{/categories}"><i class="fa fa-solid fa-list"></i>Quản lý danh mục</a></li>
+
+        <li>
+          <a th:href="@{/admin-products}" class="flex items-center justify-between p-2 hover:bg-gray-100"
+            id="product-manager">
+            <i class="fa fas fa-box"></i>
+            <span>Quản lý sản phẩm</span>
+            <i class="fa fa-chevron-right ml-auto transition-transform duration-100" id="chevron"
+              style="margin-right: 5px;"></i>
+          </a>
+
+          <!-- Các trường mở rộng -->
+          <div class="hidden pl-4 bg-gray-700" id="extra-fields">
+            <div class="py-2" style="margin-left: 35px;">
+              <a th:href="@{/admin-products}" class="block p-2 hover:bg-gray-200"><i class="fa-solid fa-mobile"></i>Sản
+                phẩm</a>
+              <a th:href="@{/variants}" class="block p-2 hover:bg-gray-200"><i class="fas fa-code-branch"></i>Phiên bản</a>
+              <a th:href="@{/specification}" class="block p-2 hover:bg-gray-200"><i class="fas fa-cog"></i>Thông số kỹ
+                thuật</a>
+            </div>
+          </div>
+        </li>
+
+        <li><a th:href="@{/icons}"><i class="fa fa-solid fa-ticket"></i>Quản lý voucher</a></li>
+
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng đơn hàng</p>
+        <li><a th:href="@{/login}"><i class="fa fas fa-boxes"></i>Quản lý đơn hàng</a></li>
+        <li><a th:href="@{/register}"><i class="fa fa-user-plus"></i>Demo</a></li>
+
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng người dùng</p>
+        <li><a th:href="@{/login}"> <i class="fa fas fa-users"></i>Quản lý khách hàng</a></li>
+        <li><a th:href="@{/register}"> <i class="fa fas fa-id-badge"></i>Quản lý nhân viên</a></li>
+
+        <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng Thống kê & báo
+          cáo</p>
+        <li><a th:href="@{/login}"><i class="fa fas fa-chart-line"></i>Doanh thu</a></li>
+        <li><a th:href="@{/register}"><i class="fa fas fa-trophy"></i>Sản phẩm bán chạy</a></li>
+
+      </ul>
+
+
+    </nav>
+
+    <script>
+      function toggleDropdown(id) {
+        const dropdown = document.getElementById(id);
+        dropdown.classList.toggle('hidden');
+      }
+    </script>
+
+    <script>
+      document.getElementById('product-manager').addEventListener('click', function (e) {
+        e.preventDefault(); // Ngăn chặn chuyển trang
+
+        const extraFields = document.getElementById('extra-fields');
+        const chevron = document.getElementById('chevron');
+
+        // Toggle hiển thị các trường
+        extraFields.classList.toggle('hidden');
+
+        // Xoay icon chevron
+        chevron.classList.toggle('rotate-90');
+
+        // Nếu bạn muốn thực sự chuyển trang khi click lần nữa
+        // có thể thêm logic ở đây
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const currentUrl = window.location.pathname;
+
+        document.querySelectorAll(".sidebar li a").forEach(link => {
+          const href = link.getAttribute("href");
+
+          if (href === currentUrl) {
+            link.classList.add("active");
+          }
+        });
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const currentUrl = window.location.pathname;
+
+        // Kiểm tra nếu URL hiện tại là 1 trong các trang con của dropdown
+        const dropdownUrls = [
+          '/admin-products',
+          '/specification',
+          '/variants' // thêm nếu bạn có
+        ];
+
+        if (dropdownUrls.includes(currentUrl)) {
+          // Mở dropdown
+          const extraFields = document.getElementById('extra-fields');
+          const chevron = document.getElementById('chevron');
+
+          extraFields.classList.remove('hidden');
+          chevron.classList.add('rotate-90');
+        }
+
+        // Highlight link đang active
+        document.querySelectorAll(".sidebar li a").forEach(link => {
+          const href = link.getAttribute("href");
+
+          if (href === currentUrl) {
+            link.classList.add("active");
+          }
+        });
+      });
+    </script>
+
+
+
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h1>Xác minh Tài Khoản</h1>
+<form th:action="@{/verify-otp}" method="post">
+    <input type="hidden" name="email" th:value="${email}"/>
+    <input type="text" name="otp" placeholder="OTP" required/>
+    <button type="submit">Xác minh</button>
+</form>
+</body>
+</html>

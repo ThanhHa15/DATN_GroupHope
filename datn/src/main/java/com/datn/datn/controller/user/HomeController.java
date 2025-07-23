@@ -41,6 +41,7 @@ import com.datn.datn.service.ProductVariantService;
 import com.datn.datn.service.WishlistService;
 import com.datn.datn.service.MembersService;
 import com.datn.datn.service.ProductService;
+import com.datn.datn.service.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -64,6 +65,9 @@ public class HomeController {
 
     @Autowired
     private WishlistService wishlistService;
+
+    @Autowired
+    private AuthService authService;
 
     public HomeController(ProductVariantService productVariantService) {
         this.productVariantService = productVariantService;
@@ -183,9 +187,9 @@ public class HomeController {
     public String register(
             @Valid @ModelAttribute("member") Member member,
             BindingResult result,
-            RedirectAttributes redirectAttributes,
-            Model model) {
+            RedirectAttributes redirectAttributes) {
 
+        // Kiểm tra lỗi đầu vào
         if (!member.getPassword().equals(member.getConfirmPassword())) {
             result.rejectValue("confirmPassword", "error.confirmPassword", "Mật khẩu xác nhận không khớp");
         }
@@ -199,16 +203,53 @@ public class HomeController {
         }
 
         if (result.hasErrors()) {
-            model.addAttribute("member", member);
             return "views/shared/register";
         }
 
-        // ✅ Gán mặc định quyền khách hàng
+        // Gán mặc định quyền và trạng thái
         member.setRole("CUSTOMER");
+        member.setVerified(false);
+        member.setActive(true);
 
+        // Tạo và gán OTP
+        String otp = authService.generateOtp();
+        member.setOtp(otp);
+
+        // Lưu thông tin member
         memberRepository.save(member);
-        model.addAttribute("success", "Đăng ký thành công!");
-        return "views/shared/login";
+
+        // Gửi mã OTP
+        authService.sendOtp(member.getEmail(), otp);
+
+        // Chuyển hướng đến trang nhập OTP
+        redirectAttributes.addFlashAttribute("email", member.getEmail());
+        return "redirect:/otp";
+    }
+
+    @GetMapping("/otp")
+    public String showOtpPage(Model model) {
+        return "views/shared/otp"; // Trang nhập OTP
+    }
+
+    @PostMapping("/verify-otp")
+    public String handleOtp(
+            @RequestParam String email,
+            @RequestParam String otp,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            boolean isVerified = authService.verifyOtp(email, otp);
+            if (isVerified) {
+                redirectAttributes.addFlashAttribute("success", "Xác thực thành công! Vui lòng đăng nhập.");
+                return "redirect:/login"; // Chuyển hướng đến trang đăng nhập
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Mã OTP không hợp lệ");
+                return "redirect:/otp?email=" + email; // Quay lại trang OTP nếu sai
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi hệ thống khi xác thực OTP: " + e.getMessage());
+            return "redirect:/otp?email=" + email;
+        }
     }
 
     @GetMapping("/forgetPass")

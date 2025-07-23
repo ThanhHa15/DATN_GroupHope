@@ -320,7 +320,7 @@ function updateQuantity(variantId, newQty) {
     body: `variantId=${variantId}&quantity=${newQty}`,
   })
     .then((res) => {
-      if (!res.ok) throw new Error("Không thể cập nhật số lượng");
+      if (!res.ok) throw new Error("Đã hết hàng");
       return res.text();
     })
     .then(() => {

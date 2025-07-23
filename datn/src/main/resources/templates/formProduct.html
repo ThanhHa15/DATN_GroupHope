@@ -4,110 +4,390 @@
 <head>
   <meta charset="UTF-8" />
   <title>Thêm sản phẩm</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { primary: '#1e88e5', secondary: '#f5f5f5' }, borderRadius: { 'none': '0px', 'sm': '4px', DEFAULT: '8px', 'md': '12px', 'lg': '16px', 'xl': '20px', '2xl': '24px', '3xl': '32px', 'full': '9999px', 'button': '8px' } } } }</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
   <style>
+    :where([class^="ri-"])::before {
+      content: "\f3c2";
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 30px;
+      background-color: #f0f3f7;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      color: #2c3e50;
     }
 
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 20px;
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
 
-    th,
-    td {
+    body {
+      background-color: #f0f3f7;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      color: #2c3e50;
+    }
+
+
+
+    .content {
+      margin-left: 295px;
+      margin-top: 100px;
+      width: 79%;
+    }
+
+    .card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .content>h2 {
+      margin-bottom: 20px;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    h3 {
+      margin-bottom: 15px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    label {
+
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #333;
+      /* position: relative;
+  bottom: -17px;
+  left: 10px; */
+
+    }
+
+    select {
+      width: 655px;
+      height: 50px;
       border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
+      border-radius: 3px;
+      margin-bottom: 10px;
     }
 
-    form {
-      margin-top: 20px;
+    .form-group>label+input {
+      width: 500px;
+      height: 50px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    /* input,
+select {
+ 
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 14px;
+  margin-bottom: 15px;
+} */
+
+    textarea {
+      resize: vertical;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    input[type="file"] {
+      margin-bottom: 15px;
+
     }
 
     button {
-      padding: 6px 12px;
+      padding: 10px 18px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
+      transition: 0.3s;
     }
 
     .edit-btn {
-      background-color: #2980b9;
+      background-color: #3498db;
       color: white;
+    }
+
+    .edit-btn:hover {
+      background-color: #2980b9;
     }
 
     .delete-btn {
       background-color: #e74c3c;
       color: white;
     }
+
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .submit-btn {
+      background-color: #2ecc71;
+      color: white;
+      float: right;
+      padding: 10px 20px;
+    }
+
+    .submit-btn:hover {
+      background-color: #27ae60;
+    }
+
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+
+    .cart-item {
+      padding: 10px;
+      background-color: #f9f9f9;
+    }
   </style>
 </head>
 
 <body>
-  <div th:replace="~{dashboard :: nav}"></div>
-  <!-- Đúng -->
+  <div th:replace="nav :: na"></div>
+  <div th:replace="header :: header"></div>
 
-  <h2>📝 Thêm sản phẩm</h2>
-  <form th:action="@{/admin-products/add}" method="post" enctype="multipart/form-data" th:object="${product}">
-    <input type="hidden" th:field="*{productID}" />
 
-    <label>Tên sản phẩm:</label><br />
-    <input type="text" th:field="*{productName}" required /><br />
+  <div class="content">
+    <h1 style=" margin-top: -18px; font-size: 23px; margin-bottom: 18px; margin-left: 8px;">Thêm/sửa sản phẩm</h1>
+    <div class="card">
+      <form th:action="@{/admin-products/add}" method="post" enctype="multipart/form-data" th:object="${product}">
+        <input type="hidden" th:field="*{productID}" />
 
-    <label>Loại (ID):</label><br />
 
-    <select th:field="*{category.categoryID}" required>
-      <option value="" selected>-- Chọn danh mục --</option>
-      <option th:each="c : ${categories}" th:value="${c.categoryID}" th:text="${c.name}">
-      </option>
-    </select>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Tên sản phẩm -->
+          <div>
+            <label class="block text-gray-700 text-base font-semibold mb-2">Tên sản phẩm</label>
+            <input type="text" th:field="*{productName}" required placeholder="Nhập tên sản phẩm"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
 
-    <br />
+          <!-- Loại -->
+          <div>
+            <label class="block text-gray-700 text-base font-semibold mb-2">Loại</label>
+            <select th:field="*{category.categoryID}" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="" selected>Chọn loại</option>
+              <option th:each="c : ${categories}" th:value="${c.categoryID}" th:text="${c.name}"></option>
+            </select>
+          </div>
+        </div>
 
-    <label>Mô tả:</label><br />
-    <textarea th:field="*{description}" rows="3"></textarea><br />
+        <!-- Mô tả -->
+        <div style="display: none;">
+          <label class="block text-gray-700 text-base font-semibold mb-2">Mô tả</label>
+          <textarea th:field="*{description}" rows="3" placeholder="Nhập mô tả sản phẩm"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
 
-    <label>Ảnh:</label><br />
-    <input type="file" name="imageFile" /><br /><br />
+        <!-- Ảnh -->
+        <div>
+          <label class="block text-gray-700 text-base font-semibold mb-2">Ảnh</label>
+          <input type="file" name="imageFile" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:bg-blue-100" />
+        </div>
+        <button type="submit" class="submit-btn" style="margin-top: -50px;">Lưu sản phẩm</button>
+      </form>
+    </div>
+  </div>
 
-    <button type="submit">Lưu sản phẩm</button>
-  </form>
 
-  <h3>📋 Danh sách sản phẩm</h3>
-  <table>
-    <tr>
-      <th>STT</th>
-      <th>Tên sản phẩm</th>
-      <th>Loại</th>
-      <th>Mô tả</th>
-      <th>Ảnh</th>
-      <th>Sửa</th>
-      <th>Xóa</th>
-    </tr>
+  <div style="margin-left: 295px;">
+    <div class="flex min-h-screen">
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col">
+        <main class="flex-1 p-6 overflow-auto" style="margin-top: -30px ; margin-left: -20px;">
+          <!-- Products Section -->
+          <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+              <div class="flex justify-between items-center">
+                <h2 class="text-xl font-semibold">Danh sách sản phẩm</h2>
+              </div>
+            </div>
 
-    <tr th:each="p, iter : ${products}">
-      <td th:text="${iter.index + 1}"></td>
-      <td th:text="${p.productName}"></td>
-      <td th:text="${p.category.name}"></td>
-      <td th:text="${p.description}"></td>
-      <td>
-        <img th:src="@{'/images/' + ${p.imageUrl}}" width="60" />
-      </td>
-      <td>
-        <a th:href="@{'/admin-products/edit/' + ${p.productID}}">
-          <button class="edit-btn">Sửa</button>
-        </a>
-      </td>
-      <td>
-        <a th:href="@{'/admin-products/delete/' + ${p.productID}}" onclick="return confirm('Xóa sản phẩm?')">
-          <button class="delete-btn">Xóa</button>
-        </a>
-      </td>
-    </tr>
-  </table>
+            <div class="p-6">
+              <!-- Search and Filter -->
+              <div class="flex flex-wrap gap-4 mb-6">
+                <div class="flex-1 min-w-[240px]">
+                  <div class="relative">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..."
+                      class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                    <div
+                      class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
+                      <i class="ri-search-line text-gray-400"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-48">
+                  <div class="relative">
+                    <select
+                      class="w-full pl-4 pr-10  border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                      <option value="">Tất cả danh mục</option>
+                      <option value="smartphone">Điện thoại</option>
+                      <option value="accessories">Phụ kiện</option>
+                      <option value="tablet">Máy tính bảng</option>
+                    </select>
+                    <div
+                      class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                      <i class="ri-arrow-down-s-line text-gray-400"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="w-48">
+                  <div class="relative">
+                    <select
+                      class="w-full pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                      <option value="">Trạng thái</option>
+                      <option value="active">Đang bán</option>
+                      <option value="outofstock">Hết hàng</option>
+                      <option value="hidden">Ẩn</option>
+                    </select>
+                    <div
+                      class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                      <i class="ri-arrow-down-s-line text-gray-400"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Products Table -->
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead>
+                    <tr>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
+                        STT</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
+                        Ảnh</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-left text-lg font-bold text-gray-700 uppercase tracking-wider">
+                        Sản phẩm</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-left text-lg font-bold text-gray-700 uppercase tracking-wider">
+                        Danh mục</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
+                        Thao tác</th>
+                    </tr>
+
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200 text-sm text-gray-700">
+                    <tr th:each="p, iter : ${products}">
+                      <td th:text="${iter.index + 1}" class="px-4 py-4 text-center text-base font-small">1</td>
+                      <td class="px-4 py-4 text-center">
+                        <img class="w-[70px] h-[70px] object-cover rounded mx-auto"
+                          th:src="@{'/images/' + ${p.imageUrl}}" alt="">
+                      </td>
+                      <td th:text="${p.productName}" class="px-4 py-4 text-left text-base font-small">Iphone 15 Pro Max
+                      </td>
+                      <td th:text="${p.category.name}" class="px-4 py-4 text-left text-base font-small">Điện thoại</td>
+                      <td class="px-4 py-4">
+                        <div class="flex justify-center gap-2">
+                          <a th:href="@{'/admin-products/edit/' + ${p.productID}}"
+                            class="text-blue-600 hover:text-blue-800" title="Sửa">
+                            <div class="w-8 h-8 flex items-center justify-center text-xl">
+                              <i class="ri-edit-line"></i>
+                            </div>
+                          </a>
+                          <a th:href="@{'/admin-products/delete/' + ${p.productID}}"
+                            onclick="return confirm('Xóa sản phẩm?')" class="text-red-500 hover:text-red-700"
+                            title="Xoá">
+                            <div class="w-8 h-8 flex items-center justify-center text-xl">
+                              <i class="ri-delete-bin-line"></i>
+                            </div>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+
+
+              <!-- Pagination -->
+              <div class="flex items-center justify-between mt-6">
+                <div class="text-sm text-gray-500">
+                  Hiển thị 1-6 của 24 sản phẩm
+                </div>
+                <div class="flex space-x-2">
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap">Trước</button>
+                  <button
+                    class="px-3 py-1 border border-primary bg-primary text-white rounded-button whitespace-nowrap">1</button>
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">2</button>
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">3</button>
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">4</button>
+                  <button
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">Tiếp</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sales Charts -->
+
+        </main>
+      </div>
+
+
+    </div>
 </body>
 
 </html>
