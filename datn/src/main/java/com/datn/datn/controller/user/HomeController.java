@@ -373,10 +373,16 @@ public class HomeController {
 
     @PostMapping("/editInf")
     public String updateMemberInfo(HttpServletRequest request, HttpSession session, Model model) {
-        Member currentUser = (Member) session.getAttribute("loggedInUser"); // ✅ Lấy đúng session
+        Member sessionUser = (Member) session.getAttribute("loggedInUser");
+        if (sessionUser == null) {
+            return "redirect:/login";
+        }
+
+        // ✅ Lấy bản mới từ DB để Hibernate quản lý entity đúng cách
+        Member currentUser = memberService.getEmployeeById(sessionUser.getId());
 
         if (currentUser == null) {
-            return "redirect:/login"; // Phòng trường hợp bị null
+            return "redirect:/login";
         }
 
         // Lấy dữ liệu từ form
@@ -399,34 +405,36 @@ public class HomeController {
 
         // Xử lý đổi mật khẩu nếu có
         if (currentPassword != null && !currentPassword.isBlank()) {
-            if (!currentPassword.equals(currentUser.getPassword())) {
+            if (!currentPassword.equals(sessionUser.getPassword())) {
                 model.addAttribute("error", "Mật khẩu hiện tại không đúng");
-                model.addAttribute("member", currentUser);
+                model.addAttribute("member", sessionUser);
                 return "views/shared/editInf";
             }
 
             if (newPassword == null || newPassword.isBlank()) {
                 model.addAttribute("error", "Vui lòng nhập mật khẩu mới");
-                model.addAttribute("member", currentUser);
+                model.addAttribute("member", sessionUser);
                 return "views/shared/editInf";
             }
 
             if (!newPassword.equals(confirmPassword)) {
                 model.addAttribute("error", "Mật khẩu xác nhận không khớp");
-                model.addAttribute("member", currentUser);
+                model.addAttribute("member", sessionUser);
                 return "views/shared/editInf";
             }
 
-            currentUser.setPassword(newPassword); // Nếu có BCrypt thì mã hóa ở đây
+            currentUser.setPassword(newPassword); // Hash nếu cần
         }
 
-        // Lưu thay đổi
+        // ✅ Save vào DB
         memberService.save(currentUser);
-        session.setAttribute("loggedInUser", currentUser); // ✅ Cập nhật lại session
+
+        // ✅ Cập nhật lại session
+        session.setAttribute("loggedInUser", currentUser);
 
         model.addAttribute("success", "Cập nhật thông tin thành công");
         model.addAttribute("member", currentUser);
-        return "views/shared/editInf"; // ✅ Load lại trang
+        return "views/shared/editInf";
     }
 
     @GetMapping("/address")

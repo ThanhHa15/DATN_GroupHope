@@ -9,16 +9,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/discount")
+// @RequestMapping("/discount")
 public class DiscountController {
 
     private final ProductVariantService variantService;
@@ -29,7 +26,23 @@ public class DiscountController {
         this.productService = productService;
     }
 
-    @PostMapping("/apply")
+    @GetMapping("/discount")
+    public String showVariantForm(Model model) {
+        List<Product> products = productService.getAll();
+
+        // Gán storages cho từng product
+        for (Product p : products) {
+            List<String> storages = variantService.findStoragesByProductId(p.getProductID());
+            p.setStorages(storages); // Bạn cần có getter/setter & @Transient trong Product
+        }
+
+        model.addAttribute("variant", new ProductVariant());
+        model.addAttribute("variants", variantService.getAll());
+        model.addAttribute("products", products); // thêm bản đã gán storages
+        return "formDiscount"; // tên file view Thymeleaf của bạn
+    }
+
+    @PostMapping("/discount/apply")
     public String applyDiscount(
             @RequestParam("productId") Integer productId,
             @RequestParam("storage") String storage,
@@ -40,26 +53,25 @@ public class DiscountController {
 
         LocalDate today = LocalDate.now();
 
-        // ❌ Ngày không hợp lệ
+        // ❌ Validate ngày
         if (start.isBefore(today) || end.isBefore(today)) {
             redirectAttributes.addFlashAttribute("error", "Ngày bắt đầu và kết thúc không được ở quá khứ.");
-            return "redirect:/variants"; // quay lại form áp dụng
+            return "redirect:/discount";
         }
 
         if (end.isBefore(start)) {
             redirectAttributes.addFlashAttribute("error", "Ngày kết thúc phải sau ngày bắt đầu.");
-            return "redirect:/variants";
+            return "redirect:/discount";
         }
 
-        // ✅ Kiểm tra storage có tồn tại với productId không
+        // ✅ Kiểm tra tồn tại storage
         List<String> validStorages = variantService.findStoragesByProductId(productId);
 
         if (!validStorages.contains(storage)) {
             redirectAttributes.addFlashAttribute("error", "Dung lượng không hợp lệ cho sản phẩm đã chọn.");
-            return "redirect:/variants";
+            return "redirect:/discount";
         }
 
-        // ✅ Tiến hành áp dụng giảm giá
         try {
             variantService.applyDiscountToStorage(productId, storage, discount, start, end);
             redirectAttributes.addFlashAttribute("success", "Áp dụng giảm giá thành công!");
@@ -67,7 +79,6 @@ public class DiscountController {
             redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi áp dụng giảm giá.");
         }
 
-        return "redirect:/variants"; // chuyển về trang danh sách biến thể sản phẩm
+        return "redirect:/discount";
     }
-
 }

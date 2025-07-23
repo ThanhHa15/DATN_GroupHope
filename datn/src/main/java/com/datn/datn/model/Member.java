@@ -73,7 +73,7 @@ public class Member {
     private String otp;
     
     @Column(name = "verified", nullable = false, columnDefinition = "TINYINT(1) default 0")
-    private boolean verified = false;
+    private Boolean verified = false;
 
     @Version
     private Integer version;
