@@ -38,4 +38,8 @@ public interface ProductVariantService {
 
     List<ProductVariant> filterByStorage(String[] storages);
 
+    void removeDiscount(Integer variantId);
+
+    void updateDiscount(Integer variantId, float discount, LocalDate start, LocalDate end);
+
 }

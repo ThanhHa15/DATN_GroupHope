@@ -81,4 +81,32 @@ public class DiscountController {
 
         return "redirect:/discount";
     }
+
+    @PostMapping("/discount/remove/{variantId}")
+    public String removeDiscount(@PathVariable Integer variantId, RedirectAttributes redirectAttributes) {
+        try {
+            variantService.removeDiscount(variantId);
+            redirectAttributes.addFlashAttribute("success", "Đã xóa giảm giá thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Xóa giảm giá thất bại: " + e.getMessage());
+        }
+        return "redirect:/discount";
+    }
+
+    @PostMapping("/discount/update")
+    public String updateDiscount(
+            @RequestParam("variantId") Integer variantId,
+            @RequestParam("discount") float discount,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            variantService.updateDiscount(variantId, discount, start, end);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật giảm giá thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Cập nhật giảm giá thất bại: " + e.getMessage());
+        }
+        return "redirect:/discount";
+    }
 }

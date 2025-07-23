@@ -104,6 +104,7 @@
                         <th class="pr-15">Giá</th>
                         <!-- Đã ẩn 2 cột ngày -->
                         <th class="p-3">Thời gian hiệu lực</th>
+                        <th class="p-3">Thao tác</th> <!-- Thêm cột mới -->
                     </tr>
                 </thead>
                 <tbody>
@@ -140,9 +141,112 @@
                         <td class="p-3 countdown-timer" th:attr="data-end-date=${v.discountEnd}">
                             <span class="loading-text">Chưa giảm giá...</span>
                         </td>
+                        <td class="p-3">
+                            <div class="flex space-x-2">
+                                <!-- Nút Sửa - Mở modal -->
+                                <button th:attr="data-id=${v.variantID}"
+                                    class="edit-btn text-blue-500 hover:text-blue-700">
+                                    <i class="ri-edit-2-line"></i>
+                                </button>
+
+                                <!-- Nút Xóa -->
+                                <form th:action="@{/discount/remove/{id}(id=${v.variantID})}" method="post"
+                                    class="delete-form">
+                                    <button type="button" class="text-red-500 hover:text-red-700 delete-btn">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+            <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                    <h3 class="text-lg font-semibold mb-4">Sửa giảm giá</h3>
+                    <form id="editForm" method="post" th:action="@{/discount/update}">
+                        <input type="hidden" name="variantId" id="editVariantId">
+
+                        <div class="mb-4">
+                            <label class="block mb-2">Phần trăm giảm</label>
+                            <input type="number" name="discount" min="0" max="100" class="w-full border rounded p-2"
+                                required>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block mb-2">Ngày bắt đầu</label>
+                                <input type="date" name="startDate" class="w-full border rounded p-2" required>
+                            </div>
+                            <div>
+                                <label class="block mb-2">Ngày kết thúc</label>
+                                <input type="date" name="endDate" class="w-full border rounded p-2" required>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="closeEditModal()"
+                                class="px-4 py-2 border rounded hover:bg-gray-100">
+                                Hủy
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- JavaScript xử lý -->
+            <script>
+                // Xử lý nút xóa
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const form = this.closest('.delete-form');
+                        Swal.fire({
+                            title: 'Xác nhận xóa?',
+                            text: "Bạn có chắc muốn xóa giảm giá này?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Xóa',
+                            cancelButtonText: 'Hủy'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+
+                // Xử lý nút sửa
+                let editModal = document.getElementById('editModal');
+
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const variantId = this.getAttribute('data-id');
+                        document.getElementById('editVariantId').value = variantId;
+
+                        // Lấy dữ liệu hiện tại (có thể thêm AJAX nếu cần)
+                        const row = this.closest('tr');
+                        const discount = row.querySelector('td:nth-child(6)').textContent.replace('%', '');
+                        const startDate = row.querySelector('td:nth-child(8)').getAttribute('data-start-date');
+                        const endDate = row.querySelector('td:nth-child(8)').getAttribute('data-end-date');
+
+                        const form = document.getElementById('editForm');
+                        form.querySelector('[name="discount"]').value = discount;
+                        form.querySelector('[name="startDate"]').value = startDate;
+                        form.querySelector('[name="endDate"]').value = endDate;
+
+                        editModal.classList.remove('hidden');
+                    });
+                });
+
+                function closeEditModal() {
+                    editModal.classList.add('hidden');
+                }
+            </script>
 
             <script th:inline="javascript">
                 document.addEventListener('DOMContentLoaded', function () {

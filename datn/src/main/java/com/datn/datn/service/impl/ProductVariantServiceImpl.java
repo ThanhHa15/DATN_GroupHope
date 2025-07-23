@@ -153,4 +153,35 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         return repo.findByStorages(Arrays.asList(storages));
     }
 
+    @Override
+    public void removeDiscount(Integer variantId) {
+        ProductVariant variant = getById(variantId);
+        if (variant != null) {
+            variant.setDiscount(null);
+            variant.setDiscountStart(null);
+            variant.setDiscountEnd(null);
+            variant.setDiscountedPrice(BigDecimal.valueOf(variant.getPrice()));
+            save(variant);
+        }
+    }
+    @Override
+    public void updateDiscount(Integer variantId, float discount, LocalDate start, LocalDate end) {
+        ProductVariant variant = getById(variantId);
+        if (variant != null) {
+            variant.setDiscount(discount);
+            variant.setDiscountStart(start);
+            variant.setDiscountEnd(end);
+
+            if (discount > 0) {
+                BigDecimal price = BigDecimal.valueOf(variant.getPrice());
+                BigDecimal discountRate = BigDecimal.valueOf(discount).divide(BigDecimal.valueOf(100));
+                BigDecimal discounted = price.subtract(price.multiply(discountRate));
+                variant.setDiscountedPrice(discounted);
+            } else {
+                variant.setDiscountedPrice(BigDecimal.valueOf(variant.getPrice()));
+            }
+            save(variant);
+        }
+    }
+
 }
