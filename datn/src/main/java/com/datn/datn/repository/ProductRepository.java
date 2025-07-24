@@ -11,4 +11,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT DISTINCT p FROM Product p JOIN p.variants v WHERE v.discount > 0 AND v.discountStart <= CURRENT_DATE AND v.discountEnd >= CURRENT_DATE")
     List<Product> findProductsWithActiveDiscount();
     
+    @Query("SELECT p.category.name, COUNT(p) FROM Product p GROUP BY p.category.name")
+    List<Object[]> countProductsByCategory();
 }

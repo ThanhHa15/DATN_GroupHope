@@ -1,11 +1,248 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-<h1>Xác minh Tài Khoản</h1>
-<form th:action="@{/verify-otp}" method="post">
-    <input type="hidden" name="email" th:value="${email}"/>
-    <input type="text" name="otp" placeholder="OTP" required/>
-    <button type="submit">Xác minh</button>
-</form>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kích hoạt tài khoản - SMember</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#000f8f',
+            secondary: '#000f8f'
+          },
+          borderRadius: {
+            'none': '0px',
+            'sm': '4px',
+            DEFAULT: '8px',
+            'md': '12px',
+            'lg': '16px',
+            'xl': '20px',
+            '2xl': '24px',
+            '3xl': '32px',
+            'full': '9999px',
+            'button': '8px'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .otp-input {
+      width: 3rem;
+      height: 3rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .otp-input:focus {
+      outline: none;
+      border-color: #000f8f;
+      box-shadow: 0 0 0 3px rgba(0, 15, 143, 0.1);
+    }
+
+    .otp-input.filled {
+      border-color: #000f8f;
+      background-color: #e0e7ff;
+      /* Màu nền nhạt phù hợp với màu xanh biển */
+    }
+
+    .countdown-btn {
+      transition: all 0.3s ease;
+    }
+
+    .countdown-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 text-center">
+    <div class="mb-8">
+      <div
+        class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center">
+        <img src="https://i.postimg.cc/Df6qqMS5/477b25428bbf3f139ba6628b702a4830-removebg-preview.png"
+          alt="SMember Mascot" class="w-20 h-20 object-contain">
+      </div>
+
+      <h1 class="text-2xl font-bold text-gray-900 mb-3">Kích hoạt tài khoản</h1>
+      <p class="text-gray-600 text-sm leading-relaxed">
+        Vui lòng nhập OTP vừa được gửi qua <span class="font-semibold text-primary">EMAIL</span><br>
+        đến địa chỉ của bạn
+      </p>
+    </div>
+
+    <form th:action="@{/verify-otp}" method="post">
+      <input type="hidden" name="email" th:value="${email}" />
+      <input type="hidden" name="otp" id="otpHidden" />
+
+      <div class="flex justify-center gap-3 mb-6">
+        <input type="text" maxlength="1" class="otp-input" id="otp1">
+        <input type="text" maxlength="1" class="otp-input" id="otp2">
+        <input type="text" maxlength="1" class="otp-input" id="otp3">
+        <input type="text" maxlength="1" class="otp-input" id="otp4">
+        <input type="text" maxlength="1" class="otp-input" id="otp5">
+        <input type="text" maxlength="1" class="otp-input" id="otp6">
+      </div>
+
+      <div class="flex gap-3">
+        <button type="button" onclick="window.location.href='/register'"
+          class="flex-1 py-3 px-6 border border-gray-300 text-gray-700 font-medium !rounded-button hover:bg-gray-50 transition-colors whitespace-nowrap">
+          <i class="ri-arrow-left-line mr-2"></i>Quay lại
+        </button>
+
+        <button type="submit"
+          class="flex-1 py-3 px-6 bg-primary text-white font-medium !rounded-button hover:bg-blue-900 transition-colors whitespace-nowrap"
+          id="confirmBtn" disabled>
+          Xác nhận
+        </button>
+      </div>
+    </form>
+
+    <div class="border-t border-gray-200 pt-6 mt-6">
+      <p class="text-sm font-medium text-gray-900 mb-4">Hoặc gửi lại OTP:</p>
+      <p class="text-xs text-gray-500 mb-4">(Mã OTP có thời hạn 5 phút)</p>
+
+      <button type="button"
+        class="countdown-btn text-sm text-gray-500 bg-gray-100 px-4 py-2 !rounded-button font-medium" id="resendBtn"
+        disabled>
+        Nhận mã sau <span id="countdown">20</span>s
+      </button>
+    </div>
+  </div>
+  <!-- Hiển thị thông báo -->
+  <script th:if="${error != null}">
+    Swal.fire({
+      icon: 'error',
+      title: 'OTP không chính xác',
+      text: /*[[${error}]]*/ '',
+      confirmButtonColor: '#000f8f'
+    });
+</script>
+
+<script th:if="${success != null}">
+    Swal.fire({
+      icon: 'success',
+      title: 'Thành công',
+      text: /*[[${success}]]*/ '',
+      confirmButtonColor: '#000f8f'
+    });
+</script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const otpInputs = document.querySelectorAll('.otp-input');
+      const confirmBtn = document.getElementById('confirmBtn');
+      const otpHidden = document.getElementById('otpHidden');
+
+      otpInputs.forEach((input, index) => {
+        input.addEventListener('input', function (e) {
+          const value = e.target.value;
+          if (value.length === 1 && /^\d$/.test(value)) {
+            e.target.classList.add('filled');
+            if (index < otpInputs.length - 1) {
+              otpInputs[index + 1].focus();
+            }
+          } else if (value.length === 0) {
+            e.target.classList.remove('filled');
+          } else {
+            e.target.value = '';
+          }
+          checkOtpComplete();
+        });
+
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Backspace' && !e.target.value && index > 0) {
+            otpInputs[index - 1].focus();
+            otpInputs[index - 1].classList.remove('filled');
+          }
+        });
+
+        input.addEventListener('paste', function (e) {
+          e.preventDefault();
+          const paste = (e.clipboardData || window.clipboardData).getData('text');
+          const digits = paste.replace(/\D/g, '').slice(0, 6);
+          digits.split('').forEach((digit, i) => {
+            if (otpInputs[i]) {
+              otpInputs[i].value = digit;
+              otpInputs[i].classList.add('filled');
+            }
+          });
+          checkOtpComplete();
+        });
+      });
+
+      function checkOtpComplete() {
+        const values = Array.from(otpInputs).map(input => input.value);
+        const isComplete = values.every(val => val.length === 1);
+        if (isComplete) {
+          confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          confirmBtn.disabled = false;
+          otpHidden.value = values.join('');
+        } else {
+          confirmBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          confirmBtn.disabled = true;
+          otpHidden.value = '';
+        }
+      }
+
+      checkOtpComplete();
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      let countdownTime = 20;
+      const countdownElement = document.getElementById('countdown');
+      const resendBtn = document.getElementById('resendBtn');
+
+      function startCountdown() {
+        const timer = setInterval(() => {
+          countdownTime--;
+          countdownElement.textContent = countdownTime;
+
+          if (countdownTime <= 0) {
+            clearInterval(timer);
+            resendBtn.disabled = false;
+            resendBtn.classList.remove('countdown-btn');
+            resendBtn.classList.add('bg-primary', 'text-white', 'hover:bg-blue-900');
+            resendBtn.innerHTML = 'Gửi lại mã OTP';
+          }
+        }, 1000);
+      }
+
+      resendBtn.addEventListener('click', function () {
+        if (!this.disabled) {
+          countdownTime = 20;
+          this.disabled = true;
+          this.classList.add('countdown-btn');
+          this.classList.remove('bg-primary', 'text-white', 'hover:bg-blue-900');
+          this.innerHTML = `Nhận mã sau <span id="countdown">${countdownTime}</span>s`;
+          startCountdown();
+
+          console.log('Gửi lại mã OTP...');
+        }
+      });
+
+      startCountdown();
+    });
+  </script>
 </body>
+
 </html>

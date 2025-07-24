@@ -53,8 +53,9 @@ public class ProductServiceImpl implements ProductService {
         return repo.findProductsWithActiveDiscount();
     }
 
-    
-
-    
+    @Override
+    public List<Object[]> countProductsByCategory() {
+        return repo.countProductsByCategory();
+    }
 
 }

@@ -17,6 +17,6 @@ public interface ProductService {
 
     List<Product> findProductsWithDiscount();
 
-
+    List<Object[]> countProductsByCategory();
     
 }

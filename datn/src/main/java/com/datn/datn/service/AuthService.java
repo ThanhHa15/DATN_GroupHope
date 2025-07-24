@@ -69,10 +69,12 @@ public class AuthService {
 
             // Cập nhật trực tiếp bằng native query
             int updated = entityManager.createNativeQuery(
-                    "UPDATE members SET verified = 1, otp = NULL WHERE email = ?")
-                    .setParameter(1, email)
+                    "UPDATE members SET verified = true, otp = NULL WHERE email = :email AND otp = :otp")
+                    .setParameter("email", email)
+                    .setParameter("otp", otp)
                     .executeUpdate();
 
+            // Đảm bảo thay đổi được flush ngay lập tức
             entityManager.flush();
             entityManager.clear(); // Clear cache
 
