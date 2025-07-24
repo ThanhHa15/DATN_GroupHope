@@ -23,7 +23,6 @@
     div+h2 {
       margin-top: 100px;
       margin-left: 295px;
-
       font-size: 23px;
     }
 
@@ -43,7 +42,6 @@
 
     table {
       margin-left: 295px;
-
       border-collapse: collapse;
       margin-top: 20px;
       background-color: #ffffff;
@@ -53,12 +51,28 @@
 
     .spec-row {
       display: none;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.2s ease;
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .spec-row.show {
+      display: table-row;
+      max-height: 500px;
+      /* Giá trị đủ lớn để chứa nội dung */
+      opacity: 1;
     }
 
     .product-header {
       cursor: pointer;
       background-color: #f9f9f9;
       font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+
+    .product-header:hover {
+      background-color: #e0e0e0;
     }
 
     .spec-table {
@@ -153,14 +167,72 @@
       height: 38px;
     }
 
-    /* Thêm CSS này vào phần style */
     .spec-form label {
       font-weight: 700;
-      /* Làm chữ đậm */
       color: #2c3e50;
-      /* Màu xanh đậm chuyên nghiệp */
       margin-bottom: 6px;
       display: block;
+    }
+  </style>
+  <style>
+    .spec-table {
+      width: 1200px;
+      margin-left: 300px;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 15px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .spec-table th {
+      background-color: #000f8f;
+      color: white;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .spec-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+      background-color: #fff;
+    }
+
+    .spec-table tr:nth-child(even) td:not(.product-header) {
+      background-color: #f4f6fa;
+    }
+
+    .product-header td {
+      background-color: #f0f0f0;
+      font-weight: 600;
+      font-size: 16px;
+      color: #000f8f;
+      text-align: left;
+      padding: 12px 16px;
+    }
+
+    .spec-edit-form input[type="text"] {
+      padding: 6px 8px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .spec-edit-form button {
+      margin-left: 8px;
+      background-color: #1e88e5;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .spec-edit-form button:hover {
+      background-color: #1565c0;
     }
   </style>
 </head>
@@ -178,7 +250,7 @@
       <label for="productSelect" class="form-label">Chọn sản phẩm:</label>
       <select id="productSelect" name="productid" class="form-control" onchange="showFieldsByProductType()" required>
         <option value="" disabled selected>-- Chọn sản phẩm --</option>
-        <option th:each="p : ${products}" th:value="${p.productID}" th:data-type="${p.category.name.toLowerCase()}"
+        <option th:each="p : ${products}" th:value="${p.productID}" th:data-category-id="${p.category.categoryID}"
           th:text="${p.productName}"></option>
       </select>
     </div>
@@ -356,12 +428,10 @@
       </div>
     </div>
 
-    <!-- chưa làm -->
-
     <!-- Apple Watch Form -->
-    <div id="form-type-applewatch" class="spec-form card" style="display: none">
+    <div id="form-type-watch" class="spec-form card" style="display: none">
       <div class="card-header">
-        <h3>Thông số Apple Watch</h3>
+        <h3 style="font-size: 20px; font-weight: 600;">Thông số Apple Watch</h3>
       </div>
       <div class="card-body grid-container">
         <div class="form-group">
@@ -402,7 +472,7 @@
     <!-- AirPods Form -->
     <div id="form-type-airpods" class="spec-form card" style="display: none">
       <div class="card-header">
-        <h3>Thông số AirPods</h3>
+        <h3 style="font-size: 20px; font-weight: 600;">Thông số AirPods</h3>
       </div>
       <div class="card-body grid-container">
         <div class="form-group">
@@ -440,44 +510,120 @@
       </div>
     </div>
 
+    <!-- Case Form -->
+    <div id="form-type-op-lung-bao-da" class="spec-form card" style="display: none">
+      <div class="card-header">
+        <h3 style="font-size: 20px; font-weight: 600;">Thông số Ốp lưng & Bao da</h3>
+      </div>
+      <div class="card-body grid-container">
+        <div class="form-group">
+          <label>Chất liệu:</label>
+          <input type="text" class="form-control" name="specs['Chất liệu']" />
+        </div>
+        <div class="form-group">
+          <label>Loại bao da:</label>
+          <input type="text" class="form-control" name="specs['Loại bao da']" />
+        </div>
+        <div class="form-group">
+          <label>Hỗ trợ sạc không dây:</label>
+          <select class="form-control" name="specs['Hỗ trợ sạc không dây']">
+            <option value="Có">Có</option>
+            <option value="Không">Không</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Khả năng chống sốc:</label>
+          <input type="text" class="form-control" name="specs['Khả năng chống sốc']" />
+        </div>
+        <div class="form-group">
+          <label>Khả năng chống nước:</label>
+          <input type="text" class="form-control" name="specs['Khả năng chống nước']" />
+        </div>
+        <div class="form-group">
+          <label>Thiết kế:</label>
+          <input type="text" class="form-control" name="specs['Thiết kế']" />
+        </div>
+        <div class="form-group">
+          <label>Thiết bị tương thích:</label>
+          <input type="text" class="form-control" name="specs['Thiết bị tương thích']" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Charger Form -->
+    <div id="form-type-sac-cap" class="spec-form card" style="display: none">
+      <div class="card-header">
+        <h3 style="font-size: 20px; font-weight: 600;">Thông số Sạc & Cáp</h3>
+      </div>
+      <div class="card-body grid-container">
+        <div class="form-group">
+          <label>Công suất:</label>
+          <input type="text" class="form-control" name="specs['Công suất']" />
+        </div>
+        <div class="form-group">
+          <label>Loại sạc:</label>
+          <input type="text" class="form-control" name="specs['Loại sạc']" />
+        </div>
+        <div class="form-group">
+          <label>Số cổng sạc:</label>
+          <input type="number" class="form-control" name="specs['Số cổng sạc']" />
+        </div>
+        <div class="form-group">
+          <label>Chuẩn sạc nhanh:</label>
+          <input type="text" class="form-control" name="specs['Chuẩn sạc nhanh']" />
+        </div>
+        <div class="form-group">
+          <label>Chất liệu vỏ:</label>
+          <input type="text" class="form-control" name="specs['Chất liệu vỏ']" />
+        </div>
+        <div class="form-group">
+          <label>Hỗ trợ sạc không dây:</label>
+          <select class="form-control" name="specs['Hỗ trợ sạc không dây']">
+            <option value="Có">Có</option>
+            <option value="Không">Không</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Thiết bị tương thích:</label>
+          <input type="text" class="form-control" name="specs['Thiết bị tương thích']" />
+        </div>
+      </div>
+    </div>
+
     <div class="form-actions">
       <button type="submit"
-        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg text-lg">Lưu thông
+        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg text-lg">Thêm thông
         số</button>
     </div>
   </form>
 
+  <h3 style="font-size: 20px; color: #333; margin-left: 300px; margin-bottom: -20px; margin-top: 20px;">Danh sách thông
+    số đã lưu</h3>
 
-  <h3>Danh sách thông số đã lưu</h3>
-  <style>
-    .spec-row {
-      display: none;
-      transition: all 0.3s ease;
-    }
-  </style>
-
-  <table class="spec-table">
+  <table class="spec-table" style="table-layout: fixed; width: 1200px;">
     <thead>
       <tr>
-        <th>Sản phẩm</th>
-        <th>Tên thông số</th>
+        <th style="width: 200px;">Sản phẩm</th>
+        <th style="width: 350px;">Tên thông số</th>
         <th>Giá trị</th>
       </tr>
     </thead>
     <tbody th:each="entry : ${groupedSpecList}">
       <!-- Dòng tiêu đề sản phẩm -->
       <tr class="product-header" style="cursor: pointer;" th:onclick="|toggleSpecs('group-' + ${entry.key})|">
-        <td th:text="${productIdToNameMap.get(entry.key)}" colspan="3"></td>
+        <td th:text="${productIdToNameMap.get(entry.key)}" style="width: 200px;"></td>
+        <td colspan="2"></td>
       </tr>
 
       <!-- Các dòng thông số -->
       <tr th:each="spec : ${entry.value}" th:id="|group-${spec.productid}|" class="spec-row">
-        <td></td>
-        <td th:text="${spec.specKey}"></td>
-        <td>
-          <form th:action="@{/specification/update}" method="post" class="spec-edit-form">
+        <td style="width: 200px;"></td>
+        <td style="font-weight: 600; font-size: 17px;" th:text="${spec.specKey}"></td>
+        <td class="text-left pl-2">
+          <form style="margin-left: 10px;" th:action="@{/specification/update}" method="post" class="spec-edit-form">
             <input type="hidden" name="specId" th:value="${spec.specId}" />
-            <input type="text" name="specValue" th:value="${spec.specValue}" />
+            <input style="width: 70%; padding-left: 10px; background-color: #e1e1e1; color: black;" type="text"
+              name="specValue" th:value="${spec.specValue}" />
             <button type="submit">Cập nhật</button>
           </form>
         </td>
@@ -485,29 +631,38 @@
     </tbody>
   </table>
 
-
-
   <script>
     function toggleSpecs(groupIdPrefix) {
-      const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
-      rows.forEach(row => {
-        row.style.display = row.style.display === 'table-row' ? 'none' : 'table-row';
-      });
+  const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
+  rows.forEach(row => {
+    if (row.classList.contains('show')) {
+      // Hiệu ứng thu lên
+      row.style.maxHeight = '0';
+      row.style.opacity = '0';
+      setTimeout(() => {
+        row.classList.remove('show');
+      }, 300);
+    } else {
+      // Hiệu ứng trượt xuống
+      row.classList.add('show');
+      // Tính toán chiều cao thực tế
+      const contentHeight = row.scrollHeight;
+      row.style.maxHeight = `${contentHeight}px`;
+      row.style.opacity = '1';
     }
-  </script>
+  });
+}
 
-  <script>
     function showFieldsByProductType() {
       const select = document.getElementById("productSelect");
       const selectedOption = select.options[select.selectedIndex];
-      const type = selectedOption.getAttribute("data-type");
+      const categoryId = selectedOption.getAttribute("data-category-id");
 
       const allForms = document.querySelectorAll(".spec-form");
 
       allForms.forEach((form) => {
         form.style.display = "none";
 
-        // disable & remove required
         const inputs = form.querySelectorAll("input, textarea");
         inputs.forEach((el) => {
           el.disabled = true;
@@ -515,12 +670,22 @@
         });
       });
 
-      if (type) {
-        const formToShow = document.getElementById("form-type-" + type);
+      if (categoryId) {
+        const categoryToFormMap = {
+          '1': 'iphone',
+          '2': 'ipad',
+          '3': 'macbook',
+          '4': 'airpods',
+          '5': 'op-lung-bao-da',
+          '6': 'sac-cap',
+          '7': 'watch'
+        };
+
+        const formType = categoryToFormMap[categoryId];
+        const formToShow = document.getElementById("form-type-" + formType);
         if (formToShow) {
           formToShow.style.display = "block";
 
-          // enable & add required
           const inputs = formToShow.querySelectorAll("input, textarea");
           inputs.forEach((el) => {
             el.disabled = false;
@@ -529,10 +694,7 @@
         }
       }
     }
-
-    document.addEventListener("DOMContentLoaded", showFieldsByProductType);
   </script>
-
 </body>
 
 </html>

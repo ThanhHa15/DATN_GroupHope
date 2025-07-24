@@ -198,9 +198,57 @@
           </div>
 
           <div class="form-group">
-            <label>Màu:</label>
-            <input type="text" placeholder="Màu" th:field="*{color}" required />
+            <label class="block mb-2 font-medium">Màu:</label>
+            <div class="flex gap-3 flex-wrap">
+              <label class="relative">
+                <input type="radio" name="color" value="Đen" th:field="*{color}" class="sr-only peer" />
+                <span
+                  class="w-8 h-8 inline-block rounded-full border border-gray-300 cursor-pointer bg-black peer-checked:ring-2 peer-checked:ring-black peer-checked:ring-offset-2 transition"></span>
+              </label>
+
+              <label class="relative">
+                <input type="radio" name="color" value="Đỏ" th:field="*{color}" class="sr-only peer" />
+                <span
+                  class="w-8 h-8 inline-block rounded-full border border-gray-300 cursor-pointer bg-red-600 peer-checked:ring-2 peer-checked:ring-red-600 peer-checked:ring-offset-2 transition"></span>
+              </label>
+
+              <label class="relative">
+                <input type="radio" name="color" value="Xanh lá" th:field="*{color}" class="sr-only peer" />
+                <span
+                  class="w-8 h-8 inline-block rounded-full border border-gray-300 cursor-pointer bg-green-500 peer-checked:ring-2 peer-checked:ring-green-500 peer-checked:ring-offset-2 transition"></span>
+              </label>
+
+              <label class="relative">
+                <input type="radio" name="color" value="Xanh dương" th:field="*{color}" class="sr-only peer" />
+                <span
+                  class="w-8 h-8 inline-block rounded-full border border-gray-300 cursor-pointer bg-blue-600 peer-checked:ring-2 peer-checked:ring-blue-600 peer-checked:ring-offset-2 transition"></span>
+              </label>
+
+              <!-- Màu Titan -->
+              <label class="relative">
+                <input type="radio" name="color" value="Titan" th:field="*{color}" class="sr-only peer" />
+                <span
+                  class="w-8 h-8 inline-block rounded-full border border-gray-300 cursor-pointer bg-gray-300 peer-checked:ring-2 peer-checked:ring-gray-500 peer-checked:ring-offset-2 transition"></span>
+              </label>
+
+              <!-- Màu Trắng -->
+              <label class="relative">
+                <input type="radio" name="color" value="Trắng" th:field="*{color}" class="sr-only peer" />
+                <span
+                  class="w-8 h-8 inline-block rounded-full border border-gray-300 cursor-pointer bg-white peer-checked:ring-2 peer-checked:ring-gray-400 peer-checked:ring-offset-2 transition"></span>
+              </label>
+
+              <!-- Màu Vàng -->
+              <label class="relative">
+                <input type="radio" name="color" value="Vàng" th:field="*{color}" class="sr-only peer" />
+                <span
+                  class="w-8 h-8 inline-block rounded-full border border-gray-300 cursor-pointer bg-yellow-400 peer-checked:ring-2 peer-checked:ring-yellow-400 peer-checked:ring-offset-2 transition"></span>
+              </label>
+
+
+            </div>
           </div>
+
 
           <div class="form-group">
             <label>Dung lượng:</label>
@@ -415,6 +463,9 @@
                         Số lượng</th>
                       <th
                         class="px-4 py-3 bg-gray-50 text-center text-md font-bold text-gray-700 uppercase tracking-wider">
+                        Trạng thái</th> <!-- MỚI -->
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-md font-bold text-gray-700 uppercase tracking-wider">
                         Thao tác</th>
                     </tr>
                   </thead>
@@ -441,6 +492,20 @@
                         </div>
                       </td>
                       <td th:text="${v.quantityInStock}" class="px-4 py-4 text-center text-base font-small"></td>
+
+                      <!-- Cột Trạng Thái -->
+                      <td class="px-4 py-4 text-center text-base font-semibold">
+                        <span th:if="${v.quantityInStock > 0}"
+                          class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium inline-block">
+                          Đang bán
+                        </span>
+                        <span th:if="${v.quantityInStock <= 0}"
+                          class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium inline-block">
+                          Hết hàng
+                        </span>
+                      </td>
+
+
                       <td class="px-4 py-4">
                         <div class="flex justify-center gap-2">
                           <a th:href="@{/variants/edit/{id}(id=${v.variantID})}" title="Sửa"
@@ -460,6 +525,7 @@
                     </tr>
                   </tbody>
                 </table>
+
               </div>
 
 
