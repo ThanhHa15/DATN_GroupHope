@@ -224,10 +224,15 @@
 
           <div class="form-group">
             <label>Giá gốc (VNĐ):</label>
-            <input type="text" id="priceInput" placeholder="Giá gốc" th:field="*{price}" required
+            <!-- Trường người dùng nhập (format để nhìn đẹp) -->
+            <input type="text" id="priceInput" placeholder="Giá gốc"
               th:value="${variant.price != null ? #numbers.formatDecimal(variant.price, 0, 'COMMA', 0, 'POINT') : ''}" />
-            <input type="hidden" th:field="*{price}" id="priceHidden" />
+
+            <!-- Trường ẩn để gửi dữ liệu đúng dạng double -->
+            <input type="hidden" name="price" id="priceHidden" th:value="${variant.price != null ? variant.price : ''}"
+              required />
           </div>
+
 
           <div class="form-group">
             <label>Hình ảnh:</label>

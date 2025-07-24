@@ -104,7 +104,28 @@ public class EmployeeController {
             } else {
                 member.setPassword(existing.getPassword());
             }
-            membersService.update(member);
+            Member exis = membersService.getEmployeeById(member.getId());
+            if (existing == null) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy nhân viên");
+                return "redirect:/admin/employees";
+            }
+
+            // Cập nhật các trường cần thiết
+            exis.setFullname(member.getFullname());
+            exis.setEmail(member.getEmail());
+            exis.setPhone(member.getPhone());
+            exis.setBirthday(member.getBirthday());
+            exis.setRole(member.getRole());
+            exis.setActive(member.isActive());
+            // exis.setVerified(member.isVerified());
+            // ... các field khác như address nếu có
+
+            if (newPassword != null && !newPassword.isBlank()) {
+                existing.setPassword(newPassword);
+            }
+
+            membersService.update(existing); // Sử dụng entity có version đúng
+
             redirectAttributes.addFlashAttribute("success", "Cập nhật nhân viên thành công");
         }
         return "redirect:/admin/employees";

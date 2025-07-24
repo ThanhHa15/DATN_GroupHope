@@ -31,14 +31,12 @@
 
     th,
     td {
-      /* border: 1px solid #ccc; */
       padding: 10px;
       text-align: center;
     }
 
     form {
       margin: 20px;
-
     }
 
     button {
@@ -59,7 +57,6 @@
     }
 
     .content2 {
-
       margin-left: 300px;
       background: #ffffff;
       border-radius: 10px;
@@ -76,25 +73,7 @@
 
     label {
       font-weight: bold;
-
     }
-
-    /* form {
-    display: flex;
-    
-    gap: 20px;
-  }
-  .d1 {
-    flex: 1;
-    
-  }
-  .d1 {
-    flex: 2;
-    
-  } */
-    /* tr > td {
-    border-bottom:1px solid #792828;
-   } */
   </style>
 
 </head>
@@ -105,7 +84,7 @@
 
   <h1> Thêm voucher</h1>
   <div class="content2">
-    <form th:action="@{/vouchers/save}" method="post" th:object="${voucher}" class="flex flex-col gap-6">
+    <form th:action="@{/vouchers/save}" method="post" th:object="${voucher}" class="flex flex-col gap-6" id="voucherForm">
 
       <!-- 2 cột nội dung -->
       <div class="flex flex-col md:flex-row gap-8">
@@ -139,12 +118,11 @@
           </div>
           <div>
             <label class="block text-gray-700">Giá tối thiểu (VNĐ)</label>
-            <input type="text" id="minPriceDisplay"
-              th:value="${voucher.minimumPrice != null ? #numbers.formatDecimal(voucher.minimumPrice, 0, 'COMMA', 0, 'POINT') : ''}"
-              class="w-full border rounded p-2" required>
-            <input type="hidden" id="minPriceHidden" th:field="*{minimumPrice}" />
+            <input type="text" id="minPriceDisplay" 
+                   th:value="${voucher.minimumPrice != null ? #numbers.formatDecimal(voucher.minimumPrice, 0, 'COMMA', 0, 'POINT') : ''}" 
+                   class="w-full border rounded p-2" required>
+            <input type="hidden" id="minPriceHidden" name="minimumPrice" th:value="*{minimumPrice}" />
           </div>
-
 
           <div>
             <label class="block text-gray-700">Ngày kết thúc</label>
@@ -163,7 +141,7 @@
     </form>
   </div>
 
-  <div th:if="${error}" class="text-red-500 font-semibold mb-2">
+  <div th:if="${error}" class="text-red-500 font-semibold" style="margin-left: 350px; margin-top: -50px;">
     <p th:text="${error}"></p>
   </div>
 
@@ -187,8 +165,8 @@
           <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.code}"></td>
           <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.discountPercent + '%'}">
           </td>
-          <td class="px-4 py-2 border-b border-gray-300 text-center align-middle format-price"
-            th:text="${v.minimumPrice}"></td>
+          <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" 
+              th:text="${#numbers.formatDecimal(v.minimumPrice, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
           <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.quantity}"></td>
           <td class="px-4 py-2 border-b border-gray-300 text-center align-middle countdown"
             th:attr="data-enddate=${v.endDate}">
@@ -209,71 +187,103 @@
 
   </div>
 
-</body>
-
-</html>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Format giá tiền
-    const prices = document.querySelectorAll(".format-price");
-    prices.forEach(cell => {
-      let raw = cell.textContent.trim();
-      raw = raw.replaceAll('.', '').replace(',', '.');
-      const value = parseFloat(raw);
-      if (!isNaN(value)) {
-        cell.textContent = value.toLocaleString("vi-VN") + " đ";
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Xử lý format giá tối thiểu
+      const minPriceDisplay = document.getElementById("minPriceDisplay");
+      const minPriceHidden = document.getElementById("minPriceHidden");
+      const form = document.getElementById("voucherForm");
+      
+      // Format khi hiển thị ban đầu
+      if (minPriceHidden && minPriceHidden.value) {
+        minPriceDisplay.value = parseInt(minPriceHidden.value).toLocaleString('vi-VN');
       }
+      
+      // Format khi người dùng nhập
+      if (minPriceDisplay) {
+        minPriceDisplay.addEventListener('input', function(e) {
+          // Lấy giá trị số từ chuỗi đã format
+          let rawValue = this.value.replace(/\./g, '');
+          
+          if (rawValue) {
+            let num = parseInt(rawValue);
+            if (!isNaN(num)) {
+              // Format lại hiển thị
+              this.value = num.toLocaleString('vi-VN');
+              // Gán giá trị số vào input hidden
+              if (minPriceHidden) {
+                minPriceHidden.value = num;
+              }
+            }
+          } else {
+            if (minPriceHidden) {
+              minPriceHidden.value = '';
+            }
+          }
+        });
+      }
+      
+      // Đảm bảo gửi giá trị số khi submit form
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          if (minPriceDisplay && minPriceDisplay.value && minPriceHidden) {
+            let rawValue = minPriceDisplay.value.replace(/\./g, '');
+            minPriceHidden.value = rawValue ? parseInt(rawValue) : '';
+          }
+        });
+      }
+
+      // Tính thời gian đếm ngược và đổi màu
+      function updateCountdowns() {
+        const now = new Date();
+        const countdownElements = document.querySelectorAll('.countdown');
+
+        countdownElements.forEach(element => {
+          const endDateStr = element.getAttribute('data-enddate');
+          const endDate = new Date(endDateStr);
+
+          if (isNaN(endDate.getTime())) {
+            element.textContent = "Ngày không hợp lệ";
+            element.classList.add('text-red-500');
+            return;
+          }
+
+          const diff = endDate - now;
+
+          if (diff < 0) {
+            element.textContent = "Đã hết hạn";
+            element.classList.remove('text-green-500');
+            element.classList.add('text-red-500');
+            return;
+          }
+
+          // Tính toán ngày, giờ, phút, giây
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+          // Hiển thị kết quả
+          if (days > 0) {
+            element.textContent = `${days} ngày  ${hours} giờ  ${minutes} phút  `;
+          } else if (hours > 0) {
+            element.textContent = `${hours} giờ ${minutes} phút`;
+          } else if (minutes > 0) {
+            element.textContent = `${minutes}phút ${seconds}giây`;
+          } else {
+            element.textContent = `${seconds}giây`;
+          }
+
+          // Đổi màu
+          element.classList.remove('text-red-500');
+          element.classList.add('text-green-500');
+        });
+      }
+
+      // Cập nhật ngay lập tức và sau mỗi giây
+      updateCountdowns();
+      setInterval(updateCountdowns, 1000);
     });
-
-    // Tính thời gian đếm ngược và đổi màu
-    function updateCountdowns() {
-      const now = new Date();
-      const countdownElements = document.querySelectorAll('.countdown');
-
-      countdownElements.forEach(element => {
-        const endDateStr = element.getAttribute('data-enddate');
-        const endDate = new Date(endDateStr);
-
-        if (isNaN(endDate.getTime())) {
-          element.textContent = "Ngày không hợp lệ";
-          element.classList.add('text-red-500');
-          return;
-        }
-
-        const diff = endDate - now;
-
-        if (diff < 0) {
-          element.textContent = "Đã hết hạn";
-          element.classList.remove('text-green-500');
-          element.classList.add('text-red-500');
-          return;
-        }
-
-        // Tính toán ngày, giờ, phút, giây
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        // Hiển thị kết quả
-        if (days > 0) {
-          element.textContent = `${days} ngày  ${hours} giờ  ${minutes} phút  `;
-        } else if (hours > 0) {
-          element.textContent = `${hours} giờ ${minutes} phút`;
-        } else if (minutes > 0) {
-          element.textContent = `${minutes}phút ${seconds}giây`;
-        } else {
-          element.textContent = `${seconds}giây`;
-        }
-
-        // Đổi màu
-        element.classList.remove('text-red-500');
-        element.classList.add('text-green-500');
-      });
-    }
-
-    // Cập nhật ngay lập tức và sau mỗi giây
-    updateCountdowns();
-    setInterval(updateCountdowns, 1000);
-  });
-</script>
+  </script>
+</body>
+</html>
