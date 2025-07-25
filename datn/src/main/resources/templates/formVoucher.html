@@ -84,7 +84,8 @@
 
   <h1> Thêm voucher</h1>
   <div class="content2">
-    <form th:action="@{/vouchers/save}" method="post" th:object="${voucher}" class="flex flex-col gap-6" id="voucherForm">
+    <form th:action="@{/vouchers/save}" method="post" th:object="${voucher}" class="flex flex-col gap-6"
+      id="voucherForm">
 
       <!-- 2 cột nội dung -->
       <div class="flex flex-col md:flex-row gap-8">
@@ -118,9 +119,9 @@
           </div>
           <div>
             <label class="block text-gray-700">Giá tối thiểu (VNĐ)</label>
-            <input type="text" id="minPriceDisplay" 
-                   th:value="${voucher.minimumPrice != null ? #numbers.formatDecimal(voucher.minimumPrice, 0, 'COMMA', 0, 'POINT') : ''}" 
-                   class="w-full border rounded p-2" required>
+            <input type="text" id="minPriceDisplay"
+              th:value="${voucher.minimumPrice != null ? #numbers.formatDecimal(voucher.minimumPrice, 0, 'COMMA', 0, 'POINT') : ''}"
+              class="w-full border rounded p-2" required>
             <input type="hidden" id="minPriceHidden" name="minimumPrice" th:value="*{minimumPrice}" />
           </div>
 
@@ -137,6 +138,7 @@
           Lưu Voucher
         </button>
       </div>
+
     </form>
   </div>
 
@@ -164,8 +166,8 @@
           <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.code}"></td>
           <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.discountPercent + '%'}">
           </td>
-          <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" 
-              th:text="${#numbers.formatDecimal(v.minimumPrice, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
+          <td class="px-4 py-2 border-b border-gray-300 text-center align-middle"
+            th:text="${#numbers.formatDecimal(v.minimumPrice, 0, 'COMMA', 0, 'POINT') + ' đ'}"></td>
           <td class="px-4 py-2 border-b border-gray-300 text-center align-middle" th:text="${v.quantity}"></td>
           <td class="px-4 py-2 border-b border-gray-300 text-center align-middle countdown"
             th:attr="data-enddate=${v.endDate}">
@@ -192,18 +194,18 @@
       const minPriceDisplay = document.getElementById("minPriceDisplay");
       const minPriceHidden = document.getElementById("minPriceHidden");
       const form = document.getElementById("voucherForm");
-      
+
       // Format khi hiển thị ban đầu
       if (minPriceHidden && minPriceHidden.value) {
         minPriceDisplay.value = parseInt(minPriceHidden.value).toLocaleString('vi-VN');
       }
-      
+
       // Format khi người dùng nhập
       if (minPriceDisplay) {
-        minPriceDisplay.addEventListener('input', function(e) {
+        minPriceDisplay.addEventListener('input', function (e) {
           // Lấy giá trị số từ chuỗi đã format
           let rawValue = this.value.replace(/\./g, '');
-          
+
           if (rawValue) {
             let num = parseInt(rawValue);
             if (!isNaN(num)) {
@@ -221,10 +223,10 @@
           }
         });
       }
-      
+
       // Đảm bảo gửi giá trị số khi submit form
       if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
           if (minPriceDisplay && minPriceDisplay.value && minPriceHidden) {
             let rawValue = minPriceDisplay.value.replace(/\./g, '');
             minPriceHidden.value = rawValue ? parseInt(rawValue) : '';
@@ -285,4 +287,5 @@
     });
   </script>
 </body>
+
 </html>

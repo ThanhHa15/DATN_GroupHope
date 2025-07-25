@@ -32,11 +32,15 @@ public class Review {
         return createdAt;
     }
 
-
-
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
 
     // Getters and Setters
-       public Long getId() {
+    public Long getId() {
         return id;
     }
 

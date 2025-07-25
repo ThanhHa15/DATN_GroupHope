@@ -42,7 +42,7 @@ public class Member {
 
     @NotNull(message = "Ngày sinh không được để trống")
     @Past(message = "Ngày sinh phải là ngày trong quá khứ")
-    @MinAge(value = 16, message = "Thành viên phải đủ ít nhất 16 tuổi")
+    // @MinAge(value = 16, message = "Thành viên phải đủ ít nhất 16 tuổi")
     private LocalDate birthday;
 
     @NotBlank(message = "Số điện thoại không được để trống")

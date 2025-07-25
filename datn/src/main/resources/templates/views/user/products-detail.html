@@ -608,36 +608,73 @@
         </div>
 
         <!-- Review Modal -->
-        <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-          <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 class="text-xl font-bold mb-4">Đánh giá sản phẩm</h3>
+        <div id="reviewModal"
+          class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center hidden z-50 transition-opacity duration-300">
+          <div
+            class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-lg mx-4 transform transition-all duration-300 scale-95 hover:scale-100">
+            <!-- Modal Header -->
+            <div class="bg-[#000f8f] p-6">
+              <h3 class="text-2xl font-bold text-white">Đánh giá sản phẩm</h3>
+              <p class="text-blue-100">Chia sẻ trải nghiệm của bạn về sản phẩm</p>
+            </div>
 
-            <div class="mb-4">
-              <label class="block mb-2">Đánh giá của bạn</label>
-              <div class="flex text-2xl text-gray-400 rating-stars">
-                <i class="fa-regular fa-star cursor-pointer" data-value="1"></i>
-                <i class="fa-regular fa-star cursor-pointer" data-value="2"></i>
-                <i class="fa-regular fa-star cursor-pointer" data-value="3"></i>
-                <i class="fa-regular fa-star cursor-pointer" data-value="4"></i>
-                <i class="fa-regular fa-star cursor-pointer" data-value="5"></i>
+            <!-- Modal Content -->
+            <div class="p-6 space-y-6">
+              <!-- Rating Section -->
+              <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Đánh giá của bạn</label>
+                <div class="flex text-3xl space-x-2 rating-stars">
+                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                    data-value="1"></i>
+                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                    data-value="2"></i>
+                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                    data-value="3"></i>
+                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                    data-value="4"></i>
+                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                    data-value="5"></i>
+                </div>
+                <input type="hidden" id="ratingValue" value="0">
+                <p class="text-sm text-gray-500">Nhấn để chọn số sao</p>
               </div>
-              <input type="hidden" id="ratingValue" value="0">
+
+              <!-- Comment Section -->
+              <div class="space-y-2">
+                <label for="reviewComment" class="block text-gray-700 font-medium">Bình luận</label>
+                <textarea id="reviewComment" rows="4"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#000f8f] focus:border-transparent transition-all"
+                  placeholder="Hãy chia sẻ chi tiết về trải nghiệm của bạn..."></textarea>
+              </div>
+
+              <!-- Image Upload Section -->
+              <div class="space-y-2">
+                <label class="block text-gray-700 font-medium">Ảnh đính kèm <span class="text-sm text-gray-500">(tối đa
+                    5 ảnh)</span></label>
+                <div class="flex items-center justify-center w-full">
+                  <label for="imageUpload"
+                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                      <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                      <p class="text-sm text-gray-500">Nhấn để tải ảnh lên</p>
+                    </div>
+                    <input type="file" id="imageUpload" multiple accept="image/*" class="hidden">
+                  </label>
+                </div>
+                <div id="previewImages" class="flex flex-wrap gap-2 mt-2"></div>
+              </div>
             </div>
 
-            <div class="mb-4">
-              <label for="reviewComment" class="block mb-2">Bình luận</label>
-              <textarea id="reviewComment" rows="4" class="w-full px-3 py-2 border rounded-md"></textarea>
-            </div>
-
-            <div class="mb-4">
-              <label class="block mb-2">Ảnh đính kèm (tối đa 5 ảnh)</label>
-              <input type="file" id="imageUpload" multiple accept="image/*" class="w-full">
-              <div id="previewImages" class="flex flex-wrap mt-2"></div>
-            </div>
-
-            <div class="flex justify-end gap-2">
-              <button id="cancelReview" class="px-4 py-2 bg-gray-300 rounded-md">Hủy</button>
-              <button id="submitReview" class="px-4 py-2 bg-green-600 text-white rounded-md">Gửi đánh giá</button>
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+              <button id="cancelReview"
+                class="px-5 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 transition-colors">
+                Hủy bỏ
+              </button>
+              <button id="submitReview"
+                class="px-5 py-2.5 text-white bg-[#000f8f] rounded-lg hover:bg-[#000e7a] focus:ring-2 focus:ring-blue-300 shadow-md transition-all">
+                Gửi đánh giá
+              </button>
             </div>
           </div>
         </div>
@@ -1160,7 +1197,7 @@
   });
 </script>
 
-<script> //
+<script> // Xử lý đánh giá sản phẩm
   document.addEventListener('DOMContentLoaded', function () {
     const productId = 1; // Replace with actual product ID
     let currentUser = null;
@@ -1383,7 +1420,7 @@
 
         if (reviews.length === 0) {
           reviewsContainer.innerHTML = `
-                <div class="text-center py-4 text-gray-800" style="margin-bottom: 230px; margin-top: 150px">
+                <div class="text-center py-4 text-gray-800" style="margin-bottom: 70px; margin-top: 120px">
                     ${rating ? `Chưa có đánh giá ${rating} sao nào` : 'Chưa có đánh giá nào cho sản phẩm này'}
                 </div>
             `;
@@ -1410,15 +1447,17 @@
       reviewElement.className = 'border-t border-gray-400 pt-4';
       reviewElement.dataset.reviewId = review.id;
 
+
       // Format date
       const date = review.createdAt ?
-        new Date(review.createdAt).toLocaleDateString('vi-VN', {
+        new Date(review.createdAt).toLocaleString('vi-VN', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
         }) : 'Không rõ ngày';
+
 
       // Create star rating
       const starsHtml = Array(5).fill().map((_, i) =>
@@ -1674,14 +1713,18 @@
           const feedbackElement = document.createElement('div');
           feedbackElement.className = 'mb-3 pb-2 border-b border-gray-100 last:border-0';
 
+
+
           const date = feedback.createdAt ?
-            new Date(feedback.createdAt).toLocaleDateString('vi-VN', {
+            new Date(feedback.createdAt).toLocaleString('vi-VN', {
               day: '2-digit',
               month: '2-digit',
               year: 'numeric',
               hour: '2-digit',
               minute: '2-digit'
             }) : 'Không rõ ngày';
+
+
 
           feedbackElement.innerHTML = `
                     <div class="flex justify-between items-start">
