@@ -145,16 +145,125 @@
                         </div>
                         <div class="text-sm text-gray-600">
                             Bằng việc Đăng ký, bạn đã đọc và đồng ý với
-                            <a href="#" class="text-primary hover:underline">Điều khoản sử dụng</a>
+                            <button type="button" onclick="openTermsModal()" class="text-primary hover:underline">Điều
+                                khoản sử dụng</button>
                             và
-                            <a href="#" class="text-primary hover:underline">Chính sách bảo mật</a>
+                            <button type="button" onclick="openPrivacyModal()"
+                                class="text-primary hover:underline">Chính sách bảo mật</button>
                             của HopePhone.
                         </div>
                     </label>
                 </div>
+                <!-- Modal: Điều khoản sử dụng -->
+                <div id="termsModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg relative">
+                        <button onclick="closeTermsModal()"
+                            class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+                        <h2 class="text-xl font-semibold text-center mb-4 text-red-600">ĐIỀU KHOẢN SỬ DỤNG</h2>
+                        <div class="max-h-[60vh] overflow-y-auto text-sm text-gray-700 space-y-4">
+                            <p><strong>PHẦN I. QUY ĐỊNH CHUNG</strong></p>
+
+                            <p><strong>I. Nguyên tắc hoạt động:</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>HopePhone.vn</strong> là nền tảng thương mại điện tử do <strong>nhóm sinh
+                                        viên FPT Polytechnic</strong> xây dựng, phát triển trong khuôn khổ đồ án tốt
+                                    nghiệp.</li>
+                                <li>Mục tiêu của website là mô phỏng quy trình bán hàng trực tuyến, cung cấp trải nghiệm
+                                    thực tế về đặt hàng – giao dịch – vận hành hệ thống thương mại điện tử.</li>
+                                <li>Tất cả thông tin sản phẩm, giá cả, và chức năng đặt hàng được xây dựng với mục đích
+                                    học tập, không nhằm mục đích kinh doanh thương mại thực tế.</li>
+                                <li>Thành viên truy cập và sử dụng website cần hiểu rõ tính chất mô phỏng và đồng ý
+                                    không khiếu nại hay yêu cầu ràng buộc pháp lý với sản phẩm, giao dịch trên nền tảng
+                                    này.</li>
+                            </ul>
+
+                            <p><strong>II. Định nghĩa:</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>Website:</strong> Là hệ thống HopePhone.vn được nhóm sinh viên xây dựng nhằm
+                                    mục đích trình bày đồ án và mô phỏng bán hàng trực tuyến.</li>
+                                <li><strong>Người sử dụng:</strong> Là tất cả người dùng truy cập website, bao gồm cả
+                                    khách tham khảo và người thực hiện hành vi đặt hàng thử nghiệm.</li>
+                                <li><strong>Nhóm phát triển:</strong> Là sinh viên thực hiện dự án, chịu trách nhiệm vận
+                                    hành, cập nhật và đảm bảo tính ổn định của website trong thời gian trình bày đồ án.
+                                </li>
+                            </ul>
+
+                            <p><strong>III. Quy định sử dụng:</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Người dùng không được đăng tải nội dung vi phạm pháp luật, đạo đức xã hội hoặc can
+                                    thiệp vào hệ thống của website dưới bất kỳ hình thức nào.</li>
+                                <li>HopePhone.vn có quyền cập nhật, chỉnh sửa hoặc xóa bỏ nội dung website mà không cần
+                                    báo trước để phục vụ mục tiêu học thuật.</li>
+                                <li>Mọi hành vi khai thác website vào mục đích thương mại, gian lận hoặc vi phạm luật sở
+                                    hữu trí tuệ đều bị nghiêm cấm.</li>
+                            </ul>
+
+                            <p class="italic">Nếu bạn tiếp tục sử dụng website này, đồng nghĩa với việc bạn đã đọc, hiểu
+                                và chấp nhận toàn bộ các điều khoản trên.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Modal: Chính sách bảo mật -->
+                <div id="privacyModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg relative">
+                        <button onclick="closePrivacyModal()"
+                            class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+                        <h2 class="text-xl font-semibold text-center mb-4 text-red-600">CHÍNH SÁCH BẢO MẬT THÔNG TIN
+                        </h2>
+                        <div class="max-h-[60vh] overflow-y-auto text-sm text-gray-700 space-y-4">
+                            <p><strong>PHẦN I. MỤC ĐÍCH VÀ PHẠM VI THU THẬP</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>HopePhone.vn thu thập thông tin cá nhân như: họ tên, số điện thoại, email, ngày
+                                    sinh, địa chỉ... khi người dùng đăng ký tài khoản.</li>
+                                <li>Mục đích thu thập là để mô phỏng trải nghiệm đăng ký, mua hàng và nhận thông tin sản
+                                    phẩm – phục vụ mục đích học tập, không sử dụng cho hoạt động thương mại thật.</li>
+                            </ul>
+
+                            <p><strong>PHẦN II. PHẠM VI SỬ DỤNG THÔNG TIN</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Thông tin người dùng chỉ được sử dụng trong phạm vi nội bộ nhóm sinh viên thực hiện
+                                    dự án để trình bày chức năng của website.</li>
+                                <li>Không chia sẻ, bán hoặc cho thuê bất kỳ thông tin cá nhân nào cho bên thứ ba dưới
+                                    mọi hình thức.</li>
+                            </ul>
+
+                            <p><strong>PHẦN III. THỜI GIAN LƯU TRỮ THÔNG TIN</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Thông tin cá nhân được lưu trữ trong hệ thống cơ sở dữ liệu trong suốt thời gian
+                                    website phục vụ việc trình bày đồ án.</li>
+                                <li>Sau khi hoàn tất quá trình đánh giá đồ án, toàn bộ dữ liệu có thể được xóa bỏ hoặc
+                                    ngừng sử dụng tùy theo quyết định của nhóm phát triển.</li>
+                            </ul>
+
+                            <p><strong>PHẦN IV. QUYỀN CỦA NGƯỜI DÙNG</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Người dùng có quyền yêu cầu kiểm tra, cập nhật hoặc xóa thông tin cá nhân của mình
+                                    thông qua biểu mẫu hỗ trợ trên website.</li>
+                                <li>Có quyền phản ánh về việc sử dụng thông tin sai mục đích (nếu có) đến nhóm quản trị
+                                    website để được giải quyết.</li>
+                            </ul>
+
+                            <p><strong>PHẦN V. CAM KẾT BẢO MẬT THÔNG TIN</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>HopePhone.vn cam kết bảo mật tuyệt đối mọi thông tin cá nhân theo chính sách đã nêu.
+                                </li>
+                                <li>Áp dụng các biện pháp kỹ thuật và bảo mật hợp lý để bảo vệ dữ liệu khỏi truy cập
+                                    trái phép hoặc rò rỉ thông tin.</li>
+                                <li>Trong mọi trường hợp, dữ liệu người dùng không được sử dụng ngoài phạm vi phục vụ đồ
+                                    án tốt nghiệp.</li>
+                            </ul>
+
+                            <p class="italic">Việc sử dụng website đồng nghĩa với việc bạn đã đọc, hiểu và đồng ý với
+                                chính sách bảo mật thông tin này.</p>
+                        </div>
+
+                    </div>
+                </div>
             </div>
-
-
             <div class="flex gap-4 mt-6">
                 <a href="login"
                     class="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-center font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors !rounded-button whitespace-nowrap">
@@ -236,6 +345,22 @@
             });
         });
     </script>
+    <script>
+        function openTermsModal() {
+            document.getElementById("termsModal").classList.remove("hidden");
+        }
+        function closeTermsModal() {
+            document.getElementById("termsModal").classList.add("hidden");
+        }
+
+        function openPrivacyModal() {
+            document.getElementById("privacyModal").classList.remove("hidden");
+        }
+        function closePrivacyModal() {
+            document.getElementById("privacyModal").classList.add("hidden");
+        }
+    </script>
+
 </body>
 
 </html>

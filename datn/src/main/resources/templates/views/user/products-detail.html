@@ -540,6 +540,7 @@
       <!-- Đoạn 2 -->
       <div class="flex gap-4" style="max-width: 1250px; margin: auto; margin-top: 20px">
         <!-- Phần 6/10 -->
+
         <div class="w-6/10 flex-6 basis-3/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
           <div class="flex items-center justify-between mb-8" style="margin-bottom: 5px">
             <h2 class="text-2xl font-bold border-l-8 border-custom-blue pl-4">
@@ -547,100 +548,101 @@
             </h2>
           </div>
 
-          <!-- Đánh giá sản phẩm -->
+          <!-- Product Review Section -->
           <div class="bg-[#f5f9f6] p-4 rounded-md border text-sm">
-            <!-- Tổng quan + Bộ lọc -->
+            <!-- Overview + Filter -->
             <div class="flex flex-col lg:flex-row justify-between items-center gap-4 mb-5">
-              <!-- Tổng quan -->
+              <!-- Overview -->
               <div class="text-center lg:text-left" style="margin-left: 28px">
-                <p class="text-2xl text-green-600 font-semibold" style="margin-left: 9px">
-                  4.6/5
+                <p class="text-2xl text-green-600 font-semibold" style="margin-left: 9px" id="average-rating">
+                  0/5
                 </p>
-                <div class="flex justify-center lg:justify-start text-yellow-500 mb-1">
+                <div class="flex justify-center lg:justify-start text-yellow-500 mb-1" id="average-stars">
                   <i class="fa-solid fa-star"></i>
                   <i class="fa-solid fa-star"></i>
                   <i class="fa-solid fa-star"></i>
                   <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star-half-stroke"></i>
+                  <i class="fa-solid fa-star"></i>
                 </div>
-                <p class="text-gray-600">(13 đánh giá)</p>
-                <button style="margin-left: -36px"
+                <p class="text-gray-600" id="total-reviews">(0 đánh giá)</p>
+                <button id="openReviewModal" style="margin-left: -36px"
                   class="mt-2 px-4 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
                   Gửi đánh giá của bạn
                 </button>
               </div>
 
-              <!-- Bộ lọc đánh giá -->
+              <!-- Review Filter -->
               <div class="flex flex-wrap justify-center gap-2 p-2 rounded-md border-gray-800">
-                <!-- Mỗi button có class filter-button để dùng JS -->
-
-                <button
+                <button data-rating="5"
                   class="filter-button border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-100 hover:border-gray-500 transition-all">
-                  5 sao (11)
+                  5 sao (0)
                 </button>
-                <button
+                <button data-rating="4"
                   class="filter-button border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-100 hover:border-gray-500 transition-all">
-                  4 sao (1)
+                  4 sao (0)
                 </button>
-                <button
+                <button data-rating="3"
                   class="filter-button border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-100 hover:border-gray-500 transition-all">
-                  3 sao (1)
+                  3 sao (0)
                 </button>
-                <button
+                <button data-rating="2"
                   class="filter-button border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-100 hover:border-gray-500 transition-all">
-                  2 sao (1)
+                  2 sao (0)
                 </button>
-                <button
+                <button data-rating="1"
                   class="filter-button border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-100 hover:border-gray-500 transition-all">
                   1 sao (0)
                 </button>
-                <button
-                  class="filter-button border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-100 hover:border-gray-500 transition-all">
+                <button data-rating="0"
+                  class="filter-button border border-gray-300 px-3 py-1 rounded-md hover:bg-gray-100 hover:border-gray-500 transition-all active-filter">
                   Tất cả
                 </button>
               </div>
             </div>
 
-            <!-- Danh sách đánh giá -->
-            <div class="space-y-6">
-              <!-- Mỗi đánh giá -->
-              <div class="border-t border-gray-400 pt-4">
-                <p class="font-semibold">nha...@gmail.com</p>
-                <div class="text-yellow-500 mb-1">
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star"></i>
-                </div>
-                <p>Cũng tạm</p>
-                <div class="text-xs text-gray-500 mt-2 flex gap-4">
-                  <a href="#" class="hover:underline">Trả lời</a>
-                  <!-- <a href="#" class="hover:underline">Hữu ích</a> -->
-                  <!-- <a href="#" class="hover:underline">Báo cáo sai phạm</a> -->
-                  <span>13/04/2020</span>
-                </div>
-              </div>
-
-              <!-- Các đánh giá khác tương tự -->
-              <div class="border-t border-gray-400 pt-4">
-                <p class="font-semibold">blabla...@gmail.com</p>
-                <div class="text-yellow-500 mb-1">
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star"></i>
-                  <i class="fa-solid fa-star"></i>
-                </div>
-                <p>Dùng rất ok đáng đồng xu</p>
-                <div class="text-xs text-gray-500 mt-2 flex gap-4">
-                  <a href="#" class="hover:underline">Trả lời</a>
-                  <span>13/04/2025</span>
-                </div>
-              </div>
+            <!-- Reviews List -->
+            <div class="space-y-6" id="reviews-container">
+              <!-- Reviews will be loaded here dynamically -->
             </div>
           </div>
         </div>
+
+        <!-- Review Modal -->
+        <div id="reviewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+          <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">Đánh giá sản phẩm</h3>
+
+            <div class="mb-4">
+              <label class="block mb-2">Đánh giá của bạn</label>
+              <div class="flex text-2xl text-gray-400 rating-stars">
+                <i class="fa-regular fa-star cursor-pointer" data-value="1"></i>
+                <i class="fa-regular fa-star cursor-pointer" data-value="2"></i>
+                <i class="fa-regular fa-star cursor-pointer" data-value="3"></i>
+                <i class="fa-regular fa-star cursor-pointer" data-value="4"></i>
+                <i class="fa-regular fa-star cursor-pointer" data-value="5"></i>
+              </div>
+              <input type="hidden" id="ratingValue" value="0">
+            </div>
+
+            <div class="mb-4">
+              <label for="reviewComment" class="block mb-2">Bình luận</label>
+              <textarea id="reviewComment" rows="4" class="w-full px-3 py-2 border rounded-md"></textarea>
+            </div>
+
+            <div class="mb-4">
+              <label class="block mb-2">Ảnh đính kèm (tối đa 5 ảnh)</label>
+              <input type="file" id="imageUpload" multiple accept="image/*" class="w-full">
+              <div id="previewImages" class="flex flex-wrap mt-2"></div>
+            </div>
+
+            <div class="flex justify-end gap-2">
+              <button id="cancelReview" class="px-4 py-2 bg-gray-300 rounded-md">Hủy</button>
+              <button id="submitReview" class="px-4 py-2 bg-green-600 text-white rounded-md">Gửi đánh giá</button>
+            </div>
+          </div>
+        </div>
+
+
         <!-- Phần 4/10 -->
         <div class="w-4/10 flex-4 basis-2/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
           <!-- Tiêu đề -->
@@ -1155,5 +1157,595 @@
         this.value = 99;
       }
     });
+  });
+</script>
+
+<script> //
+  document.addEventListener('DOMContentLoaded', function () {
+    const productId = 1; // Replace with actual product ID
+    let currentUser = null;
+    let currentFilter = 0; // 0 means all reviews
+
+    // Check login status
+    async function checkLoginStatus() {
+      try {
+        const response = await fetch('/api/reviews/check-auth', {
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          currentUser = data.username;
+          return true;
+        }
+        throw new Error('Not logged in');
+      } catch (error) {
+        currentUser = null;
+        return false;
+      }
+    }
+
+    // Initialize the page
+    async function initialize() {
+      await checkLoginStatus();
+      loadReviews(productId, currentFilter);
+      updateReviewStats(productId);
+    }
+
+    // Open review modal
+    document.getElementById('openReviewModal').addEventListener('click', async function () {
+      const isLoggedIn = await checkLoginStatus();
+      if (!isLoggedIn) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Thông báo',
+          text: 'Vui lòng đăng nhập để đánh giá sản phẩm',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      document.getElementById('reviewModal').classList.remove('hidden');
+    });
+
+    // Close review modal
+    document.getElementById('cancelReview').addEventListener('click', function () {
+      document.getElementById('reviewModal').classList.add('hidden');
+      document.getElementById('previewImages').innerHTML = '';
+      document.getElementById('reviewComment').value = '';
+      document.getElementById('ratingValue').value = 0;
+
+      // Reset stars
+      const stars = document.querySelectorAll('.rating-stars i');
+      stars.forEach(star => {
+        star.classList.remove('fa-solid', 'text-yellow-500');
+        star.classList.add('fa-regular');
+      });
+    });
+
+    // Star rating selection
+    const stars = document.querySelectorAll('.rating-stars i');
+    stars.forEach(star => {
+      star.addEventListener('click', function () {
+        const value = parseInt(this.getAttribute('data-value'));
+        document.getElementById('ratingValue').value = value;
+
+        stars.forEach((s, index) => {
+          if (index < value) {
+            s.classList.remove('fa-regular');
+            s.classList.add('fa-solid', 'text-yellow-500');
+          } else {
+            s.classList.remove('fa-solid', 'text-yellow-500');
+            s.classList.add('fa-regular');
+          }
+        });
+      });
+    });
+
+    // Image preview
+    document.getElementById('imageUpload').addEventListener('change', function (e) {
+      const previewContainer = document.getElementById('previewImages');
+      previewContainer.innerHTML = '';
+
+      Array.from(e.target.files).slice(0, 5).forEach(file => {
+        if (!file.type.match('image.*')) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'h-20 object-cover mr-2 mb-2 rounded';
+          previewContainer.appendChild(img);
+        }
+        reader.readAsDataURL(file);
+      });
+    });
+
+    // Submit review
+    document.getElementById('submitReview').addEventListener('click', async function () {
+      const isLoggedIn = await checkLoginStatus();
+      if (!isLoggedIn) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Thông báo',
+          text: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+
+      const rating = document.getElementById('ratingValue').value;
+      const comment = document.getElementById('reviewComment').value;
+      const imageFiles = document.getElementById('imageUpload').files;
+
+      if (rating === '0') {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Chưa chọn đánh giá',
+          text: 'Vui lòng chọn số sao đánh giá trước khi gửi',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+
+      if (!comment.trim()) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Thiếu nội dung',
+          text: 'Vui lòng nhập bình luận',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+
+      const formData = new FormData();
+      formData.append('productId', productId);
+      formData.append('rating', rating);
+      formData.append('comment', comment);
+
+      if (imageFiles.length > 0) {
+        Array.from(imageFiles).slice(0, 5).forEach(file => {
+          formData.append('images', file);
+        });
+      }
+
+      try {
+        const response = await fetch('/api/reviews', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Error submitting review');
+        }
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công',
+          text: 'Đánh giá của bạn đã được gửi!',
+          confirmButtonText: 'OK'
+        });
+
+        document.getElementById('reviewModal').classList.add('hidden');
+        document.getElementById('reviewComment').value = '';
+        document.getElementById('imageUpload').value = '';
+        document.getElementById('previewImages').innerHTML = '';
+
+        // Reset stars
+        stars.forEach(star => {
+          star.classList.remove('fa-solid', 'text-yellow-500');
+          star.classList.add('fa-regular');
+        });
+
+        loadReviews(productId, currentFilter);
+        updateReviewStats(productId);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi gửi đánh giá: ' + error.message);
+      }
+    });
+
+    // Filter reviews by rating
+    document.querySelectorAll('.filter-button').forEach(button => {
+      button.addEventListener('click', function () {
+        const rating = parseInt(this.getAttribute('data-rating'));
+        currentFilter = rating;
+
+        // Update active filter button
+        document.querySelectorAll('.filter-button').forEach(btn => {
+          btn.classList.remove('bg-gray-200', 'border-gray-500', 'active-filter');
+        });
+        this.classList.add('bg-gray-200', 'border-gray-500', 'active-filter');
+
+        loadReviews(productId, rating);
+      });
+    });
+
+    // Load reviews with optional rating filter
+    async function loadReviews(productId, rating = null) {
+      try {
+        let url = `/api/reviews/product/${productId}`;
+        if (rating && rating >= 1 && rating <= 5) {
+          url += `?rating=${rating}`;
+        }
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to load reviews');
+
+        const reviews = await response.json();
+        const reviewsContainer = document.getElementById('reviews-container');
+        reviewsContainer.innerHTML = '';
+
+        if (reviews.length === 0) {
+          reviewsContainer.innerHTML = `
+                <div class="text-center py-4 text-gray-800" style="margin-bottom: 230px; margin-top: 150px">
+                    ${rating ? `Chưa có đánh giá ${rating} sao nào` : 'Chưa có đánh giá nào cho sản phẩm này'}
+                </div>
+            `;
+          return;
+        }
+
+        for (const review of reviews) {
+          const reviewElement = await createReviewElement(review);
+          reviewsContainer.appendChild(reviewElement);
+        }
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+        document.getElementById('reviews-container').innerHTML = `
+            <div class="text-center py-4 text-red-500">
+                Đã xảy ra lỗi khi tải đánh giá
+            </div>
+        `;
+      }
+    }
+
+    // Create a single review element
+    async function createReviewElement(review) {
+      const reviewElement = document.createElement('div');
+      reviewElement.className = 'border-t border-gray-400 pt-4';
+      reviewElement.dataset.reviewId = review.id;
+
+      // Format date
+      const date = review.createdAt ?
+        new Date(review.createdAt).toLocaleDateString('vi-VN', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : 'Không rõ ngày';
+
+      // Create star rating
+      const starsHtml = Array(5).fill().map((_, i) =>
+        `<i class="fa-solid ${i < review.rating ? 'text-yellow-500' : 'text-gray-300'} fa-star"></i>`
+      ).join('');
+
+      // Handle images
+      let imagesHtml = '';
+      if (review.images) {
+        const imageUrls = review.images.split(',');
+        imagesHtml = `<div class="flex flex-wrap mt-2">${imageUrls.map(url =>
+          `<img src="${url}" class="h-20 object-cover mr-2 mb-2 rounded cursor-pointer" 
+                     onclick="window.open('${url}', '_blank')">`
+        ).join('')
+          }</div>`;
+      }
+
+      // Check if user has liked this review
+      let hasLiked = false;
+      if (currentUser) {
+        try {
+          const response = await fetch(`/api/reviews/${review.id}/has-liked`, {
+            credentials: 'include'
+          });
+          if (response.ok) {
+            const data = await response.json();
+            hasLiked = data.hasLiked;
+          }
+        } catch (error) {
+          console.error('Error checking like status:', error);
+        }
+      }
+
+      // Get like count
+      let likeCount = 0;
+      try {
+        const response = await fetch(`/api/reviews/${review.id}/like-count`);
+        if (response.ok) {
+          const data = await response.json();
+          likeCount = data.count;
+        }
+      } catch (error) {
+        console.error('Error getting like count:', error);
+      }
+
+      reviewElement.innerHTML = `
+            <div class="flex justify-between items-start">
+                <p class="font-semibold">${review.username || 'Ẩn danh'}</p>
+                <span class="text-sm text-gray-500">${date}</span>
+            </div>
+            <div class="flex items-center mb-1">
+                <div class="text-yellow-500 mr-2">
+                    ${starsHtml}
+                </div>
+            </div>
+            <p class="text-gray-800 mb-2">${review.comment || ''}</p>
+            ${imagesHtml}
+            
+            <div class="flex items-center justify-between mt-3">
+                <div class="flex gap-4 text-xs text-gray-500">
+                    <a href="#" class="hover:underline reply-link">Trả lời</a>
+                    <button class="like-button hover:underline flex items-center gap-1 ${hasLiked ? 'text-blue-500' : ''}" 
+                            data-review-id="${review.id}">
+                        <i class="fa-${hasLiked ? 'solid' : 'regular'} fa-thumbs-up"></i>
+                        <span class="like-count">${likeCount}</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Reply form (hidden by default) -->
+            <div class="reply-modal hidden mt-3 pl-4 border-l-2 border-gray-200">
+                <textarea class="w-full px-3 py-2 border rounded-md reply-input" 
+                         rows="2" placeholder="Viết phản hồi của bạn..."></textarea>
+                <div class="flex justify-end gap-2 mt-2">
+                    <button class="px-3 py-1 bg-gray-200 rounded-md cancel-reply">Hủy</button>
+                    <button class="px-3 py-1 bg-blue-500 text-white rounded-md submit-reply">Gửi</button>
+                </div>
+            </div>
+            
+            <!-- Feedback list -->
+            <div class="feedback-list mt-3 pl-4 border-l-2 border-gray-200"></div>
+        `;
+
+      // Load feedback for this review
+      const feedbackList = reviewElement.querySelector('.feedback-list');
+      loadFeedback(review.id, feedbackList);
+
+      // Set up event handlers for this review
+      setupReviewEventHandlers(reviewElement);
+
+      return reviewElement;
+    }
+
+    // Set up event handlers for a review element
+    function setupReviewEventHandlers(reviewElement) {
+      // Reply link
+      const replyLink = reviewElement.querySelector('.reply-link');
+      if (replyLink) {
+        replyLink.addEventListener('click', async function (e) {
+          e.preventDefault();
+
+          const isLoggedIn = await checkLoginStatus();
+          if (!isLoggedIn) {
+            Swal.fire({
+              icon: 'info',
+              title: 'Thông báo',
+              text: 'Vui lòng đăng nhập để gửi phản hồi',
+              confirmButtonText: 'OK'
+            });
+            return;
+          }
+
+
+          const replyModal = reviewElement.querySelector('.reply-modal');
+          if (replyModal) {
+            // Hide all other reply modals
+            document.querySelectorAll('.reply-modal').forEach(modal => {
+              if (modal !== replyModal) modal.classList.add('hidden');
+            });
+
+            replyModal.classList.toggle('hidden');
+            if (!replyModal.classList.contains('hidden')) {
+              replyModal.querySelector('.reply-input').focus();
+            }
+          }
+        });
+      }
+
+      // Cancel reply
+      const cancelReply = reviewElement.querySelector('.cancel-reply');
+      if (cancelReply) {
+        cancelReply.addEventListener('click', function () {
+          const replyModal = this.closest('.reply-modal');
+          if (replyModal) {
+            replyModal.classList.add('hidden');
+            replyModal.querySelector('.reply-input').value = '';
+          }
+        });
+      }
+
+      // Submit reply
+      const submitReply = reviewElement.querySelector('.submit-reply');
+      if (submitReply) {
+        submitReply.addEventListener('click', async function () {
+          const isLoggedIn = await checkLoginStatus();
+          if (!isLoggedIn) {
+            alert('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+            return;
+          }
+
+          const replyModal = this.closest('.reply-modal');
+          if (!replyModal) return;
+
+          const reviewId = reviewElement.dataset.reviewId;
+          const content = replyModal.querySelector('.reply-input').value.trim();
+
+          if (!content) {
+            alert('Vui lòng nhập nội dung phản hồi');
+            return;
+          }
+
+          try {
+            const response = await fetch(`/api/reviews/${reviewId}/feedback`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: `content=${encodeURIComponent(content)}`,
+              credentials: 'include'
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Error submitting feedback');
+            }
+
+            replyModal.querySelector('.reply-input').value = '';
+            replyModal.classList.add('hidden');
+
+            // Reload feedback
+            const feedbackList = reviewElement.querySelector('.feedback-list');
+            if (feedbackList) {
+              loadFeedback(reviewId, feedbackList);
+            }
+          } catch (error) {
+            console.error('Error submitting feedback:', error);
+            alert('Có lỗi xảy ra khi gửi phản hồi: ' + error.message);
+          }
+        });
+      }
+
+      // Like button
+      const likeButton = reviewElement.querySelector('.like-button');
+      if (likeButton) {
+        likeButton.addEventListener('click', async function (e) {
+          e.preventDefault();
+
+          const isLoggedIn = await checkLoginStatus();
+          if (!isLoggedIn) {
+            alert('Vui lòng đăng nhập để thích đánh giá');
+            return;
+          }
+
+          const reviewId = this.dataset.reviewId;
+          try {
+            const response = await fetch(`/api/reviews/${reviewId}/like`, {
+              method: 'POST',
+              credentials: 'include'
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || 'Error liking review');
+            }
+
+            // Toggle like state
+            const icon = this.querySelector('i');
+            const likeCountElement = this.querySelector('.like-count');
+
+            if (icon.classList.contains('fa-regular')) {
+              // User just liked the review
+              icon.classList.remove('fa-regular');
+              icon.classList.add('fa-solid');
+              this.classList.add('text-blue-500');
+              likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+            } else {
+              // User unliked the review
+              icon.classList.remove('fa-solid');
+              icon.classList.add('fa-regular');
+              this.classList.remove('text-blue-500');
+              likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+            }
+          } catch (error) {
+            console.error('Error liking review:', error);
+            alert('Có lỗi xảy ra khi thích đánh giá: ' + error.message);
+          }
+        });
+      }
+    }
+
+    // Load feedback for a review
+    async function loadFeedback(reviewId, feedbackContainer) {
+      try {
+        const response = await fetch(`/api/reviews/${reviewId}/feedback`);
+        if (!response.ok) throw new Error('Failed to load feedback');
+
+        const feedbacks = await response.json();
+        feedbackContainer.innerHTML = '';
+
+        if (feedbacks.length === 0) return;
+
+        feedbacks.forEach(feedback => {
+          const feedbackElement = document.createElement('div');
+          feedbackElement.className = 'mb-3 pb-2 border-b border-gray-100 last:border-0';
+
+          const date = feedback.createdAt ?
+            new Date(feedback.createdAt).toLocaleDateString('vi-VN', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }) : 'Không rõ ngày';
+
+          feedbackElement.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <p class="font-semibold text-sm">${feedback.username || 'Ẩn danh'}</p>
+                        <span class="text-xs text-gray-500">${date}</span>
+                    </div>
+                    <p class="text-gray-800 text-sm mt-1">${feedback.content || ''}</p>
+                `;
+
+          feedbackContainer.appendChild(feedbackElement);
+        });
+      } catch (error) {
+        console.error('Error loading feedback:', error);
+        feedbackContainer.innerHTML = `
+                <p class="text-red-500 text-sm">Đã xảy ra lỗi khi tải phản hồi</p>
+            `;
+      }
+    }
+
+    // Update review statistics
+    async function updateReviewStats(productId) {
+      try {
+        const response = await fetch(`/api/reviews/stats/${productId}`);
+        if (!response.ok) throw new Error('Failed to load review stats');
+
+        const stats = await response.json();
+
+        // Update average rating
+        document.getElementById('average-rating').textContent =
+          `${stats.averageRating.toFixed(1)}/5`;
+
+        // Update average stars
+        const avgRating = Math.round(stats.averageRating);
+        const starsContainer = document.getElementById('average-stars');
+        starsContainer.innerHTML = '';
+
+        for (let i = 1; i <= 5; i++) {
+          const star = document.createElement('i');
+          star.className = `fa-solid fa-star ${i <= avgRating ? 'text-yellow-500' : 'text-gray-300'}`;
+          if (i === avgRating && stats.averageRating % 1 > 0.3) {
+            star.className = 'fa-solid fa-star-half-stroke text-yellow-500';
+          }
+          starsContainer.appendChild(star);
+        }
+
+        // Update total reviews
+        document.getElementById('total-reviews').textContent =
+          `(${stats.totalReviews} đánh giá)`;
+
+        // Update filter buttons
+        document.querySelectorAll('.filter-button').forEach((button, index) => {
+          if (index < 5) {
+            const rating = 5 - index;
+            button.textContent = `${rating} sao (${stats.ratingCounts[rating + 'star']})`;
+          } else if (index === 5) {
+            button.textContent = `Tất cả (${stats.totalReviews})`;
+          }
+        });
+      } catch (error) {
+        console.error('Error updating review stats:', error);
+      }
+    }
+
+    // Initialize the page
+    initialize();
   });
 </script>
