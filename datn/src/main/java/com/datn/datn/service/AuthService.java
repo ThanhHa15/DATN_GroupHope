@@ -104,14 +104,32 @@ public class AuthService {
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message);
+            MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
+
+            String htmlContent = """
+                    <html>
+                        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                            <h2 style="color: #2d89ef;">HopePhone - Xác thực tài khoản</h2>
+                            <p>Xin chào,</p>
+                            <p>Chúng tôi đã nhận được yêu cầu xác thực tài khoản của bạn.</p>
+                            <p><strong>Mã OTP của bạn là:</strong></p>
+                            <h1 style="background-color: #f2f2f2; padding: 10px 20px; border-radius: 5px; color: #e60000; display: inline-block;">%s</h1>
+                            <p>Mã này có hiệu lực trong <strong>5 phút</strong>. Vui lòng không chia sẻ mã này với bất kỳ ai.</p>
+                            <br>
+                            <p>Trân trọng,<br><strong>Đội ngũ HopePhone</strong></p>
+                        </body>
+                    </html>
+                    """
+                    .formatted(otp);
+
             helper.setTo(email);
-            helper.setSubject("Mã OTP xác thực tài khoản");
-            helper.setText("Mã OTP của bạn là: " + otp + ". Mã có hiệu lực trong 5 phút.");
+            helper.setSubject("HopePhone - Mã OTP xác thực tài khoản");
+            helper.setText(htmlContent, true); // Gửi dưới dạng HTML
             mailSender.send(message);
         } catch (MessagingException e) {
             throw new RuntimeException("Lỗi khi gửi email OTP", e);
         }
+
     }
     // public void sendOtp(String email) {
     // // Tạo và lưu mã OTP, sau đó gửi email/sms

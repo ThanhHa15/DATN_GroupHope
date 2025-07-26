@@ -182,8 +182,8 @@
                         <!-- SĐT -->
                         <div class="col-md-6">
                             <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="phone" th:value="*{phone}"
-                                th:attrappend="required=${employee.id == null} ? 'required' : null" />
+                            <input type="text" class="form-control" th:field="*{phone}" required />
+
                             <div class="text-danger" th:if="${#fields.hasErrors('phone')}"
                                 th:text="${#fields.errors('phone')[0]}"></div>
 
@@ -290,7 +290,7 @@
                         <th>ID</th>
                         <th>Họ tên</th>
                         <th>Email</th>
-                        <th>Mật khẩu</th>
+                        <!-- <th>Mật khẩu</th> -->
                         <th>SĐT</th>
                         <th>Ngày sinh</th>
                         <th>Chức vụ</th>
@@ -301,14 +301,14 @@
                     <tr th:each="emp : ${employees}" class="text-center align-middle border-bottom">
                         <td th:text="${emp.id}"></td>
                         <td th:text="${emp.fullname}"></td>
-                        <td th:text="${emp.email}"></td>
-                        <td>
+                        <td th:text="'*****' + ${emp.email.substring(emp.email.length() - 3)}"></td>
+                        <!-- <td>
                             <span th:id="'pwd-' + ${emp.id}">******</span>
                             <input type="hidden" th:id="'realpwd-' + ${emp.id}" th:value="${emp.password}" />
                             <button type="button" class="btn btn-link p-0 text-dark"
                                 th:onclick="'togglePassword(' + ${emp.id} + ')'"><i class="bi bi-eye"></i></button>
-                        </td>
-                        <td th:text="${emp.phone}"></td>
+                        </td> -->
+                        <td th:text="'*******' + ${emp.phone.substring(emp.phone.length() - 3)}"></td>
                         <td
                             th:text="${emp.birthday != null ? #temporals.format(emp.birthday, 'MM/dd/yyyy') : 'Chưa cập nhật'}">
                         </td>

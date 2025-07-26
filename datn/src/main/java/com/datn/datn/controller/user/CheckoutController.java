@@ -48,7 +48,7 @@ public class CheckoutController {
         this.voucherRepository = voucherRepository;
     }
 
-    @GetMapping()
+   @GetMapping()
 public String checkout(@RequestParam(value = "voucherCode", required = false) String voucherCode,
                        Model model, HttpSession session) {
     Object loggedInUser = session.getAttribute("loggedInUser");
@@ -68,31 +68,29 @@ public String checkout(@RequestParam(value = "voucherCode", required = false) St
     for (Cart cart : cartItems) {
         ProductVariant variant = cart.getVariant();
         BigDecimal originalPrice = BigDecimal.valueOf(variant.getPrice());
-        BigDecimal price = variant.getDiscountedPrice() != null 
-            ? variant.getDiscountedPrice() 
-            : originalPrice;
-
+        BigDecimal price = variant.getDiscountedPrice() != null ? variant.getDiscountedPrice() : originalPrice;
         BigDecimal quantity = BigDecimal.valueOf(cart.getQuantity());
+
         originalTotal = originalTotal.add(originalPrice.multiply(quantity));
         total = total.add(price.multiply(quantity));
     }
 
-    model.addAttribute("cartItems", cartItems);
-    model.addAttribute("loggedInUser", member);
-    model.addAttribute("originalTotal", originalTotal); // ✅ Thêm dòng này
+    BigDecimal shippingFee = BigDecimal.valueOf(40000);
+    BigDecimal grandTotal = originalTotal.add(shippingFee); // Sử dụng originalTotal thay vì total
 
+    BigDecimal discount = BigDecimal.ZERO;
     if (voucherCode != null && !voucherCode.trim().isEmpty()) {
         Vouchers voucher = voucherRepository.findByCode(voucherCode.trim()).orElse(null);
         if (voucher != null
                 && voucher.getQuantity() > 0
                 && voucher.getStartDate().isBefore(java.time.LocalDate.now().plusDays(1))
                 && voucher.getEndDate().isAfter(java.time.LocalDate.now().minusDays(1))
-                && total.compareTo(voucher.getMinimumPrice()) >= 0) {
+                && grandTotal.compareTo(voucher.getMinimumPrice()) >= 0) {
 
-            BigDecimal discount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
-    .divide(BigDecimal.valueOf(100), 1, RoundingMode.HALF_UP);
-
-            total = total.subtract(discount);
+            // Áp dụng giảm giá trên grandTotal (originalTotal + shippingFee)
+            discount = grandTotal.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+                            .divide(BigDecimal.valueOf(100), 1, RoundingMode.HALF_UP);
+            grandTotal = grandTotal.subtract(discount);
 
             session.setAttribute("appliedVoucher", voucher);
             model.addAttribute("discountAmount", discount);
@@ -102,7 +100,12 @@ public String checkout(@RequestParam(value = "voucherCode", required = false) St
         }
     }
 
-    model.addAttribute("total", total);
+    model.addAttribute("cartItems", cartItems);
+    model.addAttribute("loggedInUser", member);
+    model.addAttribute("originalTotal", originalTotal);
+    model.addAttribute("shippingFee", shippingFee);
+    model.addAttribute("total", grandTotal);
+
     return "views/user/checkout";
 }
     @PostMapping("/save-address")
@@ -112,43 +115,37 @@ public String checkout(@RequestParam(value = "voucherCode", required = false) St
         session.setAttribute("checkoutAddress", address);
         session.setAttribute("checkoutNote", note);
     }
-    @GetMapping("/payment")
-    public void payment(HttpServletResponse response, HttpSession session) throws IOException {
-        Member member = (Member) session.getAttribute("loggedInUser");
-        if (member == null) {
-            response.sendRedirect("/login");
-            return;
-        }
+   @GetMapping("/payment")
+public void payment(HttpServletResponse response, HttpSession session) throws IOException {
+    Member member = (Member) session.getAttribute("loggedInUser");
+    if (member == null) {
+        response.sendRedirect("/login");
+        return;
+    }
 
-        // Tổng tiền từ giỏ hàng
-        List<Cart> cartItems = cartRepository.findByMember(member);
-        BigDecimal total = cartItems.stream()
-                .map(cart -> {
-                    BigDecimal price = cart.getVariant().getDiscountedPrice() != null
-                            ? cart.getVariant().getDiscountedPrice()
-                            : BigDecimal.valueOf(cart.getVariant().getPrice());
-                    return price.multiply(BigDecimal.valueOf(cart.getQuantity()));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    List<Cart> cartItems = cartRepository.findByMember(member);
+    BigDecimal originalTotal = cartItems.stream()
+            .map(cart -> BigDecimal.valueOf(cart.getVariant().getPrice()))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Áp dụng giảm giá nếu có
-        Vouchers voucher = (Vouchers) session.getAttribute("appliedVoucher");
-        if (voucher != null
-                && voucher.getQuantity() > 0
-                && voucher.getStartDate().isBefore(LocalDateTime.now().toLocalDate().plusDays(1))
-                && voucher.getEndDate().isAfter(LocalDateTime.now().toLocalDate().minusDays(1))
-                && total.compareTo(voucher.getMinimumPrice()) >= 0) {
+    BigDecimal shippingFee = BigDecimal.valueOf(40000);
+    BigDecimal grandTotal = originalTotal.add(shippingFee);
 
-            BigDecimal discount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
-                                    .divide(BigDecimal.valueOf(100));
-            total = total.subtract(discount);
-        }
+    Vouchers voucher = (Vouchers) session.getAttribute("appliedVoucher");
+    if (voucher != null
+            && voucher.getQuantity() > 0
+            && voucher.getStartDate().isBefore(LocalDateTime.now().toLocalDate().plusDays(1))
+            && voucher.getEndDate().isAfter(LocalDateTime.now().toLocalDate().minusDays(1))
+            && grandTotal.compareTo(voucher.getMinimumPrice()) >= 0) {
 
-    // Gửi đến VNPay với số tiền đã giảm giá
-    String paymentUrl = VnpayUtils.createPaymentUrl(total, member);
+        BigDecimal discount = grandTotal.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+                                .divide(BigDecimal.valueOf(100));
+        grandTotal = grandTotal.subtract(discount);
+    }
+
+    String paymentUrl = VnpayUtils.createPaymentUrl(grandTotal, member);
     response.sendRedirect(paymentUrl);
-}
-    @GetMapping("/return")
+}   @GetMapping("/return")
 public void paymentReturn(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
     String responseCode = request.getParameter("vnp_ResponseCode");
     System.out.println("VNPay responseCode = " + responseCode);
@@ -164,66 +161,62 @@ public void paymentReturn(HttpServletRequest request, HttpServletResponse respon
 
     List<Cart> cartItems = cartRepository.findByMember(member);
 
-    // Tính tổng giỏ hàng
-    BigDecimal total = BigDecimal.ZERO;
+    BigDecimal shippingFee = BigDecimal.valueOf(40000);
+    BigDecimal totalBeforeDiscount = BigDecimal.ZERO;
+
     for (Cart cart : cartItems) {
         ProductVariant variant = cart.getVariant();
         BigDecimal price = variant.getDiscountedPrice() != null
                 ? variant.getDiscountedPrice()
                 : BigDecimal.valueOf(variant.getPrice());
-        total = total.add(price.multiply(BigDecimal.valueOf(cart.getQuantity())));
+        totalBeforeDiscount = totalBeforeDiscount.add(price.multiply(BigDecimal.valueOf(cart.getQuantity())));
     }
 
-    // Áp dụng giảm giá nếu có
     Vouchers voucher = (Vouchers) session.getAttribute("appliedVoucher");
     BigDecimal discountAmount = BigDecimal.ZERO;
     if (voucher != null
             && voucher.getQuantity() > 0
             && voucher.getStartDate().isBefore(LocalDateTime.now().toLocalDate().plusDays(1))
             && voucher.getEndDate().isAfter(LocalDateTime.now().toLocalDate().minusDays(1))
-            && total.compareTo(voucher.getMinimumPrice()) >= 0) {
-
-        discountAmount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
-                              .divide(BigDecimal.valueOf(100));
-        total = total.subtract(discountAmount);
+            && totalBeforeDiscount.compareTo(voucher.getMinimumPrice()) >= 0) {
+        discountAmount = totalBeforeDiscount.add(shippingFee)
+                .multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+                .divide(BigDecimal.valueOf(100), 1, RoundingMode.HALF_UP);
     }
+
+    BigDecimal grandTotal = totalBeforeDiscount.add(shippingFee).subtract(discountAmount);
+    BigDecimal totalAllocated = BigDecimal.ZERO;
+    int index = 0;
 
     for (Cart cart : cartItems) {
         ProductVariant variant = cart.getVariant();
-        int purchaseQuantity = cart.getQuantity();
-
-        // Trừ tồn kho
-        variant.setQuantityInStock(variant.getQuantityInStock() - purchaseQuantity);
-        productVariantRepository.save(variant);
-
-        // Tính giá từng item
+        int qty = cart.getQuantity();
         BigDecimal price = variant.getDiscountedPrice() != null
                 ? variant.getDiscountedPrice()
                 : BigDecimal.valueOf(variant.getPrice());
+        BigDecimal itemSubtotal = price.multiply(BigDecimal.valueOf(qty));
+        BigDecimal ratio = itemSubtotal.divide(totalBeforeDiscount, 10, RoundingMode.HALF_UP);
+        BigDecimal itemTotal = grandTotal.multiply(ratio).setScale(1, RoundingMode.HALF_UP);
+        totalAllocated = totalAllocated.add(itemTotal);
 
-        BigDecimal itemSubtotal = price.multiply(BigDecimal.valueOf(purchaseQuantity));
-
-        // Phân bổ giảm giá
-        BigDecimal itemDiscount = BigDecimal.ZERO;
-        if (discountAmount.compareTo(BigDecimal.ZERO) > 0) {
-            itemDiscount = itemSubtotal.multiply(discountAmount).divide(total.add(discountAmount), 10, BigDecimal.ROUND_HALF_UP);
+        if (++index == cartItems.size()) {
+            itemTotal = itemTotal.add(grandTotal.subtract(totalAllocated));
         }
 
-        BigDecimal itemTotal = itemSubtotal.subtract(itemDiscount);
+        variant.setQuantityInStock(variant.getQuantityInStock() - qty);
+        productVariantRepository.save(variant);
 
-        // Lưu order
         Order order = new Order();
         order.setMember(member);
         order.setProductVariant(variant);
         order.setOrderDate(LocalDateTime.now());
         order.setAddress(address != null ? address : "Không có địa chỉ");
         order.setNote(note);
-        order.setTotalPrice(itemTotal.setScale(1, RoundingMode.HALF_UP).doubleValue());
+        order.setTotalPrice(itemTotal.doubleValue());
 
         orderService.save(order);
     }
 
-    // Giảm số lượng voucher
     if (voucher != null) {
         voucher.setQuantity(voucher.getQuantity() - 1);
         voucherRepository.save(voucher);
@@ -233,8 +226,10 @@ public void paymentReturn(HttpServletRequest request, HttpServletResponse respon
     cartRepository.deleteAll(cartItems);
     session.removeAttribute("checkoutAddress");
     session.removeAttribute("checkoutNote");
+
     response.sendRedirect("/home");
 }
+
 
     @GetMapping("/ipn")
     public void vnpayIpn(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -290,66 +285,62 @@ public String confirmCod(HttpSession session) {
 
     List<Cart> cartItems = cartRepository.findByMember(member);
 
-    // Tính tổng
-    BigDecimal total = BigDecimal.ZERO;
+    BigDecimal shippingFee = BigDecimal.valueOf(40000);
+    BigDecimal totalBeforeDiscount = BigDecimal.ZERO;
+
     for (Cart cart : cartItems) {
         ProductVariant variant = cart.getVariant();
         BigDecimal price = variant.getDiscountedPrice() != null
                 ? variant.getDiscountedPrice()
                 : BigDecimal.valueOf(variant.getPrice());
-        total = total.add(price.multiply(BigDecimal.valueOf(cart.getQuantity())));
+        totalBeforeDiscount = totalBeforeDiscount.add(price.multiply(BigDecimal.valueOf(cart.getQuantity())));
     }
 
-    // Áp dụng giảm giá
     Vouchers voucher = (Vouchers) session.getAttribute("appliedVoucher");
     BigDecimal discountAmount = BigDecimal.ZERO;
     if (voucher != null
             && voucher.getQuantity() > 0
             && voucher.getStartDate().isBefore(LocalDateTime.now().toLocalDate().plusDays(1))
             && voucher.getEndDate().isAfter(LocalDateTime.now().toLocalDate().minusDays(1))
-            && total.compareTo(voucher.getMinimumPrice()) >= 0) {
-
-        discountAmount = total.multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
-                              .divide(BigDecimal.valueOf(100));
-        total = total.subtract(discountAmount);
+            && totalBeforeDiscount.compareTo(voucher.getMinimumPrice()) >= 0) {
+        discountAmount = totalBeforeDiscount.add(shippingFee)
+                .multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+                .divide(BigDecimal.valueOf(100), 1, RoundingMode.HALF_UP);
     }
+
+    BigDecimal grandTotal = totalBeforeDiscount.add(shippingFee).subtract(discountAmount);
+    BigDecimal totalAllocated = BigDecimal.ZERO;
+    int index = 0;
 
     for (Cart cart : cartItems) {
         ProductVariant variant = cart.getVariant();
-        int purchaseQuantity = cart.getQuantity();
-
-        // Trừ tồn kho
-        variant.setQuantityInStock(variant.getQuantityInStock() - purchaseQuantity);
-        productVariantRepository.save(variant);
-
-        // Tính giá từng item
+        int qty = cart.getQuantity();
         BigDecimal price = variant.getDiscountedPrice() != null
                 ? variant.getDiscountedPrice()
                 : BigDecimal.valueOf(variant.getPrice());
+        BigDecimal itemSubtotal = price.multiply(BigDecimal.valueOf(qty));
+        BigDecimal ratio = itemSubtotal.divide(totalBeforeDiscount, 10, RoundingMode.HALF_UP);
+        BigDecimal itemTotal = grandTotal.multiply(ratio).setScale(1, RoundingMode.HALF_UP);
+        totalAllocated = totalAllocated.add(itemTotal);
 
-        BigDecimal itemSubtotal = price.multiply(BigDecimal.valueOf(purchaseQuantity));
-
-        // Phân bổ giảm giá
-        BigDecimal itemDiscount = BigDecimal.ZERO;
-        if (discountAmount.compareTo(BigDecimal.ZERO) > 0) {
-            itemDiscount = itemSubtotal.multiply(discountAmount).divide(total.add(discountAmount), 10, BigDecimal.ROUND_HALF_UP);
+        if (++index == cartItems.size()) {
+            itemTotal = itemTotal.add(grandTotal.subtract(totalAllocated));
         }
 
-        BigDecimal itemTotal = itemSubtotal.subtract(itemDiscount);
+        variant.setQuantityInStock(variant.getQuantityInStock() - qty);
+        productVariantRepository.save(variant);
 
-        // Lưu order
         Order order = new Order();
         order.setMember(member);
         order.setProductVariant(variant);
         order.setOrderDate(LocalDateTime.now());
         order.setAddress(address != null ? address : "Không có địa chỉ");
         order.setNote(note);
-        order.setTotalPrice(itemTotal.setScale(1, RoundingMode.HALF_UP).doubleValue());
+        order.setTotalPrice(itemTotal.doubleValue());
 
         orderService.save(order);
     }
 
-    // Giảm số lượng voucher
     if (voucher != null) {
         voucher.setQuantity(voucher.getQuantity() - 1);
         voucherRepository.save(voucher);
@@ -362,6 +353,5 @@ public String confirmCod(HttpSession session) {
 
     return "redirect:/home";
 }
-
 
 }
