@@ -15,5 +15,8 @@ import com.datn.datn.model.Vouchers;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByMemberAndOrderDateAfter(Member member, LocalDateTime date);
 
-List<Order> findByMemberOrderByOrderDateDesc(Member member);
+    List<Order> findByMemberOrderByOrderDateDesc(Member member);
+
+    @Query("SELECT DISTINCT o.address FROM Order o WHERE o.member.id = :memberId")
+    List<String> findDistinctAddressesByMemberId(@Param("memberId") Long memberId);
 }

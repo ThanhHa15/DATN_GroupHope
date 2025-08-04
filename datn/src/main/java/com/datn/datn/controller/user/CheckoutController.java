@@ -58,6 +58,11 @@ public class CheckoutController {
     if (!(loggedInUser instanceof Member member)) {
         return "redirect:/login";
     }
+    List<String> savedAddresses = orderService.getMemberAddresses(member.getId());
+    model.addAttribute("savedAddresses", savedAddresses);
+
+    String lastUsedAddress = !savedAddresses.isEmpty() ? savedAddresses.get(savedAddresses.size() - 1) : null;
+    model.addAttribute("lastUsedAddress", lastUsedAddress);
 
     model.addAttribute("email", member.getEmail());
     model.addAttribute("name", member.getFullname());

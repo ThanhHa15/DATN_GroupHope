@@ -16,7 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.datn.model.Member;
 import com.datn.datn.repository.MemberRepository;
-import com.datn.datn.SecurityConfig;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -88,6 +87,7 @@ public class OAuth2LoginController {
                         // Thay đổi cách xử lý findByEmail
                         Optional<Member> optionalMember = memberRepository.findByEmail(email);
                         Member member;
+                        boolean isNewAccount = false;
 
                         if (optionalMember.isEmpty()) {
                                 // Tạo mới tài khoản nếu không tồn tại
@@ -104,6 +104,7 @@ public class OAuth2LoginController {
                                                 .build();
 
                                 member = memberRepository.save(member);
+                                isNewAccount = true;
                                 log.info("Đã tạo mới tài khoản từ Google: {}, SĐT: {}", email, phone);
                         } else {
                                 member = optionalMember.get();
@@ -115,7 +116,14 @@ public class OAuth2LoginController {
 
                         session.setAttribute("loggedInUser", member);
                         session.setAttribute("showLoginSuccess", true);
-                        return "redirect:/updateif";
+
+                        if (isNewAccount || member.getPhone() == null || member.getPhone().isBlank()
+                                        || member.getBirthday() == null) {
+                                return "redirect:/updateif";
+                        }
+
+                        // ✅ Ngược lại, tài khoản cũ & đủ info → về trang chủ
+                        return "redirect:/";
 
                 } catch (Exception e) {
                         log.error("Lỗi khi xử lý đăng nhập Google", e);

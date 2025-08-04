@@ -45,4 +45,9 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findLatestOrdersByMember(Member member) {
         return orderRepository.findByMemberOrderByOrderDateDesc(member);
     }
+
+    @Override
+    public List<String> getMemberAddresses(Long memberId) {
+        return orderRepository.findDistinctAddressesByMemberId(memberId);
+    }
 }

@@ -149,7 +149,7 @@ public class ProductController {
 
         // 🔍 Lọc theo từ khóa tìm kiếm (tên sản phẩm)
         if (keyword != null && !keyword.trim().isEmpty()) {
-            String lowerKeyword = keyword.toLowerCase();
+            String lowerKeyword = keyword.trim().toLowerCase(); // thêm trim() ở đây
             variants = variants.stream()
                     .filter(v -> v.getProduct().getProductName().toLowerCase().contains(lowerKeyword))
                     .collect(Collectors.toList());

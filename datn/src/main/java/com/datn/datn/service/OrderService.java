@@ -19,4 +19,6 @@ public interface OrderService {
 
     List<Order> findByMemberAndOrderDateAfter(Member member, LocalDateTime date);
      List<Order> findLatestOrdersByMember(Member member);
+
+     List<String> getMemberAddresses(Long memberId);
 }
