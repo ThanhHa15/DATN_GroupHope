@@ -243,18 +243,32 @@
                             class="w-full bg-[#000f8f] text-white py-3 px-5 rounded-button font-bold hover:bg-yellow-600 transition-colors whitespace-nowrap text-lg">
                             Đăng nhập
                         </button>
+                        <div class="mt-6 text-center">
 
+
+</div>
                         <div class="mt-5 text-center">
                             <a href="forgetPass" class="text-blue-600 hover:underline">Quên mật khẩu?</a>
                         </div>
                     </form>
 
                     <div class="mt-8">
-                        <div class="relative flex items-center justify-center">
-                            <div class="border-t-2 border-gray-300 absolute w-full"></div>
-                            <span class="bg-white px-5 relative text-gray-500">Hoặc</span>
-                        </div>
+                        <!-- Divider chuyên nghiệp -->
+                    <div class="flex items-center my-6">
+                    <hr class="flex-grow border-gray-300" />
+                    <span class="px-4 text-gray-500 text-sm font-medium">Hoặc đăng nhập bằng</span>
+                    <hr class="flex-grow border-gray-300" />
+                    </div>
 
+                    <!-- Nút Google login -->
+                    <div class="w-full">
+                    <a th:href="@{/oauth2/authorization/google}"
+                        class="w-full flex items-center justify-center border border-gray-300 rounded-full py-3 px-6 text-gray-700 hover:bg-gray-100 transition">
+                        <img src="https://developers.google.com/identity/images/g-logo.png"
+                            alt="Google Logo" class="w-7 h-7 mr-3" />
+                        <span class="font-medium">Đăng nhập với Google</span>
+                    </a>
+                    </div>
                         <div class="mt-6 text-center">
                             <p class="text-gray-600">
                                 Bạn chưa có tài khoản?

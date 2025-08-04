@@ -1,6 +1,7 @@
 package com.datn.datn.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class MembersServiceImpl implements MembersService {
     }
 
     @Override
-    public Member findByEmail(String email) {
+    public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
     }
 

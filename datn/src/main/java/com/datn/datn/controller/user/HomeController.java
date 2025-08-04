@@ -12,41 +12,40 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.datn.model.Cart;
-import com.datn.datn.model.Category;
 import com.datn.datn.model.Member;
+import com.datn.datn.model.Product;
 import com.datn.datn.model.ProductVariant;
 import com.datn.datn.repository.CartRepository;
 import com.datn.datn.repository.MemberRepository;
 import com.datn.datn.repository.ProductVariantRepository;
-import com.datn.datn.repository.WishlistRepository;
-import com.datn.datn.model.Product;
-import com.datn.datn.service.CategoryService;
+import com.datn.datn.service.AuthService;
 import com.datn.datn.service.EmailService;
+import com.datn.datn.service.MembersService;
 import com.datn.datn.service.ProductVariantService;
 import com.datn.datn.service.WishlistService;
-import com.datn.datn.service.MembersService;
-import com.datn.datn.service.ProductService;
-import com.datn.datn.service.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class HomeController {
     private final ProductVariantService productVariantService;
@@ -68,6 +67,12 @@ public class HomeController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private OAuth2AuthorizedClientService authorizedClientService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public HomeController(ProductVariantService productVariantService) {
         this.productVariantService = productVariantService;
@@ -125,42 +130,79 @@ public class HomeController {
         return "views/shared/login";
     }
 
+    // Optional<Member> optional = memberRepository.loginByPhoneOrEmail(input,
+    // password);
+
+    // Tìm user bằng email hoặc phone
     @PostMapping("/login")
     public String login(
             @RequestParam String input,
             @RequestParam String password,
             HttpSession session,
             RedirectAttributes redirectAttributes,
-            Model model) {
+            HttpServletRequest request) { // Thêm HttpServletRequest
 
-        Optional<Member> optional = memberRepository.loginByPhoneOrEmail(input, password);
+        // Chuẩn hóa input
+        input = input.trim().toLowerCase();
+        password = password.trim();
 
-        if (optional.isPresent()) {
-            Member member = optional.get();
-            session.setAttribute("loggedInUser", member);
-            // 👉 Kiểm tra xem tài khoản có bị khóa không
-            if (!member.isActive()) {
-                model.addAttribute("error", "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.");
-                return "views/shared/login";
-            }
-            session.setAttribute("loggedInUser", member);
+        Optional<Member> optional = memberRepository.findByEmailOrPhone(input, input);
 
-            switch (member.getRole()) {
-                case "ADMIN":
-                    return "redirect:/admin/employees";
-                case "STAFF":
-                    return "redirect:/admin-products";
-                case "CUSTOMER":
-                    // Đặt cờ hiển thị thông báo vào Session
-                    session.setAttribute("showLoginSuccess", true);
-                    return "redirect:/"; // Redirect về trang chủ (không trả view trực tiếp)
-                default:
-                    model.addAttribute("error", "Không xác định được vai trò");
-                    return "views/shared/login";
-            }
+        if (optional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Sai email/số điện thoại hoặc mật khẩu");
+            return "redirect:/login";
+        }
+
+        Member member = optional.get();
+
+        // Debug
+        log.info("Login attempt for: {}", input);
+        log.info("Password match: {}", passwordEncoder.matches(password, member.getPassword()));
+
+        // Kiểm tra tài khoản Google
+        if ("GOOGLE".equals(member.getLoginType())) {
+            redirectAttributes.addFlashAttribute("error", "Vui lòng đăng nhập bằng Google");
+            return "redirect:/login";
+        }
+
+        // Kiểm tra mật khẩu (chỉ 1 lần)
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            redirectAttributes.addFlashAttribute("error", "Sai mật khẩu");
+            return "redirect:/login";
+        }
+
+        // Kiểm tra tài khoản bị khóa
+        if (!member.isActive()) {
+            redirectAttributes.addFlashAttribute("error", "Tài khoản đã bị khóa");
+            return "redirect:/login";
+        }
+
+        // Tạo session mới để tránh fixation attack
+        session.invalidate();
+        session = request.getSession(true);
+
+        // Lưu thông tin user vào session
+        session.setAttribute("loggedInUser", member);
+        log.info("User {} logged in successfully", member.getEmail());
+        Member loggedInUser = (Member) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) {
+            System.out.println("Chưa đăng nhập");
         } else {
-            model.addAttribute("error", "Sai email/số điện thoại hoặc mật khẩu");
-            return "views/shared/login";
+            System.out.println("Đã login: " + loggedInUser.getEmail());
+        }
+
+        // Chuyển hướng theo role
+        switch (member.getRole()) {
+            case "ADMIN":
+                return "redirect:/admin/employees";
+            case "STAFF":
+                return "redirect:/admin-products";
+            case "CUSTOMER":
+                session.setAttribute("showLoginSuccess", true);
+                return "redirect:/home";
+            default:
+                redirectAttributes.addFlashAttribute("error", "Vai trò không hợp lệ");
+                return "redirect:/login";
         }
     }
 
@@ -206,6 +248,11 @@ public class HomeController {
             return "views/shared/register";
         }
 
+        // Mã hóa mật khẩu trước khi lưu
+        String encodedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(encodedPassword);
+        member.setConfirmPassword(null); // Không cần lưu confirmPassword vào DB
+
         // Gán mặc định quyền và trạng thái
         member.setRole("CUSTOMER");
         member.setVerified(false);
@@ -214,12 +261,13 @@ public class HomeController {
         // Tạo và gán OTP
         String otp = authService.generateOtp();
         member.setOtp(otp);
+        member.setLoginType("SYSTEM");
 
         // Lưu thông tin member
         memberRepository.save(member);
 
         // Gửi mã OTP
-        authService.sendOtp(member.getEmail(), otp);
+        authService.sendOtp(member.getEmail());
 
         // Chuyển hướng đến trang nhập OTP
         redirectAttributes.addFlashAttribute("email", member.getEmail());
@@ -262,22 +310,28 @@ public class HomeController {
             @RequestParam("email") String email,
             RedirectAttributes redirectAttributes) {
 
-        Member member = memberService.findByEmail(email);
-        if (member == null) {
+        // Sử dụng Optional để xử lý trường hợp không tìm thấy email
+        Optional<Member> optionalMember = memberService.findByEmail(email);
+
+        if (optionalMember.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Email không tồn tại!");
             return "redirect:/forgetPass";
         }
 
-        String newPassword = UUID.randomUUID().toString().substring(0, 8);
-        member.setPassword(newPassword); // ⚠ Bạn nên mã hóa nếu đang dùng BCrypt!
+        Member member = optionalMember.get();
 
-        memberService.save(member); // Đã sửa lại tên đúng
+        // Tạo mật khẩu mới và mã hóa bằng BCrypt
+        String newRawPassword = UUID.randomUUID().toString().substring(0, 8);
+        String encodedPassword = passwordEncoder.encode(newRawPassword);
 
-        // In ra console (chỉ để test)
-        System.out.println("Mật khẩu mới của " + email + " là: " + newPassword);
+        member.setPassword(encodedPassword); // Lưu mật khẩu đã mã hóa
+        memberService.save(member);
 
-        // Gửi email (nếu có service email)
-        emailService.sendNewPassword(email, newPassword);
+        // In ra console (chỉ để test) - Nên xóa trong production
+        // System.out.println("Mật khẩu mới của {} là: {}", email, newRawPassword);
+
+        // Gửi email chứa mật khẩu mới (chưa mã hóa) cho người dùng
+        emailService.sendNewPassword(email, newRawPassword);
 
         redirectAttributes.addFlashAttribute("message", "Mật khẩu mới đã được gửi đến email của bạn!");
         return "redirect:/forgetPass";
@@ -319,7 +373,6 @@ public class HomeController {
 
         return "views/user/cart";
     }
-
 
     @GetMapping("/order")
     public String order(Model model, HttpSession session) {
@@ -431,6 +484,66 @@ public class HomeController {
         model.addAttribute("success", "Cập nhật thông tin thành công");
         model.addAttribute("member", currentUser);
         return "views/shared/editInf";
+    }
+
+    @GetMapping("/updateif")
+    public String showUpdateForm(HttpSession session, Model model) {
+        Member currentUser = (Member) session.getAttribute("loggedInUser");
+        if (currentUser == null)
+            return "redirect:/login";
+
+        model.addAttribute("member", currentUser);
+        return "views/shared/updateif"; // tên view hiển thị form
+    }
+
+    @PostMapping("/updateif")
+    public String updateProfile(HttpServletRequest request, HttpSession session, Model model) {
+        Member sessionUser = (Member) session.getAttribute("loggedInUser");
+        if (sessionUser == null) {
+            return "redirect:/login";
+        }
+
+        Member currentUser = memberService.getEmployeeById(sessionUser.getId());
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        // Lấy dữ liệu từ form
+        String fullname = request.getParameter("fullname");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String birthdayStr = request.getParameter("birthday");
+
+        // Validate đơn giản (nếu muốn kiểm tra thêm)
+        if (fullname == null || fullname.isBlank() ||
+                phone == null || phone.isBlank()) {
+            model.addAttribute("error", "Vui lòng nhập đầy đủ thông tin");
+            model.addAttribute("member", currentUser);
+            return "views/shared/updateif";
+        }
+
+        // Cập nhật dữ liệu
+        currentUser.setFullname(fullname);
+        currentUser.setEmail(email); // nếu bạn cho phép sửa email
+        currentUser.setPhone(phone);
+
+        if (birthdayStr != null && !birthdayStr.isBlank()) {
+            try {
+                currentUser.setBirthday(LocalDate.parse(birthdayStr));
+            } catch (Exception e) {
+                model.addAttribute("error", "Ngày sinh không hợp lệ");
+                model.addAttribute("member", currentUser);
+                return "views/shared/login";
+            }
+        }
+
+        // Lưu và cập nhật session
+        memberService.save(currentUser);
+        session.setAttribute("loggedInUser", currentUser);
+
+        model.addAttribute("success", "Cập nhật thông tin thành công");
+        model.addAttribute("member", currentUser);
+        return "redirect:/"; // ✅ đúng nếu view của bạn là file editInf.html
     }
 
     @GetMapping("/address")

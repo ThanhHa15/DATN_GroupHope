@@ -2,7 +2,8 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.5" />
+  <meta charset="UTF-8" name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.5" />
   <title>Dashboard Stats</title>
 
   <script src="https://cdn.tailwindcss.com/3.4.16"></script>
@@ -54,7 +55,7 @@
       margin: 0;
     }
 
-    
+
 
     .stats-container {
       display: flex;
@@ -153,37 +154,40 @@
       <!-- Card 1 -->
       <div class="stat-card">
         <img src="https://cdn-icons-png.flaticon.com/512/263/263115.png" class="stat-icon" />
-        <div class="stat-title">Total Sells</div>
-        <div class="stat-value">$654.66k</div>
+        <div class="stat-title">Tổng doanh thu</div>
+        <div class="stat-value">
+          99.999.999<span class="underline">đ</span>
+        </div>
+
         <div class="stat-change green">↑ +16.24%</div>
-        <a href="#" class="stat-link">View net earnings</a>
+        <a href="#" class="stat-link">Xem tất cả doanh thu</a>
       </div>
 
       <!-- Card 2 -->
       <div class="stat-card">
         <img src="https://cdn-icons-png.flaticon.com/512/1040/1040230.png" class="stat-icon" />
-        <div class="stat-title">Total Orders</div>
-        <div class="stat-value">$854.66k</div>
+        <div class="stat-title">Tổng đơn hàng</div>
+        <div class="stat-value">5</div>
         <div class="stat-change red">↓ -80.00%</div>
-        <a href="#" class="stat-link">View all orders</a>
+        <a href="#" class="stat-link">Xem tất cả đơn hàng</a>
       </div>
 
       <!-- Card 3 -->
       <div class="stat-card">
         <img src="https://cdn-icons-png.flaticon.com/512/456/456212.png" class="stat-icon" />
-        <div class="stat-title">Daily Visitors</div>
-        <div class="stat-value">$987.21M</div>
+        <div class="stat-title">Tổng số khách hàng</div>
+        <div class="stat-value">15</div>
         <div class="stat-change blue">↑ +80.00%</div>
-        <a href="#" class="stat-link">See details</a>
+        <a href="#" class="stat-link">Xem tất cả khách hàng</a>
       </div>
 
       <!-- Card 4 -->
       <div class="stat-card">
-        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828468.png" class="stat-icon" />
-        <div class="stat-title">Daily Visitors</div>
-        <div class="stat-value">$987.21M</div>
-        <div class="stat-change yellow">↑ +80.00%</div>
-        <a href="#" class="stat-link">See details</a>
+        <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="stat-icon" />
+        <div class="stat-title">Tổng số sản phẩm</div>
+        <div class="stat-value">20</div>
+        <div class="stat-change green">↑ +80.00%</div>
+        <a href="#" class="stat-link">Xem tất cả sản phẩm</a>
       </div>
     </div>
 

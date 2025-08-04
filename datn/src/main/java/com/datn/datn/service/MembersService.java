@@ -1,6 +1,7 @@
 package com.datn.datn.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,5 +28,5 @@ public interface MembersService {
 
     boolean existsByEmail(String email);
 
-    Member findByEmail(String email);
+    Optional<Member> findByEmail(String email);
 }

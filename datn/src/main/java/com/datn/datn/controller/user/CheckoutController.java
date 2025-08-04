@@ -2,6 +2,7 @@ package com.datn.datn.controller.user;
 
 import com.datn.datn.model.Member;
 import com.datn.datn.model.Order;
+import com.datn.datn.model.OrderDetail;
 import com.datn.datn.common.VnpayUtils;
 import com.datn.datn.model.Cart;
 import com.datn.datn.model.ProductVariant;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class CheckoutController {
     }
 
    @GetMapping()
-public String checkout(@RequestParam(value = "voucherCode", required = false) String voucherCode,
+    public String checkout(@RequestParam(value = "voucherCode", required = false) String voucherCode,
                        Model model, HttpSession session) {
     Object loggedInUser = session.getAttribute("loggedInUser");
 
@@ -145,7 +147,8 @@ public void payment(HttpServletResponse response, HttpSession session) throws IO
 
     String paymentUrl = VnpayUtils.createPaymentUrl(grandTotal, member);
     response.sendRedirect(paymentUrl);
-}   @GetMapping("/return")
+}  
+ @GetMapping("/return")
 public void paymentReturn(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
     String responseCode = request.getParameter("vnp_ResponseCode");
     System.out.println("VNPay responseCode = " + responseCode);
@@ -214,7 +217,30 @@ public void paymentReturn(HttpServletRequest request, HttpServletResponse respon
         order.setNote(note);
         order.setTotalPrice(itemTotal.doubleValue());
 
-        orderService.save(order);
+        Order savedOrder = orderService.save(order);
+
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for (Cart cartItem  : cartItems) {
+            ProductVariant varianteee = cartItem.getVariant();
+            int qtyseee = cartItem.getQuantity();
+            
+            // Cập nhật số lượng tồn kho
+            varianteee.setQuantityInStock(varianteee.getQuantityInStock() - qtyseee);
+            productVariantRepository.save(varianteee);
+
+            // Tạo chi tiết đơn hàng
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrder(savedOrder);
+            orderDetail.setProductVariant(varianteee);
+            orderDetail.setQuantity(qtyseee);
+            orderDetail.setPrice(varianteee.getDiscountedPrice() != null ? 
+                            varianteee.getDiscountedPrice().doubleValue() : 
+                            varianteee.getPrice());
+            
+            orderDetails.add(orderDetail);
+        }
+        savedOrder.setOrderDetails(orderDetails);
+        orderService.save(savedOrder);
     }
 
     if (voucher != null) {
@@ -227,7 +253,9 @@ public void paymentReturn(HttpServletRequest request, HttpServletResponse respon
     session.removeAttribute("checkoutAddress");
     session.removeAttribute("checkoutNote");
 
-    response.sendRedirect("/home");
+    session.setAttribute("paymentMethod", "Chuyển khoản");
+   response.sendRedirect("/result-order");
+
 }
 
 
@@ -338,7 +366,29 @@ public String confirmCod(HttpSession session) {
         order.setNote(note);
         order.setTotalPrice(itemTotal.doubleValue());
 
-        orderService.save(order);
+        Order savedOrder = orderService.save(order);
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for (Cart cartItem : cartItems) {
+            ProductVariant variants = cartItem.getVariant();
+            int qtys = cartItem.getQuantity();
+            
+            // Cập nhật số lượng tồn kho
+            variants.setQuantityInStock(variants.getQuantityInStock() - qtys);
+            productVariantRepository.save(variants);
+
+            // Tạo chi tiết đơn hàng
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrder(savedOrder);
+            orderDetail.setProductVariant(variants);
+            orderDetail.setQuantity(qtys);
+            orderDetail.setPrice(variants.getDiscountedPrice() != null ? 
+                            variants.getDiscountedPrice().doubleValue() : 
+                            variants.getPrice());
+            
+            orderDetails.add(orderDetail);
+        }
+        savedOrder.setOrderDetails(orderDetails);
+        orderService.save(savedOrder);
     }
 
     if (voucher != null) {
@@ -350,8 +400,10 @@ public String confirmCod(HttpSession session) {
     cartRepository.deleteAll(cartItems);
     session.removeAttribute("checkoutAddress");
     session.removeAttribute("checkoutNote");
+    session.setAttribute("paymentMethod", "Thanh toán khi nhận hàng (COD)");
 
-    return "redirect:/home";
+   return "redirect:/result-order";
+
 }
 
 }

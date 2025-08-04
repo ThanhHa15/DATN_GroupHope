@@ -4,14 +4,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Random;
 
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import com.datn.datn.model.Member;
 import com.datn.datn.repository.MemberRepository;
@@ -22,41 +19,55 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final MemberRepository userRepo;
+    private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AuthService.class);
     private final EntityManager entityManager;
 
-    public void register(String fullname, String phone, LocalDate birthday, String email, String password,
-            String confirmPassword) {
-        String otp = String.valueOf(new Random().nextInt(899999) + 100000);
-        Member existing = userRepo.findByEmail(email);
-        Member user = existing != null ? existing : Member.builder().email(email).build();
-        user.setFullname(fullname);
-        user.setPhone(phone);
-        user.setBirthday(birthday);
-        user.setPassword(password);
-        user.setOtp(otp);
-        user.setRole("CUSTOMER"); // Mặc định là CUSTOMER, có thể thay đổi sau
-        user.setConfirmPassword(confirmPassword);
-        user.setVerified(false);
-        userRepo.save(user);
+    @Transactional
+    public void register(String fullname, String phone, LocalDate birthday,
+            String email, String rawPassword, String confirmPassword) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("OTP xác minh");
-        message.setText("Mã OTP của bạn là: " + otp);
-        mailSender.send(message);
+        // Validate password match
+        if (!rawPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("Mật khẩu và xác nhận mật khẩu không khớp");
+        }
+
+        // Check if email already exists
+        if (memberRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email đã được đăng ký");
+        }
+
+        // Generate OTP
+        String otp = generateOtp();
+
+        // Create new user with encoded password
+        Member user = Member.builder()
+                .fullname(fullname)
+                .phone(phone)
+                .birthday(birthday)
+                .email(email)
+                .password(passwordEncoder.encode(rawPassword)) // Mã hóa mật khẩu
+                .otp(otp)
+                .role("CUSTOMER")
+                .verified(false)
+                .active(true)
+                .loginType("SYSTEM")
+                .build();
+
+        memberRepository.save(user);
+        sendOtpEmail(email, otp);
     }
 
     @Transactional
     public boolean verifyOtp(String email, String otp) {
         try {
-            // Sử dụng native query để tránh cache Hibernate
             Member member = entityManager.createQuery(
                     "SELECT m FROM Member m WHERE m.email = :email", Member.class)
                     .setParameter("email", email)
@@ -67,41 +78,36 @@ public class AuthService {
                 return false;
             }
 
-            // Cập nhật trực tiếp bằng native query
-            int updated = entityManager.createNativeQuery(
-                    "UPDATE members SET verified = 1, otp = NULL WHERE email = ?")
-                    .setParameter(1, email)
-                    .executeUpdate();
+            member.setVerified(true);
+            member.setOtp(null);
+            memberRepository.save(member);
 
-            entityManager.flush();
-            entityManager.clear(); // Clear cache
-
-            logger.info("Updated {} records for email: {}", updated, email);
-            return updated > 0;
+            return true;
 
         } catch (NoResultException e) {
-            logger.error("Member not found: {}", email);
+            log.error("Member not found: {}", email);
             return false;
         } catch (Exception e) {
-            logger.error("Verification failed", e);
+            log.error("Verification failed for email: {}", email, e);
             throw new RuntimeException("Xác thực thất bại", e);
         }
     }
 
     public String generateOtp() {
-        // Tạo mã OTP 6 chữ số ngẫu nhiên
-        Random random = new Random();
-        int otpNumber = 100000 + random.nextInt(900000);
-        return String.valueOf(otpNumber);
+        return String.valueOf(100000 + new Random().nextInt(900000));
     }
 
-    public void sendOtp(String email, String otp) {
-        Member member = userRepo.findByEmail(email); // Đổi memberRepository thành userRepo
-        if (member != null) {
-            member.setOtp(otp);
-            userRepo.save(member); // Đổi memberRepository thành userRepo
-        }
+    public void sendOtp(String email) {
+        String otp = generateOtp();
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Email không tồn tại"));
 
+        member.setOtp(otp);
+        memberRepository.save(member);
+        sendOtpEmail(email, otp);
+    }
+
+    private void sendOtpEmail(String email, String otp) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
@@ -124,15 +130,11 @@ public class AuthService {
 
             helper.setTo(email);
             helper.setSubject("HopePhone - Mã OTP xác thực tài khoản");
-            helper.setText(htmlContent, true); // Gửi dưới dạng HTML
+            helper.setText(htmlContent, true);
             mailSender.send(message);
         } catch (MessagingException e) {
+            log.error("Failed to send OTP email to {}", email, e);
             throw new RuntimeException("Lỗi khi gửi email OTP", e);
         }
-
     }
-    // public void sendOtp(String email) {
-    // // Tạo và lưu mã OTP, sau đó gửi email/sms
-    // }
-
 }

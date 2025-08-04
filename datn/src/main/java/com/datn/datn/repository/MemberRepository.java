@@ -27,9 +27,15 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByRoleInAndFullnameContainingIgnoreCaseOrEmailContainingIgnoreCase(
             List<String> roles, String nameKeyword, String emailKeyword);
 
-    Member findByEmail(String email);
+    Optional<Member> findByEmail(String email); // Thay đổi kiểu trả về
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT m FROM Member m WHERE m.email = :email")
     Member findByEmailForUpdate(@Param("email") String email);
+
+   // Optional<Member> findByEmailOrPhone(String email, String phone);
+
+    @Query("SELECT m FROM Member m WHERE m.email = :email OR m.phone = :phone")
+    Optional<Member> findByEmailOrPhone(@Param("email") String email, @Param("phone") String phone);
+
 }

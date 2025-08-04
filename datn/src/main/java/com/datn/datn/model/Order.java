@@ -2,6 +2,8 @@ package com.datn.datn.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,5 +42,9 @@ public class Order {
 
     @Column(name = "total_price", nullable = false)
     private Double totalPrice;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+private List<OrderDetail> orderDetails = new ArrayList<>();
+
 
 }

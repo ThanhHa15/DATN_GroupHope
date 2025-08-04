@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cập nhật thông tin</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      input:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+    </style>
+  </head>
+  <body class="bg-white font-['Roboto']">
+    <div class="max-w-3xl mx-auto mt-12 px-6 py-10 bg-white rounded-xl shadow-md">
+      <h1 class="text-4xl font-bold text-center text-[#000f8f] mb-8">Cập nhật thông tin</h1>
+      <form id="updateForm" method="post" th:action="@{/updateif}" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="fullname" class="block text-sm font-medium text-gray-700 mb-1">Họ và tên<span class="text-red-500">*</span></label>
+            <input type="text" id="fullname" name="fullname" 
+            th:value="${member.fullname}" placeholder="Nhập họ tên"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700" />
+            <p class="error-message hidden text-red-500 text-xs mt-1">Vui lòng nhập họ và tên đầy đủ của bạn.</p>
+          </div>
+
+          <div>
+            <label for="birthday" class="block text-sm font-medium text-gray-700 mb-1">Ngày sinh<span class="text-red-500">*</span></label>
+            <input type="date" id="birthday" name="birthday" th:value="${#temporals.format(member.birthday, 'yyyy-MM-dd')}"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700" />
+            <p class="error-message hidden text-red-500 text-xs mt-1">Vui lòng chọn ngày sinh.</p>
+          </div>
+
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại<span class="text-red-500">*</span></label>
+            <input type="tel" id="phone" name="phone" th:value="${member.phone}" placeholder="Nhập số điện thoại"
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700" />
+            <p class="error-message hidden text-red-500 text-xs mt-1">Vui lòng nhập số điện thoại hợp lệ.</p>
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email (không bắt buộc)<span class="text-red-500">*</span></label>
+            <input type="email" id="email" name="email" th:value="${member.email}" readonly
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-gray-100" />
+            <p class="text-gray-500 hidden mt-1">Email sẽ không được cập nhật.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center mt-4">
+          <input type="checkbox" id="subscribe" name="subscribe"
+                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+          <label for="subscribe" class="ml-2 block text-sm text-gray-700">
+            Đăng ký nhận tin khuyến mãi từ HopePhone
+          </label>
+        </div>
+
+        <div class="mt-4">
+                    <label class="inline-flex items-start gap-3 cursor-pointer">
+                        <div class="flex items-center h-5">
+                            <input type="checkbox" required
+                                class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer">
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            Bằng việc Đăng ký, bạn đã đọc và đồng ý với
+                            <button type="button" onclick="openTermsModal()" class="text-primary hover:underline text-red-500">Điều
+                                khoản sử dụng</button>
+                            và
+                            <button type="button" onclick="openPrivacyModal()"
+                                class="text-primary hover:underline text-red-500">Chính sách bảo mật</button>
+                            của HopePhone.
+                        </div>
+                    </label>
+                </div>
+                <!-- Modal: Điều khoản sử dụng -->
+                <div id="termsModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg relative">
+                        <button onclick="closeTermsModal()"
+                            class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+                        <h2 class="text-xl font-semibold text-center mb-4 text-red-600">ĐIỀU KHOẢN SỬ DỤNG</h2>
+                        <div class="max-h-[60vh] overflow-y-auto text-sm text-gray-700 space-y-4">
+                            <p><strong>PHẦN I. QUY ĐỊNH CHUNG</strong></p>
+
+                            <p><strong>I. Nguyên tắc hoạt động:</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>HopePhone.vn</strong> là nền tảng thương mại điện tử do <strong>nhóm sinh
+                                        viên FPT Polytechnic</strong> xây dựng, phát triển trong khuôn khổ đồ án tốt
+                                    nghiệp.</li>
+                                <li>Mục tiêu của website là mô phỏng quy trình bán hàng trực tuyến, cung cấp trải nghiệm
+                                    thực tế về đặt hàng – giao dịch – vận hành hệ thống thương mại điện tử.</li>
+                                <li>Tất cả thông tin sản phẩm, giá cả, và chức năng đặt hàng được xây dựng với mục đích
+                                    học tập, không nhằm mục đích kinh doanh thương mại thực tế.</li>
+                                <li>Thành viên truy cập và sử dụng website cần hiểu rõ tính chất mô phỏng và đồng ý
+                                    không khiếu nại hay yêu cầu ràng buộc pháp lý với sản phẩm, giao dịch trên nền tảng
+                                    này.</li>
+                            </ul>
+
+                            <p><strong>II. Định nghĩa:</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>Website:</strong> Là hệ thống HopePhone.vn được nhóm sinh viên xây dựng nhằm
+                                    mục đích trình bày đồ án và mô phỏng bán hàng trực tuyến.</li>
+                                <li><strong>Người sử dụng:</strong> Là tất cả người dùng truy cập website, bao gồm cả
+                                    khách tham khảo và người thực hiện hành vi đặt hàng thử nghiệm.</li>
+                                <li><strong>Nhóm phát triển:</strong> Là sinh viên thực hiện dự án, chịu trách nhiệm vận
+                                    hành, cập nhật và đảm bảo tính ổn định của website trong thời gian trình bày đồ án.
+                                </li>
+                            </ul>
+
+                            <p><strong>III. Quy định sử dụng:</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Người dùng không được đăng tải nội dung vi phạm pháp luật, đạo đức xã hội hoặc can
+                                    thiệp vào hệ thống của website dưới bất kỳ hình thức nào.</li>
+                                <li>HopePhone.vn có quyền cập nhật, chỉnh sửa hoặc xóa bỏ nội dung website mà không cần
+                                    báo trước để phục vụ mục tiêu học thuật.</li>
+                                <li>Mọi hành vi khai thác website vào mục đích thương mại, gian lận hoặc vi phạm luật sở
+                                    hữu trí tuệ đều bị nghiêm cấm.</li>
+                            </ul>
+
+                            <p class="italic">Nếu bạn tiếp tục sử dụng website này, đồng nghĩa với việc bạn đã đọc, hiểu
+                                và chấp nhận toàn bộ các điều khoản trên.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Modal: Chính sách bảo mật -->
+                <div id="privacyModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+                    <div class="bg-white w-full max-w-2xl p-6 rounded-lg shadow-lg relative">
+                        <button onclick="closePrivacyModal()"
+                            class="absolute top-3 right-3 text-gray-500 hover:text-black text-xl font-bold">&times;</button>
+                        <h2 class="text-xl font-semibold text-center mb-4 text-red-600">CHÍNH SÁCH BẢO MẬT THÔNG TIN
+                        </h2>
+                        <div class="max-h-[60vh] overflow-y-auto text-sm text-gray-700 space-y-4">
+                            <p><strong>PHẦN I. MỤC ĐÍCH VÀ PHẠM VI THU THẬP</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>HopePhone.vn thu thập thông tin cá nhân như: họ tên, số điện thoại, email, ngày
+                                    sinh, địa chỉ... khi người dùng đăng ký tài khoản.</li>
+                                <li>Mục đích thu thập là để mô phỏng trải nghiệm đăng ký, mua hàng và nhận thông tin sản
+                                    phẩm – phục vụ mục đích học tập, không sử dụng cho hoạt động thương mại thật.</li>
+                            </ul>
+
+                            <p><strong>PHẦN II. PHẠM VI SỬ DỤNG THÔNG TIN</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Thông tin người dùng chỉ được sử dụng trong phạm vi nội bộ nhóm sinh viên thực hiện
+                                    dự án để trình bày chức năng của website.</li>
+                                <li>Không chia sẻ, bán hoặc cho thuê bất kỳ thông tin cá nhân nào cho bên thứ ba dưới
+                                    mọi hình thức.</li>
+                            </ul>
+
+                            <p><strong>PHẦN III. THỜI GIAN LƯU TRỮ THÔNG TIN</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Thông tin cá nhân được lưu trữ trong hệ thống cơ sở dữ liệu trong suốt thời gian
+                                    website phục vụ việc trình bày đồ án.</li>
+                                <li>Sau khi hoàn tất quá trình đánh giá đồ án, toàn bộ dữ liệu có thể được xóa bỏ hoặc
+                                    ngừng sử dụng tùy theo quyết định của nhóm phát triển.</li>
+                            </ul>
+
+                            <p><strong>PHẦN IV. QUYỀN CỦA NGƯỜI DÙNG</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Người dùng có quyền yêu cầu kiểm tra, cập nhật hoặc xóa thông tin cá nhân của mình
+                                    thông qua biểu mẫu hỗ trợ trên website.</li>
+                                <li>Có quyền phản ánh về việc sử dụng thông tin sai mục đích (nếu có) đến nhóm quản trị
+                                    website để được giải quyết.</li>
+                            </ul>
+
+                            <p><strong>PHẦN V. CAM KẾT BẢO MẬT THÔNG TIN</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>HopePhone.vn cam kết bảo mật tuyệt đối mọi thông tin cá nhân theo chính sách đã nêu.
+                                </li>
+                                <li>Áp dụng các biện pháp kỹ thuật và bảo mật hợp lý để bảo vệ dữ liệu khỏi truy cập
+                                    trái phép hoặc rò rỉ thông tin.</li>
+                                <li>Trong mọi trường hợp, dữ liệu người dùng không được sử dụng ngoài phạm vi phục vụ đồ
+                                    án tốt nghiệp.</li>
+                            </ul>
+
+                            <p class="italic">Việc sử dụng website đồng nghĩa với việc bạn đã đọc, hiểu và đồng ý với
+                                chính sách bảo mật thông tin này.</p>
+                        </div>
+
+                    </div>
+                    </div>
+
+        <div class="flex justify-between mt-6">
+          <a href="/login" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-white">
+            ← Quay lại đăng nhập
+          </a>
+          <button type="submit" class="px-6 py-2 bg-[#000f8f] text-white rounded-md hover:bg-[#000f8f]">
+            Hoàn tất đăng kí 
+          </button>
+        </div>
+      </form>
+    </div>
+    <script>
+      document.getElementById("updateForm").addEventListener("submit", function (e) {
+
+  let isValid = true;
+
+  const fullname = document.getElementById("fullname");
+  const email = document.getElementById("email");
+  const phone = document.getElementById("phone");
+  const birthday = document.getElementById("birthday"); // Thêm dòng này
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^[0-9]{10,11}$/;
+
+  const showError = (el, message) => {
+    const msg = el.parentElement.querySelector(".error-message");
+    if (msg) {
+      msg.textContent = message;
+      msg.classList.remove("hidden");
+      el.classList.add("border-red-500");
+    }
+  };
+
+  const hideError = (el) => {
+    const msg = el.parentElement.querySelector(".error-message");
+    if (msg) {
+      msg.classList.add("hidden");
+      el.classList.remove("border-red-500");
+    }
+  };
+
+  // Validate các trường
+  if (!fullname.value.trim()) {
+    showError(fullname, "Vui lòng nhập họ và tên");
+    isValid = false;
+  } else hideError(fullname);
+
+  if (!emailRegex.test(email.value.trim())) {
+    showError(email, "Vui lòng nhập email hợp lệ");
+    isValid = false;
+  } else hideError(email);
+
+  if (!phoneRegex.test(phone.value.trim())) {
+    showError(phone, "Vui lòng nhập số điện thoại hợp lệ");
+    isValid = false;
+  } else hideError(phone);
+
+  // Validate ngày sinh (quan trọng)
+  if (!birthday.value) {
+    showError(birthday, "Vui lòng nhập ngày sinh");
+    isValid = false;
+  } else {
+    const birthDate = new Date(birthday.value);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    // Kiểm tra nếu chưa đến sinh nhật trong năm nay
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    
+    if (age < 16) {   
+      showError(birthday, "Xin lỗi, bạn chưa  đủ 16 tuổi");
+      isValid = false;
+    } else {
+      hideError(birthday);
+    }
+  }
+
+  
+
+  if (!isValid) {
+    e.preventDefault();
+    
+    // Tự động cuộn đến trường bị lỗi đầu tiên
+    const firstErrorField = document.querySelector('.border-red-500');
+    if (firstErrorField) {
+      firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstErrorField.focus();
+    }
+  }
+});
+    </script>
+    <script id="toggle-switch">
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.getElementById('student-toggle');
+            const dot = toggle.nextElementSibling.nextElementSibling;
+
+            toggle.addEventListener('change', function () {
+                if (this.checked) {
+                    dot.style.transform = 'translateX(24px)';
+                    toggle.nextElementSibling.classList.remove('bg-gray-300');
+                    toggle.nextElementSibling.classList.add('bg-primary');
+                } else {
+                    dot.style.transform = 'translateX(0)';
+                    toggle.nextElementSibling.classList.remove('bg-primary');
+                    toggle.nextElementSibling.classList.add('bg-gray-300');
+                }
+            });
+        });
+    </script>
+
+    <script id="checkbox-toggle">
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            checkboxes.forEach(checkbox => {
+                if (!checkbox.id || checkbox.id !== 'student-toggle') {
+                    checkbox.addEventListener('change', function () {
+                        const checkmark = this.parentElement.querySelector('div:last-child');
+
+                        if (this.checked) {
+                            checkmark.classList.add('bg-primary', 'border-primary');
+                            checkmark.innerHTML = '<i class="ri-check-line text-white text-xs"></i>';
+                        } else {
+                            checkmark.classList.remove('bg-primary', 'border-primary');
+                            checkmark.classList.add('border-gray-300');
+                            checkmark.innerHTML = '';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        function openTermsModal() {
+            document.getElementById("termsModal").classList.remove("hidden");
+        }
+        function closeTermsModal() {
+            document.getElementById("termsModal").classList.add("hidden");
+        }
+
+        function openPrivacyModal() {
+            document.getElementById("privacyModal").classList.remove("hidden");
+        }
+        function closePrivacyModal() {
+            document.getElementById("privacyModal").classList.add("hidden");
+        }
+    </script>
+
+  </body>
+</html>

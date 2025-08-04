@@ -40,13 +40,13 @@ public class Member {
     @Size(max = 100, message = "Họ và tên không quá 100 ký tự")
     private String fullname;
 
-    @NotNull(message = "Ngày sinh không được để trống")
-    @Past(message = "Ngày sinh phải là ngày trong quá khứ")
+    // @NotNull(message = "Ngày sinh không được để trống")
+    // @Past(message = "Ngày sinh phải là ngày trong quá khứ")
     // @MinAge(value = 16, message = "Thành viên phải đủ ít nhất 16 tuổi")
     private LocalDate birthday;
 
-    @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^[0-9]{10,15}$", message = "Số điện thoại không hợp lệ")
+    // @NotBlank(message = "Số điện thoại không được để trống")
+    // @Pattern(regexp = "^[0-9]{10,15}$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
     @NotBlank(message = "Email không được để trống")
@@ -77,5 +77,8 @@ public class Member {
 
     @Version
     private Integer version;
+
+    @Column(nullable = false)
+    private String loginType; 
 
 }
