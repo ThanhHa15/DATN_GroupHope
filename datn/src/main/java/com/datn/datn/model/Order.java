@@ -43,8 +43,16 @@ public class Order {
     @Column(name = "total_price", nullable = false)
     private Double totalPrice;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-private List<OrderDetail> orderDetails = new ArrayList<>();
+    @Column(name = "payment_status", columnDefinition = "NVARCHAR(50)")
+    private String paymentStatus;
 
+    @Column(name = "order_status", columnDefinition = "NVARCHAR(50)")
+    private String orderStatus;
+
+    private Double discountAmount;
+
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetails = new ArrayList<>();
 
 }

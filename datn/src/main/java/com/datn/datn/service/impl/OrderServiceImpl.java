@@ -36,11 +36,12 @@ public class OrderServiceImpl implements OrderService {
     public void deleteById(Long id) {
         orderRepository.deleteById(id);
     }
-   
-   @Override
+
+    @Override
     public List<Order> findByMemberAndOrderDateAfter(Member member, LocalDateTime date) {
         return orderRepository.findByMemberAndOrderDateAfter(member, date);
     }
+
     @Override
     public List<Order> findLatestOrdersByMember(Member member) {
         return orderRepository.findByMemberOrderByOrderDateDesc(member);
@@ -49,5 +50,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<String> getMemberAddresses(Long memberId) {
         return orderRepository.findDistinctAddressesByMemberId(memberId);
+    }
+
+    @Override
+    public List<Order> getOrdersByMemberId(Long memberId) {
+        return orderRepository.findByMemberId(memberId);
     }
 }

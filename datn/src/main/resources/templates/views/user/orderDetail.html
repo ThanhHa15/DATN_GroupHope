@@ -72,43 +72,48 @@
       <!-- Order Header -->
       <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-2">
         <h1 class="text-3xl font-bold text-gray-900">Chi tiết đơn hàng</h1>
-        <p class="text-gray-500 text-base">Ngày tạo: 17/06/2025</p>
+        <p class="text-gray-500 text-base">Ngày tạo: <span
+            th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"></span></p>
       </div>
 
       <!-- Order Status -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">TT thanh toán:</span>
-          <span class="status-pending font-semibold text-[#e5a500]">Chưa thanh toán</span>
+          <span th:text="${order.paymentStatus}" class="status-pending font-semibold text-[#e5a500]"></span>
         </div>
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">TT vận chuyển:</span>
-          <span class="status-pending font-semibold text-[#e5a500]">Chờ xác nhận</span>
+          <span th:text="${order.orderStatus}" class="status-pending font-semibold text-[#e5a500]"></span>
         </div>
         <div class="flex items-center text-base">
-                <span class="text-gray-700 font-semibold mr-1">Mã vận đơn:</span>
-                <span class="text-gray-800 font-medium">—</span>
-              </div>
+          <span class="text-gray-700 font-semibold mr-1">Mã vận đơn:</span>
+          <span class="text-gray-800 font-medium">—</span>
+        </div>
       </div>
 
       <!-- Order Info Boxes -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
           <h2 class=" font-bold mb-2 text-lg text-[#080c8c]">ĐỊA CHỈ GIAO HÀNG</h2>
-          <p class="text-gray-800 text-base font-semibold">TEST LÊ</p>
-          <p class="text-gray-700 text-sm">12 Tôn Bản, Thị xã Sơn Tây, Hà Nội</p>
-          <p class="text-gray-700 text-sm">+84987654325</p>
+          <p th:text="${order.member.fullname}" class="text-gray-800 text-base font-semibold"></p>
+          <p th:text="${order.address}" class="text-gray-700 text-sm"></p>
+          <p th:text="${order.member.phone}" class="text-gray-700 text-sm"></p>
+
         </div>
 
         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
           <h2 class="text-[#080c8c] font-bold mb-2 text-lg">THANH TOÁN</h2>
-          <p class="text-gray-700 text-base font-semibold">Chuyển khoản</p>
+          <p th:text="${session.paymentMethod}" class="text-gray-700 text-base font-semibold"></p>
         </div>
 
         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
           <h2 class="text-[#080c8c] font-bold mb-2 text-lg">GHI CHÚ</h2>
-          <p class="text-gray-700 text-base font-semibold">Không có ghi chú</p>
+          <p th:text="${#strings.isEmpty(order.note) ? 'Không có ghi chú' : order.note}"
+            class="text-gray-700 text-base font-semibold">
+          </p>
         </div>
+
       </div>
 
       <!-- Order Items -->
@@ -128,39 +133,73 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="text-base">
+            <tr th:each="detail : ${orderDetails}" class="text-base">
               <td class="py-3 px-4 border border-gray-200">
                 <div class="flex items-center gap-3">
-                  <img
-                    src="https://bizweb.dktcdn.net/100/502/883/products/230628110910-iphone-14-pro-max-1-1bad29d8-76a1-4f4a-9bc2-93eee6a2d7ea-61e61768-f143-48bd-a884-d552977c5f1c.png?v=1700193758290"
+                  <img th:src="@{'/images/' + ${detail.productVariant.imagesno2}}"
                     class="w-12 h-12 object-contain rounded bg-gray-100" />
-                  <span class="text-gray-800 font-medium">iPhone 14 Pro Max 1TB - Chính hãng VN/A</span>
+
+                  <div>
+                    <!-- Tên sản phẩm -->
+                    <div class="text-gray-800 font-semibold text-sm"
+                      th:text="${detail.productVariant.product.productName}"></div>
+
+                    <!-- Màu sắc và dung lượng -->
+                    <div class="text-gray-500 text-xs mt-1">
+                      <span th:text="'Màu: ' + ${detail.productVariant.color}"></span> |
+                      <span th:text="'Dung lượng: ' + ${detail.productVariant.storage}"></span>
+                    </div>
+                  </div>
                 </div>
               </td>
-              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium">demo123</td>
-              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium">19.429.000đ</td>
-              <td class="py-3 px-4 border border-gray-200 text-center text-gray-800 font-medium">1</td>
-              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium">19.429.000đ</td>
+
+              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium"></td>
+
+              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium"
+                th:text="${#numbers.formatDecimal(detail.price, 1, 'COMMA', 0, 'POINT') + '₫'}"></td>
+
+              <td class="py-3 px-4 border border-gray-200 text-center text-gray-800 font-medium"
+                th:text="${detail.quantity}"></td>
+
+              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium"
+                th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 1, 'COMMA', 0, 'POINT') + '₫'}">
+              </td>
+
             </tr>
           </tbody>
+
         </table>
       </div>
 
 
 
-      <!-- Order Summary -->
+
       <div class="bg-white rounded-lg border border-gray-200 p-6">
         <div class="flex justify-between text-base py-1">
           <span class="text-gray-600 font-semibold">Khuyến mãi:</span>
-          <span class="text-gray-800 font-medium">0đ</span>
+
+          <!-- Nếu có khuyến mãi -->
+          <span th:if="${order.discountAmount != null and order.discountAmount > 0}" class="text-green-600 font-medium">
+            <span th:text="'- ' + ${#numbers.formatDecimal(discountAmount, 1, 'COMMA', 0, 'POINT') + '₫'}"></span>
+          </span>
+
+          <!-- Nếu không có -->
+          <span th:if="${order.discountAmount == null or order.discountAmount <= 0}" class="text-gray-800 font-medium">
+            0₫
+          </span>
         </div>
+
+
+
         <div class="flex justify-between text-base py-1 border-b border-gray-100">
           <span class="text-gray-600 font-semibold">Phí vận chuyển:</span>
-          <span class="text-gray-800 font-medium">40.000đ</span>
+          <span th:text="${#numbers.formatDecimal(shippingFee, 1, 'COMMA', 0, 'POINT') + '₫'}"
+            class="text-gray-800 font-medium">0đ</span>
         </div>
         <div class="flex justify-between items-center py-3">
           <span class="text-gray-800 font-bold text-lg">Tổng tiền:</span>
-          <span class="text-red-600 text-2xl font-bold">19.469.000đ</span>
+          <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"
+            class="text-red-600 text-2xl font-bold">19.469.000đ</span>
         </div>
       </div>
 

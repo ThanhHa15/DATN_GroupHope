@@ -374,15 +374,15 @@ public class HomeController {
         return "views/user/cart";
     }
 
-    @GetMapping("/order")
-    public String order(Model model, HttpSession session) {
-        return "views/user/order";
-    }
+    // @GetMapping("/order")
+    // public String order(Model model, HttpSession session) {
+    //     return "views/user/order";
+    // }
 
-    @GetMapping("/order-detail")
-    public String orderDetail(Model model, HttpSession session) {
-        return "views/user/orderDetail";
-    }
+    // @GetMapping("/order-detail")
+    // public String orderDetail(Model model, HttpSession session) {
+    //     return "views/user/orderDetail";
+    // }
 
     @GetMapping("/guarantee")
     public String guarantee(Model model, HttpSession session) {

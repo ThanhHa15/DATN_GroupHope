@@ -18,7 +18,10 @@ public interface OrderService {
     void deleteById(Long id);
 
     List<Order> findByMemberAndOrderDateAfter(Member member, LocalDateTime date);
-     List<Order> findLatestOrdersByMember(Member member);
 
-     List<String> getMemberAddresses(Long memberId);
+    List<Order> findLatestOrdersByMember(Member member);
+
+    List<String> getMemberAddresses(Long memberId);
+
+    List<Order> getOrdersByMemberId(Long memberId);
 }
