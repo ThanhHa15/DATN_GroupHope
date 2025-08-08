@@ -132,135 +132,212 @@
 
     <h2>Quản lý nhân viên</h2>
     <div class="container2">
-        <!-- Form tìm kiếm -->
+
+
+        <!-- <div th:if="${success}" class="alert alert-success" th:text="${success}"></div> -->
+        <!-- <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div> -->
         <div class="moi">
-            <form th:action="@{/admin/employees}" method="get" class="justify-end gap-2 mb-4">
-                <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm người dùng..."
-                    class="border rounded px-3 py-2 text-sm" style="width: 850px; height: 37px;">
-                <button type="submit" class="bg-green-500 hover:bg-green-400 text-white text-sm px-4 py-2 rounded">
-                    Search
-                </button>
-            </form>
-            <button id="toggleFormBtn" class="btn btn-primary">
+            <form
+            th:action="@{/admin/employees}"
+            method="get"
+            class="justify-end gap-2 mb-4"
+          >
+            <input
+  type="text"
+  name="keyword"
+  th:value="${keyword}"
+  placeholder="Tìm kiếm người dùng..."
+  class="border rounded px-3 py-2 text-sm w-64"
+  style="width: 850px; height: 37px;" 
+/>
+
+            <button
+              type="submit"
+              class="bg-green-500 hover:bg-green-400 text-white text-sm px-4 py-2 rounded"
+            >
+              Search
+            </button>
+          </form>
+
+
+
+            <button id="toggleFormBtn">
                 <i class="bi bi-plus-circle"></i> Thêm nhân viên
             </button>
         </div>
-
-        <!-- Form thêm/sửa nhân viên -->
-        <div id="employeeForm" th:class="'form-container card shadow-sm ' + (${employee.id != null} ? 'active' : '')">
+        <div id="employeeFormContainer" style="margin-top: 10px;"
+            th:class="'form-container card shadow-sm ' + (${employee.id != null} ? 'active' : '')">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0" th:text="${employee.id != null} ? 'Chỉnh sửa nhân viên' : 'Thêm nhân viên mới'"></h5>
             </div>
             <div class="card-body">
-                <form id="employeeForm" th:object="${employee}" method="post" th:action="@{/admin/employees/save}">
+                <!-- BẮT ĐẦU FORM -->
+                <form id="employeeForm" th:object="${employee}" method="post" th:action="@{/admin/employees/save}" novalidate>
+                    <div th:if="${success}" id="successMessage" th:data-message="${success}"></div>
+
                     <input type="hidden" th:field="*{id}" />
 
                     <div class="row g-3">
-                        <!-- Họ tên -->
-                        <div class="col-md-6">
-                            <label class="form-label">Họ tên <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="fullname" th:field="*{fullname}" required>
-                            <div id="fullname-error" class="error-message"></div>
-                            <div th:errors="*{fullname}" class="text-danger"></div>
-                        </div>
+            <!-- Họ tên -->
+            <div class="col-md-6">
+            <label class="form-label">Họ tên <span class="text-danger">*</span></label>
+            <input type="text" class="form-control"
+                    th:field="*{fullname}"
+                    id="fullname"
+                    th:classappend="${#fields.hasErrors('fullname')} ? 'border-red-500' : ''" />
+            
+            <!-- Lỗi từ server -->
+            <div th:if="${#fields.hasErrors('fullname')}" class="text-red-500 text-xs mt-1">
+                <span th:errors="*{fullname}">Vui lòng nhập họ tên</span>
+            </div>
+
+            <!-- Lỗi từ JS -->
+            <div id="fullname-error" class="text-danger text-xs mt-1" style="display: none;">
+                Vui lòng nhập họ tên
+            </div>
+            </div>
+
 
                         <!-- Email -->
-                        <div class="col-md-6">
-                            <label class="form-label">Email <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                            <div id="email-error" class="error-message"></div>
-                            <div th:errors="*{email}" class="text-danger"></div>
-                        </div>
+                       <div class="col-md-6">
+                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                    <input id="email" type="email" class="form-control" th:field="*{email}"
+                        th:attr="required=${employee.id == null} ? 'required' : null"
+                        th:classappend="${#fields.hasErrors('email')} ? 'border-red-500' : ''">
+                    <p th:if="${#fields.hasErrors('email')}" class="text-red-500 text-xs mt-1">
+                        <span th:errors="*{email}">Vui lòng nhập email</span>
+                        <span th:errors="*{email}">Vui lòng nhập email hợp lệ</span>
+                    </p>
+                    <div id="email-error" class="text-danger text-xs mt-1" style="display:none;">Vui lòng nhập email hợp lệ</div>
+                </div>
 
-                        <!-- Số điện thoại -->
+                        <!-- SĐT -->
                         <div class="col-md-6">
-                            <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
-                            <input type="tel" class="form-control" id="phone" th:field="*{phone}" required>
-                            <div id="phone-error" class="error-message"></div>
-                            <div th:errors="*{phone}" class="text-danger"></div>
+                        <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                        <input id="phone" type="tel" class="form-control" th:field="*{phone}" 
+                            th:classappend="${#fields.hasErrors('phone')} ? 'border-red-500' : ''"
+                            required
+                            pattern="[0-9]{10,11}"
+                            title="Vui lòng nhập 10-11 chữ số">
+                            
+                        <p th:if="${#fields.hasErrors('phone')}" class="text-red-500 text-xs mt-1">
+                            <span th:errors="*{phone}">Vui lòng nhập số điện thoại</span>
+                            <span th:errors="*{phone}">Vui lòng nhập số điện thoại hợp lệ</span>
+                        </p>
+                        <div id="phone-error" class="text-danger text-xs mt-1" style="display:none;">Vui lòng nhập số điện thoại hợp lệ</div>
                         </div>
 
                         <!-- Ngày sinh -->
                         <div class="col-md-6">
-                            <label class="form-label">Ngày sinh <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="birthday"
-                                th:value="${employee.birthday != null ? #temporals.format(employee.birthday, 'yyyy-MM-dd') : ''}"
-                                required>
-                            <div id="birthday-error" class="error-message"></div>
-                            <div th:errors="*{birthday}" class="text-danger"></div>
-                        </div>
+                <label class="form-label">Ngày sinh <span class="text-danger">*</span></label>
+                <input id="birthday" type="date" class="form-control" name="birthday"
+                    th:value="${employee.birthday != null ? #temporals.format(employee.birthday, 'yyyy-MM-dd') : ''}"
+                    th:attr="required=${employee.id == null} ? 'required' : null"
+                    th:classappend="${#fields.hasErrors('birthday')} ? 'border-red-500' : ''"
+                    max="#{T(java.time.LocalDate).now().minusYears(16).format(@java.time.format.DateTimeFormatter@ofPattern('yyyy-MM-dd'))}">
+                
+                <p th:if="${#fields.hasErrors('birthday')}" class="text-red-500 text-xs mt-1">
+                    <span th:errors="*{birthday}">Vui lòng nhập ngày sinh hợp lệ (từ 16 tuổi trở lên)</span>
+                </p>
+                <div id="birthday-error" class="text-danger text-xs mt-1" style="display:none;">Vui lòng nhập ngày sinh hợp lệ (từ 16 tuổi trở lên)</div>
+            </div>
 
-                        <!-- Chức vụ -->
-                        <div class="col-md-6">
-                            <label class="form-label">Chức vụ <span class="text-danger">*</span></label>
-                            <select class="form-select" id="role" th:field="*{role}" required>
-                                <option value="">-- Chọn vai trò --</option>
-                                <option value="ADMIN" th:selected="${employee.role == 'ADMIN'}">Quản lý</option>
-                                <option value="STAFF" th:selected="${employee.role == 'STAFF'}">Nhân viên</option>
-                            </select>
-                            <div id="role-error" class="error-message"></div>
-                            <div th:errors="*{role}" class="text-danger"></div>
-                        </div>
 
-                        <!-- Phần mật khẩu (chỉ hiển thị khi chỉnh sửa) -->
-                        <div class="col-md-6" th:if="${employee.id != null}">
-                            <label class="form-label">Mật khẩu hiện tại</label>
+
+
+                        <!-- Mật khẩu (chỉ khi thêm mới) -->
+                        <div class="col-md-6" th:if="${employee.id == null}">
+                            <label class="form-label">Mật khẩu <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="currentPassword" name="currentPassword">
+                                <input type="password" class="form-control" id="password" name="newPassword"
+                                    placeholder="Nhập mật khẩu" required>
                                 <button class="btn btn-outline-secondary" type="button"
-                                    onclick="togglePasswordVisibility('currentPassword')">
+                                    onclick="togglePassword('password')">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <div id="currentPassword-error" class="error-message"></div>
+                            <div id="password-error" class="text-danger text-xs mt-1" style="display:none;">Mật khẩu tối thiểu 8 ký tự</div>
+                        </div>
+
+                        <!-- Mật khẩu hiện tại và mới (khi cập nhật) -->
+                        <div class="col-md-6" th:if="${employee.id != null}">
+                            <label class="form-label">Mật khẩu hiện tại</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="currentPassword" name="currentPassword"
+                                    placeholder="Nhập mật khẩu hiện tại">
+                                <button class="btn btn-outline-secondary" type="button"
+                                    onclick="togglePassword('currentPassword')">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="col-md-6" th:if="${employee.id != null}">
                             <label class="form-label">Mật khẩu mới</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="newPassword" name="newPassword">
+                                <input type="password" class="form-control" id="newPassword" name="newPassword"
+                                    placeholder="Nhập mật khẩu mới">
                                 <button class="btn btn-outline-secondary" type="button"
-                                    onclick="togglePasswordVisibility('newPassword')">
+                                    onclick="togglePassword('newPassword')">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <div id="newPassword-error" class="error-message"></div>
+                            <div id="newPassword-error" class="text-danger text-xs mt-1" style="display:none;">Mật khẩu tối thiểu 8 ký tự</div>
                         </div>
 
+                        <!-- Chỉ hiển thị xác nhận mật khẩu khi sửa -->
                         <div class="col-md-6" th:if="${employee.id != null}">
                             <label class="form-label">Xác nhận mật khẩu mới</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                    placeholder="Nhập lại mật khẩu mới">
                                 <button class="btn btn-outline-secondary" type="button"
-                                    onclick="togglePasswordVisibility('confirmPassword')">
+                                    onclick="togglePassword('confirmPassword')">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            <div id="confirmPassword-error" class="error-message"></div>
+                            <div id="confirmPassword-error" class="text-danger text-xs mt-1" style="display:none;">Mật khẩu xác nhận không khớp</div>
                         </div>
 
-                        <!-- Nút Submit -->
-                        <div class="mt-4 d-flex justify-content-end gap-2">
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-save me-1"></i> Lưu
-                            </button>
-                            <button type="button" id="cancelFormBtn" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-circle me-1"></i> Hủy
-                            </button>
+
+                        <!-- Vai trò -->
+                        <div class="col-md-6">
+                            <label class="form-label">Chức vụ <span class="text-danger">*</span></label>
+                            <select id="roleSelect" class="form-select" th:field="*{role}" required>
+                                <option value="">-- Chọn vai trò --</option>
+                                <option value="ADMIN" th:selected="${employee.role == 'ADMIN'}">Quản lý</option>
+                                <option value="STAFF" th:selected="${employee.role == 'STAFF'}">Nhân viên</option>
+                            </select>
+                            <div class="text-danger" th:errors="*{role}"></div>
+                            <div id="role-error" class="text-danger text-xs mt-1" style="display:none;">Vui lòng chọn chức vụ</div>
                         </div>
                     </div>
+
+                    <!-- Nút Submit / Hủy -->
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-save me-1"></i> Lưu
+                        </button>
+                        <button type="button" id="cancelFormBtn" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Hủy
+                        </button>
+                    </div>
                 </form>
+                <!-- KẾT THÚC FORM -->
+
+
+
             </div>
         </div>
 
-        <!-- Bảng danh sách nhân viên -->
         <div class="table-responsive mt-4">
-            <table class="table table-hover align-middle shadow-sm bg-white">
+            <table class="table  table-hover align-middle shadow-sm bg-white">
                 <thead class="table-light text-center align-middle">
                     <tr class="fw-semibold text-dark">
                         <th>ID</th>
                         <th>Họ tên</th>
                         <th>Email</th>
+                        <!-- <th>Mật khẩu</th> -->
                         <th>SĐT</th>
                         <th>Ngày sinh</th>
                         <th>Chức vụ</th>
@@ -272,13 +349,21 @@
                         <td th:text="${emp.id}"></td>
                         <td th:text="${emp.fullname}"></td>
                         <td th:text="'*****' + ${emp.email.substring(emp.email.length() - 3)}"></td>
+                        <!-- <td>
+                            <span th:id="'pwd-' + ${emp.id}">******</span>
+                            <input type="hidden" th:id="'realpwd-' + ${emp.id}" th:value="${emp.password}" />
+                            <button type="button" class="btn btn-link p-0 text-dark"
+                                th:onclick="'togglePassword(' + ${emp.id} + ')'"><i class="bi bi-eye"></i></button>
+                        </td> -->
                         <td th:text="'*******' + ${emp.phone.substring(emp.phone.length() - 3)}"></td>
                         <td
-                            th:text="${emp.birthday != null ? #temporals.format(emp.birthday, 'dd/MM/yyyy') : 'Chưa cập nhật'}">
+                            th:text="${emp.birthday != null ? #temporals.format(emp.birthday, 'MM/dd/yyyy') : 'Chưa cập nhật'}">
                         </td>
                         <td>
                             <span th:if="${emp.role == 'ADMIN'}" class="badge bg-primary">Quản Lý</span>
                             <span th:if="${emp.role == 'STAFF'}" class="badge bg-info">Nhân Viên</span>
+                            <span th:if="${emp.role != 'ADMIN' and emp.role != 'STAFF'}"
+                                class="badge bg-secondary">Không xác định</span>
                         </td>
                         <td>
                             <a th:href="@{'/admin/employees/edit/' + ${emp.id}}" class="me-2">
@@ -286,344 +371,289 @@
                             </a>
                             <a th:href="@{'/admin/employees/delete/' + ${emp.id}}"
                                 onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
-                                <i class="fas fa-trash-alt" style="color: red; cursor: pointer;"></i>
+                                <i class="fas fa-trash-alt" style="color: red; margin-left: 10px; cursor: pointer;"></i>
                             </a>
                         </td>
                     </tr>
                 </tbody>
+
             </table>
-
-            <!-- Phân trang -->
-            <div class="flex justify-end items-center mt-4 gap-2 mb-4 mr-2">
-                <button class="px-2 py-1 border rounded hover:bg-gray-200">&lt;</button>
-                <button class="px-2 py-1 border rounded bg-blue-500 text-white">1</button>
-                <button class="px-2 py-1 border rounded hover:bg-gray-200">2</button>
-                <button class="px-2 py-1 border rounded hover:bg-gray-200">&gt;</button>
-            </div>
+             <div class="flex justify-end items-center mt-4 gap-2 mb-4 mr-2" >
+          <button class="px-2 py-1 border rounded hover:bg-gray-200">
+            &lt;
+          </button>
+          <button class="px-2 py-1 border rounded bg-blue-500 text-white">
+            1
+          </button>
+          <button class="px-2 py-1 border rounded hover:bg-gray-200">2</button>
+          <button class="px-2 py-1 border rounded hover:bg-gray-200">
+            &gt;
+          </button>
         </div>
+        </div>
+        
     </div>
-
-    </div>
-    </div>
-
-    </div>
-
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function () {
-            // Khởi tạo select2
-            $('#role').select2({
-                placeholder: "Chọn vai trò...",
-                width: '100%'
-            });
+    $(document).ready(function () {
+        $('#roleSelect').select2({ placeholder: "Chọn quyền...", width: '100%' });
 
-            // Toggle form
-            const toggleBtn = document.getElementById('toggleFormBtn');
-            const cancelBtn = document.getElementById('cancelFormBtn');
-            const formContainer = document.getElementById('employeeForm');
+        const toggleBtn = document.getElementById('toggleFormBtn');
+        const cancelBtn = document.getElementById('cancelFormBtn');
+        const formContainer = document.getElementById('employeeFormContainer');
 
-            if (toggleBtn) toggleBtn.addEventListener('click', () => formContainer.classList.add('active'));
-            if (cancelBtn) cancelBtn.addEventListener('click', () => formContainer.classList.remove('active'));
+        if (toggleBtn) toggleBtn.addEventListener('click', () => formContainer.classList.add('active'));
+        if (cancelBtn) cancelBtn.addEventListener('click', () => formContainer.classList.remove('active'));
+    });
 
-            // Xử lý submit form
-            const form = document.getElementById("employeeForm");
-            form?.addEventListener("submit", function (e) {
+    function togglePassword(id) {
+        const span = document.getElementById("pwd-" + id);
+        const realPwd = document.getElementById("realpwd-" + id).value;
+        span.textContent = (span.textContent === "******") ? realPwd : "******";
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById("employeeForm");
+        const fullname = document.getElementById("fullname");
+        const fullnameError = document.getElementById("fullname-error");
+        const email = document.getElementById("email");
+
+        form?.addEventListener("submit", function (e) {
+            let isValid = true;
+
+            // Validate tất cả các trường bắt buộc
+            if (!validateFullname()) isValid = false;
+            if (!validateEmail()) isValid = false;
+            if (!validatePhone()) isValid = false;
+            if (!validateBirthday()) isValid = false;
+            if (!validateRole()) isValid = false;
+            if (!validatePasswordFields()) isValid = false;
+
+            if (!isValid) {
                 e.preventDefault();
-
-                // Reset tất cả validation trước khi kiểm tra
-                resetAllValidation();
-
-                let isValid = true;
-                const errorMessages = [];
-
-                // Validate từng trường và thu thập lỗi
-                if (!validateField('fullname', 'Họ tên không được để trống')) {
-                    isValid = false;
-                    errorMessages.push("- Họ tên không được để trống");
-                }
-
-                const email = document.getElementById("email").value;
-                if (!email) {
-                    markFieldInvalid('email', 'Email không được để trống');
-                    isValid = false;
-                    errorMessages.push("- Email không được để trống");
-                } else if (!validateEmail(email)) {
-                    markFieldInvalid('email', 'Email không hợp lệ');
-                    isValid = false;
-                    errorMessages.push("- Email không hợp lệ");
-                } else {
-                    markFieldValid('email');
-                }
-
-                const phone = document.getElementById("phone").value;
-                if (!phone) {
-                    markFieldInvalid('phone', 'Số điện thoại không được để trống');
-                    isValid = false;
-                    errorMessages.push("- Số điện thoại không được để trống");
-                } else if (!validatePhone(phone)) {
-                    markFieldInvalid('phone', 'Số điện thoại phải có 10-11 chữ số');
-                    isValid = false;
-                    errorMessages.push("- Số điện thoại phải có 10-11 chữ số");
-                } else {
-                    markFieldValid('phone');
-                }
-
-                const birthday = document.getElementById("birthday").value;
-                if (!birthday) {
-                    markFieldInvalid('birthday', 'Ngày sinh không được để trống');
-                    isValid = false;
-                    errorMessages.push("- Ngày sinh không được để trống");
-                } else if (!validateBirthday(birthday)) {
-                    markFieldInvalid('birthday', 'Nhân viên phải từ 16 tuổi trở lên');
-                    isValid = false;
-                    errorMessages.push("- Nhân viên phải từ 16 tuổi trở lên");
-                } else {
-                    markFieldValid('birthday');
-                }
-
-                if (!validateField('role', 'Vui lòng chọn chức vụ')) {
-                    isValid = false;
-                    errorMessages.push("- Vui lòng chọn chức vụ");
-                }
-
-                // Validate password nếu có trường password
-                const password = document.getElementById("password");
-                if (password) {
-                    if (!password.value) {
-                        markFieldInvalid('password', 'Mật khẩu không được để trống');
-                        isValid = false;
-                        errorMessages.push("- Mật khẩu không được để trống");
-                    } else if (password.value.length < 8) {
-                        markFieldInvalid('password', 'Mật khẩu phải có ít nhất 8 ký tự');
-                        isValid = false;
-                        errorMessages.push("- Mật khẩu phải có ít nhất 8 ký tự");
-                    } else {
-                        markFieldValid('password');
-                    }
-                }
-
-                // Validate các trường mật khẩu nếu là form chỉnh sửa
-                const currentPassword = document.getElementById("currentPassword");
-                const newPassword = document.getElementById("newPassword");
-                const confirmPassword = document.getElementById("confirmPassword");
-
-                if (newPassword && currentPassword && confirmPassword) {
-                    if (newPassword.value || currentPassword.value || confirmPassword.value) {
-                        if (!currentPassword.value) {
-                            markFieldInvalid('currentPassword', 'Vui lòng nhập mật khẩu hiện tại');
-                            isValid = false;
-                            errorMessages.push("- Vui lòng nhập mật khẩu hiện tại");
-                        } else {
-                            markFieldValid('currentPassword');
-                        }
-
-                        if (!newPassword.value) {
-                            markFieldInvalid('newPassword', 'Mật khẩu mới không được để trống');
-                            isValid = false;
-                            errorMessages.push("- Mật khẩu mới không được để trống");
-                        } else if (newPassword.value.length < 8) {
-                            markFieldInvalid('newPassword', 'Mật khẩu mới phải có ít nhất 8 ký tự');
-                            isValid = false;
-                            errorMessages.push("- Mật khẩu mới phải có ít nhất 8 ký tự");
-                        } else {
-                            markFieldValid('newPassword');
-                        }
-
-                        if (newPassword.value !== confirmPassword.value) {
-                            markFieldInvalid('confirmPassword', 'Mật khẩu xác nhận không khớp');
-                            isValid = false;
-                            errorMessages.push("- Mật khẩu xác nhận không khớp");
-                        } else {
-                            markFieldValid('confirmPassword');
-                        }
-                    }
-                }
-
-                if (!isValid) {
-                    // Hiển thị tất cả lỗi trong một popup
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi nhập liệu',
-                        html: 'Vui lòng kiểm tra các lỗi sau:<br>' + errorMessages.join('<br>'),
-                        confirmButtonText: 'Đóng'
-                    });
-
-                    // Cuộn đến đầu form
-                    window.scrollTo({
-                        top: form.offsetTop - 20,
-                        behavior: 'smooth'
-                    });
-                } else {
-                    // Nếu hợp lệ thì submit form
-                    form.submit();
-                }
-            });
-
-            // Validate real-time
-            document.getElementById("fullname")?.addEventListener("blur", () => validateField('fullname', 'Họ tên không được để trống'));
-            document.getElementById("email")?.addEventListener("blur", validateEmailRealTime);
-            document.getElementById("phone")?.addEventListener("blur", validatePhoneRealTime);
-            document.getElementById("birthday")?.addEventListener("change", validateBirthdayRealTime);
-            document.getElementById("role")?.addEventListener("change", () => validateField('role', 'Vui lòng chọn chức vụ'));
-            document.getElementById("password")?.addEventListener("input", validatePasswordRealTime);
-            document.getElementById("currentPassword")?.addEventListener("blur", validateCurrentPasswordRealTime);
-            document.getElementById("newPassword")?.addEventListener("input", validateNewPasswordRealTime);
-            document.getElementById("confirmPassword")?.addEventListener("blur", validateConfirmPasswordRealTime);
+                // Hiển thị thông báo lỗi tổng quát
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi nhập liệu',
+                    text: 'Vui lòng kiểm tra và điền đầy đủ thông tin bắt buộc',
+                    confirmButtonText: 'Đóng'
+                });
+            }
         });
 
-        // ========== CÁC HÀM HỖ TRỢ ==========
+        // Validate theo sự kiện blur/change/input
+        fullname?.addEventListener("blur", validateFullname);
+        email?.addEventListener("blur", validateEmail);
+        document.getElementById("phone")?.addEventListener("blur", validatePhone);
+        document.getElementById("birthday")?.addEventListener("change", validateBirthday);
+        document.getElementById("roleSelect")?.addEventListener("change", validateRole);
+        document.getElementById("password")?.addEventListener("blur", validatePasswordFields);
+        document.getElementById("newPassword")?.addEventListener("input", validatePasswordFields);
+        document.getElementById("confirmPassword")?.addEventListener("input", validatePasswordFields);
 
-        function resetAllValidation() {
-            // Xóa class is-invalid trên tất cả input
-            document.querySelectorAll('.is-invalid').forEach(el => {
-                el.classList.remove('is-invalid');
+        // Hiển thị thông báo từ server nếu có
+        const successDiv = document.getElementById('successMessage');
+        const errorDiv = document.getElementById('errorMessage');
+        if (successDiv && successDiv.dataset.message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công',
+                text: successDiv.dataset.message,
+                confirmButtonText: 'Đóng'
             });
-
-            // Ẩn tất cả thông báo lỗi
-            document.querySelectorAll('.error-message').forEach(el => {
-                el.style.display = 'none';
+        }
+        if (errorDiv && errorDiv.dataset.message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: errorDiv.dataset.message,
+                confirmButtonText: 'Đóng'
             });
         }
+    });
 
-        function markFieldInvalid(fieldId, message) {
-            const input = document.getElementById(fieldId);
-            const error = document.getElementById(`${fieldId}-error`);
-
-            input.classList.add("is-invalid");
-            error.textContent = message;
-            error.style.display = "block";
+    function validateFullname() {
+        const input = document.getElementById("fullname");
+        const errorDiv = document.getElementById("fullname-error");
+        if (!input.value.trim()) {
+            input.classList.add("border-danger");
+            errorDiv.style.display = "block";
+            errorDiv.textContent = "Vui lòng nhập họ tên";
+            return false;
         }
+        input.classList.remove("border-danger");
+        errorDiv.style.display = "none";
+        return true;
+    }
 
-        function markFieldValid(fieldId) {
-            const input = document.getElementById(fieldId);
-            const error = document.getElementById(`${fieldId}-error`);
-
-            input.classList.remove("is-invalid");
-            error.style.display = "none";
+    function validateEmail() {
+        const input = document.getElementById("email");
+        const errorDiv = document.getElementById("email-error");
+        if (!input) return true;
+        
+        const value = input.value.trim();
+        if (!value) {
+            input.classList.add("border-danger");
+            errorDiv.style.display = "block";
+            errorDiv.textContent = "Vui lòng nhập email";
+            return false;
         }
-
-        function validateField(fieldId, errorMessage) {
-            const input = document.getElementById(fieldId);
-            if (!input.value.trim()) {
-                markFieldInvalid(fieldId, errorMessage);
-                return false;
-            }
-            markFieldValid(fieldId);
-            return true;
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            input.classList.add("border-danger");
+            errorDiv.style.display = "block";
+            errorDiv.textContent = "Vui lòng nhập email hợp lệ";
+            return false;
         }
+        
+        input.classList.remove("border-danger");
+        errorDiv.style.display = "none";
+        return true;
+    }
 
-        // ========== VALIDATION FUNCTIONS ==========
-
-        function validateEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
+    function validatePhone() {
+        const input = document.getElementById("phone");
+        const errorDiv = document.getElementById("phone-error");
+        const value = input.value.trim();
+        
+        if (!value) {
+            input.classList.add("border-danger");
+            errorDiv.style.display = "block";
+            errorDiv.textContent = "Vui lòng nhập số điện thoại";
+            return false;
         }
+        
+        const phoneRegex = /^[0-9]{10,11}$/;
+        if (!phoneRegex.test(value)) {
+            input.classList.add("border-danger");
+            errorDiv.style.display = "block";
+            errorDiv.textContent = "Vui lòng nhập số điện thoại hợp lệ (10-11 chữ số)";
+            return false;
+        }
+        
+        input.classList.remove("border-danger");
+        errorDiv.style.display = "none";
+        return true;
+    }
 
-        function validateEmailRealTime() {
-            const email = document.getElementById("email").value;
-            if (!email) {
-                markFieldInvalid('email', 'Email không được để trống');
-            } else if (!validateEmail(email)) {
-                markFieldInvalid('email', 'Email không hợp lệ');
+    function validateBirthday() {
+        const input = document.getElementById("birthday");
+        const errorDiv = document.getElementById("birthday-error");
+        if (!input) return true;
+        
+        if (!input.value) {
+            input.classList.add("border-danger");
+            errorDiv.style.display = "block";
+            errorDiv.textContent = "Vui lòng nhập ngày sinh";
+            return false;
+        }
+        
+        const birthDate = new Date(input.value);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        
+        if (age < 16) {
+            input.classList.add("border-danger");
+            errorDiv.style.display = "block";
+            errorDiv.textContent = "Vui lòng nhập ngày sinh hợp lệ (từ 16 tuổi trở lên)";
+            return false;
+        }
+        
+        input.classList.remove("border-danger");
+        errorDiv.style.display = "none";
+        return true;
+    }
+
+    function validateRole() {
+        const input = document.getElementById("roleSelect");
+        const errorDiv = document.getElementById("role-error");
+        if (!input.value) {
+            input.classList.add("border-danger");
+            errorDiv.style.display = "block";
+            return false;
+        }
+        input.classList.remove("border-danger");
+        errorDiv.style.display = "none";
+        return true;
+    }
+
+    function validatePasswordFields() {
+        const newPassInput = document.getElementById("newPassword");
+        const confirmInput = document.getElementById("confirmPassword");
+        const createPassInput = document.getElementById("password");
+
+        let ok = true;
+
+        // Kiểm tra mật khẩu khi tạo mới
+        if (createPassInput && createPassInput.offsetParent !== null) {
+            if (!createPassInput.value) {
+                createPassInput.classList.add("border-danger");
+                const pe = document.getElementById("password-error");
+                if (pe) {
+                    pe.style.display = "block";
+                    pe.textContent = "Vui lòng nhập mật khẩu";
+                }
+                ok = false;
+            } else if (createPassInput.value.length < 8) {
+                createPassInput.classList.add("border-danger");
+                const pe = document.getElementById("password-error");
+                if (pe) {
+                    pe.style.display = "block";
+                    pe.textContent = "Mật khẩu tối thiểu 8 ký tự";
+                }
+                ok = false;
             } else {
-                markFieldValid('email');
+                createPassInput.classList.remove("border-danger");
+                const pe = document.getElementById("password-error");
+                if (pe) pe.style.display = "none";
             }
         }
 
-        function validatePhone(phone) {
-            const phoneRegex = /^[0-9]{10,11}$/;
-            return phoneRegex.test(phone);
-        }
-
-        function validatePhoneRealTime() {
-            const phone = document.getElementById("phone").value;
-            if (!phone) {
-                markFieldInvalid('phone', 'Số điện thoại không được để trống');
-            } else if (!validatePhone(phone)) {
-                markFieldInvalid('phone', 'Số điện thoại phải có 10-11 chữ số');
+        // Kiểm tra mật khẩu mới khi cập nhật
+        if (newPassInput && newPassInput.offsetParent !== null) {
+            if (newPassInput.value && newPassInput.value.length < 8) {
+                newPassInput.classList.add("border-danger");
+                const ne = document.getElementById("newPassword-error");
+                if (ne) {
+                    ne.style.display = "block";
+                    ne.textContent = "Mật khẩu tối thiểu 8 ký tự";
+                }
+                ok = false;
             } else {
-                markFieldValid('phone');
+                newPassInput.classList.remove("border-danger");
+                const ne = document.getElementById("newPassword-error");
+                if (ne) ne.style.display = "none";
             }
         }
 
-        function validateBirthday(birthday) {
-            const birthDate = new Date(birthday);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const m = today.getMonth() - birthDate.getMonth();
-
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-
-            return age >= 16;
-        }
-
-        function validateBirthdayRealTime() {
-            const birthday = document.getElementById("birthday").value;
-            if (!birthday) {
-                markFieldInvalid('birthday', 'Ngày sinh không được để trống');
-            } else if (!validateBirthday(birthday)) {
-                markFieldInvalid('birthday', 'Nhân viên phải từ 16 tuổi trở lên');
+        // Kiểm tra xác nhận mật khẩu
+        if (confirmInput && newPassInput && newPassInput.offsetParent !== null) {
+            if (newPassInput.value && newPassInput.value !== confirmInput.value) {
+                confirmInput.classList.add("border-danger");
+                const ce = document.getElementById("confirmPassword-error");
+                if (ce) {
+                    ce.style.display = "block";
+                    ce.textContent = "Mật khẩu xác nhận không khớp";
+                }
+                ok = false;
             } else {
-                markFieldValid('birthday');
+                confirmInput.classList.remove("border-danger");
+                const ce = document.getElementById("confirmPassword-error");
+                if (ce) ce.style.display = "none";
             }
         }
 
-        function validatePasswordRealTime() {
-            const password = document.getElementById("password").value;
-            if (!password) {
-                markFieldInvalid('password', 'Mật khẩu không được để trống');
-            } else if (password.length < 8) {
-                markFieldInvalid('password', 'Mật khẩu phải có ít nhất 8 ký tự');
-            } else {
-                markFieldValid('password');
-            }
-        }
+        return ok;
+    }
+</script>
 
-        function validateCurrentPasswordRealTime() {
-            const currentPassword = document.getElementById("currentPassword").value;
-            const newPassword = document.getElementById("newPassword").value;
-
-            if (newPassword && !currentPassword) {
-                markFieldInvalid('currentPassword', 'Vui lòng nhập mật khẩu hiện tại');
-            } else {
-                markFieldValid('currentPassword');
-            }
-        }
-
-        function validateNewPasswordRealTime() {
-            const newPassword = document.getElementById("newPassword").value;
-            if (!newPassword) {
-                markFieldInvalid('newPassword', 'Mật khẩu mới không được để trống');
-            } else if (newPassword.length < 8) {
-                markFieldInvalid('newPassword', 'Mật khẩu mới phải có ít nhất 8 ký tự');
-            } else {
-                markFieldValid('newPassword');
-            }
-        }
-
-        function validateConfirmPasswordRealTime() {
-            const newPassword = document.getElementById("newPassword").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-
-            if (newPassword !== confirmPassword) {
-                markFieldInvalid('confirmPassword', 'Mật khẩu xác nhận không khớp');
-            } else {
-                markFieldValid('confirmPassword');
-            }
-        }
-
-        function togglePasswordVisibility(id) {
-            const input = document.getElementById(id);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-    </script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

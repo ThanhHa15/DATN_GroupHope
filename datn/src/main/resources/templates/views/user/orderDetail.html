@@ -174,34 +174,48 @@
 
 
 
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <div class="bg-white rounded-lg border border-gray-200 p-6 space-y-2">
+
+        <!-- Tổng tiền sản phẩm -->
         <div class="flex justify-between text-base py-1">
-          <span class="text-gray-600 font-semibold">Khuyến mãi:</span>
-
-          <!-- Nếu có khuyến mãi -->
-          <span th:if="${order.discountAmount != null and order.discountAmount > 0}" class="text-green-600 font-medium">
-            <span th:text="'- ' + ${#numbers.formatDecimal(discountAmount, 1, 'COMMA', 0, 'POINT') + '₫'}"></span>
-          </span>
-
-          <!-- Nếu không có -->
-          <span th:if="${order.discountAmount == null or order.discountAmount <= 0}" class="text-gray-800 font-medium">
-            0₫
-          </span>
+          <span class="text-gray-600 font-semibold">Tổng tiền sản phẩm:</span>
+          <span class="text-gray-800 font-medium"
+            th:text="${#numbers.formatDecimal(productTotal, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
         </div>
 
-
-
-        <div class="flex justify-between text-base py-1 border-b border-gray-100">
+        <!-- Phí vận chuyển -->
+        <div class="flex justify-between text-base py-1">
           <span class="text-gray-600 font-semibold">Phí vận chuyển:</span>
-          <span th:text="${#numbers.formatDecimal(shippingFee, 1, 'COMMA', 0, 'POINT') + '₫'}"
-            class="text-gray-800 font-medium">0đ</span>
+          <span class="text-gray-800 font-medium"
+            th:text="${#numbers.formatDecimal(shippingFee, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
         </div>
-        <div class="flex justify-between items-center py-3">
+
+        <!-- Tạm tính -->
+        <div class="flex justify-between text-base py-1">
+          <span class="text-gray-600 font-semibold">Tạm tính:</span>
+          <span class="text-gray-800 font-medium"
+            th:text="${#numbers.formatDecimal(subtotal, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
+        </div>
+
+        <!-- Giảm giá -->
+        <div class="flex justify-between text-base py-1" th:if="${discountAmount > 0}">
+          <span class="text-gray-600 font-semibold">Giảm giá:</span>
+          <span class="text-green-600 font-medium"
+            th:text="'- ' + ${#numbers.formatDecimal(discountAmount, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
+        </div>
+        <div class="flex justify-between text-base py-1" th:if="${discountAmount <= 0}">
+          <span class="text-gray-600 font-semibold">Giảm giá:</span>
+          <span class="text-gray-800 font-medium">0₫</span>
+        </div>
+
+        <!-- Tổng tiền -->
+        <div class="flex justify-between items-center py-3 border-t border-gray-100">
           <span class="text-gray-800 font-bold text-lg">Tổng tiền:</span>
-          <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'"
-            class="text-red-600 text-2xl font-bold">19.469.000đ</span>
+          <span class="text-red-600 text-2xl font-bold"
+           th:text="${#numbers.formatDecimal(grandTotal, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
         </div>
       </div>
+
 
     </div>
   </div>

@@ -52,9 +52,16 @@ public class ResultOrder {
             double shippingFee = 40000;
             model.addAttribute("shippingFee", shippingFee);
             
+            // Giảm giá từ voucher (nếu có)
+            double discountAmount = latestOrder.getDiscountAmount();
+            model.addAttribute("discountAmount", discountAmount);
+            
             // Tổng cộng
-            double grandTotal = productTotal + shippingFee;
+            double grandTotal = productTotal + shippingFee - discountAmount;
             model.addAttribute("grandTotal", grandTotal);
+            
+            // Tạm tính (trước khi giảm giá)
+            model.addAttribute("subtotal", productTotal + shippingFee);
         }
         
         model.addAttribute("email", member.getEmail());

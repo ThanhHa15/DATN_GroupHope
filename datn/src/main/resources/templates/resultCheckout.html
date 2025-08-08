@@ -167,9 +167,16 @@
             </div>
             <div class="flex justify-between text-sm">
               <span class="text-gray-600">Tạm tính</span>
-              <span class="text-gray-800"
-                th:text="${#numbers.formatDecimal(productTotal + shippingFee, 1, 'COMMA', 0, 'POINT') + '₫'}">
+              <span class="text-gray-800" th:text="${#numbers.formatDecimal(subtotal, 1, 'COMMA', 0, 'POINT') + '₫'}">
                 18.930.000₫
+              </span>
+            </div>
+            <!-- Thêm phần giảm giá nếu có -->
+            <div class="flex justify-between text-sm" th:if="${discountAmount > 0}">
+              <span class="text-gray-600">Giảm giá</span>
+              <span class="text-green-600"
+                th:text="'- ' + ${#numbers.formatDecimal(discountAmount, 1, 'COMMA', 0, 'POINT') + '₫'}">
+                - 500.000₫
               </span>
             </div>
           </div>
@@ -179,13 +186,18 @@
               <span class="font-semibold text-gray-800">Tổng cộng</span>
               <span class="font-bold text-secondary text-lg"
                 th:text="${#numbers.formatDecimal(grandTotal, 1, 'COMMA', 0, 'POINT') + '₫'}">
-                18.930.000₫
+                18.430.000₫
               </span>
             </div>
           </div>
         </div>
       </div>
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6">
+        <button
+          class="flex-1 sm:flex-none bg-green-500 text-white px-8 py-4 rounded-button text-lg font-semibold hover:bg-green-600 transition-colors whitespace-nowrap">
+          <a href="/order">Xem đơn hàng</a>
+        </button>
+
         <button
           class="flex-1 sm:flex-none bg-secondary text-white px-8 py-4 rounded-button text-lg font-semibold hover:bg-blue-600 transition-colors whitespace-nowrap">
           <a href="/">Tiếp tục mua hàng</a>

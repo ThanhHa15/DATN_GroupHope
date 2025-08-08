@@ -83,8 +83,9 @@
                 </a>
               </td>
               <td class="px-6 py-4 text-gray-800 font-medium">
-                <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full"
-                  th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'">
+                <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full" th:text="${order.totalPrice != null} ? 
+                (${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫') : 
+                '0₫'">
                   44.459.000 đ
                 </a>
               </td>

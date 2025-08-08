@@ -26,11 +26,6 @@ public class Order {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    // Khóa ngoại tới bảng product_variants
-    @ManyToOne
-    @JoinColumn(name = "variant_id", nullable = false)
-    private ProductVariant productVariant;
-
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 

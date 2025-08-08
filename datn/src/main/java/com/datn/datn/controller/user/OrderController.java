@@ -24,16 +24,26 @@ public class OrderController {
 
     @GetMapping("/order")
     public String getOrders(Model model, HttpSession session) {
-        // Lấy member hiện tại từ session hoặc authentication
         Member currentUser = (Member) session.getAttribute("loggedInUser");
         if (currentUser != null) {
             List<Order> orders = orderService.getOrdersByMemberId(currentUser.getId());
+
+            // Đảm bảo tính toán tổng giá trị nếu cần
+            orders.forEach(order -> {
+                if (order.getTotalPrice() == null) {
+                    // Tính toán tổng giá trị từ orderDetails nếu totalPrice null
+                    double total = order.getOrderDetails().stream()
+                            .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
+                            .sum();
+                    order.setTotalPrice(total);
+                }
+            });
+
             model.addAttribute("orders", orders);
         } else {
             model.addAttribute("orders", new ArrayList<>());
         }
-
-        return "views/user/order"; // đường dẫn tới file Thymeleaf (hoặc JSP) hiển thị
+        return "views/user/order";
     }
 
     @GetMapping("/order/{orderId}")
@@ -46,18 +56,36 @@ public class OrderController {
         Order order = orderService.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
-        if (order == null || !order.getMember().getId().equals(member.getId())) {
+        if (!order.getMember().getId().equals(member.getId())) {
             return "redirect:/my-orders"; // hoặc trang 404
         }
 
-        
+        // Tính tổng tiền sản phẩm
+        double productTotal = order.getOrderDetails().stream()
+                .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
+                .sum();
+        model.addAttribute("productTotal", productTotal);
+
+        // Phí vận chuyển
         double shippingFee = 40000;
-        model.addAttribute("discountAmount", order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
         model.addAttribute("shippingFee", shippingFee);
+
+        // Giảm giá
+        double discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : 0;
+        model.addAttribute("discountAmount", discountAmount);
+
+        // Tạm tính (trước khi giảm giá)
+        model.addAttribute("subtotal", productTotal + shippingFee);
+
+        // Tổng cộng (sau giảm giá)
+        double grandTotal = productTotal + shippingFee - discountAmount;
+        model.addAttribute("grandTotal", grandTotal);
+
+        // Các dữ liệu khác
         model.addAttribute("order", order);
         model.addAttribute("orderDetails", order.getOrderDetails());
 
-        return "views/user/orderDetail"; // Đây là trang HTML bạn đã viết
+        return "views/user/orderDetail";
     }
 
 }

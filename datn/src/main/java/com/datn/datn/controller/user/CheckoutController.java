@@ -222,7 +222,6 @@ public class CheckoutController {
 
             Order order = new Order();
             order.setMember(member);
-            order.setProductVariant(variant);
             order.setOrderDate(LocalDateTime.now());
             order.setAddress(address != null ? address : "Không có địa chỉ");
             order.setNote(note);
@@ -230,7 +229,6 @@ public class CheckoutController {
             order.setPaymentStatus("Đã thanh toán");
             order.setOrderStatus("Chờ xác nhận");
             order.setDiscountAmount(discountAmount.doubleValue());
-
 
             Order savedOrder = orderService.save(order);
 
@@ -318,110 +316,95 @@ public class CheckoutController {
     }
 
     @GetMapping("/cod-confirm")
-    public String confirmCod(HttpSession session) {
-        Member member = (Member) session.getAttribute("loggedInUser");
-        if (member == null)
-            return "redirect:/login";
+public String confirmCod(HttpSession session) {
+    Member member = (Member) session.getAttribute("loggedInUser");
+    if (member == null)
+        return "redirect:/login";
 
-        String address = (String) session.getAttribute("checkoutAddress");
-        String note = (String) session.getAttribute("checkoutNote");
+    String address = (String) session.getAttribute("checkoutAddress");
+    String note = (String) session.getAttribute("checkoutNote");
 
-        List<Cart> cartItems = cartRepository.findByMember(member);
+    List<Cart> cartItems = cartRepository.findByMember(member);
 
-        BigDecimal shippingFee = BigDecimal.valueOf(40000);
-        BigDecimal totalBeforeDiscount = BigDecimal.ZERO;
+    BigDecimal shippingFee = BigDecimal.valueOf(40000);
+    BigDecimal totalBeforeDiscount = BigDecimal.ZERO;
 
-        for (Cart cart : cartItems) {
-            ProductVariant variant = cart.getVariant();
-            BigDecimal price = variant.getDiscountedPrice() != null
-                    ? variant.getDiscountedPrice()
-                    : BigDecimal.valueOf(variant.getPrice());
-            totalBeforeDiscount = totalBeforeDiscount.add(price.multiply(BigDecimal.valueOf(cart.getQuantity())));
-        }
-
-        Vouchers voucher = (Vouchers) session.getAttribute("appliedVoucher");
-        BigDecimal discountAmount = BigDecimal.ZERO;
-        if (voucher != null
-                && voucher.getQuantity() > 0
-                && voucher.getStartDate().isBefore(LocalDateTime.now().toLocalDate().plusDays(1))
-                && voucher.getEndDate().isAfter(LocalDateTime.now().toLocalDate().minusDays(1))
-                && totalBeforeDiscount.compareTo(voucher.getMinimumPrice()) >= 0) {
-            discountAmount = totalBeforeDiscount.add(shippingFee)
-                    .multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
-                    .divide(BigDecimal.valueOf(100), 1, RoundingMode.HALF_UP);
-        }
-
-        BigDecimal grandTotal = totalBeforeDiscount.add(shippingFee).subtract(discountAmount);
-        BigDecimal totalAllocated = BigDecimal.ZERO;
-        int index = 0;
-
-        for (Cart cart : cartItems) {
-            ProductVariant variant = cart.getVariant();
-            int qty = cart.getQuantity();
-            BigDecimal price = variant.getDiscountedPrice() != null
-                    ? variant.getDiscountedPrice()
-                    : BigDecimal.valueOf(variant.getPrice());
-            BigDecimal itemSubtotal = price.multiply(BigDecimal.valueOf(qty));
-            BigDecimal ratio = itemSubtotal.divide(totalBeforeDiscount, 10, RoundingMode.HALF_UP);
-            BigDecimal itemTotal = grandTotal.multiply(ratio).setScale(1, RoundingMode.HALF_UP);
-            totalAllocated = totalAllocated.add(itemTotal);
-
-            if (++index == cartItems.size()) {
-                itemTotal = itemTotal.add(grandTotal.subtract(totalAllocated));
-            }
-
-            variant.setQuantityInStock(variant.getQuantityInStock() - qty);
-            productVariantRepository.save(variant);
-
-            Order order = new Order();
-            order.setMember(member);
-            order.setProductVariant(variant);
-            order.setOrderDate(LocalDateTime.now());
-            order.setAddress(address != null ? address : "Không có địa chỉ");
-            order.setNote(note);
-            order.setTotalPrice(itemTotal.doubleValue());
-            order.setPaymentStatus("Chưa thanh toán");
-            order.setOrderStatus("Chờ xác nhận");
-            order.setDiscountAmount(discountAmount.doubleValue());
-
-
-            Order savedOrder = orderService.save(order);
-            List<OrderDetail> orderDetails = new ArrayList<>();
-            for (Cart cartItem : cartItems) {
-                ProductVariant variants = cartItem.getVariant();
-                int qtys = cartItem.getQuantity();
-
-                // Cập nhật số lượng tồn kho
-                variants.setQuantityInStock(variants.getQuantityInStock() - qtys);
-                productVariantRepository.save(variants);
-
-                // Tạo chi tiết đơn hàng
-                OrderDetail orderDetail = new OrderDetail();
-                orderDetail.setOrder(savedOrder);
-                orderDetail.setProductVariant(variants);
-                orderDetail.setQuantity(qtys);
-                orderDetail.setPrice(variants.getDiscountedPrice() != null ? variants.getDiscountedPrice().doubleValue()
-                        : variants.getPrice());
-
-                orderDetails.add(orderDetail);
-            }
-            savedOrder.setOrderDetails(orderDetails);
-            orderService.save(savedOrder);
-        }
-
-        if (voucher != null) {
-            voucher.setQuantity(voucher.getQuantity() - 1);
-            voucherRepository.save(voucher);
-            session.removeAttribute("appliedVoucher");
-        }
-
-        cartRepository.deleteAll(cartItems);
-        session.removeAttribute("checkoutAddress");
-        session.removeAttribute("checkoutNote");
-        session.setAttribute("paymentMethod", "Thanh toán khi nhận hàng (COD)");
-
-        return "redirect:/result-order";
-
+    // Tính tổng giá trị đơn hàng trước giảm giá
+    for (Cart cart : cartItems) {
+        ProductVariant variant = cart.getVariant();
+        BigDecimal price = variant.getDiscountedPrice() != null
+                ? variant.getDiscountedPrice()
+                : BigDecimal.valueOf(variant.getPrice());
+        totalBeforeDiscount = totalBeforeDiscount.add(price.multiply(BigDecimal.valueOf(cart.getQuantity())));
     }
+
+    // Tính toán giảm giá nếu có voucher
+    Vouchers voucher = (Vouchers) session.getAttribute("appliedVoucher");
+    BigDecimal discountAmount = BigDecimal.ZERO;
+    if (voucher != null
+            && voucher.getQuantity() > 0
+            && voucher.getStartDate().isBefore(LocalDateTime.now().toLocalDate().plusDays(1))
+            && voucher.getEndDate().isAfter(LocalDateTime.now().toLocalDate().minusDays(1))
+            && totalBeforeDiscount.compareTo(voucher.getMinimumPrice()) >= 0) {
+        discountAmount = totalBeforeDiscount.add(shippingFee)
+                .multiply(BigDecimal.valueOf(voucher.getDiscountPercent()))
+                .divide(BigDecimal.valueOf(100), 1, RoundingMode.HALF_UP);
+    }
+
+    // Tính tổng giá trị cuối cùng
+    BigDecimal grandTotal = totalBeforeDiscount.add(shippingFee).subtract(discountAmount);
+
+    // Tạo đơn hàng duy nhất
+    Order order = new Order();
+    order.setMember(member);
+    order.setOrderDate(LocalDateTime.now());
+    order.setAddress(address != null ? address : "Không có địa chỉ");
+    order.setNote(note);
+    order.setTotalPrice(grandTotal.doubleValue());
+    order.setPaymentStatus("Chưa thanh toán");
+    order.setOrderStatus("Chờ xác nhận");
+    order.setDiscountAmount(discountAmount.doubleValue());
+
+    // Tạo danh sách chi tiết đơn hàng
+    List<OrderDetail> orderDetails = new ArrayList<>();
+    for (Cart cart : cartItems) {
+        ProductVariant variant = cart.getVariant();
+        int qty = cart.getQuantity();
+
+        // Cập nhật số lượng tồn kho
+        variant.setQuantityInStock(variant.getQuantityInStock() - qty);
+        productVariantRepository.save(variant);
+
+        // Tạo chi tiết đơn hàng
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.setOrder(order);
+        orderDetail.setProductVariant(variant);
+        orderDetail.setQuantity(qty);
+        orderDetail.setPrice(variant.getDiscountedPrice() != null 
+                ? variant.getDiscountedPrice().doubleValue()
+                : variant.getPrice());
+
+        orderDetails.add(orderDetail);
+    }
+
+    // Liên kết orderDetails với order và lưu
+    order.setOrderDetails(orderDetails);
+    Order savedOrder = orderService.save(order);
+
+    // Xử lý voucher nếu có
+    if (voucher != null) {
+        voucher.setQuantity(voucher.getQuantity() - 1);
+        voucherRepository.save(voucher);
+        session.removeAttribute("appliedVoucher");
+    }
+
+    // Xóa giỏ hàng và dọn dẹp session
+    cartRepository.deleteAll(cartItems);
+    session.removeAttribute("checkoutAddress");
+    session.removeAttribute("checkoutNote");
+    session.setAttribute("paymentMethod", "Thanh toán khi nhận hàng (COD)");
+
+    return "redirect:/result-order";
+}
 
 }
