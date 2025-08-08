@@ -24,4 +24,6 @@ public interface OrderService {
     List<String> getMemberAddresses(Long memberId);
 
     List<Order> getOrdersByMemberId(Long memberId);
+
+    String generateOrderId();
 }

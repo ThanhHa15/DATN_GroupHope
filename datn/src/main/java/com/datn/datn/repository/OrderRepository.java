@@ -1,5 +1,6 @@
 package com.datn.datn.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,5 +23,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<String> findDistinctAddressesByMemberId(@Param("memberId") Long memberId);
 
     List<Order> findByMemberId(Long memberId);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE DATE(o.orderDate) = :date")
+    int countByOrderDate(@Param("date") LocalDate date);
+
+    long countByOrderDateBetween(LocalDateTime start, LocalDateTime end);
+
 
 }

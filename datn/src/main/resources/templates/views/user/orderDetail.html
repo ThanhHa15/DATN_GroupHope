@@ -71,7 +71,14 @@
 
       <!-- Order Header -->
       <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-2">
-        <h1 class="text-3xl font-bold text-gray-900">Chi tiết đơn hàng</h1>
+        <h1 class="text-3xl font-bold text-gray-900 flex items-center justify-between">
+          <span>Chi tiết đơn hàng</span>
+          <span class="text-gray-800 font-medium text-xl">
+            <span th:text="' #' + ${order.orderCode}" style="margin-left: 10px;"></span>
+          </span>
+        </h1>
+
+
         <p class="text-gray-500 text-base">Ngày tạo: <span
             th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"></span></p>
       </div>
@@ -80,7 +87,10 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">TT thanh toán:</span>
-          <span th:text="${order.paymentStatus}" class="status-pending font-semibold text-[#e5a500]"></span>
+          <span th:text="${order.paymentStatus}" style="font-weight: 600;"
+            th:classappend="${order.paymentStatus == 'Đã thanh toán'} ? 'text-green-500' : 'text-[#e5a500] '">
+          </span>
+
         </div>
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">TT vận chuyển:</span>
@@ -212,7 +222,7 @@
         <div class="flex justify-between items-center py-3 border-t border-gray-100">
           <span class="text-gray-800 font-bold text-lg">Tổng tiền:</span>
           <span class="text-red-600 text-2xl font-bold"
-           th:text="${#numbers.formatDecimal(grandTotal, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
+            th:text="${#numbers.formatDecimal(grandTotal, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
         </div>
       </div>
 

@@ -374,15 +374,12 @@ public class HomeController {
         return "views/user/cart";
     }
 
-    // @GetMapping("/order")
-    // public String order(Model model, HttpSession session) {
-    //     return "views/user/order";
-    // }
-
-    // @GetMapping("/order-detail")
-    // public String orderDetail(Model model, HttpSession session) {
-    //     return "views/user/orderDetail";
-    // }
+    @GetMapping("/localate")
+    public String locolate(Model model, HttpSession session) {
+        Member user = (Member) session.getAttribute("loggedInUser");
+        model.addAttribute("loggedInUser", user);
+        return "views/shared/localate";
+    }
 
     @GetMapping("/guarantee")
     public String guarantee(Model model, HttpSession session) {

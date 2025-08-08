@@ -21,6 +21,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private String orderCode; // Mã đơn hàng kiểu ORD20250808001
+
     // Khóa ngoại tới bảng members
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
@@ -45,7 +48,6 @@ public class Order {
     private String orderStatus;
 
     private Double discountAmount;
-
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails = new ArrayList<>();
