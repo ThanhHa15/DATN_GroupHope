@@ -3,27 +3,27 @@ package com.datn.datn.controller.user;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.datn.datn.model.Review;
-import com.datn.datn.model.ReviewLike;
-import com.datn.datn.model.Feedback;
-import com.datn.datn.model.Member;
-import com.datn.datn.repository.FeedbackRepository;
-import com.datn.datn.repository.ReviewLikeRepository;
-import com.datn.datn.repository.ReviewRepository;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.datn.datn.model.*;
+
+import java.util.stream.Collectors;
+
+import com.datn.datn.repository.*;
 import com.datn.datn.service.FileStorageService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
+
 import org.springframework.http.MediaType;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Propagation;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -32,15 +32,18 @@ public class ReviewController {
     private final FeedbackRepository feedbackRepository;
     private final FileStorageService fileStorageService;
     private final ReviewLikeRepository reviewLikeRepository;
+    private final ProductRepository productRepository;
 
     public ReviewController(ReviewRepository reviewRepository,
             FeedbackRepository feedbackRepository,
             FileStorageService fileStorageService,
-            ReviewLikeRepository reviewLikeRepository) {
+            ReviewLikeRepository reviewLikeRepository,
+            ProductRepository productRepository) {
         this.reviewRepository = reviewRepository;
         this.feedbackRepository = feedbackRepository;
         this.fileStorageService = fileStorageService;
         this.reviewLikeRepository = reviewLikeRepository;
+        this.productRepository = productRepository;
     }
 
     @GetMapping("/check-auth")
@@ -54,6 +57,7 @@ public class ReviewController {
     }
 
     @PostMapping("/{reviewId}/feedback")
+    @Transactional
     public ResponseEntity<?> addFeedback(
             @PathVariable Long reviewId,
             @RequestParam String content,
@@ -66,10 +70,14 @@ public class ReviewController {
         }
 
         try {
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found"));
+
             Feedback feedback = new Feedback();
-            feedback.setReviewId(reviewId);
+            feedback.setReview(review);
             feedback.setUsername(loggedInUser.getEmail());
             feedback.setContent(content.trim());
+            feedback.setCreatedAt(LocalDateTime.now());
 
             Feedback savedFeedback = feedbackRepository.save(feedback);
             return ResponseEntity.ok(savedFeedback);
@@ -83,77 +91,101 @@ public class ReviewController {
     @GetMapping("/{reviewId}/feedback")
     public ResponseEntity<?> getFeedback(@PathVariable Long reviewId) {
         try {
-            List<Feedback> feedbacks = feedbackRepository.findByReviewId(reviewId);
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found"));
+            List<Feedback> feedbacks = feedbackRepository.findByReview(review);
             return ResponseEntity.ok(feedbacks);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Failed to get feedback"));
+                    .body(Map.of("error", "Failed to get feedback: " + e.getMessage()));
         }
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createReview(
             @RequestParam(value = "images", required = false) MultipartFile[] images,
-            @RequestParam("productId") Long productId,
+            @RequestParam("productId") Integer productId, // Đổi từ Integer sang Long
             @RequestParam("rating") Integer rating,
             @RequestParam("comment") String comment,
             HttpSession session) {
 
-        Member loggedInUser = (Member) session.getAttribute("loggedInUser");
-        if (loggedInUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Vui lòng đăng nhập để đánh giá sản phẩm"));
-        }
-
         try {
-            if (rating < 1 || rating > 5) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Rating must be between 1 and 5"));
+            // Kiểm tra đăng nhập
+            Member loggedInUser = (Member) session.getAttribute("loggedInUser");
+            if (loggedInUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Vui lòng đăng nhập"));
             }
 
-            if (comment == null || comment.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Comment cannot be empty"));
+            // Validate dữ liệu
+            if (productId == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Thiếu productId"));
             }
 
-            if (images != null && images.length > 5) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Maximum 5 images allowed"));
-            }
+            // Tìm product
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
 
+            // Tạo review mới
             Review review = new Review();
-            review.setProductId(productId);
+            review.setProduct(product); // Đảm bảo product được set đúng
             review.setUsername(loggedInUser.getEmail());
             review.setRating(rating);
             review.setComment(comment.trim());
+            review.setCreatedAt(LocalDateTime.now());
 
+            // 5. Xử lý ảnh (nếu có)
             if (images != null && images.length > 0) {
-                List<String> fileNames = new ArrayList<>();
-                for (MultipartFile file : images) {
-                    if (!file.isEmpty()) {
-                        String contentType = file.getContentType();
-                        if (contentType == null || !contentType.startsWith("image/")) {
-                            return ResponseEntity.badRequest().body(Map.of("error", "Only image files are allowed"));
+                List<String> imageUrls = new ArrayList<>();
+                for (MultipartFile image : images) {
+                    if (!image.isEmpty() && image.getSize() > 0) {
+                        if (!image.getContentType().startsWith("image/")) {
+                            return ResponseEntity.badRequest()
+                                    .body(Map.of("error", "Chỉ chấp nhận file ảnh"));
                         }
-
-                        String fileName = fileStorageService.storeFile(file);
-                        fileNames.add("/api/reviews/image/" + fileName);
+                        if (image.getSize() > 5 * 1024 * 1024) { // 5MB
+                            return ResponseEntity.badRequest()
+                                    .body(Map.of("error", "Ảnh không được vượt quá 5MB"));
+                        }
+                        String fileName = fileStorageService.storeFile(image);
+                        imageUrls.add("/api/reviews/image/" + fileName);
                     }
                 }
-                review.setImages(String.join(",", fileNames));
+                if (!imageUrls.isEmpty()) {
+                    review.setImages(String.join(",", imageUrls));
+                }
             }
 
+            // 6. Lưu review
             Review savedReview = reviewRepository.save(review);
             return ResponseEntity.ok(savedReview);
 
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Failed to create review: " + e.getMessage()));
+                    .body(Map.of("error", "Lỗi khi tạo review: " + e.getMessage()));
         }
     }
+
+    // @PostMapping("/api/reviews")
+    // public ResponseEntity<?> submitReview(@RequestParam("rating") int rating,
+    // @RequestParam("comment") String comment,
+    // @RequestParam(value = "images", required = false) MultipartFile[] images) {
+    // try {
+    // Review review = reviewService.submitReview(rating, comment, images);
+    // return ResponseEntity.ok(review);
+    // } catch (Exception e) {
+    // return ResponseEntity.internalServerError().body(Map.of(
+    // "error", "Transaction failed",
+    // "message", e.getMessage()));
+    // }
+    // }
 
     @GetMapping("/image/{fileName:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String fileName) {
         try {
             Resource resource = fileStorageService.loadFileAsResource(fileName);
-
             String contentType = Files.probeContentType(Paths.get(resource.getFile().getAbsolutePath()));
             if (contentType == null) {
                 contentType = "application/octet-stream";
@@ -169,47 +201,88 @@ public class ReviewController {
     }
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<?> getReviewsByProduct(@PathVariable Long productId,
-            @RequestParam(required = false) Integer rating) {
+    public ResponseEntity<?> getReviewsByProduct(
+            @PathVariable Integer productId,
+            @RequestParam(required = false) Optional<Integer> rating) {
+
+        System.out.println("Fetching reviews for product: " + productId + ", rating: " + rating);
+
         try {
-            List<Review> reviews;
-            if (rating != null && rating >= 1 && rating <= 5) {
-                reviews = reviewRepository.findByProductIdAndRating(productId, rating);
-            } else {
-                reviews = reviewRepository.findByProductId(productId);
-            }
-            return ResponseEntity.ok(reviews);
+            List<Review> reviews = rating.isPresent()
+                    ? reviewRepository.findByProductIdAndRating(productId, rating.get())
+                    : reviewRepository.findByProductId(productId);
+
+            // Map each Review -> simple Map (DTO-like) to avoid circular refs and bad JSON
+            List<Map<String, Object>> out = reviews.stream().map(r -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", r.getId());
+                m.put("username", r.getUsername());
+                m.put("rating", r.getRating());
+                m.put("comment", r.getComment());
+                m.put("createdAt", r.getCreatedAt() != null ? r.getCreatedAt().toString() : null);
+
+                // images field: convert comma-separated string -> array (consistent JSON)
+                String imgs = r.getImages();
+                List<String> urls = (imgs == null || imgs.trim().isEmpty())
+                        ? Collections.emptyList()
+                        : Arrays.stream(imgs.split(","))
+                                .map(String::trim)
+                                .filter(s -> !s.isEmpty())
+                                .collect(Collectors.toList());
+                m.put("images", urls);
+
+                // feedbacks: load minimal fields only (NO review back-ref)
+                List<Feedback> fbEntities = feedbackRepository.findByReview(r);
+                List<Map<String, Object>> fbList = fbEntities.stream().map(fb -> {
+                    Map<String, Object> fm = new HashMap<>();
+                    fm.put("id", fb.getId());
+                    fm.put("username", fb.getUsername());
+                    fm.put("content", fb.getContent());
+                    fm.put("createdAt", fb.getCreatedAt() != null ? fb.getCreatedAt().toString() : null);
+                    return fm;
+                }).collect(Collectors.toList());
+                m.put("feedbacks", fbList);
+
+                return m;
+            }).collect(Collectors.toList());
+
+            System.out.println("Found reviews (mapped): " + out.size());
+            return ResponseEntity.ok(out);
+
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Failed to load reviews");
+            e.printStackTrace();
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Failed to fetch reviews: " + e.getMessage()));
         }
     }
 
     @GetMapping("/stats/{productId}")
-    public ResponseEntity<?> getReviewStats(@PathVariable Long productId) {
-        Map<String, Object> stats = new HashMap<>();
+    public ResponseEntity<?> getReviewStats(@PathVariable Integer productId) {
+        try {
+            Map<String, Object> stats = new HashMap<>();
 
-        // 平均评分
-        Double avgRating = reviewRepository.findAverageRatingByProductId(productId);
-        stats.put("averageRating", avgRating != null ? avgRating : 0);
+            Double avgRating = reviewRepository.findAverageRatingByProductId(productId);
+            stats.put("averageRating", avgRating != null ? Math.round(avgRating * 10) / 10.0 : 0);
 
-        // 各星级数量
-        Map<Integer, Long> ratingCounts = new HashMap<>();
-        for (int i = 1; i <= 5; i++) {
-            Long count = reviewRepository.countByProductIdAndRating(productId, i);
-            ratingCounts.put(i, count != null ? count : 0L);
+            Map<Integer, Long> ratingCounts = new HashMap<>();
+            for (int i = 1; i <= 5; i++) {
+                Long count = reviewRepository.countByProductIdAndRating(productId, i);
+                ratingCounts.put(i, count != null ? count : 0L);
+            }
+            stats.put("ratingCounts", ratingCounts);
+
+            Long total = reviewRepository.countByProductId(productId);
+            stats.put("totalReviews", total != null ? total : 0L);
+
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", "Failed to get review stats: " + e.getMessage()));
         }
-        stats.put("ratingCounts", ratingCounts);
-
-        // 总评论数
-        Long total = reviewRepository.countByProductId(productId);
-        stats.put("totalReviews", total != null ? total : 0L);
-
-        return ResponseEntity.ok(stats);
     }
 
-    
-
     @PostMapping("/{reviewId}/like")
+    @Transactional
     public ResponseEntity<?> likeReview(@PathVariable Long reviewId, HttpSession session) {
         Member loggedInUser = (Member) session.getAttribute("loggedInUser");
         if (loggedInUser == null) {
@@ -218,9 +291,20 @@ public class ReviewController {
         }
 
         try {
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found"));
+
+            // Check if user already liked this review
+            boolean alreadyLiked = reviewLikeRepository.existsByReviewAndUsername(review, loggedInUser.getEmail());
+            if (alreadyLiked) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "You already liked this review"));
+            }
+
             ReviewLike like = new ReviewLike();
-            like.setReviewId(reviewId);
+            like.setReview(review);
             like.setUsername(loggedInUser.getEmail());
+            like.setCreatedAt(LocalDateTime.now());
 
             ReviewLike savedLike = reviewLikeRepository.save(like);
             return ResponseEntity.ok(savedLike);
@@ -233,11 +317,13 @@ public class ReviewController {
     @GetMapping("/{reviewId}/like-count")
     public ResponseEntity<?> getLikeCount(@PathVariable Long reviewId) {
         try {
-            Long count = reviewLikeRepository.countByReviewId(reviewId);
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found"));
+            Long count = reviewLikeRepository.countByReview(review);
             return ResponseEntity.ok(Map.of("count", count));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Failed to get like count"));
+                    .body(Map.of("error", "Failed to get like count: " + e.getMessage()));
         }
     }
 
@@ -249,12 +335,13 @@ public class ReviewController {
         }
 
         try {
-            boolean hasLiked = reviewLikeRepository.existsByReviewIdAndUsername(reviewId, loggedInUser.getEmail());
+            Review review = reviewRepository.findById(reviewId)
+                    .orElseThrow(() -> new RuntimeException("Review not found"));
+            boolean hasLiked = reviewLikeRepository.existsByReviewAndUsername(review, loggedInUser.getEmail());
             return ResponseEntity.ok(Map.of("hasLiked", hasLiked));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Failed to check like status"));
+                    .body(Map.of("error", "Failed to check like status: " + e.getMessage()));
         }
     }
-    
 }

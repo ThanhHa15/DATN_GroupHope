@@ -538,9 +538,7 @@
       </div>
 
       <!-- Đoạn 2 -->
-      <div class="flex gap-4" style="max-width: 1250px; margin: auto; margin-top: 20px">
-        <!-- Phần 6/10 -->
-
+      <div class="reviews-section" data-product-id="${v.product.productID}">
         <div class="w-6/10 flex-6 basis-3/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
           <div class="flex items-center justify-between mb-8" style="margin-bottom: 5px">
             <h2 class="text-2xl font-bold border-l-8 border-custom-blue pl-4">
@@ -606,136 +604,76 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Review Modal -->
-        <div id="reviewModal"
-          class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center hidden z-50 transition-opacity duration-300">
-          <div
-            class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-lg mx-4 transform transition-all duration-300 scale-95 hover:scale-100">
-            <!-- Modal Header -->
-            <div class="bg-[#000f8f] p-6">
-              <h3 class="text-2xl font-bold text-white">Đánh giá sản phẩm</h3>
-              <p class="text-blue-100">Chia sẻ trải nghiệm của bạn về sản phẩm</p>
-            </div>
-
-            <!-- Modal Content -->
-            <div class="p-6 space-y-6">
-              <!-- Rating Section -->
-              <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Đánh giá của bạn</label>
-                <div class="flex text-3xl space-x-2 rating-stars">
-                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
-                    data-value="1"></i>
-                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
-                    data-value="2"></i>
-                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
-                    data-value="3"></i>
-                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
-                    data-value="4"></i>
-                  <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
-                    data-value="5"></i>
-                </div>
-                <input type="hidden" id="ratingValue" value="0">
-                <p class="text-sm text-gray-500">Nhấn để chọn số sao</p>
-              </div>
-
-              <!-- Comment Section -->
-              <div class="space-y-2">
-                <label for="reviewComment" class="block text-gray-700 font-medium">Bình luận</label>
-                <textarea id="reviewComment" rows="4"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#000f8f] focus:border-transparent transition-all"
-                  placeholder="Hãy chia sẻ chi tiết về trải nghiệm của bạn..."></textarea>
-              </div>
-
-              <!-- Image Upload Section -->
-              <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Ảnh đính kèm <span class="text-sm text-gray-500">(tối đa
-                    5 ảnh)</span></label>
-                <div class="flex items-center justify-center w-full">
-                  <label for="imageUpload"
-                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                      <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                      <p class="text-sm text-gray-500">Nhấn để tải ảnh lên</p>
-                    </div>
-                    <input type="file" id="imageUpload" multiple accept="image/*" class="hidden">
-                  </label>
-                </div>
-                <div id="previewImages" class="flex flex-wrap gap-2 mt-2"></div>
-              </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
-              <button id="cancelReview"
-                class="px-5 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 transition-colors">
-                Hủy bỏ
-              </button>
-              <button id="submitReview"
-                class="px-5 py-2.5 text-white bg-[#000f8f] rounded-lg hover:bg-[#000e7a] focus:ring-2 focus:ring-blue-300 shadow-md transition-all">
-                Gửi đánh giá
-              </button>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- Phần 4/10 -->
-        <div class="w-4/10 flex-4 basis-2/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
-          <!-- Tiêu đề -->
-          <div class="bg-[#000f8f] text-white px-4 py-2 rounded-md flex items-center space-x-2 mb-2"
-            style="margin-top: -7px">
-            <i class="fa-solid fa-gear"></i>
-            <h3 class="font-semibold text-base">Thông số kỹ thuật</h3>
+      <!-- Review Modal -->
+      <div id="reviewModal"
+        class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center hidden z-50 transition-opacity duration-300">
+        <div
+          class="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-lg mx-4 transform transition-all duration-300 scale-95 hover:scale-100">
+          <!-- Modal Header -->
+          <div class="bg-[#000f8f] p-6">
+            <h3 class="text-2xl font-bold text-white">Đánh giá sản phẩm</h3>
+            <p class="text-blue-100">Chia sẻ trải nghiệm của bạn về sản phẩm</p>
           </div>
 
-          <!-- Danh sách thông số -->
-          <div class="space-y-2 text-sm relative" style="position: relative">
-            <div th:each="spec, iterStat : ${specifications}" th:if="${iterStat.index < 8}"
-              th:class="${iterStat.index % 2 == 0} ? 'flex bg-white' : 'flex bg-gray-200'">
-              <div class="w-1/2 px-4 py-2 font-medium" th:text="${#strings.replace(spec.specKey, '''', '')}"></div>
-              <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
+          <!-- Modal Content -->
+          <div class="p-6 space-y-6">
+            <!-- Rating Section -->
+            <div class="space-y-2">
+              <label class="block text-gray-700 font-medium">Đánh giá của bạn</label>
+              <div class="flex text-3xl space-x-2 rating-stars">
+                <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                  data-value="1"></i>
+                <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                  data-value="2"></i>
+                <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                  data-value="3"></i>
+                <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                  data-value="4"></i>
+                <i class="fa-regular fa-star cursor-pointer text-amber-400 hover:text-amber-500 transition-colors"
+                  data-value="5"></i>
+              </div>
+              <input type="hidden" id="ratingValue" value="0">
+              <p class="text-sm text-gray-500">Nhấn để chọn số sao</p>
             </div>
 
-            <!-- 👇 Lớp làm mờ phủ lên dòng cuối -->
-            <div
-              class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-lg">
+            <!-- Comment Section -->
+            <div class="space-y-2">
+              <label for="reviewComment" class="block text-gray-700 font-medium">Bình luận</label>
+              <textarea id="reviewComment" rows="4"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#000f8f] focus:border-transparent transition-all"
+                placeholder="Hãy chia sẻ chi tiết về trải nghiệm của bạn..."></textarea>
+            </div>
+
+            <!-- Image Upload Section -->
+            <div class="space-y-2">
+              <label class="block text-gray-700 font-medium">Ảnh đính kèm <span class="text-sm text-gray-500">(tối đa
+                  5 ảnh)</span></label>
+              <div class="flex items-center justify-center w-full">
+                <label for="imageUpload"
+                  class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                    <p class="text-sm text-gray-500">Nhấn để tải ảnh lên</p>
+                  </div>
+                  <input type="file" id="imageUpload" multiple accept="image/*" class="hidden">
+                </label>
+              </div>
+              <div id="previewImages" class="flex flex-wrap gap-2 mt-2"></div>
             </div>
           </div>
 
-          <!-- Nút xem tất cả -->
-          <div class="text-center mt-4">
-            <button onclick="toggleFullSpecs()"
-              class="px-6 py-2 border border-[#000f8f] text-[#000f8f] rounded hover:bg-[#000f8f] hover:text-white transition">
-              Xem tất cả
+          <!-- Modal Footer -->
+          <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+            <button id="cancelReview"
+              class="px-5 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 transition-colors">
+              Hủy bỏ
             </button>
-          </div>
-
-          <!-- Overlay + Popup form -->
-          <div id="full-specs-modal"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
-              <!-- Nút đóng -->
-              <button onclick="toggleFullSpecs()"
-                class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-2xl">
-                &times;
-              </button>
-
-              <!-- Tiêu đề -->
-              <div class="flex items-center bg-blue-900 text-white font-semibold px-4 py-2 rounded-t">
-                <i class="ri-settings-3-fill mr-2"></i>
-                Thông số kỹ thuật đầy đủ
-              </div>
-
-              <!-- Nội dung thông số -->
-              <div class="divide-y divide-gray-200">
-                <div th:each="spec, iterStat : ${specifications}"
-                  th:class="${iterStat.index % 2 == 0} ? 'flex bg-white' : 'flex bg-gray-100'">
-                  <div class="w-1/2 px-4 py-2 font-medium" th:text="${#strings.replace(spec.specKey, '''', '')}"></div>
-                  <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
-                </div>
-              </div>
-            </div>
+            <button id="submitReview"
+              class="px-5 py-2.5 text-white bg-[#000f8f] rounded-lg hover:bg-[#000e7a] focus:ring-2 focus:ring-blue-300 shadow-md transition-all">
+              Gửi đánh giá
+            </button>
           </div>
         </div>
       </div>
@@ -1170,6 +1108,7 @@
     });
   });
 </script>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const qtyInput = document.getElementById("quantity");
@@ -1197,404 +1136,219 @@
   });
 </script>
 
-<script> // Xử lý đánh giá sản phẩm
-  document.addEventListener('DOMContentLoaded', function () {
-    const productId = 1; // Replace with actual product ID
-    let currentUser = null;
-    let currentFilter = 0; // 0 means all reviews
+<script th:inline="javascript"> // Xử lý sự kiên đánh giá và bình luận 
+  /* === Review & Feedback unified script ===
+     Place this inside the Thymeleaf .html (so Thymeleaf can render productId).
+     Assumptions:
+      - Backend endpoints:
+         GET  /api/reviews/product/{productId}            -> list reviews (optional ?rating=)
+         POST /api/reviews                                -> create review (FormData: productId, rating, comment, images[])
+         GET  /api/reviews/{reviewId}/feedback            -> list replies/feedback
+         POST /api/reviews/{reviewId}/feedback           -> create reply (x-www-form-urlencoded: content)
+         GET  /api/reviews/{reviewId}/like-count         -> { count: n }
+         GET  /api/reviews/{reviewId}/has-liked          -> { hasLiked: true|false }  (credentials: include)
+         POST /api/reviews/{reviewId}/like               -> toggle like (credentials: include)
+         GET  /api/reviews/stats/{productId}             -> { averageRating, totalReviews, ratingCounts: { '5star':n,... } }
+         GET  /api/reviews/check-auth                    -> { username } when logged in (credentials: include)
+      - Responses are JSON.
+  */
 
-    // Check login status
+  const PRODUCT_ID = /*[[${v.product.productID}]]*/ 0; // Thymeleaf will replace this
+  console.log('Initializing reviews script for productId:', PRODUCT_ID);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    let currentUser = null;
+    let currentFilter = 0; // 0 => all
+
+    // --- Helper: check login ---
     async function checkLoginStatus() {
       try {
-        const response = await fetch('/api/reviews/check-auth', {
-          credentials: 'include'
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          currentUser = data.username;
-          return true;
-        }
-        throw new Error('Not logged in');
-      } catch (error) {
+        const resp = await fetch('/api/reviews/check-auth', { credentials: 'include' });
+        if (!resp.ok) { currentUser = null; return false; }
+        const data = await resp.json();
+        currentUser = data.username || null;
+        return !!currentUser;
+      } catch (e) {
         currentUser = null;
         return false;
       }
     }
 
-    // Initialize the page
-    async function initialize() {
-      await checkLoginStatus();
-      loadReviews(productId, currentFilter);
-      updateReviewStats(productId);
-    }
-
-    // Open review modal
-    document.getElementById('openReviewModal').addEventListener('click', async function () {
-      const isLoggedIn = await checkLoginStatus();
-      if (!isLoggedIn) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Thông báo',
-          text: 'Vui lòng đăng nhập để đánh giá sản phẩm',
-          confirmButtonText: 'OK'
-        });
-        return;
-      }
-
-      document.getElementById('reviewModal').classList.remove('hidden');
-    });
-
-    // Close review modal
-    document.getElementById('cancelReview').addEventListener('click', function () {
-      document.getElementById('reviewModal').classList.add('hidden');
-      document.getElementById('previewImages').innerHTML = '';
-      document.getElementById('reviewComment').value = '';
-      document.getElementById('ratingValue').value = 0;
-
-      // Reset stars
-      const stars = document.querySelectorAll('.rating-stars i');
-      stars.forEach(star => {
-        star.classList.remove('fa-solid', 'text-yellow-500');
-        star.classList.add('fa-regular');
-      });
-    });
-
-    // Star rating selection
-    const stars = document.querySelectorAll('.rating-stars i');
-    stars.forEach(star => {
-      star.addEventListener('click', function () {
-        const value = parseInt(this.getAttribute('data-value'));
-        document.getElementById('ratingValue').value = value;
-
-        stars.forEach((s, index) => {
-          if (index < value) {
-            s.classList.remove('fa-regular');
-            s.classList.add('fa-solid', 'text-yellow-500');
-          } else {
-            s.classList.remove('fa-solid', 'text-yellow-500');
-            s.classList.add('fa-regular');
-          }
-        });
-      });
-    });
-
-    // Image preview
-    document.getElementById('imageUpload').addEventListener('change', function (e) {
-      const previewContainer = document.getElementById('previewImages');
-      previewContainer.innerHTML = '';
-
-      Array.from(e.target.files).slice(0, 5).forEach(file => {
-        if (!file.type.match('image.*')) return;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.className = 'h-20 object-cover mr-2 mb-2 rounded';
-          previewContainer.appendChild(img);
-        }
-        reader.readAsDataURL(file);
-      });
-    });
-
-    // Submit review
-    document.getElementById('submitReview').addEventListener('click', async function () {
-      const isLoggedIn = await checkLoginStatus();
-      if (!isLoggedIn) {
-        Swal.fire({
-          icon: 'info',
-          title: 'Thông báo',
-          text: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại',
-          confirmButtonText: 'OK'
-        });
-        return;
-      }
-
-
-      const rating = document.getElementById('ratingValue').value;
-      const comment = document.getElementById('reviewComment').value;
-      const imageFiles = document.getElementById('imageUpload').files;
-
-      if (rating === '0') {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Chưa chọn đánh giá',
-          text: 'Vui lòng chọn số sao đánh giá trước khi gửi',
-          confirmButtonText: 'OK'
-        });
-        return;
-      }
-
-
-      if (!comment.trim()) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Thiếu nội dung',
-          text: 'Vui lòng nhập bình luận',
-          confirmButtonText: 'OK'
-        });
-        return;
-      }
-
-
-      const formData = new FormData();
-      formData.append('productId', productId);
-      formData.append('rating', rating);
-      formData.append('comment', comment);
-
-      if (imageFiles.length > 0) {
-        Array.from(imageFiles).slice(0, 5).forEach(file => {
-          formData.append('images', file);
-        });
-      }
-
-      try {
-        const response = await fetch('/api/reviews', {
-          method: 'POST',
-          body: formData,
-          credentials: 'include'
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Error submitting review');
-        }
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Thành công',
-          text: 'Đánh giá của bạn đã được gửi!',
-          confirmButtonText: 'OK'
-        });
-
-        document.getElementById('reviewModal').classList.add('hidden');
-        document.getElementById('reviewComment').value = '';
-        document.getElementById('imageUpload').value = '';
-        document.getElementById('previewImages').innerHTML = '';
-
-        // Reset stars
-        stars.forEach(star => {
-          star.classList.remove('fa-solid', 'text-yellow-500');
-          star.classList.add('fa-regular');
-        });
-
-        loadReviews(productId, currentFilter);
-        updateReviewStats(productId);
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Có lỗi xảy ra khi gửi đánh giá: ' + error.message);
-      }
-    });
-
-    // Filter reviews by rating
-    document.querySelectorAll('.filter-button').forEach(button => {
-      button.addEventListener('click', function () {
-        const rating = parseInt(this.getAttribute('data-rating'));
-        currentFilter = rating;
-
-        // Update active filter button
-        document.querySelectorAll('.filter-button').forEach(btn => {
-          btn.classList.remove('bg-gray-200', 'border-gray-500', 'active-filter');
-        });
-        this.classList.add('bg-gray-200', 'border-gray-500', 'active-filter');
-
-        loadReviews(productId, rating);
-      });
-    });
-
-    // Load reviews with optional rating filter
+    // --- Load reviews (optionally filter by rating) ---
     async function loadReviews(productId, rating = null) {
+      const container = document.getElementById('reviews-container');
+      if (!container) return;
+      container.innerHTML = `<div class="py-4 text-center">Đang tải...</div>`;
+
       try {
         let url = `/api/reviews/product/${productId}`;
-        if (rating && rating >= 1 && rating <= 5) {
-          url += `?rating=${rating}`;
+        if (rating && rating > 0) url += `?rating=${rating}`;
+
+        const resp = await fetch(url);
+        const text = await resp.text(); // read raw text first
+        if (!resp.ok) {
+          // show server returned error body
+          throw new Error(text || 'Failed to load reviews');
         }
 
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Failed to load reviews');
+        let reviews;
+        try {
+          reviews = JSON.parse(text); // robust parse, and will throw if invalid
+        } catch (parseErr) {
+          console.error('Invalid JSON from server. Raw response text:', text);
+          throw new Error('Invalid JSON from server: ' + parseErr.message);
+        }
 
-        const reviews = await response.json();
-        const reviewsContainer = document.getElementById('reviews-container');
-        reviewsContainer.innerHTML = '';
-
-        if (reviews.length === 0) {
-          reviewsContainer.innerHTML = `
-                <div class="text-center py-4 text-gray-800" style="margin-bottom: 70px; margin-top: 120px">
-                    ${rating ? `Chưa có đánh giá ${rating} sao nào` : 'Chưa có đánh giá nào cho sản phẩm này'}
-                </div>
-            `;
+        if (!Array.isArray(reviews) || reviews.length === 0) {
+          container.innerHTML = `
+      <div class="text-center py-4" style="margin-bottom:70px;margin-top:120px">
+        ${rating ? `Chưa có đánh giá ${rating} sao nào` : 'Chưa có đánh giá nào cho sản phẩm này'}
+      </div>`;
           return;
         }
 
+        container.innerHTML = '';
         for (const review of reviews) {
-          const reviewElement = await createReviewElement(review);
-          reviewsContainer.appendChild(reviewElement);
+          const el = await createReviewElement(review);
+          container.appendChild(el);
         }
-      } catch (error) {
-        console.error('Error loading reviews:', error);
-        document.getElementById('reviews-container').innerHTML = `
-            <div class="text-center py-4 text-red-500">
-                Đã xảy ra lỗi khi tải đánh giá
-            </div>
-        `;
+      } catch (err) {
+        console.error('Error loading reviews:', err);
+        container.innerHTML = `<div class="text-center py-4 text-red-500">Đã xảy ra lỗi khi tải đánh giá: ${err.message}</div>`;
       }
     }
 
-    // Create a single review element
+    // --- Create review DOM ---
     async function createReviewElement(review) {
-      const reviewElement = document.createElement('div');
-      reviewElement.className = 'border-t border-gray-400 pt-4';
-      reviewElement.dataset.reviewId = review.id;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'border-t border-gray-200 pt-4 pb-4';
+      wrapper.dataset.reviewId = review.id;
 
+      const dateText = review.createdAt ? new Date(review.createdAt).toLocaleString('vi-VN') : 'Không rõ ngày';
 
-      // Format date
-      const date = review.createdAt ?
-        new Date(review.createdAt).toLocaleString('vi-VN', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        }) : 'Không rõ ngày';
-
-
-      // Create star rating
-      const starsHtml = Array(5).fill().map((_, i) =>
-        `<i class="fa-solid ${i < review.rating ? 'text-yellow-500' : 'text-gray-300'} fa-star"></i>`
+      const starsHtml = Array.from({ length: 5 }).map((_, i) =>
+        `<i class="fa-solid ${i < review.rating ? 'text-yellow-500' : 'text-gray-300'} fa-star mr-1"></i>`
       ).join('');
 
-      // Handle images
       let imagesHtml = '';
       if (review.images) {
-        const imageUrls = review.images.split(',');
-        imagesHtml = `<div class="flex flex-wrap mt-2">${imageUrls.map(url =>
-          `<img src="${url}" class="h-20 object-cover mr-2 mb-2 rounded cursor-pointer" 
-                     onclick="window.open('${url}', '_blank')">`
-        ).join('')
-          }</div>`;
+        // If backend returns comma-separated URLs or array; handle both
+        const urls = Array.isArray(review.images) ? review.images : ('' + review.images).split(',').filter(u => u);
+        if (urls.length) {
+          imagesHtml = `<div class="flex flex-wrap mt-2">${urls.map(u => `<img src="${u}" class="h-20 object-cover mr-2 mb-2 rounded cursor-pointer" onclick="window.open('${u}','_blank')">`).join('')}</div>`;
+        }
       }
 
-      // Check if user has liked this review
-      let hasLiked = false;
+      // Build base HTML
+      wrapper.innerHTML = `
+      <div class="flex justify-between items-start">
+        <p class="font-semibold">${escapeHtml(review.username) || 'Ẩn danh'}</p>
+        <span class="text-sm text-gray-500">${dateText}</span>
+      </div>
+      <div class="flex items-center mb-1 mt-2">
+        <div class="text-yellow-500 mr-2">${starsHtml}</div>
+      </div>
+      <p class="text-gray-800 mb-2">${escapeHtml(review.comment || '')}</p>
+      ${imagesHtml}
+      <div class="flex items-center justify-between mt-3">
+        <div class="flex gap-4 text-xs text-gray-500">
+          <a href="#" class="hover:underline reply-link">Trả lời</a>
+          <button class="like-button hover:underline flex items-center gap-1 ${review.hasLiked ? 'text-blue-500' : ''}" data-review-id="${review.id}">
+            <i class="${review.hasLiked ? 'fa-solid' : 'fa-regular'} fa-thumbs-up"></i>
+            <span class="like-count">0</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="reply-modal hidden mt-3 pl-4 border-l-2 border-gray-200">
+        <textarea class="w-full px-3 py-2 border rounded-md reply-input" rows="2" placeholder="Viết phản hồi của bạn..."></textarea>
+        <div class="flex justify-end gap-2 mt-2">
+          <button class="px-3 py-1 bg-gray-200 rounded-md cancel-reply">Hủy</button>
+          <button class="px-3 py-1 bg-blue-500 text-white rounded-md submit-reply">Gửi</button>
+        </div>
+      </div>
+
+      <div class="feedback-list mt-3 pl-4 border-l-2 border-gray-200"></div>
+    `;
+
+      // After insert, update like count & hasLiked by fetching endpoints (non-blocking)
+      fetchLikeCount(review.id, wrapper.querySelector('.like-count'));
+      // If API supports has-liked, update icon (we fetched hasLiked earlier possibly)
       if (currentUser) {
         try {
-          const response = await fetch(`/api/reviews/${review.id}/has-liked`, {
-            credentials: 'include'
-          });
-          if (response.ok) {
-            const data = await response.json();
-            hasLiked = data.hasLiked;
+          const resp = await fetch(`/api/reviews/${review.id}/has-liked`, { credentials: 'include' });
+          if (resp.ok) {
+            const d = await resp.json();
+            if (d.hasLiked) {
+              const btn = wrapper.querySelector('.like-button');
+              if (btn) {
+                btn.classList.add('text-blue-500');
+                const icon = btn.querySelector('i');
+                if (icon) { icon.classList.remove('fa-regular'); icon.classList.add('fa-solid'); }
+              }
+            }
           }
-        } catch (error) {
-          console.error('Error checking like status:', error);
-        }
+        } catch (e) { }
       }
 
-      // Get like count
-      let likeCount = 0;
-      try {
-        const response = await fetch(`/api/reviews/${review.id}/like-count`);
-        if (response.ok) {
-          const data = await response.json();
-          likeCount = data.count;
-        }
-      } catch (error) {
-        console.error('Error getting like count:', error);
-      }
-
-      reviewElement.innerHTML = `
-            <div class="flex justify-between items-start">
-                <p class="font-semibold">${review.username || 'Ẩn danh'}</p>
-                <span class="text-sm text-gray-500">${date}</span>
-            </div>
-            <div class="flex items-center mb-1">
-                <div class="text-yellow-500 mr-2">
-                    ${starsHtml}
-                </div>
-            </div>
-            <p class="text-gray-800 mb-2">${review.comment || ''}</p>
-            ${imagesHtml}
-            
-            <div class="flex items-center justify-between mt-3">
-                <div class="flex gap-4 text-xs text-gray-500">
-                    <a href="#" class="hover:underline reply-link">Trả lời</a>
-                    <button class="like-button hover:underline flex items-center gap-1 ${hasLiked ? 'text-blue-500' : ''}" 
-                            data-review-id="${review.id}">
-                        <i class="fa-${hasLiked ? 'solid' : 'regular'} fa-thumbs-up"></i>
-                        <span class="like-count">${likeCount}</span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Reply form (hidden by default) -->
-            <div class="reply-modal hidden mt-3 pl-4 border-l-2 border-gray-200">
-                <textarea class="w-full px-3 py-2 border rounded-md reply-input" 
-                         rows="2" placeholder="Viết phản hồi của bạn..."></textarea>
-                <div class="flex justify-end gap-2 mt-2">
-                    <button class="px-3 py-1 bg-gray-200 rounded-md cancel-reply">Hủy</button>
-                    <button class="px-3 py-1 bg-blue-500 text-white rounded-md submit-reply">Gửi</button>
-                </div>
-            </div>
-            
-            <!-- Feedback list -->
-            <div class="feedback-list mt-3 pl-4 border-l-2 border-gray-200"></div>
-        `;
-
-      // Load feedback for this review
-      const feedbackList = reviewElement.querySelector('.feedback-list');
+      // Load feedback list
+      const feedbackList = wrapper.querySelector('.feedback-list');
       loadFeedback(review.id, feedbackList);
 
-      // Set up event handlers for this review
-      setupReviewEventHandlers(reviewElement);
+      // Setup handlers
+      setupReviewEventHandlers(wrapper);
 
-      return reviewElement;
+      return wrapper;
     }
 
-    // Set up event handlers for a review element
+    // --- Escape HTML to prevent injection ---
+    function escapeHtml(unsafe) {
+      return String(unsafe || '').replace(/[&<>"'`=\/]/g, function (s) {
+        return ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;',
+          "'": '&#39;', '/': '&#x2F;', '`': '&#x60;', '=': '&#x3D;'
+        })[s];
+      });
+    }
+
+    // --- Fetch like count ---
+    async function fetchLikeCount(reviewId, el) {
+      if (!el) return;
+      try {
+        const resp = await fetch(`/api/reviews/${reviewId}/like-count`);
+        if (!resp.ok) return;
+        const d = await resp.json();
+        el.textContent = d.count || 0;
+      } catch (e) { console.error('Like count error', e); }
+    }
+
+    // --- Setup event handlers for a review element ---
     function setupReviewEventHandlers(reviewElement) {
-      // Reply link
+      // Reply link toggle
       const replyLink = reviewElement.querySelector('.reply-link');
       if (replyLink) {
         replyLink.addEventListener('click', async function (e) {
           e.preventDefault();
-
-          const isLoggedIn = await checkLoginStatus();
-          if (!isLoggedIn) {
-            Swal.fire({
-              icon: 'info',
-              title: 'Thông báo',
-              text: 'Vui lòng đăng nhập để gửi phản hồi',
-              confirmButtonText: 'OK'
-            });
+          const logged = await checkLoginStatus();
+          if (!logged) {
+            Swal.fire({ icon: 'info', title: 'Thông báo', text: 'Vui lòng đăng nhập để gửi phản hồi', confirmButtonText: 'OK' });
             return;
           }
-
-
-          const replyModal = reviewElement.querySelector('.reply-modal');
-          if (replyModal) {
-            // Hide all other reply modals
-            document.querySelectorAll('.reply-modal').forEach(modal => {
-              if (modal !== replyModal) modal.classList.add('hidden');
-            });
-
-            replyModal.classList.toggle('hidden');
-            if (!replyModal.classList.contains('hidden')) {
-              replyModal.querySelector('.reply-input').focus();
-            }
-          }
+          const modal = reviewElement.querySelector('.reply-modal');
+          // hide others
+          document.querySelectorAll('.reply-modal').forEach(m => { if (m !== modal) m.classList.add('hidden'); });
+          modal.classList.toggle('hidden');
+          if (!modal.classList.contains('hidden')) modal.querySelector('.reply-input').focus();
         });
       }
 
       // Cancel reply
-      const cancelReply = reviewElement.querySelector('.cancel-reply');
-      if (cancelReply) {
-        cancelReply.addEventListener('click', function () {
-          const replyModal = this.closest('.reply-modal');
-          if (replyModal) {
-            replyModal.classList.add('hidden');
-            replyModal.querySelector('.reply-input').value = '';
-          }
+      const cancelBtn = reviewElement.querySelector('.cancel-reply');
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+          const modal = this.closest('.reply-modal');
+          modal.classList.add('hidden');
+          modal.querySelector('.reply-input').value = '';
         });
       }
 
@@ -1602,193 +1356,284 @@
       const submitReply = reviewElement.querySelector('.submit-reply');
       if (submitReply) {
         submitReply.addEventListener('click', async function () {
-          const isLoggedIn = await checkLoginStatus();
-          if (!isLoggedIn) {
-            alert('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
-            return;
-          }
+          const logged = await checkLoginStatus();
+          if (!logged) { alert('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại'); return; }
 
-          const replyModal = this.closest('.reply-modal');
-          if (!replyModal) return;
+          const modal = this.closest('.reply-modal');
+          const content = modal.querySelector('.reply-input').value.trim();
+          if (!content) { alert('Vui lòng nhập nội dung phản hồi'); return; }
 
           const reviewId = reviewElement.dataset.reviewId;
-          const content = replyModal.querySelector('.reply-input').value.trim();
-
-          if (!content) {
-            alert('Vui lòng nhập nội dung phản hồi');
-            return;
-          }
-
           try {
-            const response = await fetch(`/api/reviews/${reviewId}/feedback`, {
+            const resp = await fetch(`/api/reviews/${reviewId}/feedback`, {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
               body: `content=${encodeURIComponent(content)}`,
               credentials: 'include'
             });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || 'Error submitting feedback');
+            if (!resp.ok) {
+              const err = await resp.json().catch(() => ({ error: 'Lỗi server' }));
+              throw new Error(err.error || 'Error submitting feedback');
             }
-
-            replyModal.querySelector('.reply-input').value = '';
-            replyModal.classList.add('hidden');
-
-            // Reload feedback
+            modal.querySelector('.reply-input').value = '';
+            modal.classList.add('hidden');
+            // reload feedback
             const feedbackList = reviewElement.querySelector('.feedback-list');
-            if (feedbackList) {
-              loadFeedback(reviewId, feedbackList);
-            }
-          } catch (error) {
-            console.error('Error submitting feedback:', error);
-            alert('Có lỗi xảy ra khi gửi phản hồi: ' + error.message);
+            loadFeedback(reviewId, feedbackList);
+          } catch (e) {
+            console.error('Submit feedback error', e);
+            alert('Có lỗi khi gửi phản hồi: ' + e.message);
           }
         });
       }
 
-      // Like button
-      const likeButton = reviewElement.querySelector('.like-button');
-      if (likeButton) {
-        likeButton.addEventListener('click', async function (e) {
+      // Like / unlike
+      const likeBtn = reviewElement.querySelector('.like-button');
+      if (likeBtn) {
+        likeBtn.addEventListener('click', async function (e) {
           e.preventDefault();
-
-          const isLoggedIn = await checkLoginStatus();
-          if (!isLoggedIn) {
-            alert('Vui lòng đăng nhập để thích đánh giá');
-            return;
-          }
+          const logged = await checkLoginStatus();
+          if (!logged) { alert('Vui lòng đăng nhập để thích đánh giá'); return; }
 
           const reviewId = this.dataset.reviewId;
           try {
-            const response = await fetch(`/api/reviews/${reviewId}/like`, {
+            const resp = await fetch(`/api/reviews/${reviewId}/like`, {
               method: 'POST',
               credentials: 'include'
             });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || 'Error liking review');
+            if (!resp.ok) {
+              const err = await resp.json().catch(() => ({ error: 'Lỗi' }));
+              throw new Error(err.error || 'Error liking review');
             }
-
-            // Toggle like state
+            // toggle UI
             const icon = this.querySelector('i');
-            const likeCountElement = this.querySelector('.like-count');
-
+            const countEl = this.querySelector('.like-count');
+            let count = parseInt(countEl.textContent || '0');
             if (icon.classList.contains('fa-regular')) {
-              // User just liked the review
-              icon.classList.remove('fa-regular');
-              icon.classList.add('fa-solid');
-              this.classList.add('text-blue-500');
-              likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+              icon.classList.remove('fa-regular'); icon.classList.add('fa-solid'); this.classList.add('text-blue-500'); count++;
             } else {
-              // User unliked the review
-              icon.classList.remove('fa-solid');
-              icon.classList.add('fa-regular');
-              this.classList.remove('text-blue-500');
-              likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+              icon.classList.remove('fa-solid'); icon.classList.add('fa-regular'); this.classList.remove('text-blue-500'); count = Math.max(0, count - 1);
             }
-          } catch (error) {
-            console.error('Error liking review:', error);
-            alert('Có lỗi xảy ra khi thích đánh giá: ' + error.message);
+            countEl.textContent = count;
+          } catch (e) {
+            console.error('Like error', e);
+            alert('Có lỗi khi thích đánh giá: ' + e.message);
           }
         });
       }
     }
 
-    // Load feedback for a review
-    async function loadFeedback(reviewId, feedbackContainer) {
+    // --- Load feedback for a review ---
+    async function loadFeedback(reviewId, container) {
+      if (!container) return;
+      container.innerHTML = `<div class="text-sm text-gray-500 py-2">Đang tải phản hồi...</div>`;
       try {
-        const response = await fetch(`/api/reviews/${reviewId}/feedback`);
-        if (!response.ok) throw new Error('Failed to load feedback');
-
-        const feedbacks = await response.json();
-        feedbackContainer.innerHTML = '';
-
-        if (feedbacks.length === 0) return;
-
-        feedbacks.forEach(feedback => {
-          const feedbackElement = document.createElement('div');
-          feedbackElement.className = 'mb-3 pb-2 border-b border-gray-100 last:border-0';
-
-
-
-          const date = feedback.createdAt ?
-            new Date(feedback.createdAt).toLocaleString('vi-VN', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            }) : 'Không rõ ngày';
-
-
-
-          feedbackElement.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <p class="font-semibold text-sm">${feedback.username || 'Ẩn danh'}</p>
-                        <span class="text-xs text-gray-500">${date}</span>
-                    </div>
-                    <p class="text-gray-800 text-sm mt-1">${feedback.content || ''}</p>
-                `;
-
-          feedbackContainer.appendChild(feedbackElement);
-        });
-      } catch (error) {
-        console.error('Error loading feedback:', error);
-        feedbackContainer.innerHTML = `
-                <p class="text-red-500 text-sm">Đã xảy ra lỗi khi tải phản hồi</p>
-            `;
+        const resp = await fetch(`/api/reviews/${reviewId}/feedback`);
+        if (!resp.ok) throw new Error('Failed to load feedback');
+        const feedbacks = await resp.json();
+        if (!Array.isArray(feedbacks) || feedbacks.length === 0) {
+          container.innerHTML = '';
+          return;
+        }
+        container.innerHTML = '';
+        for (const f of feedbacks) {
+          const el = document.createElement('div');
+          el.className = 'mb-3 pb-2 border-b border-gray-100 last:border-0';
+          const date = f.createdAt ? new Date(f.createdAt).toLocaleString('vi-VN') : 'Không rõ ngày';
+          el.innerHTML = `<div class="flex justify-between items-start">
+                          <p class="font-semibold text-sm">${escapeHtml(f.username) || 'Ẩn danh'}</p>
+                          <span class="text-xs text-gray-500">${date}</span>
+                        </div>
+                        <p class="text-gray-800 text-sm mt-1">${escapeHtml(f.content || '')}</p>`;
+          container.appendChild(el);
+        }
+      } catch (e) {
+        console.error('Load feedback error', e);
+        container.innerHTML = `<p class="text-red-500 text-sm">Đã xảy ra lỗi khi tải phản hồi</p>`;
       }
     }
 
-    // Update review statistics
+    // --- Update review stats (average, totals) ---
     async function updateReviewStats(productId) {
       try {
-        const response = await fetch(`/api/reviews/stats/${productId}`);
-        if (!response.ok) throw new Error('Failed to load review stats');
+        const resp = await fetch(`/api/reviews/stats/${productId}`);
+        if (!resp.ok) return;
+        const stats = await resp.json();
+        const avgEl = document.getElementById('average-rating');
+        if (avgEl && typeof stats.averageRating === 'number') avgEl.textContent = `${stats.averageRating.toFixed(1)}/5`;
 
-        const stats = await response.json();
-
-        // Update average rating
-        document.getElementById('average-rating').textContent =
-          `${stats.averageRating.toFixed(1)}/5`;
-
-        // Update average stars
-        const avgRating = Math.round(stats.averageRating);
         const starsContainer = document.getElementById('average-stars');
-        starsContainer.innerHTML = '';
-
-        for (let i = 1; i <= 5; i++) {
-          const star = document.createElement('i');
-          star.className = `fa-solid fa-star ${i <= avgRating ? 'text-yellow-500' : 'text-gray-300'}`;
-          if (i === avgRating && stats.averageRating % 1 > 0.3) {
-            star.className = 'fa-solid fa-star-half-stroke text-yellow-500';
+        if (starsContainer) {
+          starsContainer.innerHTML = '';
+          const avgRounded = Math.round(stats.averageRating || 0);
+          for (let i = 1; i <= 5; i++) {
+            const iEl = document.createElement('i');
+            iEl.className = `fa-solid fa-star ${i <= avgRounded ? 'text-yellow-500' : 'text-gray-300'} mr-1`;
+            starsContainer.appendChild(iEl);
           }
-          starsContainer.appendChild(star);
         }
 
-        // Update total reviews
-        document.getElementById('total-reviews').textContent =
-          `(${stats.totalReviews} đánh giá)`;
+        const totalEl = document.getElementById('total-reviews');
+        if (totalEl) totalEl.textContent = `(${stats.totalReviews || 0} đánh giá)`;
 
-        // Update filter buttons
-        document.querySelectorAll('.filter-button').forEach((button, index) => {
-          if (index < 5) {
-            const rating = 5 - index;
-            button.textContent = `${rating} sao (${stats.ratingCounts[rating + 'star']})`;
-          } else if (index === 5) {
-            button.textContent = `Tất cả (${stats.totalReviews})`;
-          }
-        });
-      } catch (error) {
-        console.error('Error updating review stats:', error);
+        // Update filter button text if ratingCounts provided
+        if (stats.ratingCounts) {
+          document.querySelectorAll('.filter-button').forEach(btn => {
+            const rating = parseInt(btn.getAttribute('data-rating')) || 0;
+            if (rating === 0) {
+              btn.textContent = `Tất cả (${stats.totalReviews || 0})`;
+            } else {
+              // ratingCounts keys could be numbers or strings - be resilient
+              const count = stats.ratingCounts[String(rating)] ?? stats.ratingCounts[rating] ?? 0;
+              btn.textContent = `${rating} sao (${count})`;
+            }
+          });
+        }
+      } catch (e) {
+        console.error('Update stats error', e);
       }
     }
 
-    // Initialize the page
-    initialize();
-  });
+    // --- Review modal UI (open/close), star selection, image preview, submit review ---
+    // Open modal (requires #openReviewModal & #reviewModal elements)
+    const openBtn = document.getElementById('openReviewModal');
+    if (openBtn) {
+      openBtn.addEventListener('click', async () => {
+        const logged = await checkLoginStatus();
+        if (!logged) {
+          Swal.fire({ icon: 'warning', title: 'Thông báo', text: 'Vui lòng đăng nhập để đánh giá sản phẩm', confirmButtonText: 'OK' });
+          return;
+        }
+        const modal = document.getElementById('reviewModal');
+        if (modal) modal.classList.remove('hidden');
+      });
+    }
+
+    // Cancel button
+    const cancelBtn = document.getElementById('cancelReview');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        const modal = document.getElementById('reviewModal');
+        if (modal) modal.classList.add('hidden');
+        resetReviewForm();
+      });
+    }
+
+    // Star selection
+    const starEls = document.querySelectorAll('.rating-stars i');
+    starEls.forEach((s, idx) => {
+      s.addEventListener('click', () => {
+        const value = parseInt(s.getAttribute('data-value')) || (idx + 1);
+        const input = document.getElementById('ratingValue');
+        if (input) input.value = value;
+        starEls.forEach((el, i) => {
+          if (i < value) { el.classList.remove('fa-regular'); el.classList.add('fa-solid', 'text-yellow-500'); }
+          else { el.classList.remove('fa-solid', 'text-yellow-500'); el.classList.add('fa-regular'); }
+        });
+      });
+    });
+
+    // Image preview
+    const imgInput = document.getElementById('imageUpload');
+    if (imgInput) {
+      imgInput.addEventListener('change', function (e) {
+        const preview = document.getElementById('previewImages');
+        preview.innerHTML = '';
+        Array.from(e.target.files).slice(0, 5).forEach(file => {
+          if (!file.type.startsWith('image/')) return;
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            const img = document.createElement('img');
+            img.src = ev.target.result;
+            img.className = 'h-20 object-cover mr-2 mb-2 rounded';
+            preview.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+    }
+
+    // Submit review
+    const submitBtn = document.getElementById('submitReview');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', async () => {
+        const logged = await checkLoginStatus();
+        if (!logged) { Swal.fire({ icon: 'info', title: 'Thông báo', text: 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại' }); return; }
+
+        const rating = document.getElementById('ratingValue')?.value || '0';
+        const comment = document.getElementById('reviewComment')?.value || '';
+        const imageFiles = document.getElementById('imageUpload')?.files || [];
+
+        if (rating === '0' || Number(rating) <= 0) {
+          Swal.fire({ icon: 'warning', title: 'Chưa chọn đánh giá', text: 'Vui lòng chọn số sao đánh giá trước khi gửi' });
+          return;
+        }
+        if (!comment.trim()) {
+          Swal.fire({ icon: 'warning', title: 'Thiếu nội dung', text: 'Vui lòng nhập bình luận' });
+          return;
+        }
+
+        // Build FormData and send
+        const fd = new FormData();
+        fd.append('productId', PRODUCT_ID);
+        fd.append('rating', rating);
+        fd.append('comment', comment);
+        if (imageFiles.length) {
+          Array.from(imageFiles).slice(0, 5).forEach(f => fd.append('images', f));
+        }
+
+        try {
+          const resp = await fetch('/api/reviews', {
+            method: 'POST',
+            body: fd,
+            credentials: 'include'
+          });
+          if (!resp.ok) {
+            // try to read JSON error, else text
+            const err = await resp.json().catch(() => null);
+            throw new Error((err && (err.error || err.message)) || await resp.text() || 'Error submitting review');
+          }
+
+          Swal.fire({ icon: 'success', title: 'Thành công', text: 'Đánh giá của bạn đã được gửi!', confirmButtonText: 'OK' });
+          document.getElementById('reviewModal')?.classList.add('hidden');
+          resetReviewForm();
+          // reload lists & stats
+          loadReviews(PRODUCT_ID, currentFilter);
+          updateReviewStats(PRODUCT_ID);
+        } catch (e) {
+          console.error('Submit review error', e);
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Có lỗi xảy ra khi gửi đánh giá: ' + e.message });
+        }
+      });
+    }
+
+    // Reset review form
+    function resetReviewForm() {
+      document.getElementById('reviewComment') && (document.getElementById('reviewComment').value = '');
+      document.getElementById('imageUpload') && (document.getElementById('imageUpload').value = '');
+      document.getElementById('previewImages') && (document.getElementById('previewImages').innerHTML = '');
+      document.getElementById('ratingValue') && (document.getElementById('ratingValue').value = 0);
+      document.querySelectorAll('.rating-stars i').forEach(i => { i.classList.remove('fa-solid', 'text-yellow-500'); i.classList.add('fa-regular'); });
+    }
+
+    // Filter buttons (assumes .filter-button elements exist and have data-rating attribute)
+    document.querySelectorAll('.filter-button').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const rating = parseInt(this.getAttribute('data-rating')) || 0;
+        currentFilter = rating;
+        // active style
+        document.querySelectorAll('.filter-button').forEach(b => b.classList.remove('bg-gray-200', 'border-gray-500', 'active-filter'));
+        this.classList.add('bg-gray-200', 'border-gray-500', 'active-filter');
+        loadReviews(PRODUCT_ID, rating);
+      });
+    });
+
+    // Initial load
+    (async () => {
+      await checkLoginStatus();
+      loadReviews(PRODUCT_ID, currentFilter);
+      updateReviewStats(PRODUCT_ID);
+    })();
+
+  }); // DOMContentLoaded
 </script>

@@ -1,62 +1,44 @@
 package com.datn.datn.model;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
+    import jakarta.persistence.*;
+    import lombok.AllArgsConstructor;
+    import lombok.Data;
+    import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "review_likes")
-public class ReviewLike {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    import java.time.LocalDateTime;
 
-    @Column(name = "review_id")
-    private Long reviewId;
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Entity
+    @Table(name = "review_likes")
+    public class ReviewLike {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
 
-    private String username;
+        // @Column(name = "review_id")
+        // private Long reviewId;
 
-    @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+        private String username;
 
-    // Constructors
-    public ReviewLike() {
+        @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+        private LocalDateTime createdAt;
+
+        // Quan hệ với bảng Review
+        @ManyToOne
+        @JoinColumn(name = "review_id")
+        private Review review;
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public LocalDateTime getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+        }
     }
-
-    public ReviewLike(Long reviewId, String username) {
-        this.reviewId = reviewId;
-        this.username = username;
-    }
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getReviewId() {
-        return reviewId;
-    }
-
-    public void setReviewId(Long reviewId) {
-        this.reviewId = reviewId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-}
