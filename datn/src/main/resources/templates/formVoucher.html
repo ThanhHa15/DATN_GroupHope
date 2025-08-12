@@ -147,8 +147,41 @@
   </div>
 
   </div>
-  <div class="ml-[300px] mt-10 bg-white p-6 shadow-md rounded-lg max-w-[1200px]">
+  <div class="ml-[300px] mt-10 bg-white mb-4 p-6 shadow-md rounded-lg max-w-[1200px]">
     <h2 class="text-xl font-semibold mb-4">Danh sách Voucher</h2>
+    <!-- Đây là phần tìm kiếm -->
+    <form th:action="@{/vouchers/search}" method="get" class="flex flex-wrap gap-4 mb-6 ">
+      <div class="flex-1 min-w-[240px]  " style="margin-left: -15px;">
+        <div class="relative">
+          <input type="text" name="keyword" placeholder="Tìm kiếm Voucher..." th:value="${keyword}"
+            class="w-[700px] pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+          <div
+            class="absolute right-15 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center ml-2">
+            <i class="ri-search-line text-gray-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-48 mf-100">
+        <div class="relative">
+          <select
+            class="w-full h-10 pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+            <option value="">Trạng thái</option>
+            <option value="active">Còn hiệu lực</option>
+            <option value="outofstock">Hết hiệu lực</option>
+            <option value="hidden">Ẩn</option>
+          </select>
+          <div
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+            <i class="ri-arrow-down-s-line text-gray-400"></i>
+          </div>
+        </div>
+      </div>
+
+
+    </form>
+
+
 
     <table class="w-full table-auto">
       <thead class="bg-gray-200 text-gray-500">
@@ -186,106 +219,161 @@
       </tbody>
     </table>
 
-  </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Xử lý format giá tối thiểu
-      const minPriceDisplay = document.getElementById("minPriceDisplay");
-      const minPriceHidden = document.getElementById("minPriceHidden");
-      const form = document.getElementById("voucherForm");
+    <div id="successMessage" th:if="${success}" th:attr="data-message=${success}" style="display: none;"></div>
 
-      // Format khi hiển thị ban đầu
-      if (minPriceHidden && minPriceHidden.value) {
-        minPriceDisplay.value = parseInt(minPriceHidden.value).toLocaleString('vi-VN');
-      }
+    <div id="errorMessage" th:if="${error}" th:attr="data-message=${error}" style="display: none;"></div>
 
-      // Format khi người dùng nhập
-      if (minPriceDisplay) {
-        minPriceDisplay.addEventListener('input', function (e) {
-          // Lấy giá trị số từ chuỗi đã format
-          let rawValue = this.value.replace(/\./g, '');
+    <div class="flex items-center justify-between mt-6">
+      <div class="text-sm text-gray-500">
+        <!-- Hiển thị 1-6 của 24 sản phẩm -->
+      </div>
+      <div class="flex space-x-2 ">
+        <button
+          class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap">Trước</button>
+        <button
+          class="px-3 py-1 border border-primary rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">1</button>
+        <button
+          class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">2</button>
+        <button
+          class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">3</button>
+        <button
+          class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">4</button>
+        <button
+          class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">Tiếp</button>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Xử lý format giá tối thiểu
+        const minPriceDisplay = document.getElementById("minPriceDisplay");
+        const minPriceHidden = document.getElementById("minPriceHidden");
+        const form = document.getElementById("voucherForm");
 
-          if (rawValue) {
-            let num = parseInt(rawValue);
-            if (!isNaN(num)) {
-              // Format lại hiển thị
-              this.value = num.toLocaleString('vi-VN');
-              // Gán giá trị số vào input hidden
+        // Format khi hiển thị ban đầu
+        if (minPriceHidden && minPriceHidden.value) {
+          minPriceDisplay.value = parseInt(minPriceHidden.value).toLocaleString('vi-VN');
+        }
+
+        // Format khi người dùng nhập
+        if (minPriceDisplay) {
+          minPriceDisplay.addEventListener('input', function (e) {
+            // Lấy giá trị số từ chuỗi đã format
+            let rawValue = this.value.replace(/\./g, '');
+
+            if (rawValue) {
+              let num = parseInt(rawValue);
+              if (!isNaN(num)) {
+                // Format lại hiển thị
+                this.value = num.toLocaleString('vi-VN');
+                // Gán giá trị số vào input hidden
+                if (minPriceHidden) {
+                  minPriceHidden.value = num;
+                }
+              }
+            } else {
               if (minPriceHidden) {
-                minPriceHidden.value = num;
+                minPriceHidden.value = '';
               }
             }
-          } else {
-            if (minPriceHidden) {
-              minPriceHidden.value = '';
+          });
+        }
+
+        // Đảm bảo gửi giá trị số khi submit form
+        if (form) {
+          form.addEventListener('submit', function (e) {
+            if (minPriceDisplay && minPriceDisplay.value && minPriceHidden) {
+              let rawValue = minPriceDisplay.value.replace(/\./g, '');
+              minPriceHidden.value = rawValue ? parseInt(rawValue) : '';
             }
-          }
+          });
+        }
+
+        // Tính thời gian đếm ngược và đổi màu
+        function updateCountdowns() {
+          const now = new Date();
+          const countdownElements = document.querySelectorAll('.countdown');
+
+          countdownElements.forEach(element => {
+            const endDateStr = element.getAttribute('data-enddate');
+            const endDate = new Date(endDateStr);
+
+            if (isNaN(endDate.getTime())) {
+              element.textContent = "Ngày không hợp lệ";
+              element.classList.add('text-red-500');
+              return;
+            }
+
+            const diff = endDate - now;
+
+            if (diff < 0) {
+              element.textContent = "Đã hết hạn";
+              element.classList.remove('text-green-500');
+              element.classList.add('text-red-500');
+              return;
+            }
+
+            // Tính toán ngày, giờ, phút, giây
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            // Hiển thị kết quả
+            if (days > 0) {
+              element.textContent = `${days} ngày  ${hours} giờ  ${minutes} phút  `;
+            } else if (hours > 0) {
+              element.textContent = `${hours} giờ ${minutes} phút`;
+            } else if (minutes > 0) {
+              element.textContent = `${minutes}phút ${seconds}giây`;
+            } else {
+              element.textContent = `${seconds}giây`;
+            }
+
+            // Đổi màu
+            element.classList.remove('text-red-500');
+            element.classList.add('text-green-500');
+          });
+        }
+
+        // Cập nhật ngay lập tức và sau mỗi giây
+        updateCountdowns();
+        setInterval(updateCountdowns, 1000);
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const successDiv = document.getElementById('successMessage');
+        const errorDiv = document.getElementById('errorMessage');
+
+        if (successDiv) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: successDiv.dataset.message,
+            confirmButtonText: 'Đóng'
+          });
+        }
+
+        if (errorDiv) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Thất bại',
+            text: errorDiv.dataset.message,
+            confirmButtonText: 'Đóng'
+          });
+        }
+      });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const statusSelect = document.querySelector('select[name="status"]');
+        statusSelect.addEventListener('change', function () {
+          this.form.submit();  // Tự động submit form khi chọn trạng thái
         });
-      }
-
-      // Đảm bảo gửi giá trị số khi submit form
-      if (form) {
-        form.addEventListener('submit', function (e) {
-          if (minPriceDisplay && minPriceDisplay.value && minPriceHidden) {
-            let rawValue = minPriceDisplay.value.replace(/\./g, '');
-            minPriceHidden.value = rawValue ? parseInt(rawValue) : '';
-          }
-        });
-      }
-
-      // Tính thời gian đếm ngược và đổi màu
-      function updateCountdowns() {
-        const now = new Date();
-        const countdownElements = document.querySelectorAll('.countdown');
-
-        countdownElements.forEach(element => {
-          const endDateStr = element.getAttribute('data-enddate');
-          const endDate = new Date(endDateStr);
-
-          if (isNaN(endDate.getTime())) {
-            element.textContent = "Ngày không hợp lệ";
-            element.classList.add('text-red-500');
-            return;
-          }
-
-          const diff = endDate - now;
-
-          if (diff < 0) {
-            element.textContent = "Đã hết hạn";
-            element.classList.remove('text-green-500');
-            element.classList.add('text-red-500');
-            return;
-          }
-
-          // Tính toán ngày, giờ, phút, giây
-          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-          // Hiển thị kết quả
-          if (days > 0) {
-            element.textContent = `${days} ngày  ${hours} giờ  ${minutes} phút  `;
-          } else if (hours > 0) {
-            element.textContent = `${hours} giờ ${minutes} phút`;
-          } else if (minutes > 0) {
-            element.textContent = `${minutes}phút ${seconds}giây`;
-          } else {
-            element.textContent = `${seconds}giây`;
-          }
-
-          // Đổi màu
-          element.classList.remove('text-red-500');
-          element.classList.add('text-green-500');
-        });
-      }
-
-      // Cập nhật ngay lập tức và sau mỗi giây
-      updateCountdowns();
-      setInterval(updateCountdowns, 1000);
-    });
-  </script>
+      });
+    </script>
 </body>
 
 </html>

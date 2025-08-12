@@ -1,572 +1,602 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Hệ thống cửa hàng</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
-        }
+<xmlns:th="http://www.thymeleaf.org">
 
-        .stats-section {
-            padding: 40px 0;
-        }
+    <head>
+        <title>Hệ thống cửa hàng</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />>
+        <link rel="stylesheet" href="/css/shared/footer.css" />
+        <link rel="stylesheet" href="/css/shared/header.css" />
+        <link rel="stylesheet" href="/css/shared/chatbox.css" />
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f8f9fa;
+            }
 
-        .stat-card {
-            background: #1e3a8a;
-            color: white;
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.2);
-            transition: transform 0.3s ease;
-        }
+            .stats-section {
+                padding: 40px 0;
+            }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
+            .stat-card {
+                background: #1e3a8a;
+                color: white;
+                border-radius: 12px;
+                padding: 25px;
+                text-align: center;
+                box-shadow: 0 4px 15px rgba(30, 58, 138, 0.2);
+                transition: transform 0.3s ease;
+            }
 
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            opacity: 0.9;
-        }
+            .stat-card:hover {
+                transform: translateY(-5px);
+            }
 
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
+            .stat-icon {
+                font-size: 2.5rem;
+                margin-bottom: 15px;
+                opacity: 0.9;
+            }
 
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
+            .stat-number {
+                font-size: 2rem;
+                font-weight: 600;
+                margin-bottom: 5px;
+            }
 
-        .main-content {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 40px;
-        }
+            .stat-label {
+                font-size: 0.9rem;
+                opacity: 0.8;
+            }
 
-        .search-section {
-            padding: 30px;
-            border-bottom: 1px solid #eee;
-        }
+            .main-content {
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+                margin-bottom: 40px;
+            }
 
-        .search-input {
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 12px 15px;
-            font-size: 0.9rem;
-            transition: border-color 0.3s ease;
-            background-color: white;
-        }
+            .search-section {
+                padding: 30px;
+                border-bottom: 1px solid #eee;
+            }
 
-        .search-input:focus {
-            border-color: #1e3a8a;
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-            outline: none;
-        }
+            .search-input {
+                border: 2px solid #e5e7eb;
+                border-radius: 8px;
+                padding: 12px 15px;
+                font-size: 0.9rem;
+                transition: border-color 0.3s ease;
+                background-color: white;
+            }
 
-        .search-input option {
-            padding: 8px;
-            font-size: 0.9rem;
-        }
+            .search-input:focus {
+                border-color: #1e3a8a;
+                box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+                outline: none;
+            }
 
-        .province-select {
-            background: #1e3a8a;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+            .search-input option {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
 
-        .province-select:hover {
-            background: #1e40af;
-        }
+            .province-select {
+                background: #1e3a8a;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 20px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
 
-        .content-wrapper {
-            display: flex;
-            min-height: 600px;
-        }
+            .province-select:hover {
+                background: #1e40af;
+            }
 
-        .shop-list {
-            width: 40%;
-            padding: 30px;
-            border-right: 1px solid #eee;
-            overflow-y: auto;
-            max-height: 600px;
-        }
-
-        .map-container {
-            width: 60%;
-            height: 600px;
-        }
-
-        .shop-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid #1e3a8a;
-            transition: all 0.3s ease;
-        }
-
-        .shop-item:hover {
-            background: #e3f2fd;
-            transform: translateX(5px);
-        }
-
-        .shop-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #1e3a8a;
-            margin-bottom: 10px;
-        }
-
-        .shop-info {
-            display: flex;
-            align-items: center;
-            margin: 8px 0;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .shop-info i {
-            width: 20px;
-            margin-right: 10px;
-            color: #1e3a8a;
-        }
-
-        .directions-link {
-            color: #1e3a8a;
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            margin-top: 10px;
-            transition: color 0.3s ease;
-        }
-
-        .directions-link:hover {
-            color: #1e40af;
-        }
-
-        .back-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(255,255,255,0.9);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 25px;
-            color: #333;
-            text-decoration: none;
-            font-weight: 600;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .back-btn:hover {
-            background: white;
-            color: #1e3a8a;
-            transform: translateY(-2px);
-        }
-
-        .notification-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: #1e3a8a;
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .notification-btn:hover {
-            background: #1e40af;
-            transform: scale(1.1);
-        }
-
-        @media (max-width: 768px) {
             .content-wrapper {
-                flex-direction: column;
+                display: flex;
+                min-height: 600px;
             }
-            
-            .shop-list, .map-container {
-                width: 100%;
-            }
-            
+
             .shop-list {
-                max-height: 300px;
+                width: 40%;
+                padding: 30px;
+                border-right: 1px solid #eee;
+                overflow-y: auto;
+                max-height: 600px;
             }
-            
+
             .map-container {
-                height: 400px;
+                width: 60%;
+                height: 600px;
             }
-        }
-    </style>
-</head>
-<body>
-    <!-- Nút quay lại -->
-    <a href="/" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Quay lại
-    </a>
 
-    <!-- Nút thông báo -->
-    <button class="notification-btn">
-        <i class="bi bi-bell"></i>
-    </button>
+            .shop-item {
+                background: #f8f9fa;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 20px;
+                border-left: 4px solid #1e3a8a;
+                transition: all 0.3s ease;
+            }
 
-    <!-- Phần thống kê -->
-    <div class="stats-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="bi bi-shop"></i>
-                        </div>
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Cửa hàng</div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="bi bi-building"></i>
-                        </div>
-                        <div class="stat-number">30+</div>
-                        <div class="stat-label">Tỉnh thành</div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="bi bi-briefcase"></i>
-                        </div>
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">Văn phòng đại diện</div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="bi bi-people"></i>
-                        </div>
-                        <div class="stat-number">500+</div>
-                        <div class="stat-label">Nhân sự</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+            .shop-item:hover {
+                background: #e3f2fd;
+                transform: translateX(5px);
+            }
 
-    <!-- Nội dung chính -->
-    <div class="container">
-        <div class="main-content">
-            <!-- Phần tìm kiếm -->
-            <div class="search-section">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Tỉnh / Thành</label>
-                        <select class="form-control search-input" id="provinceSelect">
-                            <option value="">Tất cả tỉnh thành</option>
-                            <option value="Hồ Chí Minh">Thành phố Hồ Chí Minh</option>
-                            <option value="Bình Dương">Tỉnh Bình Dương</option>
-                            <option value="Cần Thơ">Thành phố Cần Thơ</option>
-                            <option value="Hà Nội">Thành phố Hà Nội</option>
-                            <option value="Đà Nẵng">Thành phố Đà Nẵng</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Nhập tên cửa hàng</label>
-                        <input type="text" class="form-control search-input" id="shopNameInput" placeholder="Nhập tên cửa hàng">
-                    </div>
-                </div>
-            </div>
+            .shop-name {
+                font-weight: 600;
+                font-size: 1.1rem;
+                color: #1e3a8a;
+                margin-bottom: 10px;
+            }
 
-            <!-- Bản đồ và danh sách shop -->
-            <div class="content-wrapper">
-                <!-- Danh sách shop -->
-                <div class="shop-list">
-                    <div class="shop-item">
-                        <div class="shop-name">Dola Sài Gòn</div>
-                        <div class="shop-info">
-                            <i class="bi bi-geo-alt"></i>
-                            Tầng 3, 70 Lữ Gia, Phường 15, Quận 11, Thành phố Hồ Chí Minh
-                        </div>
-                        <div class="shop-info">
-                            <i class="bi bi-telephone"></i>
-                            1900 6750
-                        </div>
-                        <a href="https://maps.google.com/?q=Tầng 3, 70 Lữ Gia, Phường 15, Quận 11, Thành phố Hồ Chí Minh" target="_blank" class="directions-link">
-                            <i class="bi bi-send"></i> Chỉ đường
-                        </a>
-                    </div>
+            .shop-info {
+                display: flex;
+                align-items: center;
+                margin: 8px 0;
+                color: #666;
+                font-size: 0.9rem;
+            }
 
-                    <div class="shop-item">
-                        <div class="shop-name">Dola Bình Dương</div>
-                        <div class="shop-info">
-                            <i class="bi bi-geo-alt"></i>
-                            169 / 34 Nguyễn Hữu Cảnh, Phường Phú Thọ, TP.Thủ Dầu Một, Tỉnh Bình Dương
-                        </div>
-                        <div class="shop-info">
-                            <i class="bi bi-telephone"></i>
-                            1900 6751
-                        </div>
-                        <a href="https://maps.google.com/?q=169 / 34 Nguyễn Hữu Cảnh, Phường Phú Thọ, TP.Thủ Dầu Một, Tỉnh Bình Dương" target="_blank" class="directions-link">
-                            <i class="bi bi-send"></i> Chỉ đường
-                        </a>
-                    </div>
+            .shop-info i {
+                width: 20px;
+                margin-right: 10px;
+                color: #1e3a8a;
+            }
 
-                    <div class="shop-item">
-                        <div class="shop-name">Dola Cần Thơ</div>
-                        <div class="shop-info">
-                            <i class="bi bi-geo-alt"></i>
-                            81 đường Phan Huy Chú, KDC Thới Nhựt I, Phường An Khánh, Quận Ninh Kiều, Tp Cần Thơ
-                        </div>
-                        <div class="shop-info">
-                            <i class="bi bi-telephone"></i>
-                            1900 6752
-                        </div>
-                        <a href="https://maps.google.com/?q=81 đường Phan Huy Chú, KDC Thới Nhựt I, Phường An Khánh, Quận Ninh Kiều, Tp Cần Thơ" target="_blank" class="directions-link">
-                            <i class="bi bi-send"></i> Chỉ đường
-                        </a>
-                    </div>
+            .directions-link {
+                color: #1e3a8a;
+                text-decoration: none;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                margin-top: 10px;
+                transition: color 0.3s ease;
+            }
 
-                    <div class="shop-item">
-                        <div class="shop-name">Dola Hà Nội</div>
-                        <div class="shop-info">
-                            <i class="bi bi-geo-alt"></i>
-                            Tầng 6 - 266 Đội Cấn, Phường Liễu Giai, Quận Ba Đình, Hà Nội
-                        </div>
-                        <div class="shop-info">
-                            <i class="bi bi-telephone"></i>
-                            1900 6753
-                        </div>
-                        <a href="https://maps.google.com/?q=Tầng 6 - 266 Đội Cấn, Phường Liễu Giai, Quận Ba Đình, Hà Nội" target="_blank" class="directions-link">
-                            <i class="bi bi-send"></i> Chỉ đường
-                        </a>
-                    </div>
+            .directions-link:hover {
+                color: #1e40af;
+            }
 
-                    <div class="shop-item">
-                        <div class="shop-name">Dola Đà Nẵng</div>
-                        <div class="shop-info">
-                            <i class="bi bi-geo-alt"></i>
-                            181 đường Huỳnh Tấn Phát, Phường Hoà Cường Nam, Quận Hải Châu, TP Đà Nẵng
-                        </div>
-                        <div class="shop-info">
-                            <i class="bi bi-telephone"></i>
-                            1900 6754
-                        </div>
-                        <a href="https://maps.google.com/?q=181 đường Huỳnh Tấn Phát, Phường Hoà Cường Nam, Quận Hải Châu, TP Đà Nẵng" target="_blank" class="directions-link">
-                            <i class="bi bi-send"></i> Chỉ đường
-                        </a>
-                    </div>
-                </div>
+            .back-btn {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                background: rgba(255, 255, 255, 0.9);
+                border: none;
+                padding: 10px 15px;
+                border-radius: 25px;
+                color: #333;
+                text-decoration: none;
+                font-weight: 600;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                z-index: 1000;
+            }
 
-                <!-- Bản đồ -->
-                <div class="map-container">
-                    <div id="map" style="width: 100%; height: 100%;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+            .back-btn:hover {
+                background: white;
+                color: #1e3a8a;
+                transform: translateY(-2px);
+            }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap" async defer></script>
-    
-    <script>
-        function initMap() {
-            // Tọa độ trung tâm (Việt Nam)
-            const centerLocation = { lat: 16.0544, lng: 108.2022 };
-            
-            // Tạo bản đồ
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 6,
-                center: centerLocation,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                styles: [
-                    {
-                        featureType: "poi",
-                        elementType: "labels",
-                        stylers: [{ visibility: "off" }]
-                    }
-                ]
-            });
-            
-            // Danh sách các địa chỉ shop
-            const shopLocations = [
-                {
-                    position: { lat: 10.7715122, lng: 106.6529743 },
-                    title: "Dola Sài Gòn",
-                    address: "Tầng 3, 70 Lữ Gia, Phường 15, Quận 11, Thành phố Hồ Chí Minh",
-                    phone: "1900 6750"
-                },
-                {
-                    position: { lat: 11.0041, lng: 106.6582 },
-                    title: "Dola Bình Dương",
-                    address: "169 / 34 Nguyễn Hữu Cảnh, Phường Phú Thọ, TP.Thủ Dầu Một, Tỉnh Bình Dương",
-                    phone: "1900 6751"
-                },
-                {
-                    position: { lat: 10.0452, lng: 105.7469 },
-                    title: "Dola Cần Thơ",
-                    address: "81 đường Phan Huy Chú, KDC Thới Nhựt I, Phường An Khánh, Quận Ninh Kiều, Tp Cần Thơ",
-                    phone: "1900 6752"
-                },
-                {
-                    position: { lat: 21.0285, lng: 105.8542 },
-                    title: "Dola Hà Nội",
-                    address: "Tầng 6 - 266 Đội Cấn, Phường Liễu Giai, Quận Ba Đình, Hà Nội",
-                    phone: "1900 6753"
-                },
-                {
-                    position: { lat: 16.0544, lng: 108.2022 },
-                    title: "Dola Đà Nẵng",
-                    address: "181 đường Huỳnh Tấn Phát, Phường Hoà Cường Nam, Quận Hải Châu, TP Đà Nẵng",
-                    phone: "1900 6754"
+            .notification-btn {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: #1e3a8a;
+                color: white;
+                border: none;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+                transition: all 0.3s ease;
+                z-index: 1000;
+            }
+
+            .notification-btn:hover {
+                background: #1e40af;
+                transform: scale(1.1);
+            }
+
+            @media (max-width: 768px) {
+                .content-wrapper {
+                    flex-direction: column;
                 }
-            ];
-            
-            // Tạo markers cho tất cả các shop
-            shopLocations.forEach((shop, index) => {
-                const marker = new google.maps.Marker({
-                    position: shop.position,
-                    map: map,
-                    title: shop.title,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 10,
-                        fillColor: "#FF0000",
-                        fillOpacity: 1,
-                        strokeColor: "#FFFFFF",
-                        strokeWeight: 2
-                    },
-                    animation: google.maps.Animation.DROP
+
+                .shop-list,
+                .map-container {
+                    width: 100%;
+                }
+
+                .shop-list {
+                    max-height: 300px;
+                }
+
+                .map-container {
+                    height: 400px;
+                }
+            }
+        </style>
+    </head>
+    <!-- Header (Full width) -->
+    <div th:insert="views/shared/header :: siteHeader" style="margin-bottom: 130px"></div>
+    <!-- chatbox -->
+    <div th:insert="views/shared/chatbot :: siteChatbot"></div>
+    <!-- Zalo icon -->
+    <div th:insert="views/shared/zalo :: siteZalo"></div>
+    <br>
+
+    <body>
+        <!-- Nút quay lại -->
+        <!-- <a href="/" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a> -->
+
+        <!-- Nút thông báo -->
+        <button class="notification-btn">
+            <i class="bi bi-bell"></i>
+        </button>
+
+        <!-- Phần thống kê -->
+        <div class="stats-section" style="margin-top: -50px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Cửa hàng</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+                            <div class="stat-number">30+</div>
+                            <div class="stat-label">Tỉnh thành</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-briefcase"></i>
+                            </div>
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Văn phòng đại diện</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Nhân sự</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nội dung chính -->
+        <div class="container">
+            <div class="main-content">
+                <!-- Phần tìm kiếm -->
+                <div class="search-section">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Tỉnh / Thành</label>
+                            <select class="form-control search-input" id="provinceSelect">
+                                <option value="">Tất cả tỉnh thành</option>
+                                <option value="Hồ Chí Minh">Thành phố Hồ Chí Minh</option>
+                                <option value="Bình Dương">Tỉnh Bình Dương</option>
+                                <option value="Cần Thơ">Thành phố Cần Thơ</option>
+                                <option value="Hà Nội">Thành phố Hà Nội</option>
+                                <option value="Đà Nẵng">Thành phố Đà Nẵng</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nhập tên cửa hàng</label>
+                            <input type="text" class="form-control search-input" id="shopNameInput"
+                                placeholder="Nhập tên cửa hàng">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bản đồ và danh sách shop -->
+                <div class="content-wrapper">
+                    <!-- Danh sách shop -->
+                    <div class="shop-list">
+                        <div class="shop-item">
+                            <div class="shop-name">HopePhone Sài Gòn</div>
+                            <div class="shop-info">
+                                <i class="bi bi-geo-alt"></i>
+                                Tầng 3, 70 Lữ Gia, Phường 15, Quận 11, Thành phố Hồ Chí Minh
+                            </div>
+                            <div class="shop-info">
+                                <i class="bi bi-telephone"></i>
+                                1900 6750
+                            </div>
+                            <a href="https://maps.google.com/?q=Tầng 3, 70 Lữ Gia, Phường 15, Quận 11, Thành phố Hồ Chí Minh"
+                                target="_blank" class="directions-link">
+                                <i class="bi bi-send"></i> Chỉ đường
+                            </a>
+                        </div>
+
+                        <div class="shop-item">
+                            <div class="shop-name">HopePhone Bình Dương</div>
+                            <div class="shop-info">
+                                <i class="bi bi-geo-alt"></i>
+                                169 / 34 Nguyễn Hữu Cảnh, Phường Phú Thọ, TP.Thủ Dầu Một, Tỉnh Bình Dương
+                            </div>
+                            <div class="shop-info">
+                                <i class="bi bi-telephone"></i>
+                                1900 6751
+                            </div>
+                            <a href="https://maps.google.com/?q=169 / 34 Nguyễn Hữu Cảnh, Phường Phú Thọ, TP.Thủ Dầu Một, Tỉnh Bình Dương"
+                                target="_blank" class="directions-link">
+                                <i class="bi bi-send"></i> Chỉ đường
+                            </a>
+                        </div>
+
+                        <div class="shop-item">
+                            <div class="shop-name">HopePhone Cần Thơ</div>
+                            <div class="shop-info">
+                                <i class="bi bi-geo-alt"></i>
+                                81 đường Phan Huy Chú, KDC Thới Nhựt I, Phường An Khánh, Quận Ninh Kiều, Tp Cần Thơ
+                            </div>
+                            <div class="shop-info">
+                                <i class="bi bi-telephone"></i>
+                                1900 6752
+                            </div>
+                            <a href="https://maps.google.com/?q=81 đường Phan Huy Chú, KDC Thới Nhựt I, Phường An Khánh, Quận Ninh Kiều, Tp Cần Thơ"
+                                target="_blank" class="directions-link">
+                                <i class="bi bi-send"></i> Chỉ đường
+                            </a>
+                        </div>
+
+                        <div class="shop-item">
+                            <div class="shop-name">HopePhone Hà Nội</div>
+                            <div class="shop-info">
+                                <i class="bi bi-geo-alt"></i>
+                                Tầng 6 - 266 Đội Cấn, Phường Liễu Giai, Quận Ba Đình, Hà Nội
+                            </div>
+                            <div class="shop-info">
+                                <i class="bi bi-telephone"></i>
+                                1900 6753
+                            </div>
+                            <a href="https://maps.google.com/?q=Tầng 6 - 266 Đội Cấn, Phường Liễu Giai, Quận Ba Đình, Hà Nội"
+                                target="_blank" class="directions-link">
+                                <i class="bi bi-send"></i> Chỉ đường
+                            </a>
+                        </div>
+
+                        <div class="shop-item">
+                            <div class="shop-name">HopePhone Đà Nẵng</div>
+                            <div class="shop-info">
+                                <i class="bi bi-geo-alt"></i>
+                                181 đường Huỳnh Tấn Phát, Phường Hoà Cường Nam, Quận Hải Châu, TP Đà Nẵng
+                            </div>
+                            <div class="shop-info">
+                                <i class="bi bi-telephone"></i>
+                                1900 6754
+                            </div>
+                            <a href="https://maps.google.com/?q=181 đường Huỳnh Tấn Phát, Phường Hoà Cường Nam, Quận Hải Châu, TP Đà Nẵng"
+                                target="_blank" class="directions-link">
+                                <i class="bi bi-send"></i> Chỉ đường
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Bản đồ -->
+                    <div class="map-container">
+                        <div id="map" style="width: 100%; height: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- Footer (Full width) -->
+        <br><br>
+        <div th:insert="views/shared/footer :: footerFragment"></div>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Google Maps API -->
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap"
+            async defer></script>
+
+        <script>
+            function initMap() {
+                // Tọa độ trung tâm (Việt Nam)
+                const centerLocation = { lat: 16.0544, lng: 108.2022 };
+
+                // Tạo bản đồ
+                const map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 6,
+                    center: centerLocation,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    styles: [
+                        {
+                            featureType: "poi",
+                            elementType: "labels",
+                            stylers: [{ visibility: "off" }]
+                        }
+                    ]
                 });
-                
-                // Thêm InfoWindow cho từng marker
-                const infoWindow = new google.maps.InfoWindow({
-                    content: `
+
+                // Danh sách các địa chỉ shop
+                const shopLocations = [
+                    {
+                        position: { lat: 10.7715122, lng: 106.6529743 },
+                        title: "HopePhone Sài Gòn",
+                        address: "Tầng 3, 70 Lữ Gia, Phường 15, Quận 11, Thành phố Hồ Chí Minh",
+                        phone: "1900 6750"
+                    },
+                    {
+                        position: { lat: 11.0041, lng: 106.6582 },
+                        title: "HopePhone Bình Dương",
+                        address: "169 / 34 Nguyễn Hữu Cảnh, Phường Phú Thọ, TP.Thủ Dầu Một, Tỉnh Bình Dương",
+                        phone: "1900 6751"
+                    },
+                    {
+                        position: { lat: 10.0452, lng: 105.7469 },
+                        title: "HopePhone Cần Thơ",
+                        address: "81 đường Phan Huy Chú, KDC Thới Nhựt I, Phường An Khánh, Quận Ninh Kiều, Tp Cần Thơ",
+                        phone: "1900 6752"
+                    },
+                    {
+                        position: { lat: 21.0285, lng: 105.8542 },
+                        title: "HopePhone Hà Nội",
+                        address: "Tầng 6 - 266 Đội Cấn, Phường Liễu Giai, Quận Ba Đình, Hà Nội",
+                        phone: "1900 6753"
+                    },
+                    {
+                        position: { lat: 16.0544, lng: 108.2022 },
+                        title: "HopePhone Đà Nẵng",
+                        address: "181 đường Huỳnh Tấn Phát, Phường Hoà Cường Nam, Quận Hải Châu, TP Đà Nẵng",
+                        phone: "1900 6754"
+                    }
+                ];
+
+                // Tạo markers cho tất cả các shop
+                shopLocations.forEach((shop, index) => {
+                    const marker = new google.maps.Marker({
+                        position: shop.position,
+                        map: map,
+                        title: shop.title,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 10,
+                            fillColor: "#FF0000",
+                            fillOpacity: 1,
+                            strokeColor: "#FFFFFF",
+                            strokeWeight: 2
+                        },
+                        animation: google.maps.Animation.DROP
+                    });
+
+                    // Thêm InfoWindow cho từng marker
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `
                         <div style="padding: 12px; text-align: center; max-width: 200px;">
                             <h5 style="margin: 0 0 6px 0; color: #333; font-size: 14px;">🏪 ${shop.title}</h5>
                             <p style="margin: 0; color: #666; font-size: 12px;">${shop.address}</p>
                             <p style="margin: 3px 0 0 0; color: #1e3a8a; font-size: 11px;">📞 ${shop.phone}</p>
                         </div>
                     `
-                });
-                
-                // Hiển thị InfoWindow khi click marker
-                marker.addListener("click", () => {
-                    infoWindow.open(map, marker);
-                });
-                
-                // Thêm delay cho animation drop
-                setTimeout(() => {
-                    marker.setAnimation(google.maps.Animation.DROP);
-                }, index * 200);
-            });
-        }
+                    });
 
-        // Xử lý click vào shop item
-        document.querySelectorAll('.shop-item').forEach((item, index) => {
-            item.addEventListener('click', function() {
-                // Remove active class from all items
-                document.querySelectorAll('.shop-item').forEach(i => {
-                    i.style.background = '#f8f9fa';
-                    i.style.borderLeftColor = '#1e3a8a';
-                });
-                
-                // Add active class to clicked item
-                this.style.background = '#e3f2fd';
-                this.style.borderLeftColor = '#ff6b6b';
-            });
-        });
+                    // Hiển thị InfoWindow khi click marker
+                    marker.addListener("click", () => {
+                        infoWindow.open(map, marker);
+                    });
 
-        // Xử lý tìm kiếm
-        function filterShops() {
-            const selectedProvince = document.getElementById('provinceSelect').value.toLowerCase();
-            const searchTerm = document.getElementById('shopNameInput').value.toLowerCase();
-            const shopItems = document.querySelectorAll('.shop-item');
-            
-            shopItems.forEach(item => {
-                const shopName = item.querySelector('.shop-name').textContent.toLowerCase();
-                const shopAddress = item.querySelector('.shop-info').textContent.toLowerCase();
-                
-                // Kiểm tra tỉnh thành
-                let provinceMatch = true;
-                if (selectedProvince) {
-                    provinceMatch = shopAddress.includes(selectedProvince);
-                }
-                
-                // Kiểm tra tên cửa hàng
-                let nameMatch = true;
-                if (searchTerm) {
-                    nameMatch = shopName.includes(searchTerm) || shopAddress.includes(searchTerm);
-                }
-                
-                // Hiển thị nếu cả hai điều kiện đều thỏa mãn
-                if (provinceMatch && nameMatch) {
-                    item.style.display = 'block';
-                    item.style.opacity = '1';
-                } else {
-                    item.style.display = 'none';
-                    item.style.opacity = '0.5';
-                }
+                    // Thêm delay cho animation drop
+                    setTimeout(() => {
+                        marker.setAnimation(google.maps.Animation.DROP);
+                    }, index * 200);
+                });
+            }
+
+            // Xử lý click vào shop item
+            document.querySelectorAll('.shop-item').forEach((item, index) => {
+                item.addEventListener('click', function () {
+                    // Remove active class from all items
+                    document.querySelectorAll('.shop-item').forEach(i => {
+                        i.style.background = '#f8f9fa';
+                        i.style.borderLeftColor = '#1e3a8a';
+                    });
+
+                    // Add active class to clicked item
+                    this.style.background = '#e3f2fd';
+                    this.style.borderLeftColor = '#ff6b6b';
+                });
             });
-            
+
+            // Xử lý tìm kiếm
+            function filterShops() {
+                const selectedProvince = document.getElementById('provinceSelect').value.toLowerCase();
+                const searchTerm = document.getElementById('shopNameInput').value.toLowerCase();
+                const shopItems = document.querySelectorAll('.shop-item');
+
+                shopItems.forEach(item => {
+                    const shopName = item.querySelector('.shop-name').textContent.toLowerCase();
+                    const shopAddress = item.querySelector('.shop-info').textContent.toLowerCase();
+
+                    // Kiểm tra tỉnh thành
+                    let provinceMatch = true;
+                    if (selectedProvince) {
+                        provinceMatch = shopAddress.includes(selectedProvince);
+                    }
+
+                    // Kiểm tra tên cửa hàng
+                    let nameMatch = true;
+                    if (searchTerm) {
+                        nameMatch = shopName.includes(searchTerm) || shopAddress.includes(searchTerm);
+                    }
+
+                    // Hiển thị nếu cả hai điều kiện đều thỏa mãn
+                    if (provinceMatch && nameMatch) {
+                        item.style.display = 'block';
+                        item.style.opacity = '1';
+                    } else {
+                        item.style.display = 'none';
+                        item.style.opacity = '0.5';
+                    }
+                });
+
+                // Cập nhật số lượng kết quả
+                updateResultCount();
+            }
+
             // Cập nhật số lượng kết quả
+            function updateResultCount() {
+                const visibleItems = document.querySelectorAll('.shop-item[style*="display: block"]').length;
+                const totalItems = document.querySelectorAll('.shop-item').length;
+
+                // Tạo hoặc cập nhật thông báo số lượng kết quả
+                let resultInfo = document.getElementById('resultInfo');
+                if (!resultInfo) {
+                    resultInfo = document.createElement('div');
+                    resultInfo.id = 'resultInfo';
+                    resultInfo.style.cssText = 'padding: 10px 30px; background: #f8f9fa; border-top: 1px solid #eee; font-size: 0.9rem; color: #666;';
+                    document.querySelector('.search-section').appendChild(resultInfo);
+                }
+
+                if (visibleItems === totalItems) {
+                    resultInfo.textContent = `Hiển thị tất cả ${totalItems} cửa hàng`;
+                } else {
+                    resultInfo.textContent = `Tìm thấy ${visibleItems} cửa hàng trong tổng số ${totalItems}`;
+                }
+            }
+
+            // Thêm event listeners
+            document.getElementById('provinceSelect').addEventListener('change', filterShops);
+            document.getElementById('shopNameInput').addEventListener('input', filterShops);
+
+            // Khởi tạo số lượng kết quả
             updateResultCount();
-        }
-        
-        // Cập nhật số lượng kết quả
-        function updateResultCount() {
-            const visibleItems = document.querySelectorAll('.shop-item[style*="display: block"]').length;
-            const totalItems = document.querySelectorAll('.shop-item').length;
-            
-            // Tạo hoặc cập nhật thông báo số lượng kết quả
-            let resultInfo = document.getElementById('resultInfo');
-            if (!resultInfo) {
-                resultInfo = document.createElement('div');
-                resultInfo.id = 'resultInfo';
-                resultInfo.style.cssText = 'padding: 10px 30px; background: #f8f9fa; border-top: 1px solid #eee; font-size: 0.9rem; color: #666;';
-                document.querySelector('.search-section').appendChild(resultInfo);
-            }
-            
-            if (visibleItems === totalItems) {
-                resultInfo.textContent = `Hiển thị tất cả ${totalItems} cửa hàng`;
-            } else {
-                resultInfo.textContent = `Tìm thấy ${visibleItems} cửa hàng trong tổng số ${totalItems}`;
-            }
-        }
-        
-        // Thêm event listeners
-        document.getElementById('provinceSelect').addEventListener('change', filterShops);
-        document.getElementById('shopNameInput').addEventListener('input', filterShops);
-        
-        // Khởi tạo số lượng kết quả
-        updateResultCount();
-    </script>
-</body>
-</html>
+        </script>
+    </body>
+
+    </html>

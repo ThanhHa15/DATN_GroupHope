@@ -31,47 +31,49 @@ public class ResultOrder {
     @GetMapping
     public String result(Model model, HttpSession session) {
         Member member = (Member) session.getAttribute("loggedInUser");
-        if (member == null) return "redirect:/login";
-        
+        if (member == null)
+            return "redirect:/login";
+
         // Lấy đơn hàng mới nhất của member
         List<Order> latestOrders = orderService.findLatestOrdersByMember(member);
         if (!latestOrders.isEmpty()) {
             Order latestOrder = latestOrders.get(0);
             List<OrderDetail> orderDetails = orderDetailService.findByOrder(latestOrder);
-            
+
             model.addAttribute("order", latestOrder);
             model.addAttribute("orderDetails", orderDetails);
-            
+            model.addAttribute("address", latestOrder.getAddress());
+
             // Tính tổng tiền sản phẩm
             double productTotal = orderDetails.stream()
-                .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
-                .sum();
+                    .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
+                    .sum();
             model.addAttribute("productTotal", productTotal);
-            
+
             // Phí vận chuyển
             double shippingFee = 40000;
             model.addAttribute("shippingFee", shippingFee);
-            
+
             // Giảm giá từ voucher (nếu có)
             double discountAmount = latestOrder.getDiscountAmount();
             model.addAttribute("discountAmount", discountAmount);
-            
+
             // Tổng cộng
             double grandTotal = productTotal + shippingFee - discountAmount;
             model.addAttribute("grandTotal", grandTotal);
-            
+
             // Tạm tính (trước khi giảm giá)
             model.addAttribute("subtotal", productTotal + shippingFee);
         }
-        
+
         model.addAttribute("email", member.getEmail());
         model.addAttribute("name", member.getFullname());
         model.addAttribute("phone", member.getPhone());
         model.addAttribute("member", member);
-        
-        String paymentMethod = (String) session.getAttribute("paymentMethod");
-        model.addAttribute("paymentMethod", paymentMethod != null ? paymentMethod : "Chuyển khoản");
-        
+
+        // String paymentMethod = (String) session.getAttribute("paymentMethod");
+        // model.addAttribute("paymentMethod", paymentMethod != null ? paymentMethod : "Chuyển khoản");
+
         return "resultCheckout";
     }
 }

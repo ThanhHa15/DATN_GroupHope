@@ -91,67 +91,114 @@
 
         <!-- Danh sách phiên bản -->
         <div class="mt-10 bg-white rounded-xl shadow overflow-x-auto">
-            <h2 class="text-xl font-semibold p-4 border-b">📋 Danh sách phiên bản và giảm giá</h2>
+            <h2 class="text-xl font-semibold p-4 m-b10 ml-10">Danh sách phiên bản và giảm giá</h2>
+            <!-- Search and Filter -->
+            <div class="flex flex-wrap gap-4 mb-6 ml-5 mr-5">
+                <div class="flex-1 min-w-[240px]">
+                    <div class="relative">
+                        <input type="text" placeholder="Tìm kiếm sản phẩm..."
+                            class="w-[750px] pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                        <div
+                            class="absolute right-15 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center ml-2">
+                            <i class="ri-search-line text-gray-400"></i>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="w-48">
+                    <div class="relative h-full">
+                        <select
+                            class="w-full h-10 pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                            <option value="">Tất cả danh mục</option>
+                            <option value="smartphone">Điện thoại</option>
+                            <option value="accessories">Phụ kiện</option>
+                            <option value="tablet">Máy tính bảng</option>
+                        </select>
+                        <div
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                            <i class="ri-arrow-down-s-line text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-48">
+                    <div class="relative">
+                        <select
+                            class="w-full h-10 pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                            <option value="">Trạng thái</option>
+                            <option value="active">Đang bán</option>
+                            <option value="outofstock">Hết hàng</option>
+                            <option value="hidden">Ẩn</option>
+                        </select>
+                        <div
+                            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                            <i class="ri-arrow-down-s-line text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <table class="min-w-full table-auto text-left">
                 <thead class="bg-gray-100">
                     <tr>
-
                         <th class="p-3">STT</th>
-                        <th class="p-3">Ảnh</th>
-                        <th class="p-1 w-[150px]">Sản phẩm</th>
-                        <th class="p-3">Màu</th>
-
-                        <th class="p-3">Dung lượng</th>
+                        <th class="p-3">SẢN PHẨM</th>
+                        <!-- Gộp Ảnh + Tên + Màu + Dung lượng -->
+                        <th class="p-3">Danh mục</th>
                         <th class="p-0 w-[180px] pr-14">Giảm (%)</th>
                         <th class="pr-15">Giá</th>
-                        <!-- Đã ẩn 2 cột ngày -->
                         <th class="p-3">Thời gian hiệu lực</th>
-                        <th class="p-3">Thao tác</th> <!-- Thêm cột mới -->
+                        <th class="p-3">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="v, stat : ${variants}" class="border-t odd:bg-white even:bg-gray-300 ">
+                    <tr th:each="v, stat : ${variants}" class="border-t odd:bg-white even:bg-gray-100">
                         <td class="p-3" th:text="${stat.index + 1}"></td>
-                        <td>
-                            <img th:src="@{'/images/' + ${v.imagesno2}}" alt="ảnh"
-                                class="w-12 h-12 object-contain rounded-xl shadow" />
-                        </td>
-                        <td class="p-1" th:text="${v.product.productName}"></td>
-                        <td class="p-3" th:text="${v.color}"></td>
 
-                        <td class="py-4 pl-9" th:text="${v.storage}"></td>
+                        <!-- ✅ Gộp ảnh + tên sản phẩm + màu + dung lượng -->
+                        <td class="flex items-center gap-4 p-3">
+                            <img th:src="@{'/images/' + ${v.imagesno2}}" alt="ảnh"
+                                class="w-14 h-14 object-contain rounded-xl shadow" />
+
+                            <div class="leading-tight">
+                                <!-- Tên sản phẩm -->
+                                <div class="font-semibold text-gray-900" th:text="${v.product.productName}">Tên SP</div>
+
+                                <!-- Màu và dung lượng -->
+                                <div class="text-sm text-gray-500" th:text="${v.storage} + ' - ' + ${v.color}">128GB -
+                                    Đen</div>
+                            </div>
+                        </td>
+                        <td class="p-3" th:text="${v.product.category.name}">
+
+                        </td>
                         <td class="p-3" th:text="${v.discount != null ? v.discount + '%' : '0%'}"></td>
-                        <td class="pl-left">
+
+                        <td class="pl-left text-left">
                             <span th:if="${v.discountedPrice < v.price}">
-                                <span style="color: #dc2626; font-weight: bold; font-size: 1.125rem"
-                                    th:text="${#numbers.formatDecimal(v.discountedPrice, 0, 'POINT', 0, 'COMMA') + 'đ'}">
-                                </span>
-                                <br />
-                                <span style="
-                        color: #9ca3af;
-                        text-decoration: line-through;
-                        font-size: 0.75rem;
-                        font-style: italic;
-                    " th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA') + 'đ'}">
-                                </span>
+                                <span style="color: #dc2626; font-weight: bold; font-size: 1rem"
+                                    th:text="${#numbers.formatDecimal(v.discountedPrice, 0, 'POINT', 0, 'COMMA') + 'đ'}"></span><br />
+                                <span
+                                    style="color: #9ca3af; text-decoration: line-through; font-size: 0.75rem; font-style: italic;"
+                                    th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA') + 'đ'}"></span>
                             </span>
                             <span th:if="${v.discountedPrice == v.price}">
                                 <span th:text="${#numbers.formatDecimal(v.price, 0, 'POINT', 0, 'COMMA') + 'đ'}"></span>
                             </span>
                         </td>
-                        <!-- Cột thời gian đếm ngược -->
+
                         <td class="p-3 countdown-timer" th:attr="data-end-date=${v.discountEnd}">
                             <span class="loading-text">Chưa giảm giá...</span>
                         </td>
+
                         <td class="p-3">
                             <div class="flex space-x-2">
-                                <!-- Nút Sửa - Mở modal -->
-                                <button th:attr="data-id=${v.variantID}"
-                                    class="edit-btn text-blue-500 hover:text-blue-700">
+                                <button class="edit-btn text-blue-500 hover:text-blue-700" th:attr="data-id=${v.variantID}, 
+                 data-discount=${v.discount},
+                 data-start=${v.discountStart},
+                 data-end=${v.discountEnd}">
                                     <i class="ri-edit-2-line"></i>
                                 </button>
 
-                                <!-- Nút Xóa -->
                                 <form th:action="@{/discount/remove/{id}(id=${v.variantID})}" method="post"
                                     class="delete-form">
                                     <button type="button" class="text-red-500 hover:text-red-700 delete-btn">
@@ -163,6 +210,8 @@
                     </tr>
                 </tbody>
             </table>
+
+
             <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div class="bg-white rounded-lg p-6 w-full max-w-md">
                     <h3 class="text-lg font-semibold mb-4">Sửa giảm giá</h3>
@@ -196,6 +245,28 @@
                             </button>
                         </div>
                     </form>
+
+                </div>
+
+            </div>
+            <!-- Pagination -->
+            <div class="flex items-center justify-between mt-6 mr-2 ml-2 mb-2">
+                <div class="text-sm text-gray-500">
+
+                </div>
+                <div class="flex space-x-2">
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap">Trước</button>
+                    <button
+                        class="px-3 py-1 border border-primary bg-primary text-white rounded-button whitespace-nowrap">1</button>
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">2</button>
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">3</button>
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">4</button>
+                    <button
+                        class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">Tiếp</button>
                 </div>
             </div>
 
@@ -227,23 +298,14 @@
 
                 document.querySelectorAll('.edit-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
-                        const variantId = this.getAttribute('data-id');
-                        document.getElementById('editVariantId').value = variantId;
-
-                        // Lấy dữ liệu hiện tại (có thể thêm AJAX nếu cần)
-                        const row = this.closest('tr');
-                        const discount = row.querySelector('td:nth-child(6)').textContent.replace('%', '');
-                        const startDate = row.querySelector('td:nth-child(8)').getAttribute('data-start-date');
-                        const endDate = row.querySelector('td:nth-child(8)').getAttribute('data-end-date');
-
-                        const form = document.getElementById('editForm');
-                        form.querySelector('[name="discount"]').value = discount;
-                        form.querySelector('[name="startDate"]').value = startDate;
-                        form.querySelector('[name="endDate"]').value = endDate;
-
+                        document.getElementById('editVariantId').value = this.dataset.id;
+                        document.querySelector('#editForm [name="discount"]').value = this.dataset.discount;
+                        document.querySelector('#editForm [name="startDate"]').value = this.dataset.start;
+                        document.querySelector('#editForm [name="endDate"]').value = this.dataset.end;
                         editModal.classList.remove('hidden');
                     });
                 });
+
 
                 function closeEditModal() {
                     editModal.classList.add('hidden');

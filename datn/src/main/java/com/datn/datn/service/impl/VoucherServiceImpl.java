@@ -16,6 +16,11 @@ public class VoucherServiceImpl implements VoucherService {
     private VoucherRepository voucherRepository;
 
     @Override
+    public List<Vouchers> searchByKeyword(String keyword) {
+        return voucherRepository.findByCodeContainingIgnoreCase(keyword);
+    }
+
+    @Override
     public List<Vouchers> findAll() {
         return voucherRepository.findAll();
     }
@@ -35,9 +40,9 @@ public class VoucherServiceImpl implements VoucherService {
     public void delete(Long id) {
         voucherRepository.deleteById(id);
     }
+
     @Override
     public boolean existsByCode(String code) {
         return voucherRepository.existsByCode(code);
     }
 }
-

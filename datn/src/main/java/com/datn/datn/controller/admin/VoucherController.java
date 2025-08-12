@@ -1,16 +1,13 @@
 package com.datn.datn.controller.admin;
 
-import java.util.ArrayList;
-
+import java.time.LocalDate;
+import java.util.List; // Thêm import List
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import java.time.LocalDate;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.datn.datn.model.Vouchers;
 import com.datn.datn.service.VoucherService;
 
@@ -29,11 +26,12 @@ public class VoucherController {
     }
 
     @PostMapping("/save")
-    public String saveVoucher(@ModelAttribute("voucher") Vouchers voucher, Model model) {
+    public String saveVoucher(@ModelAttribute("voucher") Vouchers voucher,
+                              Model model,
+                              RedirectAttributes redirectAttributes) {
         boolean isEdit = (voucher.getId() != null);
         boolean isCodeDuplicate = voucherService.existsByCode(voucher.getCode());
 
-        // Validate ngày bắt đầu và ngày kết thúc
         LocalDate today = LocalDate.now();
         LocalDate start = voucher.getStartDate();
         LocalDate end = voucher.getEndDate();
@@ -52,7 +50,6 @@ public class VoucherController {
             return "formVoucher";
         }
 
-        // Kiểm tra mã voucher trùng
         if (!isEdit && isCodeDuplicate) {
             model.addAttribute("voucher", voucher);
             model.addAttribute("vouchers", voucherService.findAll());
@@ -71,12 +68,18 @@ public class VoucherController {
         }
 
         voucherService.save(voucher);
+        redirectAttributes.addFlashAttribute("success", isEdit ? "Cập nhật voucher thành công!" : "Thêm voucher thành công!");
         return "redirect:/vouchers";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteVoucher(@PathVariable Long id) {
-        voucherService.delete(id);
+    public String deleteVoucher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            voucherService.delete(id);
+            redirectAttributes.addFlashAttribute("success", "Xóa voucher thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Xóa voucher thất bại!");
+        }
         return "redirect:/vouchers";
     }
 
@@ -87,4 +90,18 @@ public class VoucherController {
         model.addAttribute("vouchers", voucherService.findAll());
         return "formVoucher";
     }
+
+    // Đây là phần tìm kiếm
+    @GetMapping("/search")
+    public String searchVouchers(@RequestParam(required = false) String keyword, Model model) {
+        List<Vouchers> vouchers = (keyword != null && !keyword.trim().isEmpty())
+                ? voucherService.searchByKeyword(keyword.trim())
+                : voucherService.findAll();
+
+        model.addAttribute("voucher", new Vouchers()); // Reset form input
+        model.addAttribute("vouchers", vouchers);
+        model.addAttribute("keyword", keyword);
+        return "formVoucher";
+    }
+    
 }

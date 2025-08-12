@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câu hỏi thường gặp - Dola</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+    <link rel="stylesheet" href="/css/shared/footer.css" />
+    <link rel="stylesheet" href="/css/shared/header.css" />
+    <link rel="stylesheet" href="/css/shared/chatbox.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  
+    <style>
+         body {
+        font-family: 'Roboto', sans-serif;
+        font-size: 15px; /* nhỏ hơn mặc định */
+    }
+        .faq-item {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .faq-question {
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 20px;
+            padding: 20px 24px;
+            background: #f3f4f6;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px; /* nhỏ hơn */
+            padding: 16px 18px;
+        }
+        .faq-question.active {
+            background: #102693;
+            color: #fff;
+
+        }
+        .faq-answer {
+            background: #fff;
+            padding: 20px 24px;
+            font-size: 16px;
+            color: #222;
+            display: none;
+            font-size: 14px; /* nhỏ hơn */
+            padding: 16px 18px;
+        }
+        .faq-answer.active {
+            display: block;
+        }
+        .faq-icon {
+            transition: transform 0.3s;
+        }
+        .faq-question.active .faq-icon {
+            transform: rotate(180deg);
+            color: #fff;
+        }
+        .faq-question:not(.active):hover {
+            background: #e5e7eb;
+        }
+        .faq-item + .faq-item {
+            margin-top: 12px;
+        }
+        /* Custom for section title underline */
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 12px;
+        }
+        .section-title-bar {
+            width: 60px;
+            height: 5px;
+            background: #102693;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+        /* Form */
+        .faq-form label {
+            font-weight: 500;
+        }
+        .faq-form input, .faq-form textarea {
+            font-size: 14px;
+        }
+        .faq-form button {
+            background: #102693;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .faq-form button:hover {
+            background: #1e40af;
+        }
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #1e3a8a;
+            transform: translateY(-2px);
+        }
+
+    </style>
+</head>
+<class="bg-gray-100">
+    <!-- Header (Full width) -->
+  <div th:insert="views/shared/header :: siteHeader" style="margin-bottom: 130px"></div>
+  <!-- chatbox -->
+  <div th:insert="views/shared/chatbot :: siteChatbot"></div>
+  <!-- Zalo icon -->
+  <div th:insert="views/shared/zalo :: siteZalo"></div>
+
+    <div class="container mx-auto px-4 py-8 mt-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">Câu hỏi thường gặp</h1>
+                <p class="text-gray-600 text-lg">Tìm hiểu thêm về dịch vụ của chúng tôi</p>
+            </div>
+                
+            <body>
+        
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left: FAQ -->
+                <div>
+                    <!-- Account FAQs -->
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                        <div class="section-title">Hỏi đáp về tài khoản</div>
+                        <div class="section-title-bar"></div>
+                        <div>
+                            <div class="faq-item">
+                                <div class="faq-question active" onclick="toggleFAQ(this)">
+                                    1. Làm thế nào để tôi trở thành thành viên của Dola?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer active">
+                                    Quý khách vui lòng nhấn vào nút “Đăng ký” ở thanh menu trên cùng của màn hình (Đối với Desktop) hoặc tại góc trái màn hình, chọn biểu tượng Menu rồi chọn “Đăng ký” (Đối với Mobile).
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    2. Tại sao tôi không thể đăng nhập vào tài khoản của tôi?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Có thể do các nguyên nhân sau:<br>
+                                    - Sai email hoặc mật khẩu<br>
+                                    - Tài khoản chưa được xác thực<br>
+                                    - Tài khoản bị khóa<br>
+                                    - Vui lòng liên hệ hỗ trợ nếu vấn đề vẫn tiếp tục
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    3. Tôi có thể sử dụng chung tài khoản với người khác được không?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Vì lý do bảo mật, chúng tôi khuyến nghị mỗi người dùng nên có tài khoản riêng. Việc chia sẻ tài khoản có thể ảnh hưởng đến quyền lợi và bảo mật thông tin cá nhân.
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    5. Tại sao tôi nên đăng ký thành viên Dola?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Đăng ký thành viên Dola mang lại nhiều lợi ích:<br>
+                                    - Nhận thông báo về khuyến mãi và sản phẩm mới<br>
+                                    - Tích điểm và nhận voucher giảm giá<br>
+                                    - Hỗ trợ ưu tiên từ đội ngũ chăm sóc khách hàng<br>
+                                    - Lưu trữ lịch sử đơn hàng và thông tin giao hàng
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    6. Dola có chương trình ưu đãi nào hấp dẫn dành cho khách hàng thân thiết?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Chúng tôi có nhiều chương trình ưu đãi đặc biệt:<br>
+                                    - Chương trình tích điểm đổi quà<br>
+                                    - Voucher giảm giá theo cấp độ thành viên<br>
+                                    - Ưu đãi sinh nhật đặc biệt<br>
+                                    - Hỗ trợ vận chuyển miễn phí cho khách hàng VIP
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Order FAQs -->
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="section-title">Hỏi đáp về đặt hàng</div>
+                        <div class="section-title-bar"></div>
+                        <div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    1. Tôi có thể đặt hàng bằng những hình thức nào?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Bạn có thể đặt hàng qua các hình thức sau:<br>
+                                    - Đặt hàng trực tuyến qua website<br>
+                                    - Tư vấn trực tiếp qua Hotline 1900 6750<br>
+                                    - Đặt hàng qua các sàn thương mại điện tử<br>
+                                    - Mua trực tiếp tại cửa hàng<br>
+                                    Dola khuyến khích bạn tạo tài khoản và đặt hàng trực tuyến để nhận được các quyền lợi thành viên.
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    2. Tôi cần hỗ trợ mua hàng, làm cách nào để liên hệ với tư vấn viên?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Bạn có thể liên hệ với tư vấn viên qua:<br>
+                                    - Hotline: 1900 6750<br>
+                                    - Chat trực tuyến trên website<br>
+                                    - Email: support@dola.com<br>
+                                    - Fanpage Facebook chính thức
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    3. Dola có giới hạn về số lượng sản phẩm khi đặt hàng không?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Chúng tôi có một số giới hạn để đảm bảo công bằng cho tất cả khách hàng:<br>
+                                    - Tối đa 5 sản phẩm cùng loại mỗi đơn hàng<br>
+                                    - Giới hạn có thể thay đổi tùy theo chương trình khuyến mãi<br>
+                                    - Liên hệ tư vấn viên nếu cần đặt số lượng lớn
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    4. Tôi muốn xem lại lịch sử đơn hàng đã mua?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Để xem lịch sử đơn hàng:<br>
+                                    - Đăng nhập vào tài khoản<br>
+                                    - Vào mục "Đơn hàng của tôi"<br>
+                                    - Xem chi tiết từng đơn hàng và trạng thái<br>
+                                    - Liên hệ hỗ trợ nếu cần thông tin thêm
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleFAQ(this)">
+                                    5. Tôi cần làm gì để thay đổi hoặc hủy bỏ đơn hàng đã đặt?
+                                    <i class="fas fa-chevron-down faq-icon"></i>
+                                </div>
+                                <div class="faq-answer">
+                                    Để thay đổi hoặc hủy đơn hàng:<br>
+                                    - Liên hệ ngay với chúng tôi qua Hotline 1900 6750<br>
+                                    - Chỉ có thể thay đổi/hủy khi đơn hàng chưa được xử lý<br>
+                                    - Thời gian xử lý: 24-48 giờ làm việc<br>
+                                    - Hoàn tiền sẽ được thực hiện theo phương thức thanh toán ban đầu
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right: Form -->
+                <div>
+                    <div class="bg-white rounded-lg shadow-md p-8">
+                        <div class="section-title">Giải đáp thắc mắc</div>
+                        <div class="section-title-bar"></div>
+                        <p class="text-gray-700 mb-6">Nếu bạn có thắc mắc mắc gì, có thể gửi yêu cầu cho chúng tôi, và chúng tôi sẽ liên lạc lại với bạn sớm nhất có thể.</p>
+                        <form class="faq-form space-y-5" action="/faq/submit" method="post">
+                            <div>
+                                <label for="fullName" class="block mb-2">Họ và tên</label>
+                                <input type="text" id="fullName" name="fullName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Họ và tên">
+                            </div>
+                            <div>
+                                <label for="email" class="block mb-2">Email</label>
+                                <input type="email" id="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Email">
+                            </div>
+                            <div>
+                                <label for="phone" class="block mb-2">Điện thoại <span class="text-red-500">*</span></label>
+                                <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Điện thoại">
+                            </div>
+                            <div>
+                                <label for="content" class="block mb-2">Nội dung</label>
+                                <textarea id="content" name="content" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none" placeholder="Nội dung"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 px-6 font-medium text-lg">Gửi thông tin</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+    
+  <!-- Footer (Full width) -->
+  <div th:insert="views/shared/footer :: footerFragment">
+
+  </div>
+
+    <script>
+        // Accordion logic
+        function toggleFAQ(element) {
+            // Đóng tất cả
+            document.querySelectorAll('.faq-question').forEach(q => q.classList.remove('active'));
+            document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('active'));
+            // Mở cái được click
+            element.classList.add('active');
+            element.nextElementSibling.classList.add('active');
+        }
+        // Mở sẵn câu đầu tiên
+        document.addEventListener('DOMContentLoaded', function() {
+            var firstQ = document.querySelector('.faq-question');
+            var firstA = document.querySelector('.faq-answer');
+            if(firstQ && firstA) {
+                firstQ.classList.add('active');
+                firstA.classList.add('active');
+            }
+        });
+
+        // Form validation
+        // document.querySelector('.faq-form').addEventListener('submit', function(e) {
+        //     e.preventDefault();
+        //     const phone = this.phone.value.trim();
+        //     if (!phone) {
+        //         alert('Vui lòng nhập số điện thoại');
+        //         return;
+        //     }
+        //     alert('Cảm ơn bạn đã gửi thắc mắc! Chúng tôi sẽ liên hệ lại sớm nhất có thể.');
+        //     this.reset();
+        // });
+    </script>
+</body>
+</html>

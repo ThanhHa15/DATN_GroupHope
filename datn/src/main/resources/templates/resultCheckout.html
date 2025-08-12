@@ -84,14 +84,14 @@
               </div>
             </div>
 
-            <div>
+            <div style="margin-right: 100px;">
               <h3 class="font-semibold text-gray-800 mb-3 text-lg">
                 Địa chỉ nhận hàng
               </h3>
               <div class="space-y-2 text-sm text-gray-600">
                 <div class="space-y-2 text-sm text-gray-600">
                   <p th:text="${member.fullname}">Nguyễn Văn Minh</p>
-                  <p>123 Trần Hưng Đạo</p>
+                  <p th:text="${address}">123 Trần Hưng Đạo</p>
                   <p th:text="${member.phone}">+84987654325</p>
                   <p></p>
                 </div>
@@ -103,7 +103,7 @@
               <h3 class="font-semibold text-gray-800 mb-3 text-lg">
                 Phương thức thanh toán
               </h3>
-              <p class="text-sm text-gray-600" th:text="${paymentMethod}">
+              <p class="text-sm text-gray-600" th:text="${order.paymentMethod}">
                 Chuyển khoản
               </p>
             </div>
@@ -119,7 +119,7 @@
         <!-- phan tren da xu ly, phan duoi chua xu ly -->
         <div class="bg-gray-200 -mt-20 rounded-lg p-6 w-[500px] -ml-[100px]">
           <h3 class="font-semibold text-gray-800 mb-4"
-            th:text="'Đơn hàng #' + ${order.id} + ' (' + ${#lists.size(orderDetails)} + ' sản phẩm)'"></h3>
+            th:text="'Đơn hàng #' + ${order.orderCode} + ' (' + ${#lists.size(orderDetails)} + ' sản phẩm)'"></h3>
 
           <div th:each="detail : ${orderDetails}" class="flex items-center mb-4 pb-4 border-b border-gray-200">
             <div class="relative mr-3">

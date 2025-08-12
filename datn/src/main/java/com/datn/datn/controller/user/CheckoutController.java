@@ -211,6 +211,7 @@ public class CheckoutController {
         order.setNote(note);
         order.setTotalPrice(grandTotal.doubleValue());
         order.setPaymentStatus("Đã thanh toán");
+        order.setPaymentMethod("Chuyển khoản");
         order.setOrderStatus("Chờ xác nhận");
         order.setDiscountAmount(discountAmount.doubleValue());
 
@@ -349,6 +350,7 @@ public class CheckoutController {
         order.setPaymentStatus("Chưa thanh toán");
         order.setOrderStatus("Chờ xác nhận");
         order.setDiscountAmount(discountAmount.doubleValue());
+        order.setPaymentMethod("Thanh toán khi nhận hàng (COD)");
 
         // Tạo danh sách chi tiết đơn hàng
         List<OrderDetail> orderDetails = new ArrayList<>();

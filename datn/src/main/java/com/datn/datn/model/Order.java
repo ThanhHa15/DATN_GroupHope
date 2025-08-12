@@ -47,6 +47,9 @@ public class Order {
     @Column(name = "order_status", columnDefinition = "NVARCHAR(50)")
     private String orderStatus;
 
+    @Column(name = "payment_method", columnDefinition = "NVARCHAR(50)")
+    private String paymentMethod;
+
     private Double discountAmount;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)

@@ -66,13 +66,13 @@
               <th class="px-6 py-3 text-left font-semibold">Ngày</th>
               <th class="px-6 py-3 text-left font-semibold">Địa chỉ</th>
               <th class="px-6 py-3 text-left font-semibold">Giá trị đơn hàng</th>
-              <th class="px-6 py-3 text-left font-semibold">TT thanh toán</th>
+              <th class="px-6 py-3 text-left font-semibold">Thanh toán</th>
               <th class="px-6 py-3 text-left font-semibold">TT đơn hàng</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-100">
             <tr th:each="order : ${orders}" class="hover:bg-gray-100 cursor-pointer transition">
-              <td class="px-6 py-4 text-blue-500">
+              <td class="px-6 py-4 text-blue-500 max-w-[130px] ">
                 <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full"
                   th:text="'#' + ${order.orderCode}">
                 </a>
@@ -85,11 +85,12 @@
                   16/06/2025
                 </a>
               </td>
-              <td class="px-6 py-4 text-gray-700">
-                <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full" th:text="${order.address}">
-                  12 Tôn Bản, Thị xã Sơn Tây, Hà Nội
+              <td class="px-6 py-4 text-gray-700 break-words whitespace-normal max-w-[250px]">
+                <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full break-words whitespace-normal"
+                  th:text="${order.address}">
                 </a>
               </td>
+
               <td class="px-6 py-4 text-gray-800 font-medium">
                 <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full" th:text="${order.totalPrice != null} ? 
                 (${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫') : 
@@ -97,11 +98,12 @@
                   44.459.000 đ
                 </a>
               </td>
-              <td class="px-6 py-4 font-semibold">
-                <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full" th:text="${order.paymentStatus}"
-                  th:classappend="${order.paymentStatus == 'Đã thanh toán'} ? 'text-green-600' : 'text-amber-500'">
+              <td class="px-4 py-4 font-semibold break-words max-w-[90px]">
+                <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full text-green-500 h-full break-words whitespace-normal"
+                  th:text="${order.paymentMethod}">
                 </a>
               </td>
+
 
 
               <td class="px-6 py-4 text-amber-500 font-semibold">
