@@ -29,14 +29,12 @@ public class ProductSpecificationController {
         List<Product> products = productService.getAll();
         model.addAttribute("products", products);
 
-        // Map productId -> productName
         Map<Integer, String> productIdToNameMap = new HashMap<>();
         for (Product product : products) {
             productIdToNameMap.put(product.getProductID().intValue(), product.getProductName());
         }
         model.addAttribute("productIdToNameMap", productIdToNameMap);
 
-        // Group spec by productId
         List<ProductSpecification> specList = specificationService.findAll();
         Map<Integer, List<ProductSpecification>> groupedSpecList = specList.stream()
                 .collect(Collectors.groupingBy(ProductSpecification::getProductid));

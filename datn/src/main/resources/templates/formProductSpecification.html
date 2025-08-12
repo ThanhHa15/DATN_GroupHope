@@ -245,14 +245,17 @@
 
   <form th:action="@{/specification/save}" method="post" enctype="multipart/form-data" accept-charset="UTF-8"
     class="specification-form" style="margin-left: 297px;">
+    <input type="hidden" id="productId" name="productid" value="">
     <!-- Select Product -->
     <div class="form-group">
       <label for="productSelect" class="form-label">Chọn sản phẩm:</label>
-      <select id="productSelect" name="productid" class="form-control" onchange="showFieldsByProductType()" required>
-        <option value="" disabled selected>-- Chọn sản phẩm --</option>
-        <option th:each="p : ${products}" th:value="${p.productID}" th:data-category-id="${p.category.categoryID}"
-          th:text="${p.productName}"></option>
+      <select id="productSelect" onchange="showFieldsByProductType()">
+        <option value="">-- Chọn sản phẩm --</option>
+        <option th:each="p : ${products}" th:value="${p.productID}" th:data-category-name="${p.category.name}"
+          th:text="${p.productName}">
+        </option>
       </select>
+
     </div>
 
     <!-- Iphone Form -->
@@ -313,7 +316,6 @@
           <label>Tính năng màn hình:</label>
           <textarea class="form-control" name="specs['Tính năng màn hình']" rows="2"></textarea>
         </div>
-
       </div>
     </div>
 
@@ -511,7 +513,7 @@
     </div>
 
     <!-- Case Form -->
-    <div id="form-type-op-lung-bao-da" class="spec-form card" style="display: none">
+    <div id="form-type-op-lung-va-bao-da" class="spec-form card" style="display: none">
       <div class="card-header">
         <h3 style="font-size: 20px; font-weight: 600;">Thông số Ốp lưng & Bao da</h3>
       </div>
@@ -551,7 +553,7 @@
     </div>
 
     <!-- Charger Form -->
-    <div id="form-type-sac-cap" class="spec-form card" style="display: none">
+    <div id="form-type-sac-va-cap" class="spec-form card" style="display: none">
       <div class="card-header">
         <h3 style="font-size: 20px; font-weight: 600;">Thông số Sạc & Cáp</h3>
       </div>
@@ -589,6 +591,30 @@
         </div>
       </div>
     </div>
+
+    <!-- Form mặc định cho danh mục chưa có form riêng -->
+    <div id="form-type-default" class="spec-form card" style="display: none">
+      <div class="card-header">
+        <h3 style="font-size: 20px; font-weight: 600;">Thông số chung</h3>
+      </div>
+      <div class="card-body grid-container">
+        <div class="form-group">
+          <label>Mô tả chung:</label>
+          <textarea class="form-control" name="specs['Mô tả chung']" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Thương hiệu:</label>
+          <input type="text" class="form-control" name="specs['Thương hiệu']" />
+        </div>
+        <div class="form-group">
+          <label>Năm sản xuất:</label>
+          <input type="text" class="form-control" name="specs['Năm sản xuất']" />
+        </div>
+      </div>
+    </div>
+
+
+
 
     <div class="form-actions">
       <button type="submit"
@@ -633,67 +659,62 @@
 
   <script>
     function toggleSpecs(groupIdPrefix) {
-  const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
-  rows.forEach(row => {
-    if (row.classList.contains('show')) {
-      // Hiệu ứng thu lên
-      row.style.maxHeight = '0';
-      row.style.opacity = '0';
-      setTimeout(() => {
-        row.classList.remove('show');
-      }, 300);
-    } else {
-      // Hiệu ứng trượt xuống
-      row.classList.add('show');
-      // Tính toán chiều cao thực tế
-      const contentHeight = row.scrollHeight;
-      row.style.maxHeight = `${contentHeight}px`;
-      row.style.opacity = '1';
+      const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
+      rows.forEach(row => {
+        if (row.classList.contains('show')) {
+          // Hiệu ứng thu lên
+          row.style.maxHeight = '0';
+          row.style.opacity = '0';
+          setTimeout(() => {
+            row.classList.remove('show');
+          }, 300);
+        } else {
+          // Hiệu ứng trượt xuống
+          row.classList.add('show');
+          // Tính toán chiều cao thực tế
+          const contentHeight = row.scrollHeight;
+          row.style.maxHeight = `${contentHeight}px`;
+          row.style.opacity = '1';
+        }
+      });
     }
-  });
-}
 
     function showFieldsByProductType() {
       const select = document.getElementById("productSelect");
       const selectedOption = select.options[select.selectedIndex];
-      const categoryId = selectedOption.getAttribute("data-category-id");
+      const categoryName = selectedOption.getAttribute("data-category-name");
+      const productId = selectedOption.value;
 
-      const allForms = document.querySelectorAll(".spec-form");
+      // Cập nhật giá trị productid
+      document.getElementById("productId").value = productId;
 
-      allForms.forEach((form) => {
-        form.style.display = "none";
+      // Ẩn tất cả form
+      document.querySelectorAll(".spec-form").forEach(form => form.style.display = "none");
 
-        const inputs = form.querySelectorAll("input, textarea");
-        inputs.forEach((el) => {
-          el.disabled = true;
-          el.removeAttribute("required");
-        });
-      });
+      if (categoryName) {
+        // Chuẩn hóa tên danh mục (bỏ dấu, thay khoảng trắng bằng gạch ngang)
+        const normalized = categoryName.toLowerCase()
+          .replace(/\s+/g, '-')
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-      if (categoryId) {
-        const categoryToFormMap = {
-          '1': 'iphone',
-          '2': 'ipad',
-          '3': 'macbook',
-          '4': 'airpods',
-          '5': 'op-lung-bao-da',
-          '6': 'sac-cap',
-          '7': 'watch'
-        };
+        const formId = `form-type-${normalized}`;
+        const form = document.getElementById(formId);
 
-        const formType = categoryToFormMap[categoryId];
-        const formToShow = document.getElementById("form-type-" + formType);
-        if (formToShow) {
-          formToShow.style.display = "block";
-
-          const inputs = formToShow.querySelectorAll("input, textarea");
-          inputs.forEach((el) => {
-            el.disabled = false;
-            el.setAttribute("required", "required");
-          });
+        if (form) {
+          form.style.display = "block"; // Hiển thị form tương ứng
+        } else {
+          // Nếu không tìm thấy form, hiển thị form mặc định
+          const defaultForm = document.getElementById("form-type-default");
+          if (defaultForm) {
+            defaultForm.style.display = "block";
+          } else {
+            console.warn("Không tìm thấy form thông số phù hợp!");
+          }
         }
       }
     }
+
+
   </script>
 </body>
 

@@ -301,7 +301,7 @@
                 </a>
 
                 <!-- Item  Ốp lưng & Bao da -->
-                <a href="/products?type=Ốp+lưng+%26+Bao+da"
+                <a href="/products?type=Ốp+lưng+và+Bao+da"
                     class="flex flex-col items-center group transition-all duration-300">
                     <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
@@ -315,14 +315,14 @@
                             Ốp lưng & Bao da
                         </h3>
                         <p class="text-base text-blue-900 font-semibold">
-                            <span th:text="'(' + (${categoryCounts['Ốp lưng & Bao da']} ?: 0) + ' sản phẩm)'"></span>
+                            <span th:text="'(' + (${categoryCounts['Ốp lưng và Bao da']} ?: 0) + ' sản phẩm)'"></span>
 
                         </p>
                     </div>
                 </a>
 
                 <!-- Item Sạc & cáp -->
-                <a href="/products?type=Sạc+%26+cáp"
+                <a href="/products?type=Sạc+và+Cáp"
                     class="flex flex-col items-center group transition-all duration-300">
                     <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
@@ -336,7 +336,7 @@
                             Sạc & cáp
                         </h3>
                         <p class="text-base text-blue-900 font-semibold">
-                            <span th:text="'(' + (${categoryCounts['Sạc & cáp']} ?: 0) + ' sản phẩm)'"></span>
+                            <span th:text="'(' + (${categoryCounts['Sạc và Cáp']} ?: 0) + ' sản phẩm)'"></span>
                         </p>
                     </div>
                 </a>
@@ -366,7 +366,6 @@
 
                     <!-- Các bộ lọc sản phẩm -->
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-
                         <!-- Lọc theo mức giá -->
                         <div class="dropdown relative">
                             <button
@@ -400,15 +399,15 @@
                             </button>
                             <div class="dropdown-content mt-0 left-0 bg-white z-20">
                                 <div class="p-3">
-                                    <div
-                                        th:each="typeOption : ${T(java.util.List).of('iPhone', 'iPad', 'MacBook', 'Watch', 'AirPods', 'Ốp lưng & Bao da', 'Sạc & cáp')}">
+                                    <div th:each="cat : ${categories}">
                                         <div class="flex items-center mb-2">
-                                            <input type="checkbox" th:id="'type' + ${typeOption.hashCode()}"
+                                            <input type="checkbox" th:id="'type' + ${cat.name.hashCode()}"
                                                 class="mr-2 filter-checkbox" data-category="type"
-                                                th:attr="data-value=${typeOption}"
-                                                th:checked="${selectedTypes != null and selectedTypes.contains(typeOption)}">
-                                            <label th:for="'type' + ${typeOption.hashCode()}"
-                                                th:text="${typeOption}"></label>
+                                                th:attr="data-value=${cat.name}"
+                                                th:checked="${selectedTypes != null and selectedTypes.contains(cat.name)}">
+                                            <label th:for="'type' + ${cat.name.hashCode()}"
+                                                th:text="${cat.name}"></label>
+
                                         </div>
                                     </div>
                                 </div>

@@ -538,8 +538,9 @@
       </div>
 
       <!-- Đoạn 2 -->
-      <div class="reviews-section" data-product-id="${v.product.productID}">
-        <div class="w-6/10 flex-6 basis-3/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+      <div class="reviews-section flex flex-row gap-6 items-stretch" data-product-id="${v.product.productID}" style="max-width: 1250px; margin: auto; margin-top: 20px; margin-bottom: 20px;">
+        <!-- Phần 6/10 -->
+        <div class="w-6/10 basis-3/5  bg-white rounded-lg p-6 flex flex-col shadow-[0_0_15px_rgba(0,0,0,0.1)]">
           <div class="flex items-center justify-between mb-8" style="margin-bottom: 5px">
             <h2 class="text-2xl font-bold border-l-8 border-custom-blue pl-4">
               ĐÁNH GIÁ SẢN PHẨM
@@ -604,7 +605,36 @@
             </div>
           </div>
         </div>
+        <!-- Phần 4/10 -->
+        <div class="w-4/10 basis-2/5  bg-white rounded-lg p-6 flex flex-col shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+          <!-- Tiêu đề -->
+          <div class="bg-[#000f8f] text-white px-4 py-2 rounded-md flex items-center space-x-2 mb-2"
+            style="margin-top: -7px">
+            <i class="fa-solid fa-gear"></i>
+            <h3 class="font-semibold text-base">Thông số kỹ thuật</h3>
+          </div>
+
+          <!-- Danh sách thông số -->
+          <div class="space-y-2 text-sm relative" style="position: relative">
+            <div th:each="spec, iterStat : ${specifications}" th:if="${iterStat.index < 20}"
+              th:class="${iterStat.index % 2 == 0} ? 'flex bg-white' : 'flex bg-gray-200'">
+              <div class="w-1/2 px-4 py-2 font-medium" th:text="${#strings.replace(spec.specKey, '''', '')}"></div>
+              <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
+            </div>
+
+            <!-- 👇 Lớp làm mờ phủ lên dòng cuối -->
+            <div
+              class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-lg">
+            </div>
+            <div class="text-center mt-4">
+              <button onclick="toggleFullSpecs()"
+                class="px-6 py-2 border border-[#000f8f] text-[#000f8f] rounded hover:bg-[#000f8f] hover:text-white transition">
+                Xem tất cả </button>
+            </div>
+          </div>
+        </div>
       </div>
+
 
       <!-- Review Modal -->
       <div id="reviewModal"
@@ -648,7 +678,8 @@
 
             <!-- Image Upload Section -->
             <div class="space-y-2">
-              <label class="block text-gray-700 font-medium">Ảnh đính kèm <span class="text-sm text-gray-500">(tối đa
+              <label class="block text-gray-700 font-medium">Ảnh đính kèm <span class="text-sm text-gray-500">(tối
+                  đa
                   5 ảnh)</span></label>
               <div class="flex items-center justify-center w-full">
                 <label for="imageUpload"
@@ -674,6 +705,31 @@
               class="px-5 py-2.5 text-white bg-[#000f8f] rounded-lg hover:bg-[#000e7a] focus:ring-2 focus:ring-blue-300 shadow-md transition-all">
               Gửi đánh giá
             </button>
+          </div>
+        </div>
+      </div>
+      <!-- Overlay + Popup form -->
+      <div id="full-specs-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
+          <!-- Nút đóng -->
+          <button onclick="toggleFullSpecs()" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-2xl">
+            &times;
+          </button>
+
+          <!-- Tiêu đề -->
+          <div class="flex items-center bg-blue-900 text-white font-semibold px-4 py-2 rounded-t">
+            <i class="ri-settings-3-fill mr-2"></i>
+            Thông số kỹ thuật đầy đủ
+          </div>
+
+          <!-- Nội dung thông số -->
+          <div class="divide-y divide-gray-200">
+            <div th:each="spec, iterStat : ${specifications}"
+              th:class="${iterStat.index % 2 == 0} ? 'flex bg-white' : 'flex bg-gray-100'">
+              <div class="w-1/2 px-4 py-2 font-medium" th:text="${#strings.replace(spec.specKey, '''', '')}"></div>
+              <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -825,7 +881,7 @@
 </body>
 
 </html>
-<script>
+<script> // JavaScript để xử lý các sự kiện và cập nhật giao diện
   document.addEventListener("DOMContentLoaded", function () {
     // Lấy các phần tử cần thiết
     const mainImage = document.getElementById("main-image");
@@ -1109,7 +1165,7 @@
   });
 </script>
 
-<script>
+<script> // Xử lý sự kiện tăng giảm số lượng sản phẩm
   document.addEventListener("DOMContentLoaded", function () {
     const qtyInput = document.getElementById("quantity");
     const decreaseBtn = document.getElementById("decreaseQty");
