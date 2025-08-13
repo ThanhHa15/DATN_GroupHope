@@ -214,6 +214,28 @@ public class ProductController {
 
         model.addAttribute("categoryCounts", categoryCounts);
 
+        // Tạo URL gốc giữ các tham số lọc hiện tại
+        StringBuilder baseUrl = new StringBuilder("/products?");
+        if (sort != null)
+            baseUrl.append("sort=").append(sort).append("&");
+        if (discounted != null)
+            baseUrl.append("discounted=").append(discounted).append("&");
+        if (keyword != null && !keyword.isEmpty())
+            baseUrl.append("keyword=").append(keyword).append("&");
+        if (price != null)
+            price.forEach(p -> baseUrl.append("price=").append(p).append("&"));
+        if (type != null)
+            type.forEach(t -> baseUrl.append("type=").append(t).append("&"));
+        if (storage != null)
+            storage.forEach(s -> baseUrl.append("storage=").append(s).append("&"));
+
+        // Xóa ký tự & cuối nếu có
+        if (baseUrl.charAt(baseUrl.length() - 1) == '&') {
+            baseUrl.deleteCharAt(baseUrl.length() - 1);
+        }
+
+        model.addAttribute("baseUrl", baseUrl.toString());
+
         // Lấy danh sách category để lặp ở view
         model.addAttribute("categories", categoryRepository.findAll());
         return "views/user/products";

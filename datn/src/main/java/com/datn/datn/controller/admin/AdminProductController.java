@@ -4,6 +4,8 @@ import com.datn.datn.model.Category;
 import com.datn.datn.model.Product;
 import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +28,20 @@ public class AdminProductController {
     }
 
     @GetMapping
-    public String showProductForm(Model model) {
-        List<Product> products = productService.getAll();
-        List<Category> categories = categoryService.getAll();
+    public String showProductForm(Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size) {
+        Page<Product> productPage = productService.getAll(PageRequest.of(page, size));
 
-        model.addAttribute("products", products);
-        model.addAttribute("categories", categories);
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("categories", categoryService.getAll());
         model.addAttribute("product", new Product());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("pageSize", size);
+
+        // Base URL mặc định
+        model.addAttribute("baseUrl", "/admin-products?");
 
         return "formProduct";
     }
@@ -51,7 +60,6 @@ public class AdminProductController {
                 e.printStackTrace();
             }
         } else {
-            // Giữ lại ảnh cũ nếu đang trong chế độ cập nhật
             if (product.getProductID() != null) {
                 Product existing = productService.getById(product.getProductID());
                 if (existing != null) {
@@ -65,7 +73,6 @@ public class AdminProductController {
         } else {
             productService.save(product);
         }
-
         return "redirect:/admin-products";
     }
 
@@ -76,14 +83,99 @@ public class AdminProductController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editProduct(@PathVariable Integer id, Model model) {
+    public String editProduct(@PathVariable Integer id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
         Product product = productService.getById(id);
         List<Category> categories = categoryService.getAll();
 
+        Page<Product> productPage = productService.getAll(PageRequest.of(page, size));
+
         model.addAttribute("product", product);
         model.addAttribute("categories", categories);
-        model.addAttribute("products", productService.getAll());
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("pageSize", size);
 
         return "formProduct";
     }
+
+    @GetMapping("/search")
+    public String searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+
+        var productPage = productService.searchProductsByName(keyword, PageRequest.of(page, size));
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("product", new Product());
+        model.addAttribute("keyword", keyword);
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("pageSize", size);
+
+        model.addAttribute("baseUrl", "/admin-products/search?keyword=" + keyword + "&");
+
+        return "formProduct";
+    }
+
+    @GetMapping("/filter")
+    public String filterProductsByCategory(
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+
+        Page<Product> productPage;
+        if (categoryId == null || categoryId == 0) {
+            productPage = productService.getAll(PageRequest.of(page, size));
+        } else {
+            productPage = productService.getByCategoryId(categoryId, PageRequest.of(page, size));
+        }
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("product", new Product());
+        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("pageSize", size);
+
+        model.addAttribute("baseUrl", "/admin-products/filter?categoryId=" + (categoryId == null ? 0 : categoryId) + "&");
+
+        return "formProduct";
+    }
+
+    // @GetMapping("/filter-status")
+    // public String filterProductsByStatus(
+    //         @RequestParam(required = false) boolean status,
+    //         @RequestParam(defaultValue = "0") int page,
+    //         @RequestParam(defaultValue = "8") int size,
+    //         Model model) {
+
+    //     Page<Product> productPage;
+
+    //     if (status == null || status.isEmpty()) {
+    //         productPage = productService.getAll(PageRequest.of(page, size));
+    //     } else {
+    //         productPage = productService.getByStatus(status, PageRequest.of(page, size));
+    //     }
+
+    //     model.addAttribute("products", productPage.getContent());
+    //     model.addAttribute("categories", categoryService.getAll());
+    //     model.addAttribute("product", new Product());
+    //     model.addAttribute("selectedStatus", status);
+    //     model.addAttribute("currentPage", page);
+    //     model.addAttribute("totalPages", productPage.getTotalPages());
+    //     model.addAttribute("pageSize", size);
+
+    //     return "formProduct";
+    // }
+
 }

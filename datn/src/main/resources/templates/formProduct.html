@@ -219,10 +219,20 @@ select {
               <option th:each="c : ${categories}" th:value="${c.categoryID}" th:text="${c.name}"></option>
             </select>
           </div>
+
+          <!-- Trạng thái -->
+          <div>
+            <label class="block text-gray-700 text-base font-semibold mb-2">Trạng thái</label>
+            <select th:field="*{status}" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="true">Đang kinh doanh</option>
+              <option value="false">Ngừng kinh doanh</option>
+            </select>
+          </div>
         </div>
 
         <!-- Mô tả -->
-        <div style="display: none;">
+        <div>
           <label class="block text-gray-700 text-base font-semibold mb-2">Mô tả</label>
           <textarea th:field="*{description}" rows="3" placeholder="Nhập mô tả sản phẩm"
             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
@@ -237,6 +247,9 @@ select {
                   file:bg-blue-50 file:text-blue-700
                   hover:file:bg-blue-100" />
         </div>
+
+
+
         <button type="submit" class="submit-btn" style="margin-top: -50px;">Lưu sản phẩm</button>
       </form>
     </div>
@@ -260,44 +273,56 @@ select {
               <!-- Search and Filter -->
               <div class="flex flex-wrap gap-4 mb-6">
                 <div class="flex-1 min-w-[240px]">
-                  <div class="relative">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm..."
-                      class="w-full h-[43px] pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                    <div
-                      class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
+                  <form th:action="@{/admin-products/search}" method="get" class="relative">
+                    <input type="text" name="keyword" placeholder="Tìm kiếm sản phẩm..."
+                      class="w-full h-[43px] pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" />
+                    <div class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center">
                       <i class="ri-search-line text-gray-400"></i>
                     </div>
-                  </div>
+                  </form>
+
                 </div>
                 <div class="w-48">
                   <div class="relative">
-                    <select
-                      class="w-full h-[43px] pl-4 pr-10  border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                      <option value="">Tất cả danh mục</option>
-                      <option value="smartphone">Điện thoại</option>
-                      <option value="accessories">Phụ kiện</option>
-                      <option value="tablet">Máy tính bảng</option>
-                    </select>
+                    <form method="get" action="/admin-products/filter" id="filterForm">
+                      <select name="categoryId"
+                        class="w-full h-[43px] pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                        onchange="document.getElementById('filterForm').submit()">
+
+                        <option value="0" th:selected="${selectedCategoryId == null || selectedCategoryId == 0}">
+                          Tất cả danh mục
+                        </option>
+
+                        <option th:each="cat : ${categories}" th:value="${cat.categoryID}" th:text="${cat.name}"
+                          th:selected="${selectedCategoryId == cat.categoryID}">
+                        </option>
+                      </select>
+                    </form>
+
                     <div
                       class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
                       <i class="ri-arrow-down-s-line text-gray-400"></i>
                     </div>
                   </div>
                 </div>
+
                 <div class="w-48">
-                  <div class="relative">
-                    <select
-                      class="w-full pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                      <option value="">Trạng thái</option>
-                      <option value="active">Đang bán</option>
-                      <option value="outofstock">Hết hàng</option>
-                      <option value="hidden">Ẩn</option>
-                    </select>
-                    <div
-                      class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
-                      <i class="ri-arrow-down-s-line text-gray-400"></i>
+                  <form method="get" action="/admin-products" id="filterForm">
+                    <div class="relative">
+                      <select name="status" onchange="document.getElementById('filterForm').submit();"
+                        class="w-full pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                        <option value="">Trạng thái</option>
+                        <option value="active">Đang bán</option>
+                        <option value="outofstock">Hết hàng</option>
+                        <option value="hidden">Ẩn</option>
+                      </select>
+                      <div
+                        class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                        <i class="ri-arrow-down-s-line text-gray-400"></i>
+                      </div>
                     </div>
-                  </div>
+                  </form>
+
                 </div>
               </div>
 
@@ -320,13 +345,16 @@ select {
                         Danh mục</th>
                       <th
                         class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
+                        Trạng thái</th>
+                      <th
+                        class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
                         Thao tác</th>
                     </tr>
-
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-200 text-sm text-gray-700">
                     <tr th:each="p, iter : ${products}">
-                      <td th:text="${iter.index + 1}" class="px-4 py-4 text-center text-base font-small">1</td>
+                      <td th:text="${currentPage * pageSize + iter.index + 1}"
+                        class="px-4 py-4 text-center text-base font-small">1</td>
                       <td class="px-4 py-4 text-center">
                         <img class="w-[70px] h-[70px] object-cover rounded mx-auto"
                           th:src="@{'/images/' + ${p.imageUrl}}" alt="">
@@ -334,8 +362,23 @@ select {
                       <td th:text="${p.productName}" class="px-4 py-4 text-left text-base font-small">Iphone 15 Pro Max
                       </td>
                       <td th:text="${p.category.name}" class="px-4 py-4 text-left text-base font-small">Điện thoại</td>
+                      <td class="px-4 py-4 text-center">
+                        <span th:text="${p.status ? 'Hiển thị' : 'Ẩn'}"
+                          th:class="${p.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}"
+                          class="px-3 py-1 rounded-full text-xs font-semibold">
+                        </span>
+                      </td>
                       <td class="px-4 py-4">
                         <div class="flex justify-center gap-2">
+                          <!-- Nút chuyển đổi trạng thái -->
+                          <a th:href="@{'/admin-products/toggle-status/' + ${p.productID}}"
+                            class="text-gray-600 hover:text-gray-800"
+                            th:title="${p.status ? 'Ẩn sản phẩm' : 'Hiển thị sản phẩm'}">
+                            <div class="w-8 h-8 flex items-center justify-center text-xl">
+                              <i th:class="${p.status ? 'ri-eye-off-line' : 'ri-eye-line'}"></i>
+                            </div>
+                          </a>
+
                           <a th:href="@{'/admin-products/edit/' + ${p.productID}}"
                             class="text-blue-600 hover:text-blue-800" title="Sửa">
                             <div class="w-8 h-8 flex items-center justify-center text-xl">
@@ -352,32 +395,49 @@ select {
                         </div>
                       </td>
                     </tr>
-
                   </tbody>
                 </table>
+                <!-- Thêm thông báo khi không có sản phẩm ở đây -->
+                <div th:if="${#lists.isEmpty(products)}" class="w-full text-center py-12">
+                  <img
+                    src="https://i.postimg.cc/nrf4Qjsw/pngtree-business-web-error-404-concept-illustration-png-image-3507632-removebg-preview.png"
+                    alt="No products" class="mx-auto w-[250px] h-auto mb-4" style="margin-top: -50px;" />
+                  <p class="text-gray-800 text-lg">Không có sản phẩm nào được tìm thấy.</p>
+                </div>
               </div>
 
 
               <!-- Pagination -->
+              <!-- Pagination -->
               <div class="flex items-center justify-between mt-6">
-                <div class="text-sm text-gray-500">
-                  Hiển thị 1-6 của 24 sản phẩm
-                </div>
-                <div class="flex space-x-2">
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap">Trước</button>
-                  <button
-                    class="px-3 py-1 border border-primary bg-primary text-white rounded-button whitespace-nowrap">1</button>
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">2</button>
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">3</button>
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">4</button>
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">Tiếp</button>
+                <div id="pagination" class="flex space-x-2">
+                  <ul class="flex gap-2">
+                    <!-- Prev -->
+                    <li>
+                      <a th:href="@{${baseUrl} + 'page=' + (${currentPage} - 1) + '&size=' + ${pageSize}}"
+                        th:classappend="${currentPage == 0} ? 'pointer-events-none opacity-50' : ''"
+                        class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Prev</a>
+                    </li>
+
+                    <!-- Số trang -->
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                      <a th:href="@{${baseUrl} + 'page=' + ${i} + '&size=' + ${pageSize}}" th:text="${i + 1}"
+                        th:classappend="${i == currentPage} ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'"
+                        class="px-3 py-1 rounded"></a>
+                    </li>
+
+                    <!-- Next -->
+                    <li>
+                      <a th:href="@{${baseUrl} + 'page=' + (${currentPage} + 1) + '&size=' + ${pageSize}}"
+                        th:classappend="${currentPage == totalPages - 1} ? 'pointer-events-none opacity-50' : ''"
+                        class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Next</a>
+                    </li>
+                  </ul>
                 </div>
               </div>
+
+
+
             </div>
           </div>
 
@@ -389,6 +449,56 @@ select {
 
     </div>
   </div>
+  <script>
+    let currentPage = 0;
+    const pageSize = 8;
+
+    function loadProducts(page) {
+      fetch(`/products?page=${page}&size=${pageSize}`)
+        .then(res => res.json())
+        .then(data => {
+          // Hiển thị sản phẩm
+          renderProducts(data.content);
+
+          // Cập nhật số trang
+          updatePagination(data.totalPages, page);
+        });
+    }
+
+    function renderProducts(products) {
+      const container = document.querySelector("#product-list");
+      container.innerHTML = "";
+      products.forEach(p => {
+        container.innerHTML += `
+      <div class="product-card">
+        <img src="${p.imageUrl}" alt="${p.productName}">
+        <h3>${p.productName}</h3>
+      </div>
+    `;
+      });
+    }
+
+    function updatePagination(totalPages, currentPage) {
+      const paginationContainer = document.querySelector("#pagination");
+      paginationContainer.innerHTML = "";
+
+      if (currentPage > 0) {
+        paginationContainer.innerHTML += `<button onclick="loadProducts(${currentPage - 1})">Trước</button>`;
+      }
+
+      for (let i = 0; i < totalPages; i++) {
+        paginationContainer.innerHTML += `<button onclick="loadProducts(${i})">${i + 1}</button>`;
+      }
+
+      if (currentPage < totalPages - 1) {
+        paginationContainer.innerHTML += `<button onclick="loadProducts(${currentPage + 1})">Tiếp</button>`;
+      }
+    }
+
+    // Load trang đầu tiên
+    loadProducts(0);
+
+  </script>
 </body>
 
 </html>

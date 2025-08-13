@@ -33,8 +33,12 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductVariant> variants;
+
     @Transient
     private List<String> storages;
+
+    @Column(name = "status", columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean status = true; // active, outofstock, hidden
 
     public List<String> getStorages() {
         return storages;
@@ -43,5 +47,4 @@ public class Product {
     public void setStorages(List<String> storages) {
         this.storages = storages;
     }
-
 }

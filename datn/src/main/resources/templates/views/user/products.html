@@ -634,9 +634,9 @@
                 <!-- PHÂN TRANG -->
                 <div class="flex justify-center mt-6">
                     <ul class="inline-flex items-center -space-x-px">
-                        <!-- Nút "Trước" -->
+                        <!-- Prev -->
                         <li th:if="${currentPage > 1}">
-                            <a th:href="@{/products(page=${currentPage - 1}, sort=${sort}, discounted=${isDiscounted})}"
+                            <a th:href="@{${baseUrl} + '&page=' + (${currentPage} - 1) + '&size=15'}"
                                 class="flex items-center px-3 py-2 ml-0 text-gray-700 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-50 hover:text-[#000f8f] transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
@@ -647,18 +647,17 @@
                             </a>
                         </li>
 
-                        <!-- Các số trang -->
+                        <!-- Page numbers -->
                         <li th:each="i : ${#numbers.sequence(1, totalPages)}">
-                            <a th:href="@{/products(page=${i}, sort=${sort}, discounted=${isDiscounted})}"
-                                th:text="${i}"
+                            <a th:href="@{${baseUrl} + '&page=' + ${i} + '&size=15'}" th:text="${i}"
                                 th:classappend="${i == currentPage} ? 'z-10 bg-[#000f8f] border-[#000f8f] text-white hover:bg-[#000d7a]' : 'text-gray-700 bg-white hover:bg-gray-50 hover:text-[#000f8f]'"
                                 class="flex items-center px-4 py-2 border border-gray-300 leading-tight transition-colors">
                             </a>
                         </li>
 
-                        <!-- Nút "Sau" -->
+                        <!-- Next -->
                         <li th:if="${currentPage < totalPages}">
-                            <a th:href="@{/products(page=${currentPage + 1}, sort=${sort}, discounted=${isDiscounted})}"
+                            <a th:href="@{${baseUrl} + '&page=' + (${currentPage} + 1) + '&size=15'}"
                                 class="flex items-center px-3 py-2 text-gray-700 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 hover:text-[#000f8f] transition-colors">
                                 Sau
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" fill="none"
@@ -670,6 +669,7 @@
                         </li>
                     </ul>
                 </div>
+
             </div>
         </div>
     </section>

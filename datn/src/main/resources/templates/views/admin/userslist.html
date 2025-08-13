@@ -147,10 +147,11 @@
                             <form th:action="@{'/admin/users/toggle/' + ${user.id}}" method="post"
                                 th:id="'lockForm-' + ${user.id}">
                                 <button type="button"
-                                    th:classappend="${user.active} ? 'text-red-600' : 'text-green-600'"
+                                    th:classappend="${user.active} ? 'text-green-600' : 'text-red-600'"
                                     th:onclick="'confirmToggle(' + ${user.id} + ', ' + ${user.active} + ')'">
-                                    <i class="bi" th:classappend="${user.active} ? 'bi-lock-fill' : 'bi-unlock'"></i>
+                                    <i class="bi" th:classappend="${user.active} ? 'bi-unlock' : 'bi-lock-fill'"></i>
                                 </button>
+
                             </form>
                         </td>
                     </tr>
