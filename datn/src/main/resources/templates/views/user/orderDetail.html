@@ -98,11 +98,14 @@
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hủy đơn hàng</a>
               <a href="#" id="returnOrderBtn"
                 th:if="${order.orderStatus == 'Đã giao hàng' and order.paymentStatus == 'Đã thanh toán'}"
+                th:data-order-date="${order.orderDate}"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Trả hàng</a>
             </div>
           </div>
         </div>
       </div>
+
+
       <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm" th:if="${order.returnReason != null}">
         <h2 class="text-[#080c8c] font-bold mb-2 text-lg">YÊU CẦU TRẢ HÀNG</h2>
         <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
@@ -129,9 +132,19 @@
               <p class="text-sm text-blue-500 mt-1">
                 Phương thức trả: <span
                   th:text="${#strings.contains(order.returnMethod, 'POST_OFFICE') ? 'Trả tại bưu cục' : 'Shipper đến nhận'}"></span>
-
-
               </p>
+              <!-- Thêm thông tin tài khoản ngân hàng -->
+              <div class="mt-2" th:if="${order.bankAccountNumber != null}">
+                <p class="text-sm text-blue-700 font-semibold">Thông tin hoàn tiền:</p>
+                <div class="text-sm text-blue-500 space-y-1 mt-1">
+                  <p>Ngân hàng: <span th:text="${order.bankName}"></span></p>
+                  <p>Số tài khoản:
+                    <span
+                      th:text="${#strings.substring(order.bankAccountNumber, 0, 3) + '****' + #strings.substring(order.bankAccountNumber, #strings.length(order.bankAccountNumber)-3)}"></span>
+                  </p>
+                  <p>Chủ tài khoản: <span th:text="${order.accountHolder}"></span></p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -385,121 +398,245 @@
   </div>
 
   <!-- Modal trả hàng -->
-  <!-- Modal trả hàng -->
   <div id="returnOrderModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
     <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
       <form id="returnForm" enctype="multipart/form-data">
-        <div class="mt-3 text-center">
-          <h3 class="text-lg leading-6 font-medium text-gray-900">Yêu cầu trả hàng</h3>
-          <div class="mt-2 px-7 py-3">
-            <!-- Phần chọn phương thức trả hàng -->
-            <div class="mb-6">
-              <h4 class="text-sm font-medium text-gray-700 mb-3 text-left">Phương thức trả hàng:</h4>
-              <div class="grid grid-cols-2 gap-3">
-                <!-- Trả tại bưu cục -->
-                <div class="relative">
-                  <input id="returnMethodPost" name="returnMethod" type="radio" value="POST_OFFICE" class="peer hidden"
-                    checked />
-                  <label for="returnMethodPost" class="block p-3 border border-gray-300 rounded-lg cursor-pointer 
-                                    hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-50">
-                    <div class="flex flex-col items-center">
-                      <i class="fas fa-box-open text-red-500 text-xl mb-2"></i>
-                      <span class="text-sm font-medium">Trả tại bưu cục</span>
-                      <p class="text-xs text-gray-500 mt-1">Tự mang đến bưu cục gần nhất</p>
-                    </div>
-                  </label>
-                </div>
-
-                <!-- Shipper đến nhận -->
-                <div class="relative">
-                  <input id="returnMethodPickup" name="returnMethod" type="radio" value="PICKUP" class="peer hidden" />
-                  <label for="returnMethodPickup" class="block p-3 border border-gray-300 rounded-lg cursor-pointer 
-                                    hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-50">
-                    <div class="flex flex-col items-center">
-                      <i class="fas fa-truck text-red-500 text-xl mb-2"></i>
-                      <span class="text-sm font-medium">Shipper đến nhận</span>
-                      <p class="text-xs text-gray-500 mt-1">Nhân viên sẽ liên hệ để hẹn lịch</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Lý do trả hàng -->
-            <div class="mb-6">
-              <p class="text-sm text-gray-500 mb-4 text-left">Vui lòng chọn lý do trả hàng</p>
-              <div class="space-y-2 text-left mb-4">
-                <div class="flex items-center">
-                  <input id="returnReason1" name="returnReason" type="radio" value="Sản phẩm bị lỗi"
-                    class="h-4 w-4 text-red-600 focus:ring-red-500" required>
-                  <label for="returnReason1" class="ml-2 block text-sm text-gray-700">Sản phẩm bị lỗi</label>
-                </div>
-                <div class="flex items-center">
-                  <input id="returnReason2" name="returnReason" type="radio" value="Sản phẩm không giống mô tả"
-                    class="h-4 w-4 text-red-600 focus:ring-red-500">
-                  <label for="returnReason2" class="ml-2 block text-sm text-gray-700">Sản phẩm không giống mô tả</label>
-                </div>
-                <div class="flex items-center">
-                  <input id="returnReason3" name="returnReason" type="radio" value="Không hài lòng với sản phẩm"
-                    class="h-4 w-4 text-red-600 focus:ring-red-500">
-                  <label for="returnReason3" class="ml-2 block text-sm text-gray-700">Không hài lòng với sản
-                    phẩm</label>
-                </div>
-                <div class="flex items-center">
-                  <input id="returnReason4" name="returnReason" type="radio" value="Nhận nhầm sản phẩm"
-                    class="h-4 w-4 text-red-600 focus:ring-red-500">
-                  <label for="returnReason4" class="ml-2 block text-sm text-gray-700">Nhận nhầm sản phẩm</label>
-                </div>
-                <div class="flex items-center">
-                  <input id="returnReasonOther" name="returnReason" type="radio" value="other"
-                    class="h-4 w-4 text-red-600 focus:ring-red-500">
-                  <label for="returnReasonOther" class="ml-2 block text-sm text-gray-700">Lý do khác</label>
-                </div>
-              </div>
-
-              <!-- Ô nhập lý do khác -->
-              <textarea id="returnOtherReason" name="otherReason" rows="4"
-                class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none mt-2 hidden"
-                placeholder="Vui lòng nhập lý do trả hàng..."></textarea>
-            </div>
-
-            <!-- Phần upload hình ảnh -->
-            <div class="mb-6">
-              <label class="block text-sm text-gray-700 mb-1 text-left">Hình ảnh minh chứng (tối đa 3 ảnh):</label>
-              <div class="flex items-center justify-center w-full">
-                <label for="returnImages"
-                  class="flex flex-col w-full h-32 border-2 border-dashed hover:border-red-300 hover:bg-gray-100 rounded-lg cursor-pointer">
-                  <div class="flex flex-col items-center justify-center pt-7">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none"
-                      viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    <p class="pt-1 text-sm text-gray-500">Kéo thả ảnh vào đây hoặc click để chọn</p>
+        <!-- Bước 1: Chọn lý do trả hàng -->
+        <div id="step1" class="step-content">
+          <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Yêu cầu trả hàng</h3>
+            <div class="mt-2 px-7 py-3">
+              <!-- Lý do trả hàng -->
+              <div class="mb-6">
+                <p class="text-sm text-gray-500 mb-4 text-left">Vui lòng chọn lý do trả hàng</p>
+                <div class="space-y-2 text-left mb-4">
+                  <div class="flex items-center">
+                    <input id="returnReason1" name="returnReason" type="radio" value="Sản phẩm bị lỗi"
+                      class="h-4 w-4 text-red-600 focus:ring-red-500" required>
+                    <label for="returnReason1" class="ml-2 block text-sm text-gray-700">Sản phẩm bị lỗi</label>
                   </div>
-                  <input id="returnImages" name="imageFile" type="file" class="opacity-0" accept="image/*" max="3">
-                </label>
+                  <div class="flex items-center">
+                    <input id="returnReason2" name="returnReason" type="radio" value="Sản phẩm không giống mô tả"
+                      class="h-4 w-4 text-red-600 focus:ring-red-500">
+                    <label for="returnReason2" class="ml-2 block text-sm text-gray-700">Sản phẩm không giống mô
+                      tả</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="returnReason3" name="returnReason" type="radio" value="Không hài lòng với sản phẩm"
+                      class="h-4 w-4 text-red-600 focus:ring-red-500">
+                    <label for="returnReason3" class="ml-2 block text-sm text-gray-700">Không hài lòng với sản
+                      phẩm</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="returnReason4" name="returnReason" type="radio" value="Nhận nhầm sản phẩm"
+                      class="h-4 w-4 text-red-600 focus:ring-red-500">
+                    <label for="returnReason4" class="ml-2 block text-sm text-gray-700">Nhận nhầm sản phẩm</label>
+                  </div>
+                  <div class="flex items-center">
+                    <input id="returnReasonOther" name="returnReason" type="radio" value="other"
+                      class="h-4 w-4 text-red-600 focus:ring-red-500">
+                    <label for="returnReasonOther" class="ml-2 block text-sm text-gray-700">Lý do khác</label>
+                  </div>
+                </div>
+
+                <!-- Ô nhập lý do khác -->
+                <textarea id="returnOtherReason" name="otherReason" rows="4"
+                  class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none mt-2 hidden"
+                  placeholder="Vui lòng nhập lý do trả hàng..."></textarea>
               </div>
-              <div id="imagePreview" class="flex flex-wrap gap-2 mt-2"></div>
-              <p class="text-xs text-gray-500 mt-1 text-left">Hỗ trợ định dạng JPG, PNG. Mỗi ảnh tối đa 5MB.</p>
+
+              <!-- Phần upload hình ảnh -->
+              <div class="mb-6">
+                <label class="block text-sm text-gray-700 mb-1 text-left">Hình ảnh minh chứng (Bắt buộc):</label>
+                <div class="flex items-center justify-center w-full">
+                  <label for="returnImages"
+                    class="flex flex-col w-full h-32 border-2 border-dashed hover:border-red-300 hover:bg-gray-100 rounded-lg cursor-pointer">
+                    <div class="flex flex-col items-center justify-center pt-7">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <p class="pt-1 text-sm text-gray-500">Kéo thả ảnh vào đây hoặc click để chọn</p>
+                    </div>
+                    <input id="returnImages" name="imageFile" type="file" class="opacity-0" accept="image/*" required
+                      multiple>
+                  </label>
+                </div>
+                <div id="imagePreview" class="flex flex-wrap gap-2 mt-2"></div>
+                <p class="text-xs text-gray-500 mt-1 text-left">Hỗ trợ định dạng JPG, PNG. Mỗi ảnh tối đa 5MB.</p>
+              </div>
+            </div>
+            <div class="items-center px-4 py-3">
+              <button type="button" id="nextStepBtn" disabled
+                class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                Tiếp theo
+              </button>
+              <button type="button" id="cancelReturnBtn"
+                class="ml-3 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                Quay lại
+              </button>
             </div>
           </div>
-          <div class="items-center px-4 py-3">
-            <button type="submit" id="confirmReturnBtn"
-              class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-              Gửi yêu cầu
-            </button>
-            <button type="button" id="cancelReturnBtn"
-              class="ml-3 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
-              Quay lại
-            </button>
+        </div>
+
+        <!-- Bước 2: Chọn phương thức trả hàng và thông tin tài khoản -->
+        <div id="step2" class="step-content hidden">
+          <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Thông tin trả hàng</h3>
+            <div class="mt-2 px-7 py-3">
+              <!-- Phần chọn phương thức trả hàng -->
+              <div class="mb-6">
+                <h4 class="text-sm font-medium text-gray-700 mb-3 text-left">Phương thức trả hàng:</h4>
+                <div class="grid grid-cols-2 gap-3">
+                  <!-- Trả tại bưu cục -->
+                  <div class="relative">
+                    <input id="returnMethodPost" name="returnMethod" type="radio" value="POST_OFFICE"
+                      class="peer hidden" checked />
+                    <label for="returnMethodPost" class="block p-3 border border-gray-300 rounded-lg cursor-pointer 
+                                    hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-50">
+                      <div class="flex flex-col items-center">
+                        <i class="fas fa-box-open text-red-500 text-xl mb-2"></i>
+                        <span class="text-sm font-medium">Trả tại bưu cục</span>
+                        <p class="text-xs text-gray-500 mt-1">Tự mang đến bưu cục gần nhất</p>
+                      </div>
+                    </label>
+                  </div>
+
+                  <!-- Shipper đến nhận -->
+                  <div class="relative">
+                    <input id="returnMethodPickup" name="returnMethod" type="radio" value="PICKUP"
+                      class="peer hidden" />
+                    <label for="returnMethodPickup" class="block p-3 border border-gray-300 rounded-lg cursor-pointer 
+                                    hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-50">
+                      <div class="flex flex-col items-center">
+                        <i class="fas fa-truck text-red-500 text-xl mb-2"></i>
+                        <span class="text-sm font-medium">Shipper đến nhận</span>
+                        <p class="text-xs text-gray-500 mt-1">Nhân viên sẽ liên hệ để hẹn lịch</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Thông tin tài khoản hoàn tiền -->
+              <div class="mb-6">
+                <h4 class="text-sm font-medium text-gray-700 mb-3 text-left">Thông tin tài khoản nhận hoàn tiền:</h4>
+                <div class="space-y-3">
+                  <div>
+                    <label for="bankAccountNumber" class="block text-sm text-gray-700 mb-1 text-left">Số tài
+                      khoản:</label>
+                    <input type="text" id="bankAccountNumber" name="bankAccountNumber"
+                      class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-1 focus:ring-red-500"
+                      required>
+                  </div>
+                  <div>
+                    <label for="bankName" class="block text-sm text-gray-700 mb-1 text-left">Ngân hàng:</label>
+                    <input type="text" id="bankName" name="bankName"
+                      class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-1 focus:ring-red-500"
+                      required>
+                  </div>
+                  <div>
+                    <label for="accountHolder" class="block text-sm text-gray-700 mb-1 text-left">Chủ tài khoản:</label>
+                    <input type="text" id="accountHolder" name="accountHolder"
+                      class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-1 focus:ring-red-500"
+                      required>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="items-center px-4 py-3">
+              <button type="submit" id="confirmReturnBtn"
+                class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                Gửi yêu cầu
+              </button>
+              <button type="button" id="prevStepBtn"
+                class="ml-3 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                Quay lại
+              </button>
+            </div>
           </div>
         </div>
       </form>
     </div>
   </div>
 
-  <script> // Xử lý khi chọn lý do khác
+
+  <script> // quá 7 ngày
+    document.addEventListener("DOMContentLoaded", function () {
+      const btn = document.getElementById("returnOrderBtn");
+      if (btn) {
+        btn.addEventListener("click", function (e) {
+          const orderDate = new Date(btn.getAttribute("data-order-date"));
+          const now = new Date();
+
+          // Calculate difference in days
+          const diffTime = Math.abs(now - orderDate);
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          if (diffDays > 7) {
+            e.preventDefault();
+            alert("Đơn hàng đã quá 7 ngày, không thể trả hàng!");
+
+            // Additionally hide the return form if it's already visible
+            const returnForm = document.getElementById("returnOrderModal"); // Replace with your form's actual ID
+            if (returnForm) {
+              returnForm.style.display = "none";
+            }
+
+            // Or redirect to another page if needed
+            // window.location.href = "/some-other-page";
+
+            return false;
+          }
+          // If within 7 days, let the default action proceed
+        });
+      }
+    });
+  </script>
+
+
+  <script> // bắt ảnh 
+    const fileInput = document.getElementById("returnImages");
+    const nextStepBtn = document.getElementById("nextStepBtn");
+
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        nextStepBtn.disabled = false;
+        nextStepBtn.classList.remove("bg-gray-400", "cursor-not-allowed");
+        nextStepBtn.classList.add("bg-red-600", "hover:bg-red-700", "focus:ring-2", "focus:ring-red-500");
+      } else {
+        nextStepBtn.disabled = true;
+        nextStepBtn.classList.add("bg-gray-400", "cursor-not-allowed");
+        nextStepBtn.classList.remove("bg-red-600", "hover:bg-red-700", "focus:ring-2", "focus:ring-red-500");
+      }
+    });
+  </script>
+
+  <script>// Xử lý chuyển đổi giữa các bước
+
+    document.getElementById('nextStepBtn')?.addEventListener('click', function () {
+      const selectedReason = document.querySelector('input[name="returnReason"]:checked');
+      if (!selectedReason) {
+        alert('Vui lòng chọn lý do trả hàng');
+        return;
+      }
+
+      if (selectedReason.value === 'other' && !document.getElementById('returnOtherReason').value.trim()) {
+        alert('Vui lòng nhập lý do trả hàng');
+        return;
+      }
+
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+    });
+
+    document.getElementById('prevStepBtn')?.addEventListener('click', function () {
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step1').classList.remove('hidden');
+    });
+
+    // Xử lý khi chọn lý do khác
     document.querySelectorAll('input[name="returnReason"]').forEach(radio => {
       radio.addEventListener('change', function () {
         const returnOtherReason = document.getElementById('returnOtherReason');
@@ -573,17 +710,9 @@
         const formData = new FormData(this);
         const orderId = [[${ order.id }]];
 
-        // Thêm phương thức trả hàng vào formData
-        const returnMethod = document.querySelector('input[name="returnMethod"]:checked').value;
-        formData.append('returnMethod', returnMethod);
-
         // Xử lý lý do
         const selectedReason = document.querySelector('input[name="returnReason"]:checked');
         const otherReason = document.getElementById('returnOtherReason').value.trim();
-
-        if (!selectedReason) {
-          throw new Error('Vui lòng chọn lý do trả hàng');
-        }
 
         const reason = selectedReason.value === 'other' ? otherReason : selectedReason.value;
         formData.append('reason', reason);
@@ -614,14 +743,11 @@
         submitBtn.innerHTML = 'Gửi yêu cầu';
       }
     });
-  </script>
 
-  <script> // Xử lý modal trả hàng
     // Xử lý modal trả hàng
     const returnOrderBtn = document.getElementById('returnOrderBtn');
     const returnOrderModal = document.getElementById('returnOrderModal');
     const cancelReturnBtn = document.getElementById('cancelReturnBtn');
-    const returnForm = document.getElementById('returnForm');
 
     if (returnOrderBtn) {
       returnOrderBtn.addEventListener('click', function (e) {
@@ -633,131 +759,9 @@
 
     cancelReturnBtn.addEventListener('click', function () {
       returnOrderModal.classList.add('hidden');
-    });
-
-    // Xử lý khi chọn lý do trả hàng
-    document.querySelectorAll('input[name="returnReason"]').forEach(radio => {
-      radio.addEventListener('change', function () {
-        const returnOtherReason = document.getElementById('returnOtherReason');
-        if (this.value === 'other') {
-          returnOtherReason.classList.remove('hidden');
-          returnOtherReason.required = true;
-        } else {
-          returnOtherReason.classList.add('hidden');
-          returnOtherReason.required = false;
-        }
-      });
-    });
-
-    // Xử lý hiển thị ảnh preview
-    document.getElementById('returnImages')?.addEventListener('change', function (e) {
-      const previewContainer = document.getElementById('imagePreview');
-      previewContainer.innerHTML = '';
-
-      if (this.files.length > 3) {
-        alert('Bạn chỉ có thể tải lên tối đa 3 ảnh');
-        this.value = '';
-        return;
-      }
-
-      Array.from(this.files).forEach(file => {
-        if (file.size > 5 * 1024 * 1024) {
-          alert(`Ảnh ${file.name} vượt quá kích thước cho phép (5MB)`);
-          return;
-        }
-
-        if (!file.type.match('image.*')) {
-          alert(`File ${file.name} không phải là hình ảnh`);
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const imgContainer = document.createElement('div');
-          imgContainer.className = 'relative w-20 h-20';
-
-          const img = document.createElement('img');
-          img.src = e.target.result;
-          img.className = 'w-full h-full object-cover rounded';
-
-          const removeBtn = document.createElement('button');
-          removeBtn.type = 'button';
-          removeBtn.className = 'absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs';
-          removeBtn.innerHTML = '×';
-          removeBtn.onclick = function () {
-            imgContainer.remove();
-            // Cần thêm logic xóa file khỏi input nếu cần
-          };
-
-          imgContainer.appendChild(img);
-          imgContainer.appendChild(removeBtn);
-          previewContainer.appendChild(imgContainer);
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-
-    // Xử lý submit form với FormData
-    returnForm?.addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const selectedReason = document.querySelector('input[name="returnReason"]:checked');
-      const otherReason = document.getElementById('returnOtherReason').value.trim();
-      const imagesInput = document.getElementById('returnImages');
-
-      if (!selectedReason) {
-        alert('Vui lòng chọn lý do trả hàng');
-        return;
-      }
-
-      if (selectedReason.value === 'other' && !otherReason) {
-        alert('Vui lòng nhập lý do trả hàng');
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('reason', selectedReason.value === 'other' ? otherReason : selectedReason.value);
-      formData.append('returnMethod', returnMethod);
-
-      // Thêm các file ảnh với tên 'images' (khớp với @RequestParam trong controller)
-      if (imagesInput.files.length > 0) {
-        for (let i = 0; i < imagesInput.files.length; i++) {
-          formData.append('images', imagesInput.files[i]);
-        }
-      }
-
-      // Hiển thị loading
-      const submitBtn = document.getElementById('confirmReturnBtn');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
-
-      // Gọi API trả hàng với FormData
-      fetch('/order/return/' + [[${ order.id }]], {
-        method: 'POST',
-        body: formData
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Có lỗi xảy ra khi gửi yêu cầu trả hàng');
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.success) {
-            alert('Yêu cầu trả hàng đã được gửi thành công');
-            window.location.reload();
-          } else {
-            throw new Error(data.message || 'Có lỗi xảy ra');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert(error.message);
-        })
-        .finally(() => {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = 'Gửi yêu cầu';
-        });
+      // Reset về bước 1 khi hủy
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step1').classList.remove('hidden');
     });
   </script>
 

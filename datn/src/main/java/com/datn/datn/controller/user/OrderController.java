@@ -2,6 +2,7 @@ package com.datn.datn.controller.user;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.datn.datn.model.Member;
 import com.datn.datn.model.Order;
+import com.datn.datn.repository.OrderRepository;
 import com.datn.datn.service.OrderService;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,6 +34,9 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @GetMapping("/order")
     public String getOrders(Model model, HttpSession session) {
@@ -71,6 +76,7 @@ public class OrderController {
             return "redirect:/my-orders"; // hoặc trang 404
         }
 
+    
         // Tính tổng tiền sản phẩm
         double productTotal = order.getOrderDetails().stream()
                 .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
@@ -138,11 +144,14 @@ public class OrderController {
         }
     }
 
-    @PostMapping(value = "/order/return/{orderId}" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/order/return/{orderId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> returnOrder(
             @PathVariable("orderId") Long orderId,
             @RequestParam("reason") String reason,
             @RequestParam("returnMethod") String returnMethod,
+            @RequestParam String bankAccountNumber,
+            @RequestParam String bankName,
+            @RequestParam String accountHolder,
             @RequestParam("imageFile") MultipartFile imageFiles,
             HttpSession session) {
 
@@ -155,6 +164,13 @@ public class OrderController {
 
             Order order = orderService.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+            order.setReturnReason(reason);
+            order.setReturnMethod(returnMethod);
+            order.setBankAccountNumber(bankAccountNumber);
+            order.setBankName(bankName);
+            order.setAccountHolder(accountHolder);
+            order.setReturnStatus("Chờ xử lý");
+            order.setReturnRequestDate(LocalDateTime.now());
 
             if (!order.getMember().getId().equals(member.getId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
@@ -197,6 +213,7 @@ public class OrderController {
             orderService.requestReturn(orderId, reason, returnMethod, imageUrls);
 
             return ResponseEntity.ok(Map.of("success", true));
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(
@@ -204,37 +221,5 @@ public class OrderController {
         }
     }
 
-    private String saveImageToStorage(MultipartFile image) throws IOException {
-        String uploadDir = new File("src/main/resources/static/images").getAbsolutePath();
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-
-        String originalFileName = image.getOriginalFilename();
-        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        String uniqueFileName = UUID.randomUUID().toString() + fileExtension;
-
-        File dest = new File(uploadDir + uniqueFileName);
-        image.transferTo(dest);
-
-        return "/uploads/return-images/" + uniqueFileName;
-    }
-
-    private String storeImage(MultipartFile image) throws IOException {
-        // Implement logic lưu ảnh vào thư mục hoặc cloud storage
-        // Ví dụ đơn giản:
-        String uploadDir = "uploads/return-images/";
-        File uploadPath = new File(uploadDir);
-        if (!uploadPath.exists()) {
-            uploadPath.mkdirs();
-        }
-
-        String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
-        File dest = new File(uploadPath + "/" + fileName);
-        image.transferTo(dest);
-
-        return fileName;
-    }
 
 }

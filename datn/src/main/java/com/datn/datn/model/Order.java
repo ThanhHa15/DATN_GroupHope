@@ -79,6 +79,15 @@ public class Order {
     @Column(name = "return_method")
     private String returnMethod;
 
+    @Column(name = "bank_account_number")
+    private String bankAccountNumber;
+    
+    @Column(name = "bank_name")
+    private String bankName;
+    
+    @Column(name = "account_holder")
+    private String accountHolder;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
