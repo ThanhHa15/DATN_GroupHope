@@ -33,8 +33,12 @@
     .status-pending {
       color: #e5a500;
     }
-  </style>
 
+    .disabled-element {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+  </style>
 </head>
 
 <body>
@@ -57,8 +61,9 @@
           </svg>
           Quay lại
         </a>
-        <!-- Thêm dropdown hành động -->
-        <div class="relative">
+
+        <!-- Thêm dropdown hành động (ẩn khi đơn hàng đã hủy) -->
+        <div class="relative" th:unless="${order.orderStatus == 'Đã hủy'}">
           <button id="actionDropdownButton"
             class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
             Hành động
@@ -71,23 +76,127 @@
           <div id="actionDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
             <div class="py-1">
               <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">In đơn hàng</a>
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Gửi email xác nhận</a>
               <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hủy đơn hàng</a>
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Đánh dấu đã thanh toán</a>
+              <a th:href="@{'/admin-order/mark-as-paid/' + ${order.id}}"
+                class="mark-as-paid block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Đánh dấu đã thanh toán
+              </a>
+              <a th:href="@{'/admin-order/process-return/' + ${order.id}}"
+                class="process-return block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Xử lý trả hàng
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Order Header (giữ nguyên) -->
-      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-2">
-        <h1 class="text-3xl font-bold text-gray-900">Chi tiết đơn hàng <span
-            class="text-lg text-gray-600">#00123</span></h1>
-        <p class="text-gray-500 text-base">Ngày tạo: 17/06/2025</p>
+
+      <!--    trả hàng -->
+      <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm" th:if="${order.returnReason != null}">
+        <h2 class="text-[#080c8c] font-bold mb-2 text-lg">YÊU CẦU TRẢ HÀNG</h2>
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-blue-700" th:text="${order.returnReason}"></p>
+              <p class="text-xs text-blue-500 mt-1" th:if="${order.returnRequestDate != null}">
+                Thời gian yêu cầu: <span
+                  th:text="${#temporals.format(order.returnRequestDate, 'dd/MM/yyyy HH:mm')}"></span>
+              </p>
+              <p class="text-sm text-blue-700 mt-2 font-semibold">
+                Trạng thái: <span th:text="${order.returnStatus ?: 'Chờ xử lý'}"></span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Form xử lý yêu cầu trả hàng -->
+          <div class="mt-4" th:unless="${order.returnStatus == 'Đã xử lý' || order.returnStatus == 'Từ chối'}">
+            <form th:action="@{'/admin-order/process-return/' + ${order.id}}" method="post">
+              <div class="mb-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Quyết định</label>
+                <select name="returnDecision"
+                  class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm w-full">
+                  <option value="ACCEPT">Chấp nhận trả hàng</option>
+                  <option value="REJECT">Từ chối yêu cầu</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Lý do (nếu từ chối)</label>
+                <textarea name="adminResponse" rows="2"
+                  class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm w-full"></textarea>
+              </div>
+              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm">
+                Xác nhận
+              </button>
+            </form>
+          </div>
+
+          <!-- Hiển thị phản hồi admin nếu đã xử lý -->
+          <div class="mt-4" th:if="${order.returnStatus == 'Đã xử lý' || order.returnStatus == 'Từ chối'}">
+            <p class="text-sm font-medium text-gray-700">Phản hồi của quản trị viên:</p>
+            <p class="text-sm text-gray-600 mt-1" th:text="${order.adminResponse}"></p>
+          </div>
+        </div>
       </div>
 
-      <!-- Thêm phần cập nhật trạng thái -->
-      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+      <!-- Thêm box lý do hủy nếu đơn hàng đã hủy -->
+      <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm" th:if="${order.orderStatus == 'Đã hủy'}">
+        <h2 class="text-[#080c8c] font-bold mb-2 text-lg">LÝ DO HỦY ĐƠN HÀNG</h2>
+        <div class="bg-red-50 border-l-4 border-red-400 p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-red-700" th:text="${order.cancelReason}"></p>
+              <p class="text-xs text-red-500 mt-1" th:if="${order.cancelDate != null}">
+                Thời gian hủy: <span th:text="${#temporals.format(order.cancelDate, 'dd/MM/yyyy HH:mm')}"></span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông báo đơn hàng đã hủy -->
+      <div th:if="${order.orderStatus == 'Đã hủy'}" class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+              fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-red-700">Đơn hàng đã bị hủy và không thể chỉnh sửa.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Header -->
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-2">
+        <h1 class="text-3xl font-bold text-gray-900">
+          Chi tiết đơn hàng <span class="text-lg text-gray-600">#<span th:text="${order.orderCode}"></span></span>
+        </h1>
+        <p class="text-gray-500 text-base">Ngày tạo: <span
+            th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
+      </div>
+
+      <!-- Phần cập nhật trạng thái (ẩn khi đơn hàng đã hủy) -->
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6"  th:unless="${order.orderStatus == 'Đã hủy' or order.orderStatus == 'Đã giao hàng'}">
         <div class="flex items-center">
           <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -103,51 +212,54 @@
                 Cập nhật trạng thái đơn hàng
               </p>
               <div class="mt-2 md:mt-0 flex gap-2">
-                <select class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                  <option>Chờ xác nhận</option>
-                  <option>Đã xác nhận</option>
-                  <option>Đang đóng gói</option>
-                  <option>Đang vận chuyển</option>
-                  <option>Đã giao hàng</option>
-                  <option>Đã hủy</option>
-                </select>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm">
-                  Cập nhật
-                </button>
+                <form th:action="@{/admin-order/update-status/{orderId}(orderId=${order.id})}" method="post">
+                  <select name="status"
+                    class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                    <option th:selected="${order.orderStatus == 'Chờ xác nhận'}">Chờ xác nhận</option>
+                    <option th:selected="${order.orderStatus == 'Đã xác nhận'}">Đã xác nhận</option>
+                    <option th:selected="${order.orderStatus == 'Đang đóng gói'}">Đang đóng gói</option>
+                    <option th:selected="${order.orderStatus == 'Đang vận chuyển'}">Đang vận chuyển</option>
+                    <option th:selected="${order.orderStatus == 'Đã giao hàng'}">Đã giao hàng</option>
+                    <option th:selected="${order.orderStatus == 'Đã hủy'}">Đã hủy</option>
+                  </select>
+                  <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm">
+                    Cập nhật
+                  </button>
+                </form>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Order Status (cải tiến thêm nút chỉnh sửa) -->
+      <!-- Order Status -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">TT thanh toán:</span>
-          <span class="status-pending font-semibold text-[#e5a500]">Chưa thanh toán</span>
-          <button class="ml-2 text-blue-600 hover:text-blue-800">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-          </button>
+          <span th:text="${order.paymentStatus}" style="font-weight: 600;"
+            th:classappend="${order.paymentStatus == 'Đã thanh toán'} ? 'text-green-500' : 'text-[#e5a500] '">
+          </span>
         </div>
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">TT đơn hàng:</span>
-          <span class="status-pending font-semibold text-[#e5a500]">Chờ xác nhận</span>
+          <span th:text="${order.orderStatus}" class="status-pending font-semibold" th:classappend=" 
+          ${order.orderStatus == 'Đã giao hàng'} ? 'text-green-500' : 
+          (${order.orderStatus == 'Đã hủy'} ? 'text-red-500' : 
+          (${order.orderStatus == 'Chờ xác nhận'} ? 'text-amber-500' : 
+          (${order.orderStatus == 'Đang vận chuyển'} ? 'text-blue-500' : 'text-gray-500')))">
+          </span>
         </div>
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">Mã vận đơn:</span>
-          <span class="text-gray-800 font-medium">—</span>
-          
+          <span th:text="' #' + ${order.orderCode}" class="text-gray-800 font-medium">—</span>
         </div>
       </div>
 
-      <!-- Order Info Boxes (thêm nút chỉnh sửa) -->
+      <!-- Order Info Boxes -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm relative">
-          <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+          <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+            th:disabled="${order.orderStatus == 'Đã hủy'}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -155,13 +267,14 @@
             </svg>
           </button>
           <h2 class="font-bold mb-2 text-lg text-[#080c8c]">ĐỊA CHỈ GIAO HÀNG</h2>
-          <p class="text-gray-800 text-base font-semibold">TEST LÊ</p>
-          <p class="text-gray-700 text-sm">12 Tôn Bản, Thị xã Sơn Tây, Hà Nội</p>
-          <p class="text-gray-700 text-sm">+84987654325</p>
+          <p th:text="${order.member.fullname}" class="text-gray-800 text-base font-semibold"></p>
+          <p th:text="${order.address}" class="text-gray-700 text-sm"></p>
+          <p th:text="${order.member.phone}" class="text-gray-700 text-sm"></p>
         </div>
 
         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm relative">
-          <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+          <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+            th:disabled="${order.orderStatus == 'Đã hủy'}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -169,12 +282,12 @@
             </svg>
           </button>
           <h2 class="text-[#080c8c] font-bold mb-2 text-lg">THANH TOÁN</h2>
-          <p class="text-gray-700 text-base font-semibold">Chuyển khoản</p>
-          <p class="text-gray-600 text-sm mt-1">Chưa thanh toán</p>
+          <p th:text="${order.paymentMethod}" class="text-gray-700 text-base font-semibold"></p>
         </div>
 
         <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm relative">
-          <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+          <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+            th:disabled="${order.orderStatus == 'Đã hủy'}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -182,13 +295,13 @@
             </svg>
           </button>
           <h2 class="text-[#080c8c] font-bold mb-2 text-lg">GHI CHÚ</h2>
-          <p class="text-gray-700 text-base font-semibold">Không có ghi chú</p>
-          <textarea class="mt-2 w-full border rounded p-2 text-sm hidden" rows="3"
-            placeholder="Thêm ghi chú..."></textarea>
+          <p th:text="${#strings.isEmpty(order.note) ? 'Không có ghi chú' : order.note}"
+            class="text-gray-700 text-base font-semibold">
+          </p>
         </div>
       </div>
 
-      <!-- Order Items (thêm cột hành động) -->
+      <!-- Order Items -->
       <div class="bg-white rounded-lg border border-gray-200 overflow-hidden mb-6">
         <table class="w-full table-auto border-collapse">
           <thead class="bg-gray-50">
@@ -205,93 +318,81 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="text-base">
+            <tr th:each="detail : ${orderDetails}" class="text-base">
               <td class="py-3 px-4 border border-gray-200">
                 <div class="flex items-center gap-3">
-                  <img
-                    src="https://bizweb.dktcdn.net/100/502/883/products/230628110910-iphone-14-pro-max-1-1bad29d8-76a1-4f4a-9bc2-93eee6a2d7ea-61e61768-f143-48bd-a884-d552977c5f1c.png?v=1700193758290"
+                  <img th:src="@{'/images/' + ${detail.productVariant.imagesno2}}"
                     class="w-12 h-12 object-contain rounded bg-gray-100" />
-                  <span class="text-gray-800 font-medium">iPhone 14 Pro Max 1TB - Chính hãng VN/A</span>
+
+                  <div>
+                    <div class="text-gray-800 font-semibold text-sm"
+                      th:text="${detail.productVariant.product.productName}"></div>
+                    <div class="text-gray-500 text-xs mt-1">
+                      <span th:text="'Màu: ' + ${detail.productVariant.color}"></span> |
+                      <span th:text="'Dung lượng: ' + ${detail.productVariant.storage}"></span>
+                    </div>
+                  </div>
                 </div>
               </td>
-              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium">demo123</td>
-              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium">19.429.000đ</td>
-              <td class="py-3 px-4 border border-gray-200 text-center text-gray-800 font-medium">1</td>
-              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium">19.429.000đ</td>
+
+              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium"></td>
+
+              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium"
+                th:text="${#numbers.formatDecimal(detail.price, 1, 'COMMA', 0, 'POINT') + '₫'}"></td>
+
+              <td class="py-3 px-4 border border-gray-200 text-center text-gray-800 font-medium"
+                th:text="${detail.quantity}"></td>
+
+              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium"
+                th:text="${#numbers.formatDecimal(detail.price * detail.quantity, 1, 'COMMA', 0, 'POINT') + '₫'}">
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- Order Summary (thêm nút lưu thay đổi) -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+      <!-- Order Summary -->
+      <div class="bg-white rounded-lg border border-gray-200 p-6 space-y-2">
         <div class="flex justify-between text-base py-1">
-          <span class="text-gray-600 font-semibold">Khuyến mãi:</span>
-          <div class="flex items-center">
-            <span class="text-gray-800 font-medium mr-2">0đ</span>
-          </div>
+          <span class="text-gray-600 font-semibold">Tổng tiền sản phẩm:</span>
+          <span class="text-gray-800 font-medium"
+            th:text="${#numbers.formatDecimal(productTotal, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
         </div>
-        <div class="flex justify-between text-base py-1 border-b border-gray-100">
+
+        <div class="flex justify-between text-base py-1">
           <span class="text-gray-600 font-semibold">Phí vận chuyển:</span>
-          <div class="flex items-center">
-            <span class="text-gray-800 font-medium mr-2">40.000đ</span>
-          </div>
+          <span class="text-gray-800 font-medium"
+            th:text="${#numbers.formatDecimal(shippingFee, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
         </div>
-        <div class="flex justify-between items-center py-3">
+
+        <div class="flex justify-between text-base py-1">
+          <span class="text-gray-600 font-semibold">Tạm tính:</span>
+          <span class="text-gray-800 font-medium"
+            th:text="${#numbers.formatDecimal(subtotal, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
+        </div>
+
+        <div class="flex justify-between text-base py-1" th:if="${discountAmount > 0}">
+          <span class="text-gray-600 font-semibold">Giảm giá:</span>
+          <span class="text-green-600 font-medium"
+            th:text="'- ' + ${#numbers.formatDecimal(discountAmount, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
+        </div>
+        <div class="flex justify-between text-base py-1" th:if="${discountAmount <= 0}">
+          <span class="text-gray-600 font-semibold">Giảm giá:</span>
+          <span class="text-gray-800 font-medium">0₫</span>
+        </div>
+
+        <div class="flex justify-between items-center py-3 border-t border-gray-100">
           <span class="text-gray-800 font-bold text-lg">Tổng tiền:</span>
-          <span class="text-red-600 text-2xl font-bold">19.469.000đ</span>
-        </div>
-        <div class="flex justify-end gap-3 pt-3 border-t border-gray-100">
-          <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md">
-            Hủy thay đổi
-          </button>
-          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-            Lưu thay đổi
-          </button>
+          <span class="text-red-600 text-2xl font-bold"
+            th:text="${#numbers.formatDecimal(grandTotal, 1, 'COMMA', 0, 'POINT') + '₫'}">0₫</span>
         </div>
       </div>
-
-      <!-- Thêm phần lịch sử đơn hàng -->
-      <div class="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Lịch sử đơn hàng</h2>
-        <div class="space-y-4">
-          <div class="flex items-start">
-            <div class="flex-shrink-0 bg-blue-100 rounded-full p-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" viewBox="0 0 20 20"
-                fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
-                  clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-gray-900">Đơn hàng đã được tạo</p>
-              <p class="text-sm text-gray-500">17/06/2025 lúc 14:30 bởi hệ thống</p>
-            </div>
-          </div>
-          <div class="flex items-start">
-            <div class="flex-shrink-0 bg-yellow-100 rounded-full p-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" viewBox="0 0 20 20"
-                fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                  clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-gray-900">Đơn hàng đang chờ xác nhận</p>
-              <p class="text-sm text-gray-500">17/06/2025 lúc 14:35 bởi Admin</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 
   <script>
     // Script để xử lý dropdown hành động
-    document.getElementById('actionDropdownButton').addEventListener('click', function () {
+    document.getElementById('actionDropdownButton')?.addEventListener('click', function () {
       document.getElementById('actionDropdown').classList.toggle('hidden');
     });
 
@@ -309,6 +410,41 @@
     });
   </script>
 
+  <script> // Xử lý sự kiện click cho các liên kết xử lý trả hàng
+    // Thêm vào phần script cuối trang
+    document.querySelectorAll('.process-return').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = this.getAttribute('href');
+      });
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Xử lý nút đánh dấu đã thanh toán
+      document.querySelectorAll('.mark-as-paid').forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (confirm('Bạn có chắc chắn muốn đánh dấu đơn hàng này là đã thanh toán?')) {
+            window.location.href = this.getAttribute('href');
+          }
+        });
+      });
+
+      // Vô hiệu hóa các phần tử khi đơn hàng đã hủy
+      if (document.querySelector('[th\\:if="${order.orderStatus == \'Đã hủy\'}"]')) {
+        document.querySelectorAll('button, a, select, input').forEach(element => {
+          if (!element.classList.contains('no-disable') &&
+            !element.hasAttribute('th:unless') &&
+            element.id !== 'actionDropdownButton') {
+            element.disabled = true;
+            element.classList.add('disabled-element');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>

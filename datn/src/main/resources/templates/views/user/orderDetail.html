@@ -66,11 +66,99 @@
 
   <!-- Wrapper bên ngoài căn giữa -->
   <div class="pt-[120px] flex justify-center bg-[#f2f2f2] px-4 pb-10">
+
     <!-- Container chính, max-width 1250px, padding đều -->
     <div class="w-full max-w-[1250px] bg-white shadow-md rounded-lg px-8 py-6">
+      <!-- Thêm nút quay lại danh sách đơn hàng -->
+      <div class="flex justify-between items-start mb-4">
+        <a href="/order" class="flex items-center text-blue-600 hover:text-blue-800">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clip-rule="evenodd" />
+          </svg>
+          Quay lại
+        </a>
+        <!-- Thêm dropdown hành động -->
+        <div class="relative">
+          <button id="actionDropdownButton"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
+            Hành động
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+          <div id="actionDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+            <div class="py-1">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">In đơn hàng</a>
+              <a href="#" id="cancelOrderBtn"
+                th:if="${order.orderStatus != 'Đã giao hàng' and order.orderStatus != 'Đang vận chuyển' and order.orderStatus != 'Đã hủy' and order.orderStatus != 'Yêu cầu trả hàng' and order.orderStatus != 'Đã trả hàng'}"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hủy đơn hàng</a>
+              <a href="#" id="returnOrderBtn"
+                th:if="${order.orderStatus == 'Đã giao hàng' and order.paymentStatus == 'Đã thanh toán'}"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Trả hàng</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm" th:if="${order.returnReason != null}">
+        <h2 class="text-[#080c8c] font-bold mb-2 text-lg">YÊU CẦU TRẢ HÀNG</h2>
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-blue-700 font-semibold">
+                Lý do: <span th:text="${order.returnReason}"></span>
+              </p>
+              <p class="text-sm text-blue-500 mt-1" th:if="${order.returnRequestDate != null}">
+                Thời gian yêu cầu: <span
+                  th:text="${#temporals.format(order.returnRequestDate, 'dd/MM/yyyy HH:mm')}"></span>
+              </p>
+              <p class="text-sm text-blue-700 mt-2 font-semibold">
+                Trạng thái: <span th:text="${order.returnStatus ?: 'Chờ xử lý'}"></span>
+              </p>
+              <p class="text-sm text-blue-500 mt-1">
+                Phương thức trả: <span
+                  th:text="${#strings.contains(order.returnMethod, 'POST_OFFICE') ? 'Trả tại bưu cục' : 'Shipper đến nhận'}"></span>
+
+
+              </p>
+            </div>
+          </div>
+
+          <!-- Hiển thị ảnh đính kèm -->
+          <div class="mt-4" th:if="${order.returnImages != null and not #strings.isEmpty(order.returnImages)}">
+            <p class="text-sm font-medium text-gray-700 mb-2">Hình ảnh đính kèm:</p>
+            <div class="flex flex-wrap gap-2">
+              <a th:each="image : ${#strings.arraySplit(order.returnImages, ',')}" th:href="${image}" target="_blank"
+                class="w-20 h-20 border rounded overflow-hidden">
+                <img th:src="${image}" class="w-full h-full object-cover" />
+              </a>
+            </div>
+          </div>
+
+          <!-- Hiển thị phản hồi admin nếu đã xử lý -->
+          <div class="mt-4" th:if="${order.returnStatus == 'Đã xử lý' || order.returnStatus == 'Từ chối'}">
+            <p class="text-sm font-medium text-gray-700">Phản hồi của quản trị viên:</p>
+            <p class="text-sm text-gray-600 mt-1" th:text="${order.adminResponse}"></p>
+            <p class="text-xs text-gray-500 mt-1" th:if="${order.returnProcessedDate != null}">
+              Ngày xử lý: <span th:text="${#temporals.format(order.returnProcessedDate, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+          </div>
+        </div>
+      </div>
 
       <!-- Order Header -->
-      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-2">
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-2 ">
         <h1 class="text-3xl font-bold text-gray-900 flex items-center justify-between">
           <span>Chi tiết đơn hàng</span>
           <span class="text-gray-800 font-medium text-xl">
@@ -80,7 +168,7 @@
 
 
         <p class="text-gray-500 text-base">Ngày tạo: <span
-            th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"></span></p>
+            th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></span></p>
       </div>
 
       <!-- Order Status -->
@@ -93,12 +181,17 @@
 
         </div>
         <div class="flex items-center text-base">
-          <span class="text-gray-700 font-semibold mr-1">TT vận chuyển:</span>
-          <span th:text="${order.orderStatus}" class="status-pending font-semibold text-[#e5a500]"></span>
+          <span class="text-gray-700 font-semibold mr-1">TT đơn hàng:</span>
+          <span th:text="${order.orderStatus}" class="status-pending font-semibold" th:classappend=" 
+          ${order.orderStatus == 'Đã giao hàng'} ? 'text-green-500' : 
+          (${order.orderStatus == 'Đã hủy'} ? 'text-red-500' : 
+          (${order.orderStatus == 'Chờ xác nhận'} ? 'text-amber-500' : 
+          (${order.orderStatus == 'Đang vận chuyển'} ? 'text-blue-500' : 'text-gray-500')))">
+          </span>
         </div>
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">Mã vận đơn:</span>
-          <span class="text-gray-800 font-medium">—</span>
+          <span th:text="' #' + ${order.orderCode}" class="text-gray-800 font-medium">—</span>
         </div>
       </div>
 
@@ -234,6 +327,545 @@
 
   <!-- Footer -->
   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 30px;"></div>
+
+  <!-- Modal hủy đơn hàng -->
+  <div id="cancelOrderModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+      <div class="mt-3 text-center">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Hủy đơn hàng</h3>
+        <div class="mt-2 px-7 py-3">
+          <p class="text-sm text-gray-500 mb-4">Vui lòng chọn lý do hủy đơn hàng</p>
+
+          <!-- Danh sách radio button cho lý do hủy -->
+          <div class="space-y-2 text-left mb-4">
+            <div class="flex items-center">
+              <input id="reason1" name="cancelReason" type="radio" value="Đổi ý không muốn mua nữa"
+                class="h-4 w-4 text-red-600 focus:ring-red-500">
+              <label for="reason1" class="ml-2 block text-sm text-gray-700">Đổi ý không muốn mua nữa</label>
+            </div>
+            <div class="flex items-center">
+              <input id="reason2" name="cancelReason" type="radio" value="Nhập sai thông tin đơn hàng"
+                class="h-4 w-4 text-red-600 focus:ring-red-500">
+              <label for="reason2" class="ml-2 block text-sm text-gray-700">Nhập sai thông tin đơn hàng</label>
+            </div>
+            <div class="flex items-center">
+              <input id="reason3" name="cancelReason" type="radio" value="Tìm thấy giá tốt hơn ở nơi khác"
+                class="h-4 w-4 text-red-600 focus:ring-red-500">
+              <label for="reason3" class="ml-2 block text-sm text-gray-700">Tìm thấy giá tốt hơn ở nơi khác</label>
+            </div>
+            <div class="flex items-center">
+              <input id="reason4" name="cancelReason" type="radio" value="Đơn hàng bị trùng"
+                class="h-4 w-4 text-red-600 focus:ring-red-500">
+              <label for="reason4" class="ml-2 block text-sm text-gray-700">Đơn hàng bị trùng</label>
+            </div>
+            <div class="flex items-center">
+              <input id="reasonOther" name="cancelReason" type="radio" value="other"
+                class="h-4 w-4 text-red-600 focus:ring-red-500">
+              <label for="reasonOther" class="ml-2 block text-sm text-gray-700">Lý do khác</label>
+            </div>
+          </div>
+
+          <!-- Ô nhập lý do khác -->
+          <textarea id="otherReason" rows="4"
+            class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none mt-2 hidden"
+            placeholder="Vui lòng nhập lý do hủy đơn hàng..."></textarea>
+        </div>
+        <div class="items-center px-4 py-3">
+          <button id="confirmCancelBtn"
+            class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+            Xác nhận hủy
+          </button>
+          <button id="cancelCancelBtn"
+            class="ml-3 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Quay lại
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal trả hàng -->
+  <!-- Modal trả hàng -->
+  <div id="returnOrderModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+      <form id="returnForm" enctype="multipart/form-data">
+        <div class="mt-3 text-center">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Yêu cầu trả hàng</h3>
+          <div class="mt-2 px-7 py-3">
+            <!-- Phần chọn phương thức trả hàng -->
+            <div class="mb-6">
+              <h4 class="text-sm font-medium text-gray-700 mb-3 text-left">Phương thức trả hàng:</h4>
+              <div class="grid grid-cols-2 gap-3">
+                <!-- Trả tại bưu cục -->
+                <div class="relative">
+                  <input id="returnMethodPost" name="returnMethod" type="radio" value="POST_OFFICE" class="peer hidden"
+                    checked />
+                  <label for="returnMethodPost" class="block p-3 border border-gray-300 rounded-lg cursor-pointer 
+                                    hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-50">
+                    <div class="flex flex-col items-center">
+                      <i class="fas fa-box-open text-red-500 text-xl mb-2"></i>
+                      <span class="text-sm font-medium">Trả tại bưu cục</span>
+                      <p class="text-xs text-gray-500 mt-1">Tự mang đến bưu cục gần nhất</p>
+                    </div>
+                  </label>
+                </div>
+
+                <!-- Shipper đến nhận -->
+                <div class="relative">
+                  <input id="returnMethodPickup" name="returnMethod" type="radio" value="PICKUP" class="peer hidden" />
+                  <label for="returnMethodPickup" class="block p-3 border border-gray-300 rounded-lg cursor-pointer 
+                                    hover:border-red-300 peer-checked:border-red-500 peer-checked:bg-red-50">
+                    <div class="flex flex-col items-center">
+                      <i class="fas fa-truck text-red-500 text-xl mb-2"></i>
+                      <span class="text-sm font-medium">Shipper đến nhận</span>
+                      <p class="text-xs text-gray-500 mt-1">Nhân viên sẽ liên hệ để hẹn lịch</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lý do trả hàng -->
+            <div class="mb-6">
+              <p class="text-sm text-gray-500 mb-4 text-left">Vui lòng chọn lý do trả hàng</p>
+              <div class="space-y-2 text-left mb-4">
+                <div class="flex items-center">
+                  <input id="returnReason1" name="returnReason" type="radio" value="Sản phẩm bị lỗi"
+                    class="h-4 w-4 text-red-600 focus:ring-red-500" required>
+                  <label for="returnReason1" class="ml-2 block text-sm text-gray-700">Sản phẩm bị lỗi</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="returnReason2" name="returnReason" type="radio" value="Sản phẩm không giống mô tả"
+                    class="h-4 w-4 text-red-600 focus:ring-red-500">
+                  <label for="returnReason2" class="ml-2 block text-sm text-gray-700">Sản phẩm không giống mô tả</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="returnReason3" name="returnReason" type="radio" value="Không hài lòng với sản phẩm"
+                    class="h-4 w-4 text-red-600 focus:ring-red-500">
+                  <label for="returnReason3" class="ml-2 block text-sm text-gray-700">Không hài lòng với sản
+                    phẩm</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="returnReason4" name="returnReason" type="radio" value="Nhận nhầm sản phẩm"
+                    class="h-4 w-4 text-red-600 focus:ring-red-500">
+                  <label for="returnReason4" class="ml-2 block text-sm text-gray-700">Nhận nhầm sản phẩm</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="returnReasonOther" name="returnReason" type="radio" value="other"
+                    class="h-4 w-4 text-red-600 focus:ring-red-500">
+                  <label for="returnReasonOther" class="ml-2 block text-sm text-gray-700">Lý do khác</label>
+                </div>
+              </div>
+
+              <!-- Ô nhập lý do khác -->
+              <textarea id="returnOtherReason" name="otherReason" rows="4"
+                class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none mt-2 hidden"
+                placeholder="Vui lòng nhập lý do trả hàng..."></textarea>
+            </div>
+
+            <!-- Phần upload hình ảnh -->
+            <div class="mb-6">
+              <label class="block text-sm text-gray-700 mb-1 text-left">Hình ảnh minh chứng (tối đa 3 ảnh):</label>
+              <div class="flex items-center justify-center w-full">
+                <label for="returnImages"
+                  class="flex flex-col w-full h-32 border-2 border-dashed hover:border-red-300 hover:bg-gray-100 rounded-lg cursor-pointer">
+                  <div class="flex flex-col items-center justify-center pt-7">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="pt-1 text-sm text-gray-500">Kéo thả ảnh vào đây hoặc click để chọn</p>
+                  </div>
+                  <input id="returnImages" name="imageFile" type="file" class="opacity-0" accept="image/*" max="3">
+                </label>
+              </div>
+              <div id="imagePreview" class="flex flex-wrap gap-2 mt-2"></div>
+              <p class="text-xs text-gray-500 mt-1 text-left">Hỗ trợ định dạng JPG, PNG. Mỗi ảnh tối đa 5MB.</p>
+            </div>
+          </div>
+          <div class="items-center px-4 py-3">
+            <button type="submit" id="confirmReturnBtn"
+              class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+              Gửi yêu cầu
+            </button>
+            <button type="button" id="cancelReturnBtn"
+              class="ml-3 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+              Quay lại
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script> // Xử lý khi chọn lý do khác
+    document.querySelectorAll('input[name="returnReason"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const returnOtherReason = document.getElementById('returnOtherReason');
+        if (this.value === 'other') {
+          returnOtherReason.classList.remove('hidden');
+          returnOtherReason.required = true;
+        } else {
+          returnOtherReason.classList.add('hidden');
+          returnOtherReason.required = false;
+        }
+      });
+    });
+
+    // Xử lý hiển thị ảnh preview
+    document.getElementById('returnImages')?.addEventListener('change', function (e) {
+      const previewContainer = document.getElementById('imagePreview');
+      previewContainer.innerHTML = '';
+
+      if (this.files.length > 3) {
+        alert('Bạn chỉ có thể tải lên tối đa 3 ảnh');
+        this.value = '';
+        return;
+      }
+
+      Array.from(this.files).forEach(file => {
+        if (file.size > 5 * 1024 * 1024) {
+          alert(`Ảnh ${file.name} vượt quá kích thước cho phép (5MB)`);
+          return;
+        }
+
+        if (!file.type.match('image.*')) {
+          alert(`File ${file.name} không phải là hình ảnh`);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const imgContainer = document.createElement('div');
+          imgContainer.className = 'relative w-20 h-20';
+
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'w-full h-full object-cover rounded';
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs';
+          removeBtn.innerHTML = '×';
+          removeBtn.onclick = function () {
+            imgContainer.remove();
+            // Cần thêm logic xóa file khỏi input nếu cần
+          };
+
+          imgContainer.appendChild(img);
+          imgContainer.appendChild(removeBtn);
+          previewContainer.appendChild(imgContainer);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    // Xử lý submit form
+    document.getElementById('returnForm')?.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const submitBtn = document.getElementById('confirmReturnBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+      try {
+        const formData = new FormData(this);
+        const orderId = [[${ order.id }]];
+
+        // Thêm phương thức trả hàng vào formData
+        const returnMethod = document.querySelector('input[name="returnMethod"]:checked').value;
+        formData.append('returnMethod', returnMethod);
+
+        // Xử lý lý do
+        const selectedReason = document.querySelector('input[name="returnReason"]:checked');
+        const otherReason = document.getElementById('returnOtherReason').value.trim();
+
+        if (!selectedReason) {
+          throw new Error('Vui lòng chọn lý do trả hàng');
+        }
+
+        const reason = selectedReason.value === 'other' ? otherReason : selectedReason.value;
+        formData.append('reason', reason);
+
+        // Gọi API
+        const response = await fetch(`/order/return/${orderId}`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Có lỗi xảy ra khi gửi yêu cầu');
+        }
+
+        const result = await response.json();
+        if (result.success) {
+          alert('Yêu cầu trả hàng đã được gửi thành công!');
+          window.location.reload();
+        } else {
+          throw new Error(result.message || 'Có lỗi xảy ra');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert(error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Gửi yêu cầu';
+      }
+    });
+  </script>
+
+  <script> // Xử lý modal trả hàng
+    // Xử lý modal trả hàng
+    const returnOrderBtn = document.getElementById('returnOrderBtn');
+    const returnOrderModal = document.getElementById('returnOrderModal');
+    const cancelReturnBtn = document.getElementById('cancelReturnBtn');
+    const returnForm = document.getElementById('returnForm');
+
+    if (returnOrderBtn) {
+      returnOrderBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        dropdown.classList.add('hidden');
+        returnOrderModal.classList.remove('hidden');
+      });
+    }
+
+    cancelReturnBtn.addEventListener('click', function () {
+      returnOrderModal.classList.add('hidden');
+    });
+
+    // Xử lý khi chọn lý do trả hàng
+    document.querySelectorAll('input[name="returnReason"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const returnOtherReason = document.getElementById('returnOtherReason');
+        if (this.value === 'other') {
+          returnOtherReason.classList.remove('hidden');
+          returnOtherReason.required = true;
+        } else {
+          returnOtherReason.classList.add('hidden');
+          returnOtherReason.required = false;
+        }
+      });
+    });
+
+    // Xử lý hiển thị ảnh preview
+    document.getElementById('returnImages')?.addEventListener('change', function (e) {
+      const previewContainer = document.getElementById('imagePreview');
+      previewContainer.innerHTML = '';
+
+      if (this.files.length > 3) {
+        alert('Bạn chỉ có thể tải lên tối đa 3 ảnh');
+        this.value = '';
+        return;
+      }
+
+      Array.from(this.files).forEach(file => {
+        if (file.size > 5 * 1024 * 1024) {
+          alert(`Ảnh ${file.name} vượt quá kích thước cho phép (5MB)`);
+          return;
+        }
+
+        if (!file.type.match('image.*')) {
+          alert(`File ${file.name} không phải là hình ảnh`);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const imgContainer = document.createElement('div');
+          imgContainer.className = 'relative w-20 h-20';
+
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'w-full h-full object-cover rounded';
+
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs';
+          removeBtn.innerHTML = '×';
+          removeBtn.onclick = function () {
+            imgContainer.remove();
+            // Cần thêm logic xóa file khỏi input nếu cần
+          };
+
+          imgContainer.appendChild(img);
+          imgContainer.appendChild(removeBtn);
+          previewContainer.appendChild(imgContainer);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    // Xử lý submit form với FormData
+    returnForm?.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const selectedReason = document.querySelector('input[name="returnReason"]:checked');
+      const otherReason = document.getElementById('returnOtherReason').value.trim();
+      const imagesInput = document.getElementById('returnImages');
+
+      if (!selectedReason) {
+        alert('Vui lòng chọn lý do trả hàng');
+        return;
+      }
+
+      if (selectedReason.value === 'other' && !otherReason) {
+        alert('Vui lòng nhập lý do trả hàng');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('reason', selectedReason.value === 'other' ? otherReason : selectedReason.value);
+      formData.append('returnMethod', returnMethod);
+
+      // Thêm các file ảnh với tên 'images' (khớp với @RequestParam trong controller)
+      if (imagesInput.files.length > 0) {
+        for (let i = 0; i < imagesInput.files.length; i++) {
+          formData.append('images', imagesInput.files[i]);
+        }
+      }
+
+      // Hiển thị loading
+      const submitBtn = document.getElementById('confirmReturnBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+      // Gọi API trả hàng với FormData
+      fetch('/order/return/' + [[${ order.id }]], {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Có lỗi xảy ra khi gửi yêu cầu trả hàng');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            alert('Yêu cầu trả hàng đã được gửi thành công');
+            window.location.reload();
+          } else {
+            throw new Error(data.message || 'Có lỗi xảy ra');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert(error.message);
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Gửi yêu cầu';
+        });
+    });
+  </script>
+
+  <script> // Thêm JavaScript để xử lý khi chọn "Lý do khác"
+    document.querySelectorAll('input[name="cancelReason"]').forEach(radio => {
+      radio.addEventListener('change', function () {
+        const otherReasonTextarea = document.getElementById('otherReason');
+        if (this.value === 'other') {
+          otherReasonTextarea.classList.remove('hidden');
+          otherReasonTextarea.required = true;
+        } else {
+          otherReasonTextarea.classList.add('hidden');
+          otherReasonTextarea.required = false;
+        }
+      });
+    });
+  </script>
+
+  <script> // Xử lý modal hủy đơn hàng
+
+    const cancelOrderBtn = document.getElementById('cancelOrderBtn');
+    const cancelOrderModal = document.getElementById('cancelOrderModal');
+    const cancelCancelBtn = document.getElementById('cancelCancelBtn');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+
+    if (cancelOrderBtn) {
+      cancelOrderBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        dropdown.classList.add('hidden'); // Ẩn dropdown
+        cancelOrderModal.classList.remove('hidden'); // Hiển thị modal
+      });
+    }
+
+    cancelCancelBtn.addEventListener('click', function () {
+      cancelOrderModal.classList.add('hidden');
+    });
+
+    confirmCancelBtn.addEventListener('click', function () {
+      // Lấy lý do hủy đơn hàng
+      const selectedReason = document.querySelector('input[name="cancelReason"]:checked');
+      const otherReason = document.getElementById('otherReason').value.trim();
+
+      let reason = '';
+
+      if (!selectedReason) {
+        alert('Vui lòng chọn lý do hủy đơn hàng');
+        return;
+      }
+
+      if (selectedReason.value === 'other') {
+        if (!otherReason) {
+          alert('Vui lòng nhập lý do hủy đơn hàng');
+          return;
+        }
+        reason = otherReason;
+      } else {
+        reason = selectedReason.value;
+      }
+
+      // Gọi API hủy đơn hàng
+      fetch('/order/cancel/' + [[${ order.id }]], {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reason: reason
+        })
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Có lỗi xảy ra khi hủy đơn hàng');
+        })
+        .then(data => {
+          if (data.success) {
+            alert('Đơn hàng đã được hủy thành công');
+            window.location.reload();
+          } else {
+            alert(data.message || 'Có lỗi xảy ra');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert(error.message);
+        });
+    });
+  </script>
+
+  <script> // Xử lý dropdown hành động
+    const button = document.getElementById('actionDropdownButton');
+    const dropdown = document.getElementById('actionDropdown');
+
+    // Mở/đóng dropdown khi click vào button
+    button.addEventListener('click', function (event) {
+      event.stopPropagation(); // ngăn sự kiện click lan ra window
+      dropdown.classList.toggle('hidden');
+    });
+
+    // Đóng dropdown khi click ra ngoài
+    window.addEventListener('click', function () {
+      if (!dropdown.classList.contains('hidden')) {
+        dropdown.classList.add('hidden');
+      }
+    });
+  </script>
+
 </body>
 
 </html>

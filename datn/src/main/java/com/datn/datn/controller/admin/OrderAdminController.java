@@ -1,23 +1,23 @@
 package com.datn.datn.controller.admin;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.datn.datn.model.Member;
 import com.datn.datn.model.Order;
 import com.datn.datn.service.OrderService;
-
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class OrderAdminController {
@@ -28,28 +28,16 @@ public class OrderAdminController {
     @GetMapping("/admin-order")
     public String getAllOrders(Model model) {
         List<Order> orders = orderService.findAll();
-
-        // Danh sách chứa dữ liệu hiển thị kèm tính toán
         List<Map<String, Object>> orderDataList = new ArrayList<>();
 
         for (Order order : orders) {
             Map<String, Object> data = new HashMap<>();
-            double shippingFee = 40000;
-
-            // 1. Tính giá gốc
-            double productTotal = order.getOrderDetails().stream()
-                .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
-                .sum();
-
-            // 2. Lấy khuyến mãi
+            double shippingFee = 40000; // Giả định phí vận chuyển cố định
+            
+            double productTotal = order.getTotalPrice() - shippingFee + (order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
             double discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : 0;
+            double grandTotal = order.getTotalPrice();
 
-            // 3. Giá cuối
-            double grandTotal = productTotal + shippingFee - discountAmount;
-            if (grandTotal < 0)
-                grandTotal = 0;
-
-            // 4. Đưa tất cả vào map
             data.put("order", order);
             data.put("productTotal", productTotal);
             data.put("discountAmount", discountAmount);
@@ -67,31 +55,91 @@ public class OrderAdminController {
         Order order = orderService.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
-        // Tính tổng tiền sản phẩm
-        double productTotal = order.getOrderDetails().stream()
-                .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
-                .sum();
-        model.addAttribute("productTotal", productTotal);
-
-        // Phí vận chuyển
         double shippingFee = 40000;
-        model.addAttribute("shippingFee", shippingFee);
-
-        // Giảm giá
+        double productTotal = order.getTotalPrice() - shippingFee + (order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
         double discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : 0;
-        model.addAttribute("discountAmount", discountAmount);
 
-        // Tạm tính (trước khi giảm giá)
-        model.addAttribute("subtotal", productTotal + shippingFee);
-
-        // Tổng cộng (sau giảm giá)
-        double grandTotal = productTotal + shippingFee - discountAmount;
-        model.addAttribute("grandTotal", grandTotal);
-
-        // Các dữ liệu khác
         model.addAttribute("order", order);
         model.addAttribute("orderDetails", order.getOrderDetails());
+        model.addAttribute("productTotal", productTotal);
+        model.addAttribute("shippingFee", shippingFee);
+        model.addAttribute("discountAmount", discountAmount);
+        model.addAttribute("subtotal", productTotal + shippingFee);
+        model.addAttribute("grandTotal", order.getTotalPrice());
 
-        return "formOrder-Detail"; // HTML chi tiết đơn hàng admin
+        return "formOrder-Detail";
     }
+
+    @GetMapping("/admin-order/mark-as-paid/{orderId}")
+    public String markOrderAsPaid(@PathVariable("orderId") Long orderId) {
+        Order order = orderService.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        order.setPaymentStatus("Đã thanh toán");
+        orderService.save(order);
+
+        return "redirect:/admin-orderdetail/" + orderId;
+    }
+
+    @PostMapping("/admin-order/update-status/{orderId}")
+    public String updateOrderStatus(
+            @PathVariable("orderId") Long orderId,
+            @RequestParam("status") String newStatus,
+            RedirectAttributes redirectAttributes) {
+
+        Order order = orderService.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        order.setOrderStatus(newStatus);
+        orderService.save(order);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật trạng thái thành công!");
+        return "redirect:/admin-orderdetail/" + orderId;
+    }
+
+    @PostMapping("/admin-order/process-return/{orderId}")
+    public String processReturnRequest(
+            @PathVariable("orderId") Long orderId,
+            @RequestParam("returnDecision") String decision,
+            @RequestParam(value = "adminResponse", required = false) String adminResponse,
+            RedirectAttributes redirectAttributes) {
+        
+        Order order = orderService.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        if ("ACCEPT".equals(decision)) {
+            order.setReturnStatus("Chấp nhận trả hàng");
+          //  order.setOrderStatus("Đã trả hàng");
+            order.setReturnProcessedDate(LocalDateTime.now());
+            order.setAdminResponse(adminResponse != null ? adminResponse : "Yêu cầu trả hàng đã được chấp nhận");
+        } else {
+            order.setReturnStatus("Từ chối");
+            order.setAdminResponse(adminResponse != null ? adminResponse : "Yêu cầu trả hàng bị từ chối");
+            order.setReturnProcessedDate(LocalDateTime.now());
+        }
+        
+        orderService.save(order);
+        
+        redirectAttributes.addFlashAttribute("successMessage", "Đã xử lý yêu cầu trả hàng thành công!");
+        return "redirect:/admin-orderdetail/" + orderId;
+    }
+
+    @PostMapping("/admin-order/cancel/{orderId}")
+    public String cancelOrder(
+            @PathVariable("orderId") Long orderId,
+            @RequestParam("cancelReason") String cancelReason,
+            RedirectAttributes redirectAttributes) {
+        
+        Order order = orderService.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+        
+        order.setOrderStatus("Đã hủy");
+        order.setCancelReason(cancelReason);
+        order.setCancelDate(LocalDateTime.now());
+        orderService.save(order);
+        
+        redirectAttributes.addFlashAttribute("successMessage", "Đã hủy đơn hàng thành công!");
+        return "redirect:/admin-orderdetail/" + orderId;
+    }
+    
 }

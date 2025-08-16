@@ -2,8 +2,14 @@ package com.datn.datn.service.impl;
 
 import com.datn.datn.model.Member;
 import com.datn.datn.model.Order;
+import com.datn.datn.model.OrderDetail;
+import com.datn.datn.model.ProductVariant;
 import com.datn.datn.repository.OrderRepository;
+import com.datn.datn.repository.ProductVariantRepository;
 import com.datn.datn.service.OrderService;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +24,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private ProductVariantRepository repo; // Assuming you have a ProductVariantRepository to handle product variants
 
     @Override
     public Order save(Order order) {
@@ -76,6 +84,90 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getOrdersByMemberId(Long memberId) {
         return orderRepository.findByMemberId(memberId);
     }
+
+    @Override
+    public void cancelOrder(Long orderId, String reason) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đơn hàng với ID: " + orderId));
+
+        if (!canBeCancelled(order.getOrderStatus())) {
+            throw new IllegalStateException("Không thể hủy đơn hàng ở trạng thái: " + order.getOrderStatus());
+        }
+
+        order.setOrderStatus("Đã hủy");
+        order.setCancelReason(reason);
+        order.setCancelDate(LocalDateTime.now());
+
+        restoreProductQuantities(order);
+
+        // Xử lý hoàn tiền nếu đã thanh toán
+        if ("Đã thanh toán".equals(order.getPaymentStatus())) {
+            processRefund(order);
+        }
+
+        orderRepository.save(order);
+        sendCancellationNotification(order);
+    }
+
+    private void processRefund(Order order) {
+        try {
+            // Gọi API hoàn tiền của cổng thanh toán
+            // Ví dụ: paymentGatewayService.processRefund(order.getTransactionId(),
+            // order.getTotalPrice());
+
+            // Cập nhật trạng thái thanh toán
+            order.setPaymentStatus("Đã hoàn tiền");
+        } catch (Exception e) {
+            // Log lỗi và có thể thông báo cho admin
+            System.err.println("Lỗi khi hoàn tiền cho đơn hàng #" + order.getOrderCode() + ": " + e.getMessage());
+            // Vẫn tiếp tục hủy đơn hàng nhưng đánh dấu cần xử lý hoàn tiền thủ công
+            order.setPaymentStatus("Chờ hoàn tiền");
+        }
+    }
+
+    private boolean canBeCancelled(String status) {
+        return !status.equals("Đang vận chuyển")
+                && !status.equals("Đã giao hàng")
+                && !status.equals("Đã hủy");
+    }
+
+    private void restoreProductQuantities(Order order) {
+        for (OrderDetail detail : order.getOrderDetails()) {
+            ProductVariant variant = detail.getProductVariant();
+            variant.setQuantityInStock(variant.getQuantityInStock() + detail.getQuantity());
+            repo.save(variant);
+        }
+    }
+
+    private void sendCancellationNotification(Order order) {
+        try {
+            String message = "Đơn hàng #" + order.getOrderCode() + " đã được hủy. Lý do: " + order.getCancelReason();
+        } catch (Exception e) {
+            // Log lỗi nhưng không làm gián đoạn quá trình hủy đơn hàng
+            System.err.println("Không thể gửi thông báo: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void requestReturn(Long orderId, String reason, String returnMethod, List<String> imageUrls) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đơn hàng với ID: " + orderId));
+
+        // Lưu danh sách ảnh (cách nhau bởi dấu phẩy)
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            order.setReturnImages(String.join(",", imageUrls));
+        }
+
+        // Cập nhật thông tin trả hàng
+        order.setOrderStatus("Yêu cầu trả hàng");
+        order.setReturnStatus("Chờ xử lý");
+        order.setReturnMethod(returnMethod);
+        order.setReturnReason(reason);
+        order.setReturnRequestDate(LocalDateTime.now());
+
+        orderRepository.save(order);
+    }
+
 
     @Override
     public String generateOrderId() {

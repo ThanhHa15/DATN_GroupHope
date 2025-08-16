@@ -3,6 +3,7 @@ package com.datn.datn.controller.admin;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,6 +26,8 @@ public class EmployeeController {
 
     @Autowired
     private MembersService membersService;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping
     public String showEmployeeList(@RequestParam(required = false) String keyword, Model model) {
@@ -75,7 +78,7 @@ public class EmployeeController {
                 model.addAttribute("employees", membersService.findByRoles(List.of("ADMIN", "STAFF")));
                 return "views/admin/list";
             }
-            member.setPassword(newPassword);
+            member.setPassword(passwordEncoder.encode(newPassword));
             membersService.save(member);
             redirectAttributes.addFlashAttribute("success", "Thêm nhân viên thành công");
 

@@ -66,7 +66,7 @@
               <th class="px-6 py-3 text-left font-semibold">Ngày</th>
               <th class="px-6 py-3 text-left font-semibold">Địa chỉ</th>
               <th class="px-6 py-3 text-left font-semibold">Giá trị đơn hàng</th>
-              <th class="px-6 py-3 text-left font-semibold">Thanh toán</th>
+              <th class="px-6 py-3 text-left font-semibold">TT Thanh toán</th>
               <th class="px-6 py-3 text-left font-semibold">TT đơn hàng</th>
             </tr>
           </thead>
@@ -98,18 +98,23 @@
                   44.459.000 đ
                 </a>
               </td>
-              <td class="px-4 py-4 font-semibold break-words max-w-[90px]">
-                <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full text-green-500 h-full break-words whitespace-normal"
-                  th:text="${order.paymentMethod}">
+              <td class="px-4 py-4 font-semibold text-left break-words max-w-[90px]">
+                <a th:href="@{/order/{id}(id=${order.id})}" th:text="${order.paymentStatus}"
+                  class="payment-badge px-3 py-1 text-xs font-medium rounded-full" th:classappend="${order.paymentStatus == 'Đã thanh toán' ? 
+                     'bg-green-100 text-green-800 border border-green-200' : 
+                     'bg-red-100 text-red-800 border border-red-200'}">
                 </a>
               </td>
 
 
 
-              <td class="px-6 py-4 text-amber-500 font-semibold">
-                <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full" th:text="${order.orderStatus}">
-                  Chờ xác nhận
+              <td class="px-6 py-4 text-xl font-semibold">
+                <a th:href="@{/order/{id}(id=${order.id})}" class="payment-badge px-3 py-1 text-[14px] rounded-full"
+                  th:text="${order.orderStatus}" style="font-weight: 600;"
+                  th:classappend="${order.orderStatus == 'Đã giao hàng'} ? 'text-green-500' : (${order.orderStatus == 'Đã hủy'} ? 'text-red-500' : 'text-amber-500')">
                 </a>
+
+
               </td>
 
             </tr>

@@ -29,5 +29,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     long countByOrderDateBetween(LocalDateTime start, LocalDateTime end);
 
+    @Query("SELECT o FROM Order o WHERE o.id = :id AND o.member.id = :memberId")
+    Optional<Order> findByIdAndMemberId(@Param("id") Long id, @Param("memberId") Long memberId);
 
+    @Query("SELECT o FROM Order o WHERE o.member.id = :memberId AND o.orderStatus = 'Yêu cầu trả hàng'")
+    List<Order> findReturnRequestsByMemberId(@Param("memberId") Long memberId);
 }

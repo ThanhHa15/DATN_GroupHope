@@ -26,4 +26,8 @@ public interface OrderService {
     List<Order> getOrdersByMemberId(Long memberId);
 
     String generateOrderId();
+
+    void cancelOrder(Long orderId, String reason);
+
+    void requestReturn(Long orderId, String reason, String returnMethod, List<String> imageUrls);
 }

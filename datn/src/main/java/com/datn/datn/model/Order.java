@@ -52,6 +52,33 @@ public class Order {
 
     private Double discountAmount;
 
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+
+    @Column(name = "cancel_date")
+    private LocalDateTime cancelDate;
+
+    @Column(name = "return_reason")
+    private String returnReason;
+
+    @Column(name = "return_request_date")
+    private LocalDateTime returnRequestDate;
+
+    @Column(name = "return_processed_date")
+    private LocalDateTime returnProcessedDate;
+
+    @Column(name = "return_status")
+    private String returnStatus;
+
+    @Column(name = "admin_response")
+    private String adminResponse;
+
+    @Column(name = "return_images")
+    private String returnImages; // Lưu các URL ảnh cách nhau bởi dấu phẩy
+
+    @Column(name = "return_method")
+    private String returnMethod;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
