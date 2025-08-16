@@ -143,6 +143,8 @@
                       th:text="${#strings.substring(order.bankAccountNumber, 0, 3) + '****' + #strings.substring(order.bankAccountNumber, #strings.length(order.bankAccountNumber)-3)}"></span>
                   </p>
                   <p>Chủ tài khoản: <span th:text="${order.accountHolder}"></span></p>
+                  <p class="text-sm text-blue-700 font-semibold" th:if="${order.refundStatus != null}">Trạng thái hoàn tiền: <span
+                      th:text="${order.refundStatus}"></span></p>
                 </div>
               </div>
             </div>

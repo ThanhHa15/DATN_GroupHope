@@ -81,12 +81,18 @@ public class Order {
 
     @Column(name = "bank_account_number")
     private String bankAccountNumber;
-    
+
     @Column(name = "bank_name")
     private String bankName;
-    
+
     @Column(name = "account_holder")
     private String accountHolder;
+
+    @Column(name = "refund_amount")
+    private Double refundAmount;
+
+    @Column(name = "refund_status")
+    private String refundStatus;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails = new ArrayList<>();

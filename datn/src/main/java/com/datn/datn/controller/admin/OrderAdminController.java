@@ -33,8 +33,9 @@ public class OrderAdminController {
         for (Order order : orders) {
             Map<String, Object> data = new HashMap<>();
             double shippingFee = 40000; // Giả định phí vận chuyển cố định
-            
-            double productTotal = order.getTotalPrice() - shippingFee + (order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
+
+            double productTotal = order.getTotalPrice() - shippingFee
+                    + (order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
             double discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : 0;
             double grandTotal = order.getTotalPrice();
 
@@ -56,7 +57,8 @@ public class OrderAdminController {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
         double shippingFee = 40000;
-        double productTotal = order.getTotalPrice() - shippingFee + (order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
+        double productTotal = order.getTotalPrice() - shippingFee
+                + (order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
         double discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : 0;
 
         model.addAttribute("order", order);
@@ -78,6 +80,23 @@ public class OrderAdminController {
         order.setPaymentStatus("Đã thanh toán");
         orderService.save(order);
 
+        return "redirect:/admin-orderdetail/" + orderId;
+    }
+
+    @PostMapping("/admin-order/confirm-refund/{orderId}")
+    public String confirmRefund(
+            @PathVariable("orderId") Long orderId,
+            RedirectAttributes redirectAttributes) {
+
+        Order order = orderService.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        order.setPaymentMethod("Đã hoàn tiền");
+        order.setOrderStatus("Đã giao hàng");
+        order.setRefundStatus("Đã hoàn tiền");
+        orderService.save(order);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Đã xác nhận hoàn tiền thành công!");
         return "redirect:/admin-orderdetail/" + orderId;
     }
 
@@ -103,13 +122,14 @@ public class OrderAdminController {
             @RequestParam("returnDecision") String decision,
             @RequestParam(value = "adminResponse", required = false) String adminResponse,
             RedirectAttributes redirectAttributes) {
-        
+
         Order order = orderService.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
         if ("ACCEPT".equals(decision)) {
             order.setReturnStatus("Chấp nhận trả hàng");
-          //  order.setOrderStatus("Đã trả hàng");
+            order.setRefundStatus("Chờ hoàn tiền");
+            order.setRefundAmount(order.getTotalPrice()); // Tự động lấy tổng tiền đơn hàng
             order.setReturnProcessedDate(LocalDateTime.now());
             order.setAdminResponse(adminResponse != null ? adminResponse : "Yêu cầu trả hàng đã được chấp nhận");
         } else {
@@ -117,10 +137,26 @@ public class OrderAdminController {
             order.setAdminResponse(adminResponse != null ? adminResponse : "Yêu cầu trả hàng bị từ chối");
             order.setReturnProcessedDate(LocalDateTime.now());
         }
-        
+
         orderService.save(order);
-        
+
         redirectAttributes.addFlashAttribute("successMessage", "Đã xử lý yêu cầu trả hàng thành công!");
+        return "redirect:/admin-orderdetail/" + orderId;
+    }
+
+    @PostMapping("/admin-order/mark-refund-completed/{orderId}")
+    public String markRefundCompleted(
+            @PathVariable("orderId") Long orderId,
+            RedirectAttributes redirectAttributes) {
+
+        Order order = orderService.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+
+        order.setPaymentStatus("Đã hoàn tiền");
+        order.setOrderStatus("Trả hàng thành công");
+        orderService.save(order);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật trạng thái hoàn tiền!");
         return "redirect:/admin-orderdetail/" + orderId;
     }
 
@@ -129,17 +165,17 @@ public class OrderAdminController {
             @PathVariable("orderId") Long orderId,
             @RequestParam("cancelReason") String cancelReason,
             RedirectAttributes redirectAttributes) {
-        
+
         Order order = orderService.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
-        
+
         order.setOrderStatus("Đã hủy");
         order.setCancelReason(cancelReason);
         order.setCancelDate(LocalDateTime.now());
         orderService.save(order);
-        
+
         redirectAttributes.addFlashAttribute("successMessage", "Đã hủy đơn hàng thành công!");
         return "redirect:/admin-orderdetail/" + orderId;
     }
-    
+
 }
