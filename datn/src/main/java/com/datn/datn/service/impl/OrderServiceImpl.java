@@ -10,7 +10,10 @@ import com.datn.datn.service.OrderService;
 
 import jakarta.persistence.EntityNotFoundException;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -168,10 +171,26 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
     }
 
-
     @Override
     public String generateOrderId() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'generateOrderId'");
+    }
+
+    @Override
+    public Order getOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đơn hàng với ID: " + orderId));
+    }
+
+    @Override
+    public Page<Order> getOrdersByMember(Long memberId, Pageable pageable) {
+        return orderRepository.findByMemberId(memberId, pageable);
+    }
+
+    @Override
+    public Page<Order> searchOrdersByMember(Long memberId, String keyword, Pageable pageable) {
+        return orderRepository.findByMemberIdAndOrderCodeContainingOrAddressContaining(memberId, keyword, keyword,
+                pageable);
     }
 }

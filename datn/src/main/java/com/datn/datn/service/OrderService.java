@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface OrderService {
 
     Order save(Order order);
@@ -30,4 +33,10 @@ public interface OrderService {
     void cancelOrder(Long orderId, String reason);
 
     void requestReturn(Long orderId, String reason, String returnMethod, List<String> imageUrls);
+
+    Order getOrderById(Long orderId);
+
+    Page<Order> getOrdersByMember(Long memberId, Pageable pageable);
+
+    Page<Order> searchOrdersByMember(Long memberId, String keyword, Pageable pageable);
 }

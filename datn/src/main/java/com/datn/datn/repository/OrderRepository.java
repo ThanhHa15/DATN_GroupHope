@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +17,18 @@ import com.datn.datn.model.Order;
 import com.datn.datn.model.Vouchers;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    Page<Order> findByMemberIdAndOrderCodeContainingOrAddressContaining(Long memberId, String code, String address,
+            Pageable pageable);
+
+    // Lấy đơn hàng theo member, phân trang
+    Page<Order> findByMemberId(Long memberId, Pageable pageable);
+
+    // Tìm kiếm theo mã đơn hàng hoặc địa chỉ
+    @Query("SELECT o FROM Order o WHERE o.member.id = :memberId AND " +
+            "(LOWER(o.orderCode) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(o.address) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<Order> searchOrdersByMember(@Param("memberId") Long memberId, @Param("keyword") String keyword,
+            Pageable pageable);
+
     List<Order> findByMemberAndOrderDateAfter(Member member, LocalDateTime date);
 
     List<Order> findByMemberOrderByOrderDateDesc(Member member);

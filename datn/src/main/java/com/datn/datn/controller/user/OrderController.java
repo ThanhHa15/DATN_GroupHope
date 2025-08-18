@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,6 +44,8 @@ public class OrderController {
         Member currentUser = (Member) session.getAttribute("loggedInUser");
         if (currentUser != null) {
             List<Order> orders = orderService.getOrdersByMemberId(currentUser.getId());
+            orders.sort(Comparator.comparing(Order::getId).reversed());
+
 
             // Đảm bảo tính toán tổng giá trị nếu cần
             orders.forEach(order -> {
@@ -76,7 +79,6 @@ public class OrderController {
             return "redirect:/my-orders"; // hoặc trang 404
         }
 
-    
         // Tính tổng tiền sản phẩm
         double productTotal = order.getOrderDetails().stream()
                 .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
@@ -169,7 +171,7 @@ public class OrderController {
             order.setBankAccountNumber(bankAccountNumber);
             order.setBankName(bankName);
             order.setAccountHolder(accountHolder);
-            order.setReturnStatus("Chờ xử lý");
+          //  order.setReturnStatus("Chờ xử lý");
             order.setReturnRequestDate(LocalDateTime.now());
 
             if (!order.getMember().getId().equals(member.getId())) {
@@ -220,6 +222,5 @@ public class OrderController {
                     Map.of("success", false, "message", e.getMessage()));
         }
     }
-
 
 }

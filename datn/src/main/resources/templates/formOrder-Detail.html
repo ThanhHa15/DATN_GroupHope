@@ -76,15 +76,12 @@
           <div id="actionDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
             <div class="py-1">
               <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">In đơn hàng</a>
-              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hủy đơn hàng</a>
-              <a th:href="@{'/admin-order/mark-as-paid/' + ${order.id}}"
+              <a th:unless="${order.paymentStatus == 'Đã thanh toán' or order.paymentStatus == 'Đã hoàn tiền' or order.paymentStatus == 'Chờ hoàn tiền'}"
+                th:href="@{'/admin-order/mark-as-paid/' + ${order.id}}"
                 class="mark-as-paid block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                 Đánh dấu đã thanh toán
               </a>
-              <a th:href="@{'/admin-order/process-return/' + ${order.id}}"
-                class="process-return block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                Xử lý trả hàng
-              </a>
+
             </div>
           </div>
         </div>
@@ -95,75 +92,93 @@
       <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm" th:if="${order.returnReason != null}">
         <h2 class="text-[#080c8c] font-bold mb-2 text-lg">YÊU CẦU TRẢ HÀNG</h2>
         <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
-                  clip-rule="evenodd" />
-              </svg>
-            </div>
-            <div class="ml-3">
-              <p class="text-sm text-blue-700 font-semibold">
-                Lý do: <span th:text="${order.returnReason}"></span>
-              </p>
-              <p class="text-sm text-blue-500 mt-1" th:if="${order.returnRequestDate != null}">
-                Thời gian yêu cầu: <span
-                  th:text="${#temporals.format(order.returnRequestDate, 'dd/MM/yyyy HH:mm')}"></span>
-              </p>
-              <p class="text-sm text-blue-700 mt-2 font-semibold">
-                Trạng thái: <span th:text="${order.returnStatus ?: 'Chờ xử lý'}"></span>
-              </p>
-              <p class="text-sm text-blue-500 mt-1">
-                Phương thức trả: <span
-                  th:text="${#strings.contains(order.returnMethod, 'POST_OFFICE') ? 'Trả tại bưu cục' : 'Shipper đến nhận'}"></span>
-              </p>
-
-              <!-- Thêm thông tin tài khoản hoàn tiền -->
-              <div class="mt-3"
-                th:if="${order.bankAccountNumber != null and !#strings.isEmpty(order.bankAccountNumber)}">
-                <p class="text-sm font-medium text-blue-700">Thông tin hoàn tiền:</p>
-                <div class="text-sm text-blue-600 space-y-1 mt-1">
-                  <p>Số tiền: <span
-                      th:text="${#numbers.formatDecimal(order.refundAmount != null ? order.refundAmount : order.totalPrice, 1, 'COMMA', 0, 'POINT') + '₫'}"></span>
-                  </p>
-                  <p>Số tài khoản: <span th:text="${order.bankAccountNumber}"></span></p>
-                  <p>Ngân hàng: <span th:text="${order.bankName}"></span></p>
-                  <p>Chủ tài khoản: <span th:text="${order.accountHolder}"></span></p>
-                  <p class="text-sm text-blue-700 font-semibold" th:if="${order.refundStatus != null}">Trạng thái hoàn tiền: <span
-                      th:text="${order.refundStatus}"></span></p>
-                      <!-- Hiển thị ảnh đính kèm -->
-          <div class="mt-4" th:if="${order.returnImages != null and not #strings.isEmpty(order.returnImages)}">
-            <p class="text-sm font-medium text-gray-700 mb-2">Hình ảnh đính kèm:</p>
-            <div class="flex flex-wrap gap-2">
-              <a th:each="image : ${#strings.arraySplit(order.returnImages, ',')}" th:href="${image}" target="_blank"
-                class="w-20 h-20 border rounded overflow-hidden">
-                <img th:src="${image}" class="w-full h-full object-cover" />
-              </a>
-            </div>
-          </div>
+          <!-- Order Info Boxes -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+              <div class="flex justify-between items-center mb-2">
+                <h2 class="font-bold text-lg text-[#080c8c]">LÝ DO TRẢ HÀNG</h2>
+                <p th:if="${order.returnRequestDate != null}" class="text-base text-gray-600">
+                  <span th:text="${#temporals.format(order.returnRequestDate, 'dd/MM/yyyy HH:mm')}"></span>
+                </p>
+              </div>
+              <p th:text="${order.returnReason}" class="text-gray-700 text-base font-semibold mb-3"></p>
+              <!-- Hiển thị ảnh đính kèm -->
+              <div th:if="${order.returnImages != null and not #strings.isEmpty(order.returnImages)}">
+                <p class="text-sm font-medium text-gray-700 mb-2">Hình ảnh đính kèm:</p>
+                <div class="flex flex-wrap gap-2">
+                  <a th:each="image : ${#strings.arraySplit(order.returnImages, ',')}" th:href="${image}"
+                    target="_blank" class="w-20 h-20 border rounded overflow-hidden">
+                    <img th:src="${image}" class="w-full h-full object-cover" />
+                  </a>
                 </div>
               </div>
             </div>
+
+
+            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+              <h2 class="text-[#080c8c] font-bold mb-2 text-lg">THÔNG TIN HOÀN TIỀN </h2>
+              <div class="mt-2" th:if="${order.bankAccountNumber != null}">
+
+                <div class="text-base text-gray-600 font-semibold space-y-1 mb-2">
+                  <p class="text-blue-700">Ngân hàng: <span class="text-gray-600" th:text="${order.bankName}"></span>
+                  </p>
+                  <p class="text-blue-700">Số tài khoản:
+                    <span class="text-gray-600" th:text="${order.bankAccountNumber}"></span>
+                  </p>
+                  <p class="text-blue-700">Chủ tài khoản: <span class="text-gray-600"
+                      th:text="${order.accountHolder}"></span></p>
+                </div>
+                <hr>
+                <p class="text-blue-700 text-base font-semibold mt-2">Số tiền: <span class="text-gray-600"
+                    th:text="${#numbers.formatDecimal(order.refundAmount != null ? order.refundAmount : order.totalPrice, 1, 'COMMA', 0, 'POINT') + '₫'}"></span>
+                </p>
+              </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+              <h2 class="text-[#080c8c] font-bold text-lg">PHƯƠNG THỨC TRẢ HÀNG</h2>
+              <p th:text="${#strings.contains(order.returnMethod, 'POST_OFFICE') ? 'Trả tại bưu cục' : 'Shipper đến nhận'}"
+                class="text-gray-700 text-base font-semibold ">
+              </p>
+
+              <!-- Thông báo hướng dẫn thêm nếu có trạng thái hoàn tiền và đơn hàng chưa "Đã giao hàng" -->
+              <div class="mb-3">
+                <p th:if="${#strings.contains(order.returnMethod, 'POST_OFFICE')}"
+                  class="text-sm text-amber-600 italic">
+
+                </p>
+                <p th:if="${#strings.contains(order.returnMethod, 'PICKUP')}" class="text-sm text-amber-600 italic">
+
+                </p>
+              </div>
+            </div>
+
+
+
           </div>
 
           <!-- Form xử lý yêu cầu trả hàng -->
-          <div class="mt-4" th:unless="${order.returnStatus == 'Đã xử lý' || order.returnStatus == 'Từ chối'}">
+          <div class="mt-4" th:if="${order.orderStatus == 'Yêu cầu trả hàng'}">
             <form th:action="@{'/admin-order/process-return/' + ${order.id}}" method="post">
+
+              <!-- Quyết định -->
               <div class="mb-3">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Quyết định</label>
-                <select name="returnDecision"
+                <label class="block text-[#080c8c] font-bold text-lg mb-1">Quyết định</label>
+                <select id="returnDecision" name="returnDecision"
                   class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm w-full">
+                  <option value="">-- Chọn quyết định --</option>
                   <option value="ACCEPT">Chấp nhận trả hàng</option>
                   <option value="REJECT">Từ chối yêu cầu</option>
                 </select>
               </div>
-              <div class="mb-3">
+
+              <!-- Lý do từ chối (ẩn mặc định) -->
+              <div id="rejectReason" class="mb-3 hidden">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Lý do (nếu từ chối)</label>
                 <textarea name="adminResponse" rows="2"
                   class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm w-full"></textarea>
               </div>
+
               <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm">
                 Xác nhận
               </button>
@@ -171,8 +186,7 @@
           </div>
 
           <!-- Nút xác nhận hoàn tiền -->
-          <div class="mt-4"
-            th:if="${order.returnStatus == 'Chấp nhận trả hàng' and order.refundStatus != 'Đã hoàn tiền'}">
+          <div class="mt-4" th:if="${order.orderStatus == 'Đơn đang được trả về shop'}">
             <form th:action="@{'/admin-order/confirm-refund/' + ${order.id}}" method="post">
               <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm">
                 Xác nhận đã hoàn tiền
@@ -182,8 +196,11 @@
 
           <!-- Hiển thị phản hồi admin nếu đã xử lý -->
           <div class="mt-4" th:if="${order.returnStatus == 'Đã xử lý' || order.returnStatus == 'Từ chối'}">
-            <p class="text-sm font-medium text-gray-700">Phản hồi của quản trị viên:</p>
-            <p class="text-sm text-gray-600 mt-1" th:text="${order.adminResponse}"></p>
+            <p class="text-[#080c8c] font-bold mt-2 text-lg">Phản hồi của quản trị viên:</p>
+            <p class="text-base text-gray-700 mt-1" th:text="${order.adminResponse}"></p>
+            <p class="text-sm text-gray-500 mt-1" th:if="${order.returnProcessedDate != null}">
+              Ngày xử lý: <span th:text="${#temporals.format(order.returnProcessedDate, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
           </div>
         </div>
       </div>
@@ -239,7 +256,7 @@
 
       <!-- Phần cập nhật trạng thái (ẩn khi đơn hàng đã hủy) -->
       <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6"
-        th:unless="${order.orderStatus == 'Đã hủy' or order.orderStatus == 'Đã giao hàng'}">
+        th:unless="${order.orderStatus == 'Đã hủy' or order.orderStatus == 'Đã giao hàng' or order.orderStatus == 'Yêu cầu trả hàng' or order.orderStatus == 'Trả hàng thành công' or order.orderStatus == 'Từ chối trả hàng' or order.orderStatus == 'Đơn đang được trả về shop'}">
         <div class="flex items-center">
           <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -279,18 +296,25 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">TT thanh toán:</span>
-          <span th:text="${order.paymentStatus}" style="font-weight: 600;"
-            th:classappend="${order.paymentStatus == 'Đã thanh toán'} ? 'text-green-500' : 'text-[#e5a500] '">
+          <span th:text="${order.paymentStatus}" style="font-weight: 600;" th:classappend="
+        ${order.paymentStatus == 'Đã thanh toán'} ? 'text-green-500' :
+        (${order.paymentStatus == 'Đã hoàn tiền'} ? 'text-green-500' :
+        'text-[#e5a500]')">
           </span>
+
         </div>
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">TT đơn hàng:</span>
-          <span th:text="${order.orderStatus}" class="status-pending font-semibold" th:classappend=" 
-          ${order.orderStatus == 'Đã giao hàng'} ? 'text-green-500' : 
-          (${order.orderStatus == 'Đã hủy'} ? 'text-red-500' : 
-          (${order.orderStatus == 'Chờ xác nhận'} ? 'text-amber-500' : 
-          (${order.orderStatus == 'Đang vận chuyển'} ? 'text-blue-500' : 'text-gray-500')))">
+          <span th:switch="${order.orderStatus}" class="status-pending font-semibold">
+            <span th:case="'Đã giao hàng'" class="text-green-500" th:text="${order.orderStatus}"></span>
+            <span th:case="'Trả hàng thành công'" class="text-green-500" th:text="${order.orderStatus}"></span>
+            <span th:case="'Đã hủy'" class="text-red-500" th:text="${order.orderStatus}"></span>
+            <span th:case="'Từ chối trả hàng'" class="text-red-500" th:text="${order.orderStatus}"></span>
+            <span th:case="'Chờ xác nhận'" class="text-amber-500" th:text="${order.orderStatus}"></span>
+            <span th:case="'Đang vận chuyển'" class="text-blue-500" th:text="${order.orderStatus}"></span>
+            <span th:case="*" class="text-gray-500" th:text="${order.orderStatus}"></span>
           </span>
+
         </div>
         <div class="flex items-center text-base">
           <span class="text-gray-700 font-semibold mr-1">Mã vận đơn:</span>
@@ -432,6 +456,25 @@
       </div>
     </div>
   </div>
+
+
+  <script> // Hiển thị/ẩn lý do từ chối khi chọn quyết định trả hàng
+    document.addEventListener("DOMContentLoaded", function () {
+      const decisionSelect = document.getElementById("returnDecision");
+      const rejectReasonDiv = document.getElementById("rejectReason");
+      const adminResponse = document.getElementById("adminResponse");
+
+      decisionSelect.addEventListener("change", function () {
+        if (this.value === "REJECT") {
+          rejectReasonDiv.classList.remove("hidden");
+          adminResponse.setAttribute("required", "required");
+        } else {
+          rejectReasonDiv.classList.add("hidden");
+          adminResponse.removeAttribute("required");
+        }
+      });
+    });
+  </script>
 
   <script>// Hiển thị/ẩn thông tin hoàn tiền khi thay đổi quyết định
 

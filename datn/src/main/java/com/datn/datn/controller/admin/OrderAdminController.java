@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -28,6 +29,8 @@ public class OrderAdminController {
     @GetMapping("/admin-order")
     public String getAllOrders(Model model) {
         List<Order> orders = orderService.findAll();
+        orders.sort(Comparator.comparing(Order::getId).reversed());
+
         List<Map<String, Object>> orderDataList = new ArrayList<>();
 
         for (Order order : orders) {
@@ -91,9 +94,8 @@ public class OrderAdminController {
         Order order = orderService.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
-        order.setPaymentMethod("Đã hoàn tiền");
-        order.setOrderStatus("Đã giao hàng");
-        order.setRefundStatus("Đã hoàn tiền");
+        order.setPaymentStatus("Đã hoàn tiền");
+        order.setOrderStatus("Trả hàng thành công");
         orderService.save(order);
 
         redirectAttributes.addFlashAttribute("successMessage", "Đã xác nhận hoàn tiền thành công!");
@@ -126,14 +128,17 @@ public class OrderAdminController {
         Order order = orderService.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
+        
         if ("ACCEPT".equals(decision)) {
             order.setReturnStatus("Chấp nhận trả hàng");
-            order.setRefundStatus("Chờ hoàn tiền");
+            order.setPaymentStatus("Chờ hoàn tiền");
+            order.setOrderStatus("Đơn đang được trả về shop");
             order.setRefundAmount(order.getTotalPrice()); // Tự động lấy tổng tiền đơn hàng
             order.setReturnProcessedDate(LocalDateTime.now());
             order.setAdminResponse(adminResponse != null ? adminResponse : "Yêu cầu trả hàng đã được chấp nhận");
         } else {
             order.setReturnStatus("Từ chối");
+            order.setOrderStatus("Từ chối trả hàng");
             order.setAdminResponse(adminResponse != null ? adminResponse : "Yêu cầu trả hàng bị từ chối");
             order.setReturnProcessedDate(LocalDateTime.now());
         }
@@ -144,21 +149,7 @@ public class OrderAdminController {
         return "redirect:/admin-orderdetail/" + orderId;
     }
 
-    @PostMapping("/admin-order/mark-refund-completed/{orderId}")
-    public String markRefundCompleted(
-            @PathVariable("orderId") Long orderId,
-            RedirectAttributes redirectAttributes) {
-
-        Order order = orderService.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
-
-        order.setPaymentStatus("Đã hoàn tiền");
-        order.setOrderStatus("Trả hàng thành công");
-        orderService.save(order);
-
-        redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật trạng thái hoàn tiền!");
-        return "redirect:/admin-orderdetail/" + orderId;
-    }
+   
 
     @PostMapping("/admin-order/cancel/{orderId}")
     public String cancelOrder(
@@ -178,4 +169,18 @@ public class OrderAdminController {
         return "redirect:/admin-orderdetail/" + orderId;
     }
 
+
+
+
+    // Xóa đơn hàng
+    @GetMapping("/delete/{id}")
+    public String deleteOrder(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            orderService.deleteById(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa đơn hàng thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa đơn hàng: " + e.getMessage());
+        }
+        return "redirect:/admin-order"; // quay lại danh sách
+    }
 }

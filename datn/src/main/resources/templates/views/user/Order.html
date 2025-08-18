@@ -68,16 +68,16 @@
               <th class="px-6 py-3 text-left font-semibold">Giá trị đơn hàng</th>
               <th class="px-6 py-3 text-left font-semibold">TT Thanh toán</th>
               <th class="px-6 py-3 text-left font-semibold">TT đơn hàng</th>
+              <th class="px-6 py-3 text-left font-semibold">Đánh giá</th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-100">
             <tr th:each="order : ${orders}" class="hover:bg-gray-100 cursor-pointer transition">
-              <td class="px-6 py-4 text-blue-500 max-w-[130px] ">
+              <td class="px-6 py-4 text-blue-500 max-w-[130px]">
                 <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full"
                   th:text="'#' + ${order.orderCode}">
                 </a>
               </td>
-
 
               <td class="px-6 py-4 text-gray-700">
                 <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full"
@@ -93,30 +93,42 @@
 
               <td class="px-6 py-4 text-gray-800 font-medium">
                 <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full" th:text="${order.totalPrice != null} ? 
-                (${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫') : 
-                '0₫'">
+        (${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫') : 
+        '0₫'">
                   44.459.000 đ
                 </a>
               </td>
               <td class="px-4 py-4 font-semibold text-left break-words max-w-[90px]">
                 <a th:href="@{/order/{id}(id=${order.id})}" th:text="${order.paymentStatus}"
                   class="payment-badge px-3 py-1 text-xs font-medium rounded-full" th:classappend="${order.paymentStatus == 'Đã thanh toán' ? 
-                     'bg-green-100 text-green-800 border border-green-200' : 
-                     'bg-red-100 text-red-800 border border-red-200'}">
+             'bg-green-100 text-green-800 border border-green-200' : 
+             'bg-red-100 text-red-800 border border-red-200'}">
                 </a>
               </td>
-
-
 
               <td class="px-6 py-4 text-xl font-semibold">
                 <a th:href="@{/order/{id}(id=${order.id})}" class="payment-badge px-3 py-1 text-[14px] rounded-full"
-                  th:text="${order.orderStatus}" style="font-weight: 600;"
-                  th:classappend="${order.orderStatus == 'Đã giao hàng'} ? 'text-green-500' : (${order.orderStatus == 'Đã hủy'} ? 'text-red-500' : 'text-amber-500')">
+                  th:text="${order.orderStatus}" style="font-weight: 600;" th:classappend="
+        ${order.orderStatus == 'Đã giao hàng'} ? 'text-green-500' : 
+        (${order.orderStatus == 'Đã hủy'} ? 'text-red-500' : 
+        (${order.orderStatus == 'Từ chối trả hàng'} ? 'text-red-500' : 
+        (${order.orderStatus == 'Chờ xác nhận'} ? 'text-amber-500' : 
+        (${order.orderStatus == 'Đang vận chuyển'} ? 'text-blue-500' : 
+        (${order.orderStatus == 'Trả hàng thành công'} ? 'text-green-600' : 
+        (${order.orderStatus == 'Đơn đang được trả về shop'} ? 'text-purple-500' : 
+        'text-gray-500'))))))">
+                </a>
+              </td>
+
+              <td class="px-6 py-4">
+                <a href="/products"
+                  class="inline-block px-3 py-1 text-sm text-gray-700 font-medium bg-gray-100 rounded-lg hover:bg-gray-200 hover:text-primary transition-colors cursor-pointer">
+                  Đánh giá ngay
                 </a>
 
 
-              </td>
 
+              </td>
             </tr>
           </tbody>
         </table>
