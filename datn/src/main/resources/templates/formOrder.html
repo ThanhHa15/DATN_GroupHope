@@ -102,11 +102,14 @@
                 <!-- Trạng thái thanh toán -->
                 <div class="flex-1 min-w-[200px]">
                   <div class="relative">
-                    <select
-                      class="w-full h-[43px] pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                    <select id="paymentStatusFilter"
+                      class="w-full h-[43px] pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                      onchange="filterOrders()">
                       <option value="">Trạng thái thanh toán</option>
-                      <option value="paid">Đã thanh toán</option>
-                      <option value="unpaid">Chưa thanh toán</option>
+                      <option value="Đã thanh toán">Đã thanh toán</option>
+                      <option value="Chưa thanh toán">Chưa thanh toán</option>
+                      <option value="Đã hoàn tiền">Đã hoàn tiền</option>
+                      <option value="Chờ hoàn tiền">Chờ hoàn tiền</option>
                     </select>
                     <div
                       class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
@@ -118,13 +121,18 @@
                 <!-- Trạng thái đơn hàng -->
                 <div class="flex-1 min-w-[200px]">
                   <div class="relative">
-                    <select
-                      class="w-full h-[43px] pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                    <select id="orderStatusFilter"
+                      class="w-full h-[43px] pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                      onchange="filterOrders()">
                       <option value="">Trạng thái đơn hàng</option>
-                      <option value="pending">Chờ xác nhận</option>
-                      <option value="shipping">Đang giao</option>
-                      <option value="completed">Hoàn tất</option>
-                      <option value="cancelled">Đã hủy</option>
+                      <option value="Chờ xác nhận">Chờ xác nhận</option>
+                      <option value="Đang giao">Đang giao</option>
+                      <option value="Đã giao hàng">Hoàn tất</option>
+                      <option value="Đã hủy">Đã hủy</option>
+                      <option value="Yêu cầu trả hàng">Yêu cầu trả hàng</option>
+                      <option value="Trả hàng thành công">Trả hàng thành công</option>
+                      <option value="Từ chối trả hàng">Từ chối trả hàng</option>
+                      <option value="Đơn đang được trả về shop">Đơn đang được trả về shop</option>
                     </select>
                     <div
                       class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
@@ -167,6 +175,36 @@
                   </thead>
 
                   <tbody class="divide-y divide-gray-200 text-sm text-gray-800">
+                    <!-- Thêm đoạn này ngay sau thẻ <tbody> -->
+                    <tr th:if="${orderDataList.isEmpty()}">
+                      <td colspan="8" class="px-4 py-6 text-center text-gray-500">
+                        <div class="flex flex-col items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-3" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span class="text-lg font-medium" th:text="${#strings.isEmpty(search) && #strings.isEmpty(paymentStatus) && #strings.isEmpty(orderStatus) ? 
+        'Hiện không có đơn hàng nào' : 
+        'Không tìm thấy đơn hàng phù hợp với điều kiện lọc'}"></span>
+                          <p class="text-sm mt-1"
+                            th:if="${!#strings.isEmpty(search) || !#strings.isEmpty(paymentStatus) || !#strings.isEmpty(orderStatus)}">
+                            <span th:if="${!#strings.isEmpty(search)}">Từ khóa: "<span
+                                th:text="${search}"></span>"</span>
+                            <span th:if="${!#strings.isEmpty(paymentStatus)}"
+                              th:text="${!#strings.isEmpty(search) ? ', ' : ''} + 'Trạng thái thanh toán: ' + ${paymentStatus}"></span>
+                            <span th:if="${!#strings.isEmpty(orderStatus)}"
+                              th:text="${(!#strings.isEmpty(search) || !#strings.isEmpty(paymentStatus)) ? ', ' : ''} + 'Trạng thái đơn hàng: ' + ${orderStatus}"></span>
+                          </p>
+                          <button
+                            th:if="${!#strings.isEmpty(search) || !#strings.isEmpty(paymentStatus) || !#strings.isEmpty(orderStatus)}"
+                            onclick="resetFilters()"
+                            class="mt-3 px-4 py-2 bg-primary text-white rounded-button hover:bg-blue-600 transition">
+                            Xóa bộ lọc
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
                     <tr th:each="item, iterStat : ${orderDataList}" class="hover:bg-gray-50 transition">
                       <!-- STT -->
                       <td class="px-4 py-3 align-middle" th:text="${(currentPage - 1) * pageSize + iterStat.index + 1}">
@@ -266,7 +304,6 @@
               </div>
 
               <!-- Pagination -->
-              <!-- Pagination -->
               <div class="flex items-center justify-between mt-4">
                 <div class="text-sm text-gray-500">
                   Hiển thị <span th:text="${(currentPage-1)*pageSize+1}"></span>-<span
@@ -304,7 +341,7 @@
     </div>
   </div>
 
-  <script>
+  <script> // Hàm lọc đơn hàng
     function toggleDropdown(button) {
       const dropdown = button.parentElement.querySelector('div.absolute');
       dropdown.classList.toggle("hidden");
@@ -317,6 +354,81 @@
         }
       });
     }
+  </script>
+
+  <script>
+    // Hàm reset bộ lọc
+    function resetFilters() {
+      // Reset các dropdown
+      document.getElementById('paymentStatusFilter').value = '';
+      document.getElementById('orderStatusFilter').value = '';
+
+      // Reset ô tìm kiếm
+      const searchInput = document.querySelector('input[type="text"]');
+      if (searchInput) {
+        searchInput.value = '';
+      }
+
+      // Chuyển hướng về trang không có bộ lọc
+      window.location.href = '/admin-order';
+    }
+
+    // Các hàm khác giữ nguyên...
+  </script>
+
+  <script> // Hàm lọc đơn hàng
+    function filterOrders() {
+      const paymentStatus = document.getElementById('paymentStatusFilter').value;
+      const orderStatus = document.getElementById('orderStatusFilter').value;
+
+      // Lấy giá trị tìm kiếm nếu có
+      const searchInput = document.querySelector('input[type="text"]');
+      const searchValue = searchInput ? searchInput.value : '';
+
+      // Tạo URL với các tham số lọc
+      let url = `/admin-order?search=${encodeURIComponent(searchValue)}`;
+
+      if (paymentStatus) {
+        url += `&paymentStatus=${encodeURIComponent(paymentStatus)}`;
+      }
+
+      if (orderStatus) {
+        url += `&orderStatus=${encodeURIComponent(orderStatus)}`;
+      }
+
+      // Chuyển hướng đến URL đã lọc
+      window.location.href = url;
+    }
+
+    // Thêm sự kiện cho ô tìm kiếm
+    document.addEventListener('DOMContentLoaded', function () {
+      const searchInput = document.querySelector('input[type="text"]');
+      if (searchInput) {
+        searchInput.addEventListener('keypress', function (e) {
+          if (e.key === 'Enter') {
+            filterOrders();
+          }
+        });
+      }
+
+      // Đặt lại giá trị đã chọn từ URL (nếu có)
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentStatusParam = urlParams.get('paymentStatus');
+      const orderStatusParam = urlParams.get('orderStatus');
+      const searchParam = urlParams.get('search');
+
+      if (paymentStatusParam) {
+        document.getElementById('paymentStatusFilter').value = paymentStatusParam;
+      }
+
+      if (orderStatusParam) {
+        document.getElementById('orderStatusFilter').value = orderStatusParam;
+      }
+
+      if (searchParam && searchInput) {
+        searchInput.value = searchParam;
+      }
+    });
   </script>
 </body>
 

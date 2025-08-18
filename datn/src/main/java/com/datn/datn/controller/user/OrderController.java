@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,30 +54,55 @@ public class OrderController {
     private ProductVariantRepository productVariantRepository;
 
     @GetMapping("/order")
-    public String getOrders(Model model, HttpSession session) {
+    public String getOrders(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "") String paymentStatus,
+            @RequestParam(defaultValue = "") String orderStatus,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model,
+            HttpSession session) {
+
         Member currentUser = (Member) session.getAttribute("loggedInUser");
         if (currentUser != null) {
-            List<Order> orders = orderService.getOrdersByMemberId(currentUser.getId());
-            orders.sort(Comparator.comparing(Order::getId).reversed());
+            // Tạo Specification để lọc dữ liệu
+            Specification<Order> spec = Specification
+                    .where((root, query, cb) -> cb.equal(root.get("member").get("id"), currentUser.getId()));
 
-            // Đảm bảo tính toán tổng giá trị nếu cần
-            orders.forEach(order -> {
-                if (order.getTotalPrice() == null) {
-                    // Tính toán tổng giá trị từ orderDetails nếu totalPrice null
-                    double total = order.getOrderDetails().stream()
-                            .mapToDouble(detail -> detail.getPrice() * detail.getQuantity())
-                            .sum();
-                    order.setTotalPrice(total);
-                }
-            });
+            // Thêm điều kiện tìm kiếm
+            if (!search.isEmpty()) {
+                spec = spec.and((root, query, cb) -> cb.or(
+                        cb.like(root.get("orderCode"), "%" + search + "%"),
+                        cb.like(root.get("orderDate").as(String.class), "%" + search + "%")));
+            }
 
-            model.addAttribute("orders", orders);
+            // Thêm điều kiện lọc theo trạng thái thanh toán
+            if (!paymentStatus.isEmpty()) {
+                spec = spec.and((root, query, cb) -> cb.equal(root.get("paymentStatus"), paymentStatus));
+            }
+
+            // Thêm điều kiện lọc theo trạng thái đơn hàng
+            if (!orderStatus.isEmpty()) {
+                spec = spec.and((root, query, cb) -> cb.equal(root.get("orderStatus"), orderStatus));
+            }
+
+            // Phân trang và sắp xếp
+            PageRequest pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
+            Page<Order> orderPage = orderService.findAll(spec, pageable);
+
+            model.addAttribute("orders", orderPage.getContent());
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", orderPage.getTotalPages());
+            model.addAttribute("totalItems", orderPage.getTotalElements());
+            model.addAttribute("search", search);
+            model.addAttribute("paymentStatus", paymentStatus);
+            model.addAttribute("orderStatus", orderStatus);
+            model.addAttribute("pageSize", size);
         } else {
             model.addAttribute("orders", new ArrayList<>());
         }
         return "views/user/order";
     }
-
 
     @GetMapping("/order/{orderId}")
     public String viewOrderDetail(@PathVariable("orderId") Long orderId, Model model, HttpSession session) {
