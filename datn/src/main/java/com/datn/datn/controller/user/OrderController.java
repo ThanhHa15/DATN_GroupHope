@@ -22,11 +22,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.datn.model.Member;
 import com.datn.datn.model.Order;
+import com.datn.datn.model.Product;
+import com.datn.datn.repository.OrderDetailRepository;
 import com.datn.datn.repository.OrderRepository;
+import com.datn.datn.repository.ProductVariantRepository;
 import com.datn.datn.service.OrderService;
+import com.datn.datn.service.ProductService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -37,7 +42,12 @@ public class OrderController {
     private OrderService orderService;
 
     @Autowired
-    private OrderRepository orderRepository;
+    private ProductService productService;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+    @Autowired
+    private ProductVariantRepository productVariantRepository;
 
     @GetMapping("/order")
     public String getOrders(Model model, HttpSession session) {
@@ -45,7 +55,6 @@ public class OrderController {
         if (currentUser != null) {
             List<Order> orders = orderService.getOrdersByMemberId(currentUser.getId());
             orders.sort(Comparator.comparing(Order::getId).reversed());
-
 
             // Đảm bảo tính toán tổng giá trị nếu cần
             orders.forEach(order -> {
@@ -64,6 +73,7 @@ public class OrderController {
         }
         return "views/user/order";
     }
+
 
     @GetMapping("/order/{orderId}")
     public String viewOrderDetail(@PathVariable("orderId") Long orderId, Model model, HttpSession session) {
@@ -171,7 +181,7 @@ public class OrderController {
             order.setBankAccountNumber(bankAccountNumber);
             order.setBankName(bankName);
             order.setAccountHolder(accountHolder);
-          //  order.setReturnStatus("Chờ xử lý");
+            // order.setReturnStatus("Chờ xử lý");
             order.setReturnRequestDate(LocalDateTime.now());
 
             if (!order.getMember().getId().equals(member.getId())) {

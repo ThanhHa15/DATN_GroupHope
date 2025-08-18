@@ -58,11 +58,13 @@
   <div th:replace="header :: header"></div>
 
   <h1 style="margin-left: 300px; font-size: 23px; margin-top: 78px;">Quản lý đơn hàng</h1>
-  <div style="margin-left: 300px" th:if="${successMessage}" class="p-3 mb-4 text-base text-gray-700 bg-green-100 rounded-lg" role="alert">
+  <div style="margin-left: 300px" th:if="${successMessage}"
+    class="p-3 mb-4 text-base text-gray-700 bg-green-100 rounded-lg" role="alert">
     <span th:text="${successMessage}"></span>
   </div>
 
-  <div style="margin-left: 300px" th:if="${errorMessage}" class="p-3 mb-4 text-base text-red-700 bg-red-100 rounded-lg" role="alert">
+  <div style="margin-left: 300px" th:if="${errorMessage}" class="p-3 mb-4 text-base text-red-700 bg-red-100 rounded-lg"
+    role="alert">
     <span th:text="${errorMessage}"></span>
   </div>
 
@@ -167,7 +169,8 @@
                   <tbody class="divide-y divide-gray-200 text-sm text-gray-800">
                     <tr th:each="item, iterStat : ${orderDataList}" class="hover:bg-gray-50 transition">
                       <!-- STT -->
-                      <td class="px-4 py-3 align-middle" th:text="${iterStat.index + 1}"></td>
+                      <td class="px-4 py-3 align-middle" th:text="${(currentPage - 1) * pageSize + iterStat.index + 1}">
+                      </td>
 
                       <!-- Mã đơn hàng -->
                       <td class="px-4 py-3 align-middle font-medium">
@@ -246,7 +249,7 @@
                           </a>
 
                           <!-- Icon Xóa -->
-                          <a th:href="@{/delete/{id}(id=${item.order.id})}" 
+                          <a th:href="@{/delete/{id}(id=${item.order.id})}"
                             onclick="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?')"
                             class="text-red-500 hover:text-red-700" title="Xóa đơn hàng">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -263,23 +266,35 @@
               </div>
 
               <!-- Pagination -->
+              <!-- Pagination -->
               <div class="flex items-center justify-between mt-4">
                 <div class="text-sm text-gray-500">
-                  <!-- Hiển thị 1-6 của 24 sản phẩm -->
+                  Hiển thị <span th:text="${(currentPage-1)*pageSize+1}"></span>-<span
+                    th:text="${currentPage*pageSize > totalItems ? totalItems : currentPage*pageSize}"></span>
+                  của <span th:text="${totalItems}"></span> đơn hàng
                 </div>
                 <div class="flex space-x-2">
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap">Trước</button>
-                  <button
-                    class="px-3 py-1 border border-primary bg-primary text-white rounded-button whitespace-nowrap">1</button>
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">2</button>
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">3</button>
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">4</button>
-                  <button
-                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">Tiếp</button>
+                  <!-- Nút Previous -->
+                  <a th:href="@{/admin-order(search=${search},paymentStatus=${paymentStatus},orderStatus=${orderStatus},page=${currentPage > 1 ? currentPage-1 : 1},pageSize=${pageSize})}"
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap"
+                    th:classappend="${currentPage == 1} ? 'opacity-50 cursor-not-allowed'">
+                    Trước
+                  </a>
+
+                  <!-- Các nút trang -->
+                  <a th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    th:href="@{/admin-order(search=${search},paymentStatus=${paymentStatus},orderStatus=${orderStatus},page=${i},pageSize=${pageSize})}"
+                    class="px-3 py-5 border rounded-button whitespace-nowrap" style="padding: 10px;"
+                    th:class="${i == currentPage} ? 'border-primary bg-primary text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'">
+                    <span th:text="${i}"></span>
+                  </a>
+
+                  <!-- Nút Next -->
+                  <a th:href="@{/admin-order(search=${search},paymentStatus=${paymentStatus},orderStatus=${orderStatus},page=${currentPage < totalPages ? currentPage+1 : totalPages},pageSize=${pageSize})}"
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap"
+                    th:classappend="${currentPage == totalPages} ? 'opacity-50 cursor-not-allowed'">
+                    Tiếp
+                  </a>
                 </div>
               </div>
             </div>

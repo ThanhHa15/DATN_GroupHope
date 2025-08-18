@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,16 +31,46 @@ public class OrderAdminController {
     private OrderService orderService;
 
     @GetMapping("/admin-order")
-    public String getAllOrders(Model model) {
-        List<Order> orders = orderService.findAll();
-        orders.sort(Comparator.comparing(Order::getId).reversed());
+    public String getAllOrders(
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "") String paymentStatus,
+            @RequestParam(defaultValue = "") String orderStatus,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
 
+        // Tạo Specification để lọc dữ liệu
+        Specification<Order> spec = Specification.where(null);
+
+        // Thêm điều kiện tìm kiếm
+        if (!search.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.or(
+                    cb.like(root.get("orderCode"), "%" + search + "%"),
+                    cb.like(root.get("member").get("fullname"), "%" + search + "%"),
+                    cb.like(root.get("member").get("phone"), "%" + search + "%"),
+                    cb.like(root.get("member").get("email"), "%" + search + "%")));
+        }
+
+        // Thêm điều kiện lọc theo trạng thái thanh toán
+        if (!paymentStatus.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("paymentStatus"), paymentStatus));
+        }
+
+        // Thêm điều kiện lọc theo trạng thái đơn hàng
+        if (!orderStatus.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("orderStatus"), orderStatus));
+        }
+
+        // Phân trang và sắp xếp
+        PageRequest pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
+        Page<Order> orderPage = orderService.findAll(spec, pageable);
+
+        // Xử lý dữ liệu đơn hàng
         List<Map<String, Object>> orderDataList = new ArrayList<>();
+        double shippingFee = 40000; // Giả định phí vận chuyển cố định
 
-        for (Order order : orders) {
+        for (Order order : orderPage.getContent()) {
             Map<String, Object> data = new HashMap<>();
-            double shippingFee = 40000; // Giả định phí vận chuyển cố định
-
             double productTotal = order.getTotalPrice() - shippingFee
                     + (order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
             double discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : 0;
@@ -50,7 +84,16 @@ public class OrderAdminController {
             orderDataList.add(data);
         }
 
+        // Thêm các thuộc tính vào model
         model.addAttribute("orderDataList", orderDataList);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
+        model.addAttribute("totalItems", orderPage.getTotalElements());
+        model.addAttribute("search", search);
+        model.addAttribute("paymentStatus", paymentStatus);
+        model.addAttribute("orderStatus", orderStatus);
+        model.addAttribute("pageSize", size);
+
         return "formOrder";
     }
 
@@ -128,7 +171,6 @@ public class OrderAdminController {
         Order order = orderService.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
-        
         if ("ACCEPT".equals(decision)) {
             order.setReturnStatus("Chấp nhận trả hàng");
             order.setPaymentStatus("Chờ hoàn tiền");
@@ -149,8 +191,6 @@ public class OrderAdminController {
         return "redirect:/admin-orderdetail/" + orderId;
     }
 
-   
-
     @PostMapping("/admin-order/cancel/{orderId}")
     public String cancelOrder(
             @PathVariable("orderId") Long orderId,
@@ -168,9 +208,6 @@ public class OrderAdminController {
         redirectAttributes.addFlashAttribute("successMessage", "Đã hủy đơn hàng thành công!");
         return "redirect:/admin-orderdetail/" + orderId;
     }
-
-
-
 
     // Xóa đơn hàng
     @GetMapping("/delete/{id}")

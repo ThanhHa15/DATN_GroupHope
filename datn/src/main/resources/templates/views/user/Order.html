@@ -52,6 +52,31 @@
         <h2 class="text-2xl font-semibold text-gray-800">Đơn hàng của bạn</h2>
         <p class="text-sm text-gray-500">Thông tin các đơn hàng gần đây</p>
       </div>
+
+      <!-- Phần tìm kiếm -->
+      <div class="p-4 border-b">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div class="relative w-full md:w-64">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm theo mã đơn, ngày..."
+              class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            <i class="ri-search-line absolute left-3 top-3 text-gray-400"></i>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <label for="statusFilter" class="text-sm text-gray-600">Lọc theo trạng thái:</label>
+            <select id="statusFilter"
+              class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+              <option value="">Tất cả</option>
+              <option value="Chờ xác nhận">Chờ xác nhận</option>
+              <option value="Đang vận chuyển">Đang vận chuyển</option>
+              <option value="Đã giao hàng">Đã giao hàng</option>
+              <option value="Đã hủy">Đã hủy</option>
+              <option value="Trả hàng thành công">Trả hàng thành công</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div class="overflow-x-auto">
         <!-- Nếu không có đơn hàng -->
         <div th:if="${#lists.isEmpty(orders)}" class="text-center text-gray-600 py-8">
@@ -59,7 +84,8 @@
         </div>
 
         <!-- Nếu có đơn hàng -->
-        <table th:unless="${#lists.isEmpty(orders)}" class="min-w-full divide-y divide-gray-100 text-sm">
+        <table th:unless="${#lists.isEmpty(orders)}" class="min-w-full divide-y divide-gray-100 text-sm"
+          id="ordersTable">
           <thead class="bg-primary text-white">
             <tr>
               <th class="px-6 py-3 text-left font-semibold">Đơn hàng</th>
@@ -71,8 +97,14 @@
               <th class="px-6 py-3 text-left font-semibold">Đánh giá</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-100">
-            <tr th:each="order : ${orders}" class="hover:bg-gray-100 cursor-pointer transition">
+          <tbody class="bg-white divide-y divide-gray-100" id="ordersTableBody">
+            <tr id="noOrdersRow" class="text-center text-gray-600" style="display:none;">
+              <td colspan="7" class="py-8">Không có đơn hàng nào.</td>
+            </tr>
+
+            <tr th:each="order : ${orders}" class="order-row hover:bg-gray-100 cursor-pointer transition"
+              data-order-code="${order.orderCode}" data-order-date="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"
+              data-order-status="${order.orderStatus}">
               <td class="px-6 py-4 text-blue-500 max-w-[130px]">
                 <a th:href="@{/order/{id}(id=${order.id})}" class="block w-full h-full"
                   th:text="'#' + ${order.orderCode}">
@@ -109,14 +141,14 @@
               <td class="px-6 py-4 text-xl font-semibold">
                 <a th:href="@{/order/{id}(id=${order.id})}" class="payment-badge px-3 py-1 text-[14px] rounded-full"
                   th:text="${order.orderStatus}" style="font-weight: 600;" th:classappend="
-        ${order.orderStatus == 'Đã giao hàng'} ? 'text-green-500' : 
-        (${order.orderStatus == 'Đã hủy'} ? 'text-red-500' : 
-        (${order.orderStatus == 'Từ chối trả hàng'} ? 'text-red-500' : 
-        (${order.orderStatus == 'Chờ xác nhận'} ? 'text-amber-500' : 
-        (${order.orderStatus == 'Đang vận chuyển'} ? 'text-blue-500' : 
-        (${order.orderStatus == 'Trả hàng thành công'} ? 'text-green-600' : 
-        (${order.orderStatus == 'Đơn đang được trả về shop'} ? 'text-purple-500' : 
-        'text-gray-500'))))))">
+    ${order.orderStatus == 'Đã giao hàng'} ? 'text-green-500' : 
+    (${order.orderStatus == 'Đã hủy'} ? 'text-red-500' : 
+    (${order.orderStatus == 'Từ chối trả hàng'} ? 'text-red-500' : 
+    (${order.orderStatus == 'Chờ xác nhận'} ? 'text-amber-500' : 
+    (${order.orderStatus == 'Đang vận chuyển'} ? 'text-blue-500' : 
+    (${order.orderStatus == 'Trả hàng thành công'} ? 'text-green-600' : 
+    (${order.orderStatus == 'Đơn đang được trả về shop'} ? 'text-purple-500' : 
+    'text-gray-500'))))))">
                 </a>
               </td>
 
@@ -125,23 +157,225 @@
                   class="inline-block px-3 py-1 text-sm text-gray-700 font-medium bg-gray-100 rounded-lg hover:bg-gray-200 hover:text-primary transition-colors cursor-pointer">
                   Đánh giá ngay
                 </a>
-
-
-
               </td>
+
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="p-4 border-t text-sm text-gray-500 text-right">
+      <!-- Phân trang -->
+      <div class="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-sm text-gray-500">
+          Hiển thị <span id="startItem">1</span> - <span id="endItem">10</span> của <span id="totalItems">0</span> đơn
+          hàng
+        </div>
 
+        <div class="flex items-center gap-2">
+          <button id="prevPage" class="px-3 py-1 border rounded-lg disabled:opacity-50" disabled>
+            <i class="ri-arrow-left-s-line"></i>
+          </button>
+
+          <div class="flex gap-1" id="pageNumbers">
+            <!-- Các số trang sẽ được thêm bằng JavaScript -->
+          </div>
+
+          <button id="nextPage" class="px-3 py-1 border rounded-lg disabled:opacity-50" disabled>
+            <i class="ri-arrow-right-s-line"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 30px;"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Các biến quản lý phân trang
+      const rowsPerPage = 10;
+      let currentPage = 1;
+      let filteredRows = [];
+
+      // Lấy tất cả các hàng trong bảng
+      const allRows = Array.from(document.querySelectorAll('.order-row'));
+      filteredRows = [...allRows];
+
+      // Cập nhật thông tin phân trang ban đầu
+      updatePaginationInfo();
+
+      // Hàm hiển thị các hàng theo trang hiện tại
+      function displayRows() {
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        const noOrdersRow = document.getElementById('noOrdersRow');
+
+        // Ẩn tất cả các hàng
+        allRows.forEach(row => row.style.display = 'none');
+
+        if (filteredRows.length === 0) {
+          // Hiển thị thông báo trong bảng
+          noOrdersRow.style.display = '';
+        } else {
+          // Ẩn thông báo nếu có dữ liệu
+          noOrdersRow.style.display = 'none';
+          // Hiển thị các hàng trong trang hiện tại
+          filteredRows.slice(start, end).forEach(row => row.style.display = 'table-row');
+        }
+
+        // Cập nhật thông tin phân trang
+        updatePaginationInfo();
+      }
+
+
+
+      // Hàm cập nhật thông tin phân trang
+      function updatePaginationInfo() {
+        const totalItems = filteredRows.length;
+        const startItem = (currentPage - 1) * rowsPerPage + 1;
+        const endItem = Math.min(currentPage * rowsPerPage, totalItems);
+
+        document.getElementById('totalItems').textContent = totalItems;
+        document.getElementById('startItem').textContent = startItem;
+        document.getElementById('endItem').textContent = endItem;
+
+        // Cập nhật trạng thái nút Previous/Next
+        document.getElementById('prevPage').disabled = currentPage === 1;
+        document.getElementById('nextPage').disabled = currentPage === Math.ceil(totalItems / rowsPerPage);
+
+        // Tạo các nút số trang
+        updatePageNumbers();
+      }
+
+      // Hàm tạo các nút số trang
+      function updatePageNumbers() {
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        pageNumbersContainer.innerHTML = '';
+
+        // Giới hạn số lượng nút trang hiển thị
+        const maxVisiblePages = 5;
+        let startPage, endPage;
+
+        if (totalPages <= maxVisiblePages) {
+          startPage = 1;
+          endPage = totalPages;
+        } else {
+          const maxVisibleBeforeCurrent = Math.floor(maxVisiblePages / 2);
+          const maxVisibleAfterCurrent = Math.ceil(maxVisiblePages / 2) - 1;
+
+          if (currentPage <= maxVisibleBeforeCurrent) {
+            startPage = 1;
+            endPage = maxVisiblePages;
+          } else if (currentPage + maxVisibleAfterCurrent >= totalPages) {
+            startPage = totalPages - maxVisiblePages + 1;
+            endPage = totalPages;
+          } else {
+            startPage = currentPage - maxVisibleBeforeCurrent;
+            endPage = currentPage + maxVisibleAfterCurrent;
+          }
+        }
+
+        // Thêm nút trang đầu tiên nếu cần
+        if (startPage > 1) {
+          addPageNumber(1);
+          if (startPage > 2) {
+            pageNumbersContainer.innerHTML += '<span class="px-3 py-1">...</span>';
+          }
+        }
+
+        // Thêm các nút trang
+        for (let i = startPage; i <= endPage; i++) {
+          addPageNumber(i);
+        }
+
+        // Thêm nút trang cuối cùng nếu cần
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            pageNumbersContainer.innerHTML += '<span class="px-3 py-1">...</span>';
+          }
+          addPageNumber(totalPages);
+        }
+      }
+
+      // Hàm thêm nút số trang
+      function addPageNumber(pageNumber) {
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        const button = document.createElement('button');
+        button.className = `px-3 py-1 rounded-lg ${currentPage === pageNumber ? 'bg-primary text-white' : 'border'}`;
+        button.textContent = pageNumber;
+        button.addEventListener('click', () => {
+          currentPage = pageNumber;
+          displayRows();
+        });
+        pageNumbersContainer.appendChild(button);
+      }
+
+      // Sự kiện cho nút Previous
+      document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          displayRows();
+        }
+      });
+
+      // Sự kiện cho nút Next
+      document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+        if (currentPage < totalPages) {
+          currentPage++;
+          displayRows();
+        }
+      });
+
+      // Sự kiện tìm kiếm và lọc
+      document.getElementById('searchInput').addEventListener('input', filterOrders);
+      document.getElementById('statusFilter').addEventListener('change', filterOrders);
+      // Hàm lọc đơn hàng theo mã đơn/ngày và trạng thái
+      function filterOrders() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+
+        function normalizeDate(str) {
+          // đổi dd/MM/yyyy hoặc d/M/yyyy thành dd/MM/yyyy
+          const parts = str.split('/');
+          if (parts.length === 3) {
+            return parts.map(p => p.padStart(2, '0')).join('/');
+          }
+          return str;
+        }
+
+        filteredRows = allRows.filter(row => {
+          const orderCode = row.getAttribute('data-order-code').toLowerCase();
+          const orderDate = normalizeDate(row.getAttribute('data-order-date'));
+          const searchDate = normalizeDate(searchTerm);
+          const matchesSearch = searchTerm === '' ||
+            orderCode.includes(searchTerm) ||
+            orderDate.includes(searchDate);
+
+
+          const orderStatusElement = row.querySelector('td:nth-child(6) a');
+          const orderStatus = orderStatusElement ? orderStatusElement.textContent.trim() : '';
+
+          // Kiểm tra từ khóa tìm kiếm (mã đơn hoặc ngày)
+
+          // Kiểm tra trạng thái
+          const matchesStatus = statusFilter === '' || orderStatus === statusFilter;
+
+          return matchesSearch && matchesStatus;
+        });
+
+        // Reset về trang đầu tiên
+        currentPage = 1;
+        displayRows();
+      }
+
+      // Hiển thị các hàng ban đầu
+      displayRows();
+    });
+  </script>
 </body>
 
 </html>
