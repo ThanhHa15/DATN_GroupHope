@@ -1,23 +1,27 @@
 package com.datn.datn.controller.admin;
 
-import com.datn.datn.dto.ProductVariantCreateDTO;
-import com.datn.datn.dto.VariantSpecificationDTO;
+import com.datn.datn.model.Category;
 import com.datn.datn.model.Product;
 import com.datn.datn.model.ProductVariant;
-import com.datn.datn.service.*;
+import com.datn.datn.service.CategoryService;
+import com.datn.datn.service.ProductService;
+import com.datn.datn.service.ProductVariantService;
 
-import org.springframework.format.annotation.DateTimeFormat;
+import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/variants")
@@ -25,39 +29,109 @@ public class ProductVariantController {
 
     private final ProductVariantService variantService;
     private final ProductService productService;
+    private final CategoryService categoryService;
 
     public ProductVariantController(ProductVariantService variantService,
-            ProductService productService) {
+            ProductService productService,
+            CategoryService categoryService) {
         this.variantService = variantService;
         this.productService = productService;
+        this.categoryService = categoryService;
     }
 
+    // ========== HIỂN THỊ DANH SÁCH & FORM ==========
     @GetMapping
-    public String showVariantForm(Model model) {
-        List<Product> products = productService.getAll();
-
-        // Gán storages cho từng product
-        for (Product p : products) {
-            List<String> storages = variantService.findStoragesByProductId(p.getProductID());
-            p.setStorages(storages); // Bạn cần có getter/setter & @Transient trong Product
-        }
+    public String showVariantForm(
+            Model model,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size) {
+        Page<ProductVariant> variantPage = variantService.getAll(PageRequest.of(page, size));
+        List<Product> products = loadProductsWithStorages();
 
         model.addAttribute("variant", new ProductVariant());
-        model.addAttribute("variants", variantService.getAll());
-        model.addAttribute("products", products); // thêm bản đã gán storages
-        return "formVariant"; // tên file view Thymeleaf của bạn
+        model.addAttribute("variants", variantPage.getContent());
+        model.addAttribute("products", products);
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", variantPage.getTotalPages());
+
+        return "formVariant";
     }
 
+    // ========== TÌM KIẾM ==========
+    @GetMapping("/search")
+    public String searchVariants(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+
+        Page<ProductVariant> variantPage = variantService.searchVariantsByName(keyword, PageRequest.of(page, size));
+        List<Product> products = loadProductsWithStorages();
+
+        model.addAttribute("variant", new ProductVariant());
+        model.addAttribute("variants", variantPage.getContent());
+        model.addAttribute("products", products);
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", variantPage.getTotalPages());
+
+        // ✅ Thêm thông báo khi không có kết quả
+        if (variantPage.isEmpty()) {
+            model.addAttribute("notFoundMessage", "Không tìm thấy kết quả cho từ khóa: \"" + keyword + "\"");
+        }
+
+        return "formVariant";
+    }
+
+    // ========== LỌC THEO DANH MỤC ==========
+    @GetMapping("/filter-variants")
+    public String filterVariantsByCategory(
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductVariant> variantPage;
+
+        if (categoryId == null || categoryId == 0) {
+            variantPage = variantService.getAll(pageable); // lấy tất cả
+        } else {
+            variantPage = variantService.filterByCategory(categoryId, pageable); // lọc
+        }
+
+        List<Product> products = loadProductsWithStorages();
+
+        model.addAttribute("variant", new ProductVariant());
+        model.addAttribute("variants", variantPage.getContent());
+        model.addAttribute("products", products);
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", variantPage.getTotalPages());
+        model.addAttribute("selectedCategoryId", categoryId);
+
+        // ✅ nếu không có sản phẩm
+        if (variantPage.isEmpty()) {
+            model.addAttribute("noProductMessage", "Không có sản phẩm trong danh mục này");
+        }
+
+        return "formVariant";
+    }
+
+    // ========== THÊM / SỬA ==========
     @PostMapping("/add")
     public String addOrUpdateVariant(
-            @ModelAttribute("variant") ProductVariant variant,
-            @RequestParam("imageFile") MultipartFile imageFile,
+            @Valid @ModelAttribute("variant") ProductVariant variant,
             BindingResult result,
+            @RequestParam("imageFile") MultipartFile imageFile,
             Model model) {
 
         if (result.hasErrors()) {
-            model.addAttribute("products", productService.getAll());
-            return "formVariant";
+            model.addAttribute("products", loadProductsWithStorages());
+            model.addAttribute("categories", categoryService.getAll());
+            return "formVariant"; // Trả về form kèm lỗi
         }
 
         // Xử lý ảnh
@@ -82,35 +156,76 @@ public class ProductVariantController {
         return "redirect:/variants";
     }
 
+    // ========== XÓA ==========
     @GetMapping("/delete/{id}")
-    public String deleteVariant(@PathVariable Integer id) {
-        variantService.delete(id);
+    public String deleteVariant(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            variantService.delete(id);
+            redirectAttributes.addFlashAttribute("success", "Xóa thành công!");
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa vì sản phẩm này đã nằm trong đơn hàng!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra, vui lòng thử lại!");
+        }
         return "redirect:/variants";
     }
 
+    // ========== SỬA ==========
     @GetMapping("/edit/{id}")
-    public String editVariant(@PathVariable Integer id, Model model) {
-        // Lấy variant cần sửa
+    public String editVariant(@PathVariable Integer id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
         ProductVariant variant = variantService.getById(id);
-
-        // Gán productId để dùng cho form binding (vì dùng *{productId})
-        variant.setProductId(variant.getProduct().getProductID());
-
-        // Lấy danh sách sản phẩm
-        List<Product> products = productService.getAll();
-
-        // Với mỗi sản phẩm, gán thêm danh sách các dung lượng (storages)
-        for (Product product : products) {
-            List<String> storages = variantService.findStoragesByProductId(product.getProductID());
-            product.setStorages(storages);
+        if (variant == null) {
+            return "redirect:/variants";
         }
 
-        // Đẩy dữ liệu ra view
+        if (variant.getProduct() != null) {
+            variant.setProductId(variant.getProduct().getProductID());
+        }
+
+        Page<ProductVariant> variantPage = variantService.getAll(PageRequest.of(page, size));
+        List<Product> products = loadProductsWithStorages();
+
         model.addAttribute("variant", variant);
         model.addAttribute("products", products);
-        model.addAttribute("variants", variantService.getAll());
+        model.addAttribute("variants", variantPage.getContent());
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", variantPage.getTotalPages());
 
         return "formVariant";
     }
 
+    // ========== LỌC THEO TRẠNG THÁI ==========
+    @GetMapping("/filter-status")
+    public String filterVariantsByStatus(
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+
+        Page<ProductVariant> variantPage = variantService.filterByStatus(status, PageRequest.of(page, size));
+        List<Product> products = loadProductsWithStorages();
+
+        model.addAttribute("variant", new ProductVariant());
+        model.addAttribute("variants", variantPage.getContent());
+        model.addAttribute("products", products);
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("status", status);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", variantPage.getTotalPages());
+
+        return "formVariant";
+    }
+
+    // ========== HÀM CHUNG: LOAD PRODUCTS KÈM STORAGES ==========
+    private List<Product> loadProductsWithStorages() {
+        List<Product> products = productService.getAll();
+        for (Product p : products) {
+            p.setStorages(variantService.findStoragesByProductId(p.getProductID()));
+        }
+        return products;
+    }
 }

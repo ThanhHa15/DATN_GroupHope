@@ -8,12 +8,14 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "Product_variants")
+
 public class ProductVariant {
 
     @Id
@@ -25,6 +27,7 @@ public class ProductVariant {
     private Product product;
 
     @Column(length = 50, nullable = false)
+    @NotBlank(message = "Vui lòng chọn màu!")
     private String color;
 
     @Column(length = 20, nullable = false)

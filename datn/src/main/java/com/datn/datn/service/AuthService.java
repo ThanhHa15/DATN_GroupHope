@@ -1,7 +1,6 @@
 package com.datn.datn.service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.mail.javamail.JavaMailSender;
@@ -66,45 +65,53 @@ public class AuthService {
     }
 
     @Transactional
-    public boolean verifyOtp(String email, String otp) {
-        try {
-            Member member = entityManager.createQuery(
-                    "SELECT m FROM Member m WHERE m.email = :email", Member.class)
-                    .setParameter("email", email)
-                    .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                    .getSingleResult();
+public boolean verifyOtp(String email, String otp) {
+    try {
+        Member member = entityManager.createQuery(
+                "SELECT m FROM Member m WHERE m.email = :email", Member.class)
+                .setParameter("email", email)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .getSingleResult();
 
-            if (member == null || !otp.equals(member.getOtp())) {
-                return false;
-            }
+        if (member == null) return false;
 
-            member.setVerified(true);
-            member.setOtp(null);
-            memberRepository.save(member);
-
-            return true;
-
-        } catch (NoResultException e) {
-            log.error("Member not found: {}", email);
+        // Nếu OTP sai => cho nhập lại, không xóa
+        if (!otp.equals(member.getOtp())) {
             return false;
-        } catch (Exception e) {
-            log.error("Verification failed for email: {}", email, e);
-            throw new RuntimeException("Xác thực thất bại", e);
         }
+
+        // OTP đúng => xác thực thành công
+        member.setVerified(true);
+        member.setOtp(null); // clear OTP sau khi thành công
+        memberRepository.save(member);
+        return true;
+
+    } catch (NoResultException e) {
+        log.error("Member not found: {}", email);
+        return false;
+    } catch (Exception e) {
+        log.error("Verification failed for email: {}", email, e);
+        throw new RuntimeException("Xác thực thất bại", e);
     }
+}
+
 
     public String generateOtp() {
         return String.valueOf(100000 + new Random().nextInt(900000));
     }
 
     public void sendOtp(String email) {
-        String otp = generateOtp();
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Email không tồn tại"));
 
-        member.setOtp(otp);
-        memberRepository.save(member);
-        sendOtpEmail(email, otp);
+        String otp = member.getOtp(); // ✅ Lấy OTP đã lưu sẵn trong DB
+        if (otp == null) {
+            otp = generateOtp(); // Nếu DB chưa có OTP thì mới tạo mới
+            member.setOtp(otp);
+            memberRepository.save(member);
+        }
+
+        sendOtpEmail(email, otp); // ✅ Gửi đúng OTP đã lưu trong DB
     }
 
     private void sendOtpEmail(String email, String otp) {

@@ -13,6 +13,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class ProductVariantServiceImpl implements ProductVariantService {
@@ -164,6 +166,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
             save(variant);
         }
     }
+
     @Override
     public void updateDiscount(Integer variantId, float discount, LocalDate start, LocalDate end) {
         ProductVariant variant = getById(variantId);
@@ -181,6 +184,49 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 variant.setDiscountedPrice(BigDecimal.valueOf(variant.getPrice()));
             }
             save(variant);
+        }
+    }
+
+    // ----------------- PHẦN MỚI -----------------
+    @Override
+    public Page<ProductVariant> getAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    @Override
+    public Page<ProductVariant> searchVariantsByName(String keyword, Pageable pageable) {
+        // Tìm cả theo màu và tên sản phẩm
+        return repo.searchByNameOrColor(keyword, pageable);
+    }
+
+    @Override
+    public Page<ProductVariant> getByProductId(Integer productId, Pageable pageable) {
+        return repo.findByProduct_ProductID(productId, pageable);
+    }
+
+    @Override
+    public Page<ProductVariant> filterByCategory(Integer categoryId, Pageable pageable) {
+        return repo.findByCategory(categoryId, pageable);
+    }
+
+    // @Override
+    // public Page<ProductVariant> getByStatus(String status, Pageable pageable) {
+    // return repo.findByStatus(status, pageable);
+    // }
+    // ----------------- HẾT PHẦN MỚI -----------------
+
+    @Override
+    public Page<ProductVariant> filterByStatus(String status, Pageable pageable) {
+        if (status == null || status.isEmpty()) {
+            return repo.findAll(pageable);
+        }
+
+        if (status.equals("het")) {
+            return repo.findOutOfStock(pageable);
+        } else if (status.equals("con")) {
+            return repo.findInStock(pageable);
+        } else {
+            return repo.findAll(pageable);
         }
     }
 

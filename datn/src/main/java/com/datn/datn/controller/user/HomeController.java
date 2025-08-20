@@ -289,14 +289,16 @@ public class HomeController {
             boolean isVerified = authService.verifyOtp(email, otp);
             if (isVerified) {
                 redirectAttributes.addFlashAttribute("success", "Xác thực thành công! Vui lòng đăng nhập.");
-                return "redirect:/login"; // Chuyển hướng đến trang đăng nhập
+                return "redirect:/login";
             } else {
                 redirectAttributes.addFlashAttribute("error", "Mã OTP không hợp lệ");
-                return "redirect:/otp?email=" + email; // Quay lại trang OTP nếu sai
+                redirectAttributes.addFlashAttribute("email", email); // Giữ lại email
+                return "redirect:/otp";
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi hệ thống khi xác thực OTP: " + e.getMessage());
-            return "redirect:/otp?email=" + email;
+            redirectAttributes.addFlashAttribute("email", email); // Giữ lại email
+            return "redirect:/otp";
         }
     }
 

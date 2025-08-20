@@ -2,7 +2,8 @@ package com.datn.datn.service;
 
 import com.datn.datn.model.Product;
 import com.datn.datn.model.ProductVariant;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -42,4 +43,20 @@ public interface ProductVariantService {
 
     void updateDiscount(Integer variantId, float discount, LocalDate start, LocalDate end);
 
+    // Hàm phân trang
+    Page<ProductVariant> getAll(Pageable pageable);
+    // lọc theo danh mục
+    // Page<ProductVariant> getByCategoryId(Integer categoryId, Pageable pageable);
+
+    // Tìm kiếm theo tên và màu
+    Page<ProductVariant> searchVariantsByName(String keyword, Pageable pageable);
+
+    Page<ProductVariant> getByProductId(Integer productId, Pageable pageable);
+
+    // Page<ProductVariant> getByStatus(String status, Pageable pageable);
+    // Danh mục sản phẩm
+    Page<ProductVariant> filterByCategory(Integer categoryId, Pageable pageable);
+
+    // Lấy các phiên bản theo trạng thái
+    Page<ProductVariant> filterByStatus(String status, Pageable pageable);
 }
