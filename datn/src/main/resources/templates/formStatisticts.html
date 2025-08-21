@@ -437,39 +437,31 @@
         <h1 style="font-size: 23px; margin-bottom: 30px;">Bảng Doanh thu</h1>
         <!-- Bộ lọc thời gian -->
         <div class="bg-white p-4 rounded-lg shadow mb-5">
-            <div class="flex flex-wrap items-end gap-4">
-                <!-- Ngày bắt đầu -->
+            <form method="get" action="/statistics" class="flex flex-wrap items-end gap-4">
                 <div>
-                    <label for="startDate" class="block text-sm font-medium text-gray-700">Ngày bắt
-                        đầu</label>
-                    <input type="date" id="startDate" name="startDate"
-                        class="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <label for="startDate" class="block text-sm font-medium text-gray-700">Ngày bắt đầu</label>
+                    <input type="date" id="startDate" name="startDate" th:value="${startDate}"
+                        class="mt-1 block w-48 border-gray-300 rounded-md shadow-sm">
                 </div>
-
-                <!-- Ngày kết thúc -->
                 <div>
-                    <label for="endDate" class="block text-sm font-medium text-gray-700">Ngày kết
-                        thúc</label>
-                    <input type="date" id="endDate" name="endDate"
-                        class="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <label for="endDate" class="block text-sm font-medium text-gray-700">Ngày kết thúc</label>
+                    <input type="date" id="endDate" name="endDate" th:value="${endDate}"
+                        class="mt-1 block w-48 border-gray-300 rounded-md shadow-sm">
                 </div>
-
-                <!-- Nút lọc -->
                 <div>
-                    <button
-                        class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md shadow hover:bg-blue-700 transition">
+                    <button type="submit"
+                        class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md shadow hover:bg-blue-700">
                         Lọc
                     </button>
                 </div>
-
-                <!-- Nút reset -->
-                <div>
-                    <button
-                        class="px-5 py-2 bg-gray-300 text-gray-800 font-medium rounded-md shadow hover:bg-gray-400 transition">
+                <div style="margin-bottom: 10px;">
+                    <a href="/statistics"
+                        class="px-5 py-2 mb-10 bg-gray-300 text-gray-800 font-medium rounded-md shadow hover:bg-gray-400">
                         Xóa bộ lọc
-                    </button>
+                    </a>
                 </div>
-            </div>
+            </form>
+
         </div>
 
         <!-- Bảng thống kê đơn hàng -->
@@ -490,56 +482,70 @@
                 </thead>
 
                 <tbody class="divide-y divide-gray-200 text-sm text-gray-800">
-                    <!-- Ví dụ một dòng dữ liệu -->
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-4 py-3 text-left pl-6 align-middle">1</td>
-                        <td class="px-4 py-3 font-medium text-left text-blue-500 hover:underline cursor-pointer">DH001
-                        </td>
-                        <td class="px-4 py-3 text-left">2025-08-21</td>
-                        <td class="px-4 py-3 align-middle text-left">
-                            <div class="font-medium">Nguyễn Văn A</div>
-                            <div class="text-gray-500 text-sm">0987654321</div>
-                            <div class="text-gray-500 text-sm truncate">email@example.com</div>
-                        </td>
+                    <tr th:each="data, iterStat : ${orderDataList}" class="hover:bg-gray-50 transition">
+                        <td th:text="${iterStat.index + 1}" class="px-4 py-3 pl-6 text-left"></td>
+                        <td th:text="${data.order.orderCode}"
+                            class="px-4 py-3 text-left pl-0 font-medium text-blue-500 hover:underline"></td>
+                        <td th:text="${#temporals.format(data.order.orderDate, 'dd/MM/yyyy')}" class="px-4 py-3 text-left"></td>
                         <td class="px-4 py-3 text-left">
-                            <div class="flex justify-between"><span>Giá gốc:</span><span>2.000.000₫</span></div>
-                            <div class="flex justify-between"><span>KM:</span><span
-                                    class="text-red-500">-200.000₫</span></div>
+                            <div th:text="${data.order.member.fullname}" class="font-medium"></div>
+                            <div th:text="${data.order.member.phone}" class="text-gray-500 text-sm"></div>
+                            <div th:text="${data.order.member.email}" class="text-gray-500 text-sm truncate"></div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex justify-between"><span>Giá gốc:</span><span
+                                    th:text="${#numbers.formatDecimal(data.productTotal, 1, 'COMMA', 0, 'POINT') + '₫'}"></span>
+                            </div>
+                            <div class="flex justify-between"><span>KM:</span><span class="text-red-500"
+                                    th:text="'-' + ${#numbers.formatDecimal(data.discountAmount, 1, 'COMMA', 0, 'POINT') + '₫'}"></span>
+                            </div>
                             <div class="flex justify-between"><span>Giá cuối:</span><span
-                                    class="text-green-600 font-semibold">1.800.000₫</span></div>
+                                    class="text-green-600 font-semibold"
+                                    th:text="${#numbers.formatDecimal(data.grandTotal, 1, 'COMMA', 0, 'POINT') + '₫'}"></span>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
+
             </table>
         </div>
         <!-- Pagination -->
         <div class="flex items-center justify-between mt-4">
             <div class="text-sm text-gray-500">
-                Hiển thị <span></span>-<span></span>
+                Hiển thị
+                <span th:text="${(currentPage - 1) * 10 + 1}"></span> -
+                <span th:text="${(currentPage - 1) * 10 + orderDataList.size()}"></span>
                 của <span th:text="${totalItems}"></span> đơn hàng
             </div>
+
             <div class="flex space-x-2">
                 <!-- Nút Previous -->
-                <a
+                <a th:if="${currentPage > 1}"
+                    th:href="@{/statistics(page=${currentPage - 1}, size=10, startDate=${startDate}, endDate=${endDate})}"
                     class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap">
                     Trước
                 </a>
 
                 <!-- Các nút trang -->
-                <a class="px-3 py-5 border rounded-button whitespace-nowrap" style="padding: 10px;">
-                    <span></span>
+                <a th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    th:href="@{/statistics(page=${i}, size=10, startDate=${startDate}, endDate=${endDate})}"
+                    th:text="${i}"
+                    th:classappend="${i == currentPage} ? 'bg-blue-500 text-white' : 'border-gray-300 text-gray-700'"
+                    class="px-3 py-1 border rounded-button whitespace-nowrap">
                 </a>
 
                 <!-- Nút Next -->
-                <a
+                <a th:if="${currentPage < totalPages}"
+                    th:href="@{/statistics(page=${currentPage + 1}, size=10, startDate=${startDate}, endDate=${endDate})}"
                     class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">
                     Tiếp
                 </a>
             </div>
         </div>
+
     </div>
 
-    
+
 
     <script> //biểu đồ
         // Hàm lấy dữ liệu từ server

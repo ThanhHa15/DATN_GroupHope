@@ -21,11 +21,6 @@ public class StatisticsController {
     @Autowired
     private StatisticsService statisticsService;
 
-    @GetMapping("/statistics")
-    public String statistics() {
-        return "formStatisticts";
-    }
-
     // biểu đồ tuần
     @GetMapping("/dailyByWeek")
     @ResponseBody

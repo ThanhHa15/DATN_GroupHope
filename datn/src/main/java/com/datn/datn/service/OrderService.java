@@ -3,6 +3,7 @@ package com.datn.datn.service;
 import com.datn.datn.model.Member;
 import com.datn.datn.model.Order;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -40,4 +41,7 @@ public interface OrderService {
     Page<Order> getOrdersByMember(Long memberId, Pageable pageable);
 
     Page<Order> searchOrdersByMember(Long memberId, String keyword, Pageable pageable);
+
+    List<Order> getOrdersByDateRange(LocalDate start, LocalDate end);
+
 }

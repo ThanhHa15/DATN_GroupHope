@@ -1,5 +1,6 @@
 package com.datn.datn.controller.admin;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -220,4 +222,57 @@ public class OrderAdminController {
         }
         return "redirect:/admin-order"; // quay lại danh sách
     }
+
+    @GetMapping("/statistics")
+    public String statisticsPage(
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+
+        double shippingFee = 40000;
+
+        // Chỉ lấy đơn hàng có paymentStatus = "Đã thanh toán"
+        Specification<Order> spec = (root, query, cb) -> cb.equal(root.get("paymentStatus"), "Đã thanh toán");
+
+        // Nếu có lọc theo ngày thì thêm điều kiện
+        if (startDate != null && endDate != null) {
+            spec = spec.and((root, query, cb) -> cb.between(
+                    root.get("orderDate"),
+                    startDate.atStartOfDay(),
+                    endDate.atTime(23, 59, 59)));
+        }
+
+        // Phân trang và sắp xếp
+        PageRequest pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
+        Page<Order> orderPage = orderService.findAll(spec, pageable);
+
+        // Xử lý dữ liệu đơn hàng
+        List<Map<String, Object>> orderDataList = new ArrayList<>();
+        for (Order order : orderPage.getContent()) {
+            Map<String, Object> data = new HashMap<>();
+            double productTotal = order.getTotalPrice() - shippingFee
+                    + (order.getDiscountAmount() != null ? order.getDiscountAmount() : 0);
+            double discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : 0;
+            double grandTotal = order.getTotalPrice();
+
+            data.put("order", order);
+            data.put("productTotal", productTotal);
+            data.put("discountAmount", discountAmount);
+            data.put("grandTotal", grandTotal);
+
+            orderDataList.add(data);
+        }
+
+        model.addAttribute("orderDataList", orderDataList);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("totalItems", orderPage.getTotalElements());
+        model.addAttribute("currentPage", orderPage.getNumber() + 1);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
+
+        return "formStatisticts";
+    }
+
 }

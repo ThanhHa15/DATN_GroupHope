@@ -10,7 +10,6 @@ import com.datn.datn.service.OrderService;
 
 import jakarta.persistence.EntityNotFoundException;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -193,5 +192,18 @@ public class OrderServiceImpl implements OrderService {
     public Page<Order> searchOrdersByMember(Long memberId, String keyword, Pageable pageable) {
         return orderRepository.findByMemberIdAndOrderCodeContainingOrAddressContaining(memberId, keyword, keyword,
                 pageable);
+    }
+
+    @Override
+    public List<Order> getOrdersByDateRange(LocalDate start, LocalDate end) {
+        if (start != null && end != null) {
+            return orderRepository.findByOrderDateBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
+        } else if (start != null) {
+            return orderRepository.findByOrderDateAfter(start.atStartOfDay());
+        } else if (end != null) {
+            return orderRepository.findByOrderDateBefore(end.atTime(23, 59, 59));
+        } else {
+            return orderRepository.findAll();
+        }
     }
 }
