@@ -175,8 +175,6 @@
             margin: 0;
         }
 
-
-
         .stats-container {
             display: flex;
             gap: 20px;
@@ -273,6 +271,26 @@
             text-align: center;
             margin-top: 5px;
         }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 
 </head>
@@ -287,6 +305,9 @@
         <div class="container" style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px">
             <!-- Card 1 - Tổng doanh thu -->
             <div class="stat-card" id="revenue-card">
+                <div class="loading-overlay" id="revenue-loading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
                 <img src="https://cdn-icons-png.flaticon.com/512/263/263115.png" class="stat-icon" />
                 <div class="stat-title">Tổng doanh thu</div>
                 <div class="stat-value">
@@ -297,31 +318,43 @@
                 <div class="error-message" id="revenue-error"></div>
             </div>
 
-            <!-- Card 2 -->
-            <div class="stat-card">
+            <!-- Card 2 - Tổng đơn hàng -->
+            <div class="stat-card" id="orders-card">
+                <div class="loading-overlay" id="orders-loading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
                 <img src="https://cdn-icons-png.flaticon.com/512/1040/1040230.png" class="stat-icon" />
                 <div class="stat-title">Tổng đơn hàng</div>
-                <div class="stat-value">5</div>
-                <div class="stat-change red">↓ -80.00%</div>
+                <div class="stat-value" id="total-orders">Đang tải...</div>
+                <div class="stat-change red" id="orders-change">↓ -80.00%</div>
                 <a href="#" class="stat-link">Xem tất cả đơn hàng</a>
+                <div class="error-message" id="orders-error"></div>
             </div>
 
-            <!-- Card 3 -->
-            <div class="stat-card">
+            <!-- Card 3 - Tổng số khách hàng -->
+            <div class="stat-card" id="customers-card">
+                <div class="loading-overlay" id="customers-loading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
                 <img src="https://cdn-icons-png.flaticon.com/512/456/456212.png" class="stat-icon" />
                 <div class="stat-title">Tổng số khách hàng</div>
-                <div class="stat-value">15</div>
-                <div class="stat-change blue">↑ +80.00%</div>
+                <div class="stat-value" id="total-customers">Đang tải...</div>
+                <div class="stat-change blue" id="customers-change">↑ +0.00%</div>
                 <a href="#" class="stat-link">Xem tất cả khách hàng</a>
+                <div class="error-message" id="customers-error"></div>
             </div>
 
-            <!-- Card 4 -->
-            <div class="stat-card">
+            <!-- Card 4 - Tổng số sản phẩm -->
+            <div class="stat-card" id="products-card">
+                <div class="loading-overlay" id="products-loading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
                 <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" class="stat-icon" />
                 <div class="stat-title">Tổng số sản phẩm</div>
-                <div class="stat-value">20</div>
-                <div class="stat-change green">↑ +80.00%</div>
+                <div class="stat-value" id="total-products">Đang tải...</div>
+                <div class="stat-change green" id="products-change">↑ +0.00%</div>
                 <a href="#" class="stat-link">Xem tất cả sản phẩm</a>
+                <div class="error-message" id="products-error"></div>
             </div>
         </div>
 
@@ -733,134 +766,6 @@
         });
     </script>
 
-    <script> // Thống kê dashboard
-        // Hàm định dạng số tiền
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-            }).format(amount);
-        }
-
-        // Hàm định dạng số
-        function formatNumber(number) {
-            return new Intl.NumberFormat('vi-VN').format(number);
-        }
-
-        // Hàm cập nhật thẻ card
-        function updateStatCards(data) {
-            // Card Doanh thu
-            const revenueElement = document.querySelector('.stat-card:nth-child(1) .stat-value');
-            const revenueChangeElement = document.querySelector('.stat-card:nth-child(1) .stat-change');
-
-            if (revenueElement && data.totalRevenue !== undefined) {
-                revenueElement.innerHTML = `${formatNumber(data.totalRevenue)}<span class="underline">đ</span>`;
-
-                if (data.revenueChangePercent !== undefined) {
-                    const changePercent = parseFloat(data.revenueChangePercent);
-                    const isPositive = changePercent >= 0;
-                    revenueChangeElement.className = `stat-change ${isPositive ? 'green' : 'red'}`;
-                    revenueChangeElement.innerHTML = `${isPositive ? '↑' : '↓'} ${Math.abs(changePercent).toFixed(2)}%`;
-                }
-            }
-
-            // Card Đơn hàng
-            const ordersElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
-            const ordersChangeElement = document.querySelector('.stat-card:nth-child(2) .stat-change');
-
-            if (ordersElement && data.totalOrders !== undefined) {
-                ordersElement.textContent = formatNumber(data.totalOrders);
-
-                if (data.ordersChangePercent !== undefined) {
-                    const changePercent = parseFloat(data.ordersChangePercent);
-                    const isPositive = changePercent >= 0;
-                    ordersChangeElement.className = `stat-change ${isPositive ? 'green' : 'red'}`;
-                    ordersChangeElement.innerHTML = `${isPositive ? '↑' : '↓'} ${Math.abs(changePercent).toFixed(2)}%`;
-                }
-            }
-
-            // Card Khách hàng
-            const customersElement = document.querySelector('.stat-card:nth-child(3) .stat-value');
-            const customersChangeElement = document.querySelector('.stat-card:nth-child(3) .stat-change');
-
-            if (customersElement && data.totalCustomers !== undefined) {
-                customersElement.textContent = formatNumber(data.totalCustomers);
-
-                if (data.customersChangePercent !== undefined) {
-                    const changePercent = parseFloat(data.customersChangePercent);
-                    const isPositive = changePercent >= 0;
-                    customersChangeElement.className = `stat-change ${isPositive ? 'blue' : 'red'}`;
-                    customersChangeElement.innerHTML = `${isPositive ? '↑' : '↓'} ${Math.abs(changePercent).toFixed(2)}%`;
-                }
-            }
-
-            // Card Sản phẩm
-            const productsElement = document.querySelector('.stat-card:nth-child(4) .stat-value');
-            const productsChangeElement = document.querySelector('.stat-card:nth-child(4) .stat-change');
-
-            if (productsElement && data.totalProducts !== undefined) {
-                productsElement.textContent = formatNumber(data.totalProducts);
-
-                // Luôn hiển thị 0% hoặc có thể ẩn phần trăm thay đổi
-                productsChangeElement.className = 'stat-change blue';
-                productsChangeElement.innerHTML = '→ 0%';
-
-                // Hoặc nếu muốn ẩn hoàn toàn:
-                // productsChangeElement.style.display = 'none';
-            }
-        }
-
-        // Hàm load dữ liệu thống kê dashboard
-        async function loadDashboardStats() {
-            try {
-                const response = await fetch('/dashboardStats');
-                const data = await response.json();
-                console.log('Dashboard stats:', data);
-                updateStatCards(data);
-            } catch (error) {
-                console.error('Lỗi khi tải thống kê dashboard:', error);
-            }
-        }
-
-        // Load dữ liệu ban đầu
-        document.addEventListener('DOMContentLoaded', async function () {
-            try {
-                // Load thống kê dashboard
-                await loadDashboardStats();
-
-                // Các phần code khác...
-                await loadWeekOptions();
-
-                // Load dữ liệu tháng (năm hiện tại)
-                const today = new Date();
-                const currentYear = today.getFullYear();
-                document.getElementById('yearSelectWeek').value = currentYear;
-                document.getElementById('yearSelect').value = currentYear;
-
-                const monthlyData = await fetchData('/monthlyByDate', {
-                    startDate: `${currentYear}-01-01T00:00:00`,
-                    endDate: `${currentYear}-12-31T23:59:59`
-                });
-                renderYearlyChart(monthlyData, 'revenue');
-
-                // Load dữ liệu tuần hiện tại
-                const currentWeek = getWeekNumber(today);
-                document.getElementById('weekSelect').value = currentWeek;
-
-                const dailyData = await fetchData('/dailyByWeek', {
-                    year: currentYear,
-                    weekNumber: currentWeek
-                });
-                renderWeeklyChart(dailyData, 'revenue', {
-                    weekNumber: currentWeek,
-                    year: currentYear
-                });
-
-            } catch (error) {
-                console.error('Lỗi khi tải dữ liệu:', error);
-            }
-        });
-    </script>
 
     <script> //link card
         // Thêm sự kiện click cho các link
@@ -888,13 +793,58 @@
 
     </script>
 
-    <script> // Hàm cập nhật thẻ card
-        // Hàm định dạng số tiền
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-            }).format(amount);
+    <script>
+        // Hàm load dữ liệu thống kê dashboard
+        async function loadDashboardStats() {
+            try {
+                showLoading(true);
+                console.log('Fetching dashboard data from /dashboardd');
+                const response = await fetch('/dashboardd');
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Dữ liệu nhận được từ server:', data);
+
+                // Kiểm tra từng giá trị
+                console.log('totalRevenue:', data.totalRevenue, 'type:', typeof data.totalRevenue);
+                console.log('totalOrders:', data.totalOrders, 'type:', typeof data.totalOrders);
+                console.log('totalCustomers:', data.totalCustomers, 'type:', typeof data.totalCustomers);
+                console.log('totalProducts:', data.totalProducts, 'type:', typeof data.totalProducts);
+
+                // Cập nhật các thẻ card với dữ liệu nhận được
+                updateStatCards(data);
+                showLoading(false);
+
+            } catch (error) {
+                console.error('Lỗi khi load dashboard:', error);
+                document.getElementById('revenue-error').textContent = 'Không thể tải doanh thu';
+                document.getElementById('orders-error').textContent = 'Không thể tải đơn hàng';
+                document.getElementById('customers-error').textContent = 'Không thể tải khách hàng';
+                document.getElementById('products-error').textContent = 'Không thể tải sản phẩm';
+                showLoading(false);
+            }
+        }
+
+        // Hiển thị/ẩn trạng thái loading
+        function showLoading(show) {
+            const loadingElements = [
+                'revenue-loading',
+                'orders-loading',
+                'customers-loading',
+                'products-loading'
+            ];
+
+            loadingElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.display = show ? 'flex' : 'none';
+                }
+            });
         }
 
         // Hàm định dạng số
@@ -904,148 +854,180 @@
 
         // Hàm xử lý dữ liệu BigDecimal từ Java
         function parseBigDecimal(bigDecimal) {
-            if (!bigDecimal) return 0;
+            if (bigDecimal === undefined || bigDecimal === null) return 0;
 
-            // Nếu là số thông thường
-            if (typeof bigDecimal === 'number') {
-                return bigDecimal;
-            }
+            // Nếu là số thì trả về luôn
+            if (typeof bigDecimal === 'number') return bigDecimal;
 
-            // Nếu là chuỗi
+            // Nếu là chuỗi số
             if (typeof bigDecimal === 'string') {
-                return parseFloat(bigDecimal.replace(/,/g, '')) || 0;
+                // Thử parse thành số
+                const parsed = parseFloat(bigDecimal.replace(/[^\d.-]/g, ''));
+                return isNaN(parsed) ? 0 : parsed;
             }
 
-            // Nếu là object (BigDecimal từ Java)
+            // Xử lý object (có thể là BigDecimal từ Java)
             if (typeof bigDecimal === 'object') {
-                // Kiểm tra định dạng BigDecimal phổ biến
-                if (bigDecimal.intVal !== undefined && Array.isArray(bigDecimal.intVal)) {
-                    // Xử lý mảng intVal - chuyển đổi thành số
-                    let numberStr = '';
-                    for (let i = 0; i < bigDecimal.intVal.length; i++) {
-                        numberStr += bigDecimal.intVal[i].toString();
-                    }
+                // Kiểm tra các trường phổ biến của BigDecimal trong JSON
+                if (bigDecimal.number !== undefined) {
+                    return parseBigDecimal(bigDecimal.number);
+                }
+                if (bigDecimal.value !== undefined) {
+                    return parseBigDecimal(bigDecimal.value);
+                }
+                if (bigDecimal.amount !== undefined) {
+                    return parseBigDecimal(bigDecimal.amount);
+                }
 
-                    // Áp dụng scale (số chữ số thập phân)
-                    const scale = bigDecimal.scale || 0;
-                    if (scale > 0 && numberStr.length > scale) {
-                        const integerPart = numberStr.slice(0, -scale);
-                        const decimalPart = numberStr.slice(-scale);
-                        return parseFloat(integerPart + '.' + decimalPart);
-                    } else {
-                        return parseFloat(numberStr);
+                // Xử lý intVal array nếu có (định dạng Java BigDecimal)
+                if (bigDecimal.intVal !== undefined && Array.isArray(bigDecimal.intVal)) {
+                    try {
+                        // Chuyển mảng intVal thành chuỗi số
+                        let numberStr = '';
+                        for (let i = 0; i < bigDecimal.intVal.length; i++) {
+                            numberStr += Math.abs(bigDecimal.intVal[i]).toString().padStart(9, '0');
+                        }
+
+                        const scale = bigDecimal.scale || 0;
+                        let result;
+
+                        if (scale > 0 && numberStr.length > scale) {
+                            const integerPart = numberStr.slice(0, -scale);
+                            const decimalPart = numberStr.slice(-scale);
+                            result = parseFloat(integerPart + '.' + decimalPart);
+                        } else {
+                            result = parseInt(numberStr);
+                        }
+
+                        // Xử lý số âm
+                        if (bigDecimal.intVal[0] < 0) {
+                            result = -result;
+                        }
+
+                        return result;
+                    } catch (e) {
+                        console.error('Error parsing BigDecimal intVal:', e);
+                        return 0;
                     }
-                } else if (bigDecimal.value !== undefined) {
-                    // Nếu có trường value
-                    return typeof bigDecimal.value === 'string' ?
-                        parseFloat(bigDecimal.value) : bigDecimal.value;
                 }
             }
 
             return 0;
         }
 
-
         // Hàm cập nhật thẻ card
         function updateStatCards(data) {
             console.log('Updating cards with data:', data);
 
             // Card Doanh thu
-            const revenueElement = document.getElementById('total-revenue');
-            const revenueChangeElement = document.getElementById('revenue-change');
-            const revenueErrorElement = document.getElementById('revenue-error');
-            
-            if (revenueElement) {
-                let revenueValue = 0;
-                
-                // Xử lý dữ liệu doanh thu
-                if (data.totalRevenue !== undefined && data.totalRevenue !== null) {
-                    revenueValue = parseBigDecimal(data.totalRevenue);
-                    revenueElement.textContent = formatNumber(revenueValue);
-                    revenueErrorElement.textContent = '';
-                } else {
-                    revenueElement.textContent = '0';
-                    revenueErrorElement.textContent = 'Không có dữ liệu doanh thu';
-                }
-                
-                // Xử lý phần trăm thay đổi
-                let changePercent = 0;
-                if (data.revenueChangePercent !== undefined && data.revenueChangePercent !== null) {
-                    changePercent = typeof data.revenueChangePercent === 'number' ? 
-                                   data.revenueChangePercent : parseFloat(data.revenueChangePercent) || 0;
-                }
-                
-                const isPositive = changePercent >= 0;
-                revenueChangeElement.className = `stat-change ${isPositive ? 'green' : 'red'}`;
-                revenueChangeElement.innerHTML = `${isPositive ? '↑' : '↓'} ${Math.abs(changePercent).toFixed(2)}%`;
-            }
+            updateCardValue(
+                'total-revenue',
+                'revenue-change',
+                'revenue-error',
+                data.totalRevenue,
+                data.revenueChangePercent,
+                true,
+                'đ'
+            );
 
             // Card Đơn hàng
-            const ordersElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
-            const ordersChangeElement = document.querySelector('.stat-card:nth-child(2) .stat-change');
-
-            if (ordersElement && data.totalOrders !== undefined) {
-                ordersElement.textContent = formatNumber(data.totalOrders);
-
-                let ordersChangePercent = 0;
-                if (data.ordersChangePercent !== undefined && data.ordersChangePercent !== null) {
-                    ordersChangePercent = typeof data.ordersChangePercent === 'number' ?
-                        data.ordersChangePercent : parseFloat(data.ordersChangePercent) || 0;
-                }
-
-                const isPositive = ordersChangePercent >= 0;
-                ordersChangeElement.className = `stat-change ${isPositive ? 'green' : 'red'}`;
-                ordersChangeElement.innerHTML = `${isPositive ? '↑' : '↓'} ${Math.abs(ordersChangePercent).toFixed(2)}%`;
-            }
+            updateCardValue(
+                'total-orders',
+                'orders-change',
+                'orders-error',
+                data.totalOrders,
+                data.ordersChangePercent,
+                false,
+                ''
+            );
 
             // Card Khách hàng
-            const customersElement = document.querySelector('.stat-card:nth-child(3) .stat-value');
-            const customersChangeElement = document.querySelector('.stat-card:nth-child(3) .stat-change');
-
-            if (customersElement && data.totalCustomers !== undefined) {
-                customersElement.textContent = formatNumber(data.totalCustomers);
-
-                let customersChangePercent = 0;
-                if (data.customersChangePercent !== undefined && data.customersChangePercent !== null) {
-                    customersChangePercent = typeof data.customersChangePercent === 'number' ?
-                        data.customersChangePercent : parseFloat(data.customersChangePercent) || 0;
-                }
-
-                const isPositive = customersChangePercent >= 0;
-                customersChangeElement.className = `stat-change ${isPositive ? 'blue' : 'red'}`;
-                customersChangeElement.innerHTML = `${isPositive ? '↑' : '↓'} ${Math.abs(customersChangePercent).toFixed(2)}%`;
-            }
+            updateCardValue(
+                'total-customers',
+                'customers-change',
+                'customers-error',
+                data.totalCustomers,
+                data.customersChangePercent,
+                false,
+                ''
+            );
 
             // Card Sản phẩm
-            const productsElement = document.querySelector('.stat-card:nth-child(4) .stat-value');
-            const productsChangeElement = document.querySelector('.stat-card:nth-child(4) .stat-change');
+            updateCardValue(
+                'total-products',
+                'products-change',
+                'products-error',
+                data.totalProducts,
+                data.productsChangePercent,
+                false,
+                ''
+            );
+        }
 
-            if (productsElement && data.totalProducts !== undefined) {
-                productsElement.textContent = formatNumber(data.totalProducts);
+        // Hàm cập nhật giá trị cho từng card
+        function updateCardValue(valueElementId, changeElementId, errorElementId, value, changePercent, isCurrency, suffix) {
+            const valueElement = document.getElementById(valueElementId);
+            const changeElement = document.getElementById(changeElementId);
+            const errorElement = document.getElementById(errorElementId);
 
-                let productsChangePercent = 0;
-                if (data.productsChangePercent !== undefined && data.productsChangePercent !== null) {
-                    productsChangePercent = typeof data.productsChangePercent === 'number' ?
-                        data.productsChangePercent : parseFloat(data.productsChangePercent) || 0;
+            if (!valueElement) return;
+
+            try {
+                console.log(`Updating ${valueElementId}:`, value, changePercent);
+
+                // Xử lý giá trị
+                let formattedValue = '0';
+                if (value !== undefined && value !== null) {
+                    let numValue;
+
+                    // Xử lý đơn giản - chuyển đổi thành số
+                    if (typeof value === 'number') {
+                        numValue = value;
+                    } else if (typeof value === 'string') {
+                        numValue = parseFloat(value) || 0;
+                    } else {
+                        numValue = 0;
+                    }
+
+                    formattedValue = isCurrency ?
+                        formatNumber(numValue) + suffix :
+                        formatNumber(numValue);
+
+                    errorElement.textContent = '';
+                } else {
+                    errorElement.textContent = 'Không có dữ liệu';
+                    console.warn(`No data for ${valueElementId}`);
                 }
 
-                const isPositive = productsChangePercent >= 0;
-                productsChangeElement.className = `stat-change ${isPositive ? 'green' : 'red'}`;
-                productsChangeElement.innerHTML = `${isPositive ? '↑' : '↓'} ${Math.abs(productsChangePercent).toFixed(2)}%`;
+                valueElement.textContent = formattedValue;
+
+                // Xử lý phần trăm thay đổi
+                let percentValue = 0;
+                if (changePercent !== undefined && changePercent !== null) {
+                    percentValue = typeof changePercent === 'number' ?
+                        changePercent : parseFloat(changePercent) || 0;
+                }
+
+                const isPositive = percentValue >= 0;
+                changeElement.className = `stat-change ${isPositive ? 'green' : 'red'}`;
+                changeElement.innerHTML = `${isPositive ? '↑' : '↓'} ${Math.abs(percentValue).toFixed(2)}%`;
+
+            } catch (e) {
+                console.error(`Error updating card ${valueElementId}:`, e);
+                valueElement.textContent = isCurrency ? '0' + suffix : '0';
+                errorElement.textContent = 'Lỗi dữ liệu';
             }
         }
-
-        // Hàm convert BigInteger array to number (nếu cần)
-        function parseBigInteger(intVal, scale) {
-            if (!intVal || !Array.isArray(intVal)) return 0;
-
-            // Nếu là mảng [103933000] - đơn giản
-            if (intVal.length === 1 && typeof intVal[0] === 'number') {
-                return intVal[0] / Math.pow(10, scale || 0);
-            }
-
-            return 0; // Fallback
+        // Hàm định dạng số
+        function formatNumber(number) {
+            return new Intl.NumberFormat('vi-VN').format(number);
         }
+        // Gọi hàm load dashboard stats khi trang tải xong
+        document.addEventListener('DOMContentLoaded', function () {
+            loadDashboardStats();
+
+            // Các hàm load dữ liệu khác...
+        });
     </script>
 </body>
 

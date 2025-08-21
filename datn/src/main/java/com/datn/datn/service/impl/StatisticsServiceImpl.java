@@ -90,102 +90,48 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
     }
 
-    @Override
-    public Map<String, Object> getDashboardStatistics() {
-        Map<String, Object> result = new HashMap<>();
-        result.putAll(getRevenueAndOrdersStatistics());
-        result.putAll(getCustomerStatistics());
-        result.putAll(getProductStatistics());
-        return result;
-    }
+    // @Override
+    // public Map<String, Object> getDashboardStatistics() {
+    // Map<String, Object> result = new HashMap<>();
+
+    // result.putAll(getCustomerStatistics());
+    // result.putAll(getProductStatistics());
+    // return result;
+    // }
 
     @Override
-    public Map<String, Object> getRevenueAndOrdersStatistics() {
+    public Map<String, Object> getDashboardStats() {
         Map<String, Object> result = new HashMap<>();
+
         try {
-            Object[] stats = orderRepository.getTotalRevenueAndOrders();
+            // Lấy dữ liệu tổng từ SQL Server
+            BigDecimal totalRevenue = orderRepository.getTotalRevenue();
+            Long totalOrders = orderRepository.getTotalOrders();
 
-            System.out.println("Raw stats from DB: " + Arrays.toString(stats));
-            System.out.println("Types: " +
-                    (stats[0] != null ? stats[0].getClass().getSimpleName() : "null") + ", " +
-                    (stats[1] != null ? stats[1].getClass().getSimpleName() : "null") + ", " +
-                    (stats[2] != null ? stats[2].getClass().getSimpleName() : "null") + ", " +
-                    (stats[3] != null ? stats[3].getClass().getSimpleName() : "null"));
+            // Log để kiểm tra
+            System.out.println("Total Revenue: " + totalRevenue);
+            System.out.println("Total Orders: " + totalOrders);
 
-            if (stats != null && stats.length >= 4) {
-                // SQL Server trả về BigInteger cho SUM, Long cho COUNT
-                BigInteger totalRevenueBigInt = (BigInteger) stats[0];
-                Long totalOrders = (Long) stats[1];
-                BigInteger lastMonthRevenueBigInt = (BigInteger) stats[2];
-                Long lastMonthOrders = (Long) stats[3];
+            // Chuyển đổi BigDecimal thành double để dễ xử lý trong JSON
+            result.put("totalRevenue", totalRevenue != null ? totalRevenue.doubleValue() : 0.0);
+            result.put("totalOrders", totalOrders != null ? totalOrders : 0L);
 
-                // Convert BigInteger to BigDecimal
-                BigDecimal totalRevenue = new BigDecimal(totalRevenueBigInt);
-                BigDecimal lastMonthRevenue = new BigDecimal(lastMonthRevenueBigInt);
-
-                System.out.println("Converted - Total Revenue: " + totalRevenue);
-                System.out.println("Converted - Total Orders: " + totalOrders);
-
-                result.put("totalRevenue", totalRevenue);
-                result.put("totalOrders", totalOrders);
-                result.put("lastMonthRevenue", lastMonthRevenue);
-                result.put("lastMonthOrders", lastMonthOrders);
-
-                // Tính phần trăm thay đổi
-                if (lastMonthRevenue.compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal revenueChange = totalRevenue.subtract(lastMonthRevenue)
-                            .divide(lastMonthRevenue, 4, RoundingMode.HALF_UP)
-                            .multiply(BigDecimal.valueOf(100));
-                    result.put("revenueChangePercent", revenueChange.doubleValue());
-                    System.out.println("Revenue change percent: " + revenueChange + "%");
-                } else {
-                    result.put("revenueChangePercent", 0.0);
-                    System.out.println("No last month revenue data");
-                }
-
-                if (lastMonthOrders > 0) {
-                    double ordersChangePercent = ((totalOrders - lastMonthOrders) / (double) lastMonthOrders) * 100;
-                    result.put("ordersChangePercent", ordersChangePercent);
-                    System.out.println("Orders change percent: " + ordersChangePercent + "%");
-                } else {
-                    result.put("ordersChangePercent", 0.0);
-                    System.out.println("No last month orders data");
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error in getRevenueAndOrdersStatistics: " + e.getMessage());
-            e.printStackTrace();
-            result.put("totalRevenue", BigDecimal.ZERO);
-            result.put("totalOrders", 0L);
+            // Tính phần trăm thay đổi
             result.put("revenueChangePercent", 0.0);
             result.put("ordersChangePercent", 0.0);
+
+            // Thêm dữ liệu khách hàng và sản phẩm
+            result.putAll(getCustomerStatistics());
+            result.putAll(getProductStatistics());
+
+            result.put("success", true);
+
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("errorMessage", "Lỗi khi lấy dữ liệu thống kê: " + e.getMessage());
         }
+
         return result;
-    }
-
-    // Helper methods để convert dữ liệu từ native query
-    private BigDecimal convertToBigDecimal(Object value) {
-        if (value == null)
-            return BigDecimal.ZERO;
-        if (value instanceof BigDecimal)
-            return (BigDecimal) value;
-        if (value instanceof Number)
-            return BigDecimal.valueOf(((Number) value).doubleValue());
-        if (value instanceof String)
-            return new BigDecimal((String) value);
-        return BigDecimal.ZERO;
-    }
-
-    private Long convertToLong(Object value) {
-        if (value == null)
-            return 0L;
-        if (value instanceof Long)
-            return (Long) value;
-        if (value instanceof Number)
-            return ((Number) value).longValue();
-        if (value instanceof String)
-            return Long.parseLong((String) value);
-        return 0L;
     }
 
     @Override

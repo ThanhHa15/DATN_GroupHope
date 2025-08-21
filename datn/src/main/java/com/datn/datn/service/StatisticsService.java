@@ -13,11 +13,11 @@ public interface StatisticsService {
 
     public List<Map<String, Object>> getDailyStatisticsByWeek(int year, int weekNumber); // Lấy thống kê hàng ngày theo tuần
     
-    Map<String, Object> getDashboardStatistics();
+    // Map<String, Object> getDashboardStatistics(); // Thống kê dashboard
     
-    Map<String, Object> getRevenueAndOrdersStatistics();
+    Map<String, Object> getCustomerStatistics(); // Thống kê khách hàng
     
-    Map<String, Object> getCustomerStatistics();
-    
-    Map<String, Object> getProductStatistics();
+    Map<String, Object> getProductStatistics(); // Thống kê sản phẩm
+
+    Map<String, Object> getDashboardStats(); // Thống kê dashboard cho admin
 }

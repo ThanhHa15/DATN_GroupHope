@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,22 +51,17 @@ public class StatisticsController {
         return statisticsService.getMonthlyStatisticsByDateRange(startDate, endDate);
     }
 
-    // thống kê dashboard
-    @GetMapping("/dashboardStats")
-    @ResponseBody
-    public Map<String, Object> getDashboardStatistics() {
-        Map<String, Object> result = statisticsService.getDashboardStatistics();
+    @GetMapping("/dashboardd")
+    public ResponseEntity<Map<String, Object>> getDashboardStats() {
+        Map<String, Object> stats = statisticsService.getDashboardStats();
 
-        // Debug: log dữ liệu sẽ trả về JSON
-        System.out.println("Dashboard stats to return: " + result);
-
-        // Kiểm tra kiểu dữ liệu
-        for (Map.Entry<String, Object> entry : result.entrySet()) {
-            System.out.println(entry.getKey() + " = " + entry.getValue() + " (type: " +
-                    (entry.getValue() != null ? entry.getValue().getClass().getSimpleName() : "null") + ")");
+        Boolean success = (Boolean) stats.get("success");
+        if (success != null && success) {
+            return ResponseEntity.ok(stats);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(stats);
         }
-
-        return result;
     }
 
 }
