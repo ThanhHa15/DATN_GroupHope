@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
@@ -25,6 +27,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findByCategory_CategoryID(Integer categoryId, Pageable pageable);
 
     Page<Product> findByStatus(boolean status, Pageable pageable); // Cho phân trang
-    
+
     List<Product> findByStatus(boolean status); // Cho trường hợp không phân trang
+
+    // Chỉ đếm tổng số sản phẩm active
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.status = true")
+    long countActiveProducts();
+
 }
