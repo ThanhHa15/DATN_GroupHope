@@ -299,7 +299,7 @@
     <div th:replace="nav :: na"></div>
     <div th:replace="header :: header"></div>
 
-    <div style="margin-left: 300px; margin-top: 70px;">
+    <div style="margin-left: 300px; margin-top: 70px; margin-bottom: 40px;">
         <h1 style="font-size: 23px; margin-bottom: 30px;">Thống kê Doanh thu</h1>
 
         <div class="container" style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px">
@@ -434,43 +434,112 @@
             </div>
         </div>
 
+        <h1 style="font-size: 23px; margin-bottom: 30px;">Bảng Doanh thu</h1>
+        <!-- Bộ lọc thời gian -->
+        <div class="bg-white p-4 rounded-lg shadow mb-5">
+            <div class="flex flex-wrap items-end gap-4">
+                <!-- Ngày bắt đầu -->
+                <div>
+                    <label for="startDate" class="block text-sm font-medium text-gray-700">Ngày bắt
+                        đầu</label>
+                    <input type="date" id="startDate" name="startDate"
+                        class="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
 
-        <!-- Bảng dữ liệu -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Mã đơn</th>
-                    <th>Khách hàng</th>
-                    <th>Ngày</th>
-                    <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>#DH001</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>01/08/2025</td>
-                    <td>5.500.000 ₫</td>
-                    <td>Đã giao</td>
-                </tr>
-                <tr>
-                    <td>#DH002</td>
-                    <td>Trần Thị B</td>
-                    <td>01/08/2025</td>
-                    <td>12.000.000 ₫</td>
-                    <td>Đang xử lý</td>
-                </tr>
-                <tr>
-                    <td>#DH003</td>
-                    <td>Lê Văn C</td>
-                    <td>31/07/2025</td>
-                    <td>7.200.000 ₫</td>
-                    <td>Đã hủy</td>
-                </tr>
-            </tbody>
-        </table>
+                <!-- Ngày kết thúc -->
+                <div>
+                    <label for="endDate" class="block text-sm font-medium text-gray-700">Ngày kết
+                        thúc</label>
+                    <input type="date" id="endDate" name="endDate"
+                        class="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+
+                <!-- Nút lọc -->
+                <div>
+                    <button
+                        class="px-5 py-2 bg-blue-600 text-white font-medium rounded-md shadow hover:bg-blue-700 transition">
+                        Lọc
+                    </button>
+                </div>
+
+                <!-- Nút reset -->
+                <div>
+                    <button
+                        class="px-5 py-2 bg-gray-300 text-gray-800 font-medium rounded-md shadow hover:bg-gray-400 transition">
+                        Xóa bộ lọc
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng thống kê đơn hàng -->
+        <div class="table-container bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full table-fixed divide-y divide-gray-200">
+                <thead class="bg-gray-100 sticky top-0 z-10">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-[100px]">STT</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-[120px]">Đơn hàng
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-[140px]">Ngày tạo
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-[170px]">Người mua
+                        </th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-4/12">Giá trị đơn
+                            hàng</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-200 text-sm text-gray-800">
+                    <!-- Ví dụ một dòng dữ liệu -->
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-4 py-3 text-left pl-6 align-middle">1</td>
+                        <td class="px-4 py-3 font-medium text-left text-blue-500 hover:underline cursor-pointer">DH001
+                        </td>
+                        <td class="px-4 py-3 text-left">2025-08-21</td>
+                        <td class="px-4 py-3 align-middle text-left">
+                            <div class="font-medium">Nguyễn Văn A</div>
+                            <div class="text-gray-500 text-sm">0987654321</div>
+                            <div class="text-gray-500 text-sm truncate">email@example.com</div>
+                        </td>
+                        <td class="px-4 py-3 text-left">
+                            <div class="flex justify-between"><span>Giá gốc:</span><span>2.000.000₫</span></div>
+                            <div class="flex justify-between"><span>KM:</span><span
+                                    class="text-red-500">-200.000₫</span></div>
+                            <div class="flex justify-between"><span>Giá cuối:</span><span
+                                    class="text-green-600 font-semibold">1.800.000₫</span></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <div class="flex items-center justify-between mt-4">
+            <div class="text-sm text-gray-500">
+                Hiển thị <span></span>-<span></span>
+                của <span th:text="${totalItems}"></span> đơn hàng
+            </div>
+            <div class="flex space-x-2">
+                <!-- Nút Previous -->
+                <a
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-500 hover:bg-gray-50 whitespace-nowrap">
+                    Trước
+                </a>
+
+                <!-- Các nút trang -->
+                <a class="px-3 py-5 border rounded-button whitespace-nowrap" style="padding: 10px;">
+                    <span></span>
+                </a>
+
+                <!-- Nút Next -->
+                <a
+                    class="px-3 py-1 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 whitespace-nowrap">
+                    Tiếp
+                </a>
+            </div>
+        </div>
     </div>
+
+    
 
     <script> //biểu đồ
         // Hàm lấy dữ liệu từ server
@@ -766,7 +835,6 @@
         });
     </script>
 
-
     <script> //link card
         // Thêm sự kiện click cho các link
         document.querySelectorAll('.stat-link').forEach(link => {
@@ -927,7 +995,7 @@
                 data.totalRevenue,
                 data.revenueChangePercent,
                 true,
-                'đ'
+                ''
             );
 
             // Card Đơn hàng
