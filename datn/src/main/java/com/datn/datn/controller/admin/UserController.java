@@ -27,14 +27,34 @@ public class UserController {
     private MembersService membersService;
 
     @GetMapping
-    public String showEmployeeList(@RequestParam(required = false) String keyword, Model model) {
-        List<Member> employees = (keyword != null && !keyword.trim().isEmpty())
-                ? membersService.searchByKeywordAndRoles(keyword.trim(), List.of("CUSTOMER"))
-                : membersService.findByRoles(List.of("CUSTOMER"));
+    public String showEmployeeList(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            Model model) {
+
+        List<Member> employees;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            employees = membersService.searchByKeywordAndRoles(keyword.trim(), List.of("CUSTOMER"));
+        } else {
+            employees = membersService.findByRoles(List.of("CUSTOMER"));
+        }
+
+        // 👉 Lọc theo trạng thái
+        if ("active".equals(status)) {
+            employees = employees.stream()
+                    .filter(Member::isActive)
+                    .toList();
+        } else if ("locked".equals(status)) {
+            employees = employees.stream()
+                    .filter(u -> !u.isActive())
+                    .toList();
+        }
 
         model.addAttribute("employee", new Member());
         model.addAttribute("employees", employees);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("status", status); // để giữ lại giá trị trong select
         return "views/admin/userslist";
     }
 

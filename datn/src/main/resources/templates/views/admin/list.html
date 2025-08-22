@@ -332,45 +332,42 @@
         </div>
 
         <div class="table-responsive mt-4">
-            <table class="table  table-hover align-middle shadow-sm bg-white">
-                <thead class="table-light text-center align-middle">
-                    <tr class="fw-semibold text-dark">
-                        <th>ID</th>
-                        <th>Họ tên</th>
-                        <th>Email</th>
-                        <!-- <th>Mật khẩu</th> -->
-                        <th>SĐT</th>
-                        <th>Ngày sinh</th>
-                        <th>Chức vụ</th>
-                        <th>Hành động</th>
+            <table class="min-w-full table-fixed border-collapse text-sm text-center">
+                <thead class="bg-gray-100 text-gray-600 uppercase">
+                    <tr>
+                        <th class="w-[5%] px-4 py-2 border">STT</th>
+                        <th class="w-[20%] px-4 py-2 border">Họ tên</th>
+                        <th class="w-[20%] px-4 py-2 border">Email</th>
+                        <th class="w-[15%] px-4 py-2 border">SĐT</th>
+                        <th class="w-[15%] px-4 py-2 border">Ngày sinh</th>
+                        <th class="w-[15%] px-4 py-2 border">Chức vụ</th>
+                        <th class="w-[10%] px-4 py-2 border">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="emp : ${employees}" class="text-center align-middle border-bottom">
-                        <td th:text="${emp.id}"></td>
-                        <td th:text="${emp.fullname}"></td>
-                        <td
-                            th:text="${emp.email != null and !emp.email.isEmpty() and emp.email.length() >= 3} ? ('*****' + ${emp.email.substring(emp.email.length() - 3)}) : 'Chưa cập nhật'">
+                    <tr th:each="emp, stat : ${employees}" class="hover:bg-gray-50">
+                        <td class="px-4 py-2 border" th:text="${stat.index + 1}"></td>
+                        <td class="px-4 py-2 border" th:text="${emp.fullname}"></td>
+                        <td class="px-4 py-2 border" th:text="${emp.email}"></td>
+                        <td class="px-4 py-2 border" th:text="${emp.phone}"></td>
+                        <td class="px-4 py-2 border"
+                            th:text="${emp.birthday != null ? #temporals.format(emp.birthday, 'dd/MM/yyyy') : 'Chưa cập nhật'}">
                         </td>
-                        <!-- <td>
-                            <span th:id="'pwd-' + ${emp.id}">******</span>
-                            <input type="hidden" th:id="'realpwd-' + ${emp.id}" th:value="${emp.password}" />
-                            <button type="button" class="btn btn-link p-0 text-dark"
-                                th:onclick="'togglePassword(' + ${emp.id} + ')'"><i class="bi bi-eye"></i></button>
-                        </td> -->
-                        <td
-                            th:text="${emp.phone != null and !emp.phone.isEmpty() and emp.phone.length() >= 3} ? ('*******' + ${emp.phone.substring(emp.phone.length() - 3)}) : 'Chưa cập nhật'">
-                        </td>
-                        <td
-                            th:text="${emp.birthday != null ? #temporals.format(emp.birthday, 'MM/dd/yyyy') : 'Chưa cập nhật'}">
-                        </td>
-                        <td>
-                            <span th:if="${emp.role == 'ADMIN'}" class="badge bg-primary">Quản Lý</span>
-                            <span th:if="${emp.role == 'STAFF'}" class="badge bg-info">Nhân Viên</span>
+                        <td class="px-4 py-2 border">
+                            <span th:if="${emp.role == 'ADMIN'}"
+                                class="bg-red-500 text-white text-xs px-2 py-1 rounded inline-block">
+                                Quản Lý
+                            </span>
+
+                            <span th:if="${emp.role == 'STAFF'}"
+                                class="bg-blue-500 text-white text-xs px-2 py-1 rounded inline-block">
+                                Nhân Viên
+                            </span>
+
                             <span th:if="${emp.role != 'ADMIN' and emp.role != 'STAFF'}"
                                 class="badge bg-secondary">Không xác định</span>
                         </td>
-                        <td>
+                        <td class="px-4 py-2 border">
                             <a th:href="@{'/admin/employees/edit/' + ${emp.id}}" class="me-2">
                                 <i class="fas fa-pen" style="color: #007bff; cursor: pointer;"></i>
                             </a>
@@ -381,8 +378,9 @@
                         </td>
                     </tr>
                 </tbody>
-
             </table>
+
+            <!-- Pagination giả  -->
             <div class="flex justify-end items-center mt-4 gap-2 mb-4 mr-2">
                 <button class="px-2 py-1 border rounded hover:bg-gray-200">
                     &lt;

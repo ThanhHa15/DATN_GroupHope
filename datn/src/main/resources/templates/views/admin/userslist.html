@@ -81,29 +81,39 @@
 
     <div style="margin-left: 295px; max-width: 1220px; margin-top: 2%">
         <div class="bg-white rounded shadow p-4">
-            <div class="d1">
-                <!-- Tìm kiếm -->
-                <form th:action="@{/admin/users}" method="get" class="justify-end gap-2 mb-4">
-                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm người dùng..."
-                        class="border rounded px-3 py-2 text-sm w-64" style="width: 850px;" />
-                    <button type="submit" class="bg-green-500 hover:bg-green-400 text-white text-sm px-4 py-2 rounded">
-                        Search
-                    </button>
-                </form>
-                <div class="w-48">
-                    <div class="relative h-full">
-                        <select
-                            class="w-full h-10 pl-1 pr-8 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                            <option value="">Tất cả người dùng</option>
-                            <option value="smartphone">Đang hoạt động</option>
-                            <option value="accessories">Đã khóa</option>
-                        </select>
-                        <div
-                            class="pb-3 absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
-                            <i class="ri-arrow-down-s-line text-gray-400 text-base"></i>
+            <div class="d1 mb-2">
+                <!-- Form kết hợp cả tìm kiếm và lọc -->
+                <form th:action="@{/admin/users}" method="get" class="flex items-end gap-4">
+                    <!-- Ô tìm kiếm -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1 ">Tìm kiếm</label>
+                        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm người dùng..."
+                            class="border    px-3 py-2 text-sm w-[830px]" />
+                    </div>
+
+                    <!-- Dropdown lọc trạng thái -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Trạng thái</label>
+                        <div class="relative">
+                            <select name="status"
+                                class="w-48 h-10 pl-1 pr-8 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                                <option value="" th:selected="${status == null or status == ''}">Tất cả người dùng
+                                </option>
+                                <option value="active" th:selected="${status == 'active'}">Đang hoạt động</option>
+                                <option value="locked" th:selected="${status == 'locked'}">Đã khóa</option>
+                            </select>
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <i class="ri-arrow-down-s-line text-gray-400"></i>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Nút submit -->
+                    <button type="submit"
+                        class="bg-green-500 hover:bg-green-400 text-white text-sm px-4 py-2 rounded h-10">
+                        Áp dụng
+                    </button>
+                </form>
             </div>
             <!-- Bảng danh sách -->
             <table class="min-w-full table-auto text-sm text-center">
@@ -120,14 +130,14 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    <tr th:each="user : ${employees}" class="hover:bg-yellow-100">
-                        <td class="p-2 align-middle" th:text="${user.id}"></td>
+                    <tr th:each="user, stat : ${employees}" class="hover:bg-yellow-100">
+                        <td class="p-2 align-middle" th:text="${stat.index + 1}"></td>
                         <td class="p-2 align-middle" th:text="${user.fullname}"></td>
                         <td class="p-2 align-middle"
-                            th:text="'*****' + ${user.email.substring(user.email.length() - 3)}"></td>
+                            th:text="${user.email}"></td>
 
                         <td class="p-2 align-middle"
-                            th:text="'*******' + ${user.phone.substring(user.phone.length() - 3)}"></td>
+                            th:text="${user.phone}"></td>
 
                         <td class="p-2 align-middle"
                             th:text="${user.birthday != null ? #temporals.format(user.birthday, 'dd/MM/yyyy') : 'Chưa cập nhật'}">

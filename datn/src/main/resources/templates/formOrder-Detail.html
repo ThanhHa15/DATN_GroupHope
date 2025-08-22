@@ -275,13 +275,24 @@
                 <form th:action="@{/admin-order/update-status/{orderId}(orderId=${order.id})}" method="post">
                   <select name="status"
                     class="border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                    <option th:selected="${order.orderStatus == 'Chờ xác nhận'}">Chờ xác nhận</option>
-                    <option th:selected="${order.orderStatus == 'Đã xác nhận'}">Đã xác nhận</option>
-                    <option th:selected="${order.orderStatus == 'Đang đóng gói'}">Đang đóng gói</option>
-                    <option th:selected="${order.orderStatus == 'Đang vận chuyển'}">Đang vận chuyển</option>
-                    <option th:selected="${order.orderStatus == 'Đã giao hàng'}">Đã giao hàng</option>
-                    <option th:selected="${order.orderStatus == 'Đã hủy'}">Đã hủy</option>
+
+                    <!-- Nếu đang Chờ xác nhận thì có thể chuyển sang Đã xác nhận hoặc Hủy đơn -->
+                    <option th:if="${order.orderStatus == 'Chờ xác nhận'}" value="Đã xác nhận">Đã xác nhận</option>
+                    <option th:if="${order.orderStatus == 'Chờ xác nhận'}" value="Đã hủy">Hủy đơn hàng</option>
+
+                    <!-- Nếu đang Đã xác nhận thì chỉ cho chọn Đang đóng gói -->
+                    <option th:if="${order.orderStatus == 'Đã xác nhận'}" value="Đang đóng gói">Đang đóng gói</option>
+
+                    <!-- Nếu đang Đang đóng gói thì chỉ cho chọn Đang vận chuyển -->
+                    <option th:if="${order.orderStatus == 'Đang đóng gói'}" value="Đang vận chuyển">Đang vận chuyển
+                    </option>
+
+                    <!-- Nếu đang Đang vận chuyển thì chỉ cho chọn Đã giao hàng -->
+                    <option th:if="${order.orderStatus == 'Đang vận chuyển'}" value="Đã giao hàng">Đã giao hàng</option>
+
                   </select>
+
+
                   <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm">
                     Cập nhật
                   </button>

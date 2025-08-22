@@ -48,10 +48,10 @@ import jakarta.validation.Valid;
 
 @Controller
 public class HomeAdminController {
-    @GetMapping("dashboard")
-    public String dashboard(Model model, HttpServletRequest request) {
-        return "lll";
-    }
+    // @GetMapping("dashboard")
+    // public String dashboard(Model model, HttpServletRequest request) {
+    //     return "lll";
+    // }
     
 
 }
