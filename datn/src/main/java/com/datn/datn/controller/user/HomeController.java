@@ -130,19 +130,14 @@ public class HomeController {
         return "views/shared/login";
     }
 
-    // Optional<Member> optional = memberRepository.loginByPhoneOrEmail(input,
-    // password);
-
-    // Tìm user bằng email hoặc phone
     @PostMapping("/login")
     public String login(
             @RequestParam String input,
             @RequestParam String password,
             HttpSession session,
             RedirectAttributes redirectAttributes,
-            HttpServletRequest request) { // Thêm HttpServletRequest
+            HttpServletRequest request) {
 
-        // Chuẩn hóa input
         input = input.trim().toLowerCase();
         password = password.trim();
 
@@ -155,17 +150,13 @@ public class HomeController {
 
         Member member = optional.get();
 
-        // Debug
-        log.info("Login attempt for: {}", input);
-        log.info("Password match: {}", passwordEncoder.matches(password, member.getPassword()));
-
-        // Kiểm tra tài khoản Google
+        // Kiểm tra login type
         if ("GOOGLE".equals(member.getLoginType())) {
             redirectAttributes.addFlashAttribute("error", "Vui lòng đăng nhập bằng Google");
             return "redirect:/login";
         }
 
-        // Kiểm tra mật khẩu (chỉ 1 lần)
+        // Kiểm tra mật khẩu
         if (!passwordEncoder.matches(password, member.getPassword())) {
             redirectAttributes.addFlashAttribute("error", "Sai mật khẩu");
             return "redirect:/login";
@@ -177,21 +168,19 @@ public class HomeController {
             return "redirect:/login";
         }
 
-        // Tạo session mới để tránh fixation attack
-        session.invalidate();
-        session = request.getSession(true);
-
-        // Lưu thông tin user vào session
-        session.setAttribute("loggedInUser", member);
-        log.info("User {} logged in successfully", member.getEmail());
-        Member loggedInUser = (Member) session.getAttribute("loggedInUser");
-        if (loggedInUser == null) {
-            System.out.println("Chưa đăng nhập");
-        } else {
-            System.out.println("Đã login: " + loggedInUser.getEmail());
+        // Kiểm tra OTP (verified)
+        if (member.getVerified() == null || !member.getVerified()) {
+            redirectAttributes.addFlashAttribute("error", "Vui lòng xác thực OTP trước khi đăng nhập");
+            redirectAttributes.addFlashAttribute("email", member.getEmail());
+            return "redirect:/otp";
         }
 
-        // Chuyển hướng theo role
+        // Tạo session mới
+        session.invalidate();
+        session = request.getSession(true);
+        session.setAttribute("loggedInUser", member);
+
+        // Điều hướng theo role
         switch (member.getRole()) {
             case "ADMIN":
                 return "redirect:/admin/employees";

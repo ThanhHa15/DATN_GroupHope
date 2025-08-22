@@ -32,14 +32,17 @@
 	</properties>
 	<dependencies>
 		<dependency>
-    <groupId>com.itextpdf</groupId>
-    <artifactId>itext7-core</artifactId>
-    <version>7.2.5</version> <!-- hoặc version mới hơn -->
-    <type>pom</type>
-</dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext7-core</artifactId>
+			<version>7.2.5</version> <!-- hoặc version mới hơn -->
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.10.0</version>
+		</dependency>
 
-		
-		
 		<!-- OAuth2 Client -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

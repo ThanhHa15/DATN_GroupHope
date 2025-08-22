@@ -538,9 +538,10 @@
       </div>
 
       <!-- Đoạn 2 -->
-      <div class="reviews-section flex flex-row gap-6 items-stretch" data-product-id="${v.product.productID}" style="max-width: 1250px; margin: auto; margin-top: 20px; margin-bottom: 20px;">
+      <div class="reviews-section flex flex-row gap-6 items-stretch" data-product-id="${v.product.productID}"
+        style="max-width: 1250px; margin: auto; margin-top: 20px; margin-bottom: 20px;">
         <!-- Phần 6/10 -->
-        <div class="w-6/10 basis-3/5  bg-white rounded-lg p-6 flex flex-col shadow-[0_0_15px_rgba(0,0,0,0.1)]">
+        <div class="w-6/10 flex-6 basis-3/5 bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]">
           <div class="flex items-center justify-between mb-8" style="margin-bottom: 5px">
             <h2 class="text-2xl font-bold border-l-8 border-custom-blue pl-4">
               ĐÁNH GIÁ SẢN PHẨM
@@ -678,9 +679,8 @@
 
             <!-- Image Upload Section -->
             <div class="space-y-2">
-              <label class="block text-gray-700 font-medium">Ảnh đính kèm <span class="text-sm text-gray-500">(tối
-                  đa
-                  5 ảnh)</span></label>
+              <label class="block text-gray-700 font-medium">Ảnh đính kèm <span class="text-sm text-gray-500">
+                </span></label>
               <div class="flex items-center justify-center w-full">
                 <label for="imageUpload"
                   class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
@@ -1192,6 +1192,33 @@
   });
 </script>
 
+<script> // danh gia va binh luan
+  document.addEventListener("DOMContentLoaded", function () {
+    const qtyInput = document.getElementById("quantity");
+    const decreaseBtn = document.getElementById("decreaseQty");
+    const increaseBtn = document.getElementById("increaseQty");
+
+    decreaseBtn.addEventListener("click", () => {
+      let qty = parseInt(qtyInput.value);
+      if (qty > 1) qtyInput.value = qty - 1;
+    });
+
+    increaseBtn.addEventListener("click", () => {
+      let qty = parseInt(qtyInput.value);
+      if (qty < 99) qtyInput.value = qty + 1;
+    });
+
+    qtyInput.addEventListener("change", function () {
+      let value = parseInt(this.value);
+      if (isNaN(value) || value < 1) {
+        this.value = 1;
+      } else if (value > 99) {
+        this.value = 99;
+      }
+    });
+  });
+</script>
+
 <script th:inline="javascript"> // Xử lý sự kiên đánh giá và bình luận 
   /* === Review & Feedback unified script ===
      Place this inside the Thymeleaf .html (so Thymeleaf can render productId).
@@ -1444,14 +1471,35 @@
       }
 
       // Like / unlike
+      // Like / unlike
       const likeBtn = reviewElement.querySelector('.like-button');
       if (likeBtn) {
         likeBtn.addEventListener('click', async function (e) {
           e.preventDefault();
           const logged = await checkLoginStatus();
-          if (!logged) { alert('Vui lòng đăng nhập để thích đánh giá'); return; }
+          if (!logged) {
+            Swal.fire({ icon: 'info', title: 'Thông báo', text: 'Vui lòng đăng nhập để thích đánh giá' });
+            return;
+          }
 
           const reviewId = this.dataset.reviewId;
+          const icon = this.querySelector('i');
+          const countEl = this.querySelector('.like-count');
+          let count = parseInt(countEl.textContent || '0');
+
+          if (icon.classList.contains('fa-solid')) {
+            // Đã like rồi -> hỏi xác nhận trước khi bỏ like
+            const confirm = await Swal.fire({
+              title: 'Xác nhận',
+              text: 'Bạn có chắc chắn bỏ like không?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonText: 'Có',
+              cancelButtonText: 'Không'
+            });
+            if (!confirm.isConfirmed) return;
+          }
+
           try {
             const resp = await fetch(`/api/reviews/${reviewId}/like`, {
               method: 'POST',
@@ -1461,22 +1509,28 @@
               const err = await resp.json().catch(() => ({ error: 'Lỗi' }));
               throw new Error(err.error || 'Error liking review');
             }
-            // toggle UI
-            const icon = this.querySelector('i');
-            const countEl = this.querySelector('.like-count');
-            let count = parseInt(countEl.textContent || '0');
-            if (icon.classList.contains('fa-regular')) {
-              icon.classList.remove('fa-regular'); icon.classList.add('fa-solid'); this.classList.add('text-blue-500'); count++;
-            } else {
-              icon.classList.remove('fa-solid'); icon.classList.add('fa-regular'); this.classList.remove('text-blue-500'); count = Math.max(0, count - 1);
+
+            const result = await resp.json();
+
+            if (result.message === "liked") {
+              icon.classList.remove('fa-regular');
+              icon.classList.add('fa-solid');
+              this.classList.add('text-blue-500');
+              count++;
+            } else if (result.message === "unliked") {
+              icon.classList.remove('fa-solid');
+              icon.classList.add('fa-regular');
+              this.classList.remove('text-blue-500');
+              count = Math.max(0, count - 1);
             }
             countEl.textContent = count;
           } catch (e) {
             console.error('Like error', e);
-            alert('Có lỗi khi thích đánh giá: ' + e.message);
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Có lỗi khi xử lý like: ' + e.message });
           }
         });
       }
+
     }
 
     // --- Load feedback for a review ---

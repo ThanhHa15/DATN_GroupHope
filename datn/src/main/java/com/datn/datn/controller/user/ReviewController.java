@@ -3,7 +3,6 @@ package com.datn.datn.controller.user;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.datn.datn.model.*;
 
@@ -23,7 +22,6 @@ import java.util.*;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Propagation;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -294,23 +292,24 @@ public class ReviewController {
             Review review = reviewRepository.findById(reviewId)
                     .orElseThrow(() -> new RuntimeException("Review not found"));
 
-            // Check if user already liked this review
             boolean alreadyLiked = reviewLikeRepository.existsByReviewAndUsername(review, loggedInUser.getEmail());
             if (alreadyLiked) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("error", "You already liked this review"));
+                // Nếu đã like thì bỏ like (xóa bản ghi)
+                reviewLikeRepository.deleteByReviewAndUsername(review, loggedInUser.getEmail());
+                return ResponseEntity.ok(Map.of("message", "unliked"));
+            } else {
+                // Nếu chưa like thì thêm mới
+                ReviewLike like = new ReviewLike();
+                like.setReview(review);
+                like.setUsername(loggedInUser.getEmail());
+                like.setCreatedAt(LocalDateTime.now());
+
+                reviewLikeRepository.save(like);
+                return ResponseEntity.ok(Map.of("message", "liked"));
             }
-
-            ReviewLike like = new ReviewLike();
-            like.setReview(review);
-            like.setUsername(loggedInUser.getEmail());
-            like.setCreatedAt(LocalDateTime.now());
-
-            ReviewLike savedLike = reviewLikeRepository.save(like);
-            return ResponseEntity.ok(savedLike);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Failed to like review: " + e.getMessage()));
+                    .body(Map.of("error", "Failed to like/unlike review: " + e.getMessage()));
         }
     }
 

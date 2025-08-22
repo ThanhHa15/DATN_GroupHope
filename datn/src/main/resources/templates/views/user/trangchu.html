@@ -204,9 +204,36 @@
   <!-- Main Banner Section -->
   <div class="relative w-full h-[570px] text-center bg-gray-100">
     <!-- Main Banner -->
-    <div class="w-full h-full">
-      <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/slider_1.jpg?1719764721426" alt="banner"
-        class="w-full h-full object-cover" />
+    <!-- Main Banner Section -->
+    <div class="relative w-full h-[570px] text-center bg-gray-100 group overflow-hidden">
+      <!-- Slideshow wrapper -->
+      <div id="banner-slides" class="w-full h-full relative">
+        <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/slider_1.jpg?1719764721426"
+          class="banner-slide w-full h-full object-cover absolute top-0 left-0 opacity-100 transition-opacity duration-700"
+          alt="banner 1" />
+        <img src="https://i.postimg.cc/76wBNW1N/image.png"
+          class="banner-slide w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-opacity duration-700"
+          alt="banner 2" />
+        <img src="https://i.postimg.cc/kG5f0Rp6/image.png"
+          class="banner-slide w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-opacity duration-700"
+          alt="banner 3" />
+        <img src="https://i.postimg.cc/dQWW8nh8/image.png"
+          class="banner-slide w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-opacity duration-700"
+          alt="banner 4" />
+        <img src="https://i.postimg.cc/fTJ85Xd1/image.png"
+          class="banner-slide w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-opacity duration-700"
+          alt="banner 5" />
+      </div>
+
+      <!-- Nút điều hướng -->
+      <button id="prev-btn"
+        class="hidden group-hover:flex absolute top-1/2 left-4 -translate-y-1/2 bg-black bg-opacity-40 text-white px-4 py-2 rounded-full">
+        <i class="ri-arrow-left-s-line text-2xl"></i>
+      </button>
+      <button id="next-btn"
+        class="hidden group-hover:flex absolute top-1/2 right-4 -translate-y-1/2 bg-black bg-opacity-40 text-white px-4 py-2 rounded-full">
+        <i class="ri-arrow-right-s-line text-2xl"></i>
+      </button>
     </div>
 
     <!-- Small Banners -->
@@ -500,7 +527,9 @@
           class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
-              <img src="https://bizweb.dktcdn.net/100/502/883/products/220817045837-s7-lte-nhom-su-blue.png?v=1700214386510" alt="Pin dự phòng" class="category-image" />
+              <img
+                src="https://bizweb.dktcdn.net/100/502/883/products/220817045837-s7-lte-nhom-su-blue.png?v=1700214386510"
+                alt="Pin dự phòng" class="category-image" />
             </div>
             <h3 class="font-bold text-2xl mb-1">Watch</h3>
             <p class="text-base text-blue-800 font-semibold">
@@ -595,3 +624,63 @@
     });
   });
 </script>
+
+<script> //banner
+    document.addEventListener("DOMContentLoaded", function () {
+      const slides = document.querySelectorAll(".banner-slide");
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+      let currentIndex = 0;
+      let interval;
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => {
+          slide.style.opacity = (i === index) ? "1" : "0";
+        });
+        currentIndex = index;
+      }
+
+      function nextSlide() {
+        let newIndex = (currentIndex + 1) % slides.length;
+        showSlide(newIndex);
+      }
+
+      function prevSlide() {
+        let newIndex = (currentIndex - 1 + slides.length) % slides.length;
+        showSlide(newIndex);
+      }
+
+      let timeout;
+
+      function startAutoSlide() {
+        timeout = setTimeout(function tick() {
+          nextSlide();
+          timeout = setTimeout(tick, 4000);
+        }, 4000);
+      }
+
+      function stopAutoSlide() {
+        clearTimeout(timeout);
+      }
+
+
+      nextBtn.addEventListener("click", () => {
+        nextSlide();
+        stopAutoSlide();
+        startAutoSlide();
+      });
+
+      prevBtn.addEventListener("click", () => {
+        prevSlide();
+        stopAutoSlide();
+        startAutoSlide();
+      });
+
+      // Hover thì dừng auto chạy
+      document.getElementById("banner-slides").addEventListener("mouseenter", stopAutoSlide);
+      document.getElementById("banner-slides").addEventListener("mouseleave", startAutoSlide);
+
+      showSlide(0);
+      startAutoSlide();
+    });
+  </script>
