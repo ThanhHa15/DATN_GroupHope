@@ -333,6 +333,53 @@ public class HomeController {
         return "views/user/products-detail";
     }
 
+    @PostMapping("/delete-account")
+    @ResponseBody
+    public ResponseEntity<?> deleteAccount(HttpSession session, RedirectAttributes redirectAttributes) {
+        Member loggedInUser = (Member) session.getAttribute("loggedInUser");
+
+        if (loggedInUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập để thực hiện hành động này");
+        }
+
+        try {
+            // Lấy user từ database để đảm bảo dữ liệu mới nhất
+            Member currentUser = memberService.getEmployeeById(loggedInUser.getId());
+
+            if (currentUser == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy tài khoản");
+            }
+
+            // Kiểm tra quyền (chỉ cho phép CUSTOMER xóa tài khoản của chính mình)
+            if (!"CUSTOMER".equals(currentUser.getRole())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bạn không có quyền thực hiện hành động này");
+            }
+
+            // Xóa các dữ liệu liên quan trước khi xóa user
+            // Xóa giỏ hàng
+            List<Cart> cartItems = cartRepository.findByMember(currentUser);
+            cartRepository.deleteAll(cartItems);
+
+            // Xóa wishlist
+            // (Nếu có service xóa wishlist)
+
+            // Xóa user
+            memberRepository.delete(currentUser);
+
+            // Hủy session
+            session.invalidate();
+
+            log.info("User account deleted successfully: {}", currentUser.getEmail());
+
+            return ResponseEntity.ok().body("Tài khoản đã được xóa thành công");
+
+        } catch (Exception e) {
+            log.error("Error deleting user account: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Có lỗi xảy ra khi xóa tài khoản: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/introduction")
     public String introduction(Model model, HttpSession session) {
         return "views/user/introduction";

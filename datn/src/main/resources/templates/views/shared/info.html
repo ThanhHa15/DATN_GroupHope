@@ -108,11 +108,17 @@
             </div>
           </div>
           <div class="mt-6">
-          <div class="flex justify-end mt-6">
+          <div class="flex justify-end mt-6 space-x-4">
           <a href="editInf"
             class="inline-block bg-primary text-white font-medium px-5 py-2 rounded-button hover:bg-red-600 transition">
             <i class="ri-edit-line mr-2"></i> Chỉnh sửa thông tin
           </a>
+          
+          <!-- Nút xóa tài khoản -->
+          <button onclick="confirmDeleteAccount()" 
+                  class="inline-block bg-red-600 text-white font-medium px-5 py-2 rounded-button hover:bg-red-700 transition">
+            <i class="ri-delete-bin-line mr-2"></i> Xóa tài khoản
+          </button>
         </div>
         </main>
       </div>
@@ -234,5 +240,51 @@
       toggle.classList.toggle("ri-eye-off-line", isHidden);
     });
   });
+</script>
+
+<script>
+  // Hàm xác nhận xóa tài khoản
+  function confirmDeleteAccount() {
+    // Hiển thị dialog xác nhận
+    if (confirm('Bạn có chắc chắn muốn xóa tài khoản này?\n\n⚠️ LƯU Ý: Hành động này không thể hoàn tác!\n\nTất cả dữ liệu của bạn sẽ bị xóa vĩnh viễn.')) {
+      // Nếu user xác nhận, gọi API xóa tài khoản
+      deleteAccount();
+    }
+  }
+
+  // Hàm xóa tài khoản
+  function deleteAccount() {
+    // Hiển thị loading
+    const deleteBtn = document.querySelector('button[onclick="confirmDeleteAccount()"]');
+    const originalText = deleteBtn.innerHTML;
+    deleteBtn.innerHTML = '<i class="ri-loader-4-line mr-2 animate-spin"></i> Đang xóa...';
+    deleteBtn.disabled = true;
+
+    // Gọi API xóa tài khoản
+    fetch('/delete-account', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        // Xóa thành công
+        alert('Tài khoản đã được xóa thành công!');
+        // Chuyển hướng về trang chủ
+        window.location.href = '/home';
+      } else {
+        throw new Error('Xóa tài khoản thất bại');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Có lỗi xảy ra khi xóa tài khoản. Vui lòng thử lại!');
+      
+      // Khôi phục nút
+      deleteBtn.innerHTML = originalText;
+      deleteBtn.disabled = false;
+    });
+  }
 </script>
 
