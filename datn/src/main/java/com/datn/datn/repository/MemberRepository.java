@@ -3,6 +3,8 @@ package com.datn.datn.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -48,4 +50,34 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT COUNT(m) FROM Member m WHERE m.role = 'CUSTOMER' AND m.active = true")
     long countNewCustomers();
 
+    List<Member> findByActive(boolean active);
+
+    // Tìm người dùng theo trạng thái active và keyword
+    @Query("SELECT m FROM Member m WHERE (:keyword IS NULL OR m.fullname LIKE %:keyword%) AND m.active = :active")
+    List<Member> findByActive(@Param("active") boolean active, @Param("keyword") String keyword);
+
+    // Tìm người dùng theo keyword, không xét trạng thái
+    @Query("SELECT m FROM Member m WHERE :keyword IS NULL OR m.fullname LIKE %:keyword%")
+    List<Member> searchUsers(@Param("keyword") String keyword);
+
+    // Thêm các method phân trang cho toàn bộ users
+    @Query("SELECT m FROM Member m WHERE :keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%")
+    List<Member> searchUsersWithPagination(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT m FROM Member m")
+    List<Member> findAllUsersWithPagination(Pageable pageable);
+
+    @Query("SELECT COUNT(m) FROM Member m WHERE :keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%")
+    long countUsersByKeyword(@Param("keyword") String keyword);
+
+    @Query("SELECT COUNT(m) FROM Member m")
+    long countAllUsers();
+
+    // Phân trang cho nhân viên (ADMIN, STAFF) với keyword tùy chọn
+    @Query("SELECT m FROM Member m WHERE m.role IN :roles AND (:keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%)")
+    List<Member> searchEmployeesWithPagination(@Param("roles") List<String> roles, @Param("keyword") String keyword,
+            Pageable pageable);
+
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.role IN :roles AND (:keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%)")
+    long countEmployeesByKeyword(@Param("roles") List<String> roles, @Param("keyword") String keyword);
 }

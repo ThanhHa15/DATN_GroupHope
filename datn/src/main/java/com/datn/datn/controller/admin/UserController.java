@@ -28,33 +28,63 @@ public class UserController {
 
     @GetMapping
     public String showEmployeeList(
-            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String keyword, 
             @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
             Model model) {
-
+        
         List<Member> employees;
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            employees = membersService.searchByKeywordAndRoles(keyword.trim(), List.of("CUSTOMER"));
+        long totalUsers;
+        
+        if (status != null && !status.isEmpty()) {
+            // Lọc theo trạng thái
+            boolean isActive = "active".equals(status);
+            employees = membersService.findByActive(isActive, keyword);
+            totalUsers = employees.size();
+            
+            // Xử lý phân trang cho danh sách đã lọc
+            int startIndex = page * size;
+            int endIndex = Math.min(startIndex + size, employees.size());
+            
+            if (startIndex < employees.size()) {
+                employees = employees.subList(startIndex, endIndex);
+            } else {
+                employees = employees.subList(0, 0); // Empty list
+            }
         } else {
-            employees = membersService.findByRoles(List.of("CUSTOMER"));
+            // Hiển thị tất cả người dùng với phân trang
+            totalUsers = membersService.countUsers(keyword);
+            employees = membersService.searchUsersWithPagination(keyword, page, size);
         }
 
-        // 👉 Lọc theo trạng thái
-        if ("active".equals(status)) {
-            employees = employees.stream()
-                    .filter(Member::isActive)
-                    .toList();
-        } else if ("locked".equals(status)) {
-            employees = employees.stream()
-                    .filter(u -> !u.isActive())
-                    .toList();
+        // Tính toán thông tin phân trang
+        int totalPages = (int) Math.ceil((double) totalUsers / size);
+        int currentPage = page;
+        
+        // Đảm bảo page không âm
+        if (currentPage < 0) {
+            currentPage = 0;
+        }
+        
+        // Đảm bảo page không vượt quá tổng số trang
+        if (totalPages > 0 && currentPage >= totalPages) {
+            currentPage = totalPages - 1;
         }
 
         model.addAttribute("employee", new Member());
         model.addAttribute("employees", employees);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("status", status); // để giữ lại giá trị trong select
+        model.addAttribute("selectedStatus", status);
+        
+        // Thêm thông tin phân trang
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("size", size);
+        model.addAttribute("hasNext", currentPage < totalPages - 1);
+        model.addAttribute("hasPrevious", currentPage > 0);
+        
         return "views/admin/userslist";
     }
 
@@ -87,12 +117,12 @@ public class UserController {
         if (isCreate) {
             if (membersService.existsByEmail(member.getEmail())) {
                 result.rejectValue("email", "error.member", "Email đã tồn tại");
-                model.addAttribute("employees", membersService.findByRoles(List.of("CUSTOMER")));
+                model.addAttribute("employees", membersService.searchUsers(null));
                 return "views/admin/userslist";
             }
             if (newPassword == null || newPassword.isBlank()) {
                 result.rejectValue("password", "error.member", "Mật khẩu không được để trống");
-                model.addAttribute("employees", membersService.findByRoles(List.of("CUSTOMER")));
+                model.addAttribute("employees", membersService.searchUsers(null));
                 return "views/admin/userslist";
             }
             member.setPassword(newPassword);
@@ -108,12 +138,12 @@ public class UserController {
             if (newPassword != null && !newPassword.isBlank()) {
                 if (!newPassword.equals(confirmPassword)) {
                     result.rejectValue("confirmPassword", "error.member", "Xác nhận mật khẩu không khớp");
-                    model.addAttribute("employees", membersService.findByRoles(List.of("ADMIN", "STAFF")));
+                    model.addAttribute("employees", membersService.searchUsers(null));
                     return "views/admin/userslist";
                 }
                 if (!currentPassword.equals(existing.getPassword())) {
                     result.rejectValue("password", "error.member", "Mật khẩu hiện tại không đúng");
-                    model.addAttribute("employees", membersService.findByRoles(List.of("ADMIN", "STAFF")));
+                    model.addAttribute("employees", membersService.searchUsers(null));
                     return "views/admin/userslist";
                 }
                 member.setPassword(newPassword);

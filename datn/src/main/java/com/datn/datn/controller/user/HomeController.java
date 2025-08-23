@@ -168,8 +168,9 @@ public class HomeController {
             return "redirect:/login";
         }
 
-        // Kiểm tra OTP (verified)
-        if (member.getVerified() == null || !member.getVerified()) {
+        // Kiểm tra OTP (chỉ CUSTOMER mới cần)
+        if ((member.getVerified() == null || !member.getVerified())
+                && "CUSTOMER".equalsIgnoreCase(member.getRole())) {
             redirectAttributes.addFlashAttribute("error", "Vui lòng xác thực OTP trước khi đăng nhập");
             redirectAttributes.addFlashAttribute("email", member.getEmail());
             return "redirect:/otp";

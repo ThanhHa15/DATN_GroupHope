@@ -29,4 +29,21 @@ public interface MembersService {
     boolean existsByEmail(String email);
 
     Optional<Member> findByEmail(String email);
+
+    List<Member> findByActive(boolean active, String keyword);
+    
+    //
+
+    List<Member> searchUsers(String keyword);
+
+    // Users pagination
+    List<Member> searchUsersWithPagination(String keyword, int page, int size);
+
+    long countUsers(String keyword);
+
+    // Employees pagination
+    List<Member> searchEmployeesWithPagination(String keyword, int page, int size);
+
+    long countEmployees(String keyword);
+
 }

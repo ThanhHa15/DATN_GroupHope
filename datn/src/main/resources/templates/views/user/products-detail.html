@@ -518,19 +518,21 @@
                 <!-- Nội dung -->
                 <ul class="p-4 space-y-3 text-[15px] leading-snug">
                   <li class="flex items-start space-x-2">
-                    <i class="fa-solid fa-check" style="margin-top: 6px"></i>
-                    <span>Áp dụng Phiếu quà tặng/ Mã giảm giá theo sản
-                      phẩm.</span>
+                    <i class="fa-solid fa-gift text-red-500" style="margin-top: 6px"></i>
+                    <span><b>Voucher DATN2808</b>: Giảm ngay <b>30%</b> cho mọi đơn hàng.
+                      Số lượng có hạn, nhanh tay sử dụng kẻo hết!</span>
                   </li>
                   <li class="flex items-start space-x-2">
-                    <i class="fa-solid fa-check" style="margin-top: 6px"></i>
-                    <span>Giảm giá 10% khi mua từ 5 sản phẩm.</span>
+                    <i class="fa-solid fa-gift text-green-500" style="margin-top: 6px"></i>
+                    <span><b>Voucher HOPEPHONE</b>: Giảm <b>10%</b> cho đơn hàng từ
+                      <b>5.000.000₫</b>. Áp dụng cho tất cả sản phẩm Apple!</span>
                   </li>
                   <li class="flex items-start space-x-2">
-                    <i class="fa-solid fa-gift" style="margin-top: 6px"></i>
-                    <span>Tặng 100.000₫ cho thành viên Dola.</span>
+                    <i class="fa-solid fa-check text-blue-500" style="margin-top: 6px"></i>
+                    <span>Áp dụng trực tiếp khi nhập mã tại bước thanh toán.</span>
                   </li>
                 </ul>
+
               </div>
             </div>
           </div>
@@ -623,10 +625,6 @@
               <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
             </div>
 
-            <!-- 👇 Lớp làm mờ phủ lên dòng cuối -->
-            <div
-              class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-lg">
-            </div>
             <div class="text-center mt-4">
               <button onclick="toggleFullSpecs()"
                 class="px-6 py-2 border border-[#000f8f] text-[#000f8f] rounded hover:bg-[#000f8f] hover:text-white transition">
