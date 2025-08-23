@@ -547,299 +547,383 @@
 
 
 
-    <script> //biểu đồ
-        // Hàm lấy dữ liệu từ server
-        async function fetchData(url, params = {}) {
-            try {
-                const queryString = new URLSearchParams(params).toString();
-                const fullUrl = queryString ? `${url}?${queryString}` : url;
+    <script>
+    // Hàm lấy dữ liệu từ server
+    async function fetchData(url, params = {}) {
+        try {
+            const queryString = new URLSearchParams(params).toString();
+            const fullUrl = queryString ? `${url}?${queryString}` : url;
 
-                const response = await fetch(fullUrl);
-                return await response.json();
-            } catch (error) {
-                console.error('Lỗi khi lấy dữ liệu:', error);
-                return [];
+            const response = await fetch(fullUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            return await response.json();
+        } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu:', error);
+            return [];
+        }
+    }
+
+    // Biểu đồ theo năm
+    const yearlyCtx = document.getElementById('yearlyRevenueChart').getContext('2d');
+    let yearlyChart = null;
+
+    // Biểu đồ theo tuần
+    const chart = echarts.init(document.getElementById("chart"));
+
+    // Hàm render biểu đồ năm
+    function renderYearlyChart(data, type = "revenue") {
+        if (yearlyChart) {
+            yearlyChart.destroy();
         }
 
-        // Biểu đồ theo năm
-        const yearlyCtx = document.getElementById('yearlyRevenueChart').getContext('2d');
-        let yearlyChart = null;
+        const labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+            'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
 
-        // Biểu đồ theo tuần
-        const chart = echarts.init(document.getElementById("chart"));
+        const monthlyData = new Array(12).fill(0);
 
-        // Hàm render biểu đồ năm
-        function renderYearlyChart(data, type = "revenue") {
-            if (yearlyChart) {
-                yearlyChart.destroy();
-            }
-
-            const labels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
-                'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
-
-            const monthlyData = new Array(12).fill(0);
-
-            data.forEach(item => {
-                const month = parseInt(item.month) - 1;
-                if (month >= 0 && month < 12) {
-                    monthlyData[month] = type === "revenue" ?
-                        (item.revenue || 0) :
-                        (item.totalOrders || 0);
-                }
-            });
-
-            yearlyChart = new Chart(yearlyCtx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: type === "revenue" ? 'Doanh thu năm' : 'Số đơn hàng',
-                        data: monthlyData,
-                        fill: true,
-                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                        borderColor: '#10b981',
-                        tension: 0.4,
-                        pointRadius: 3,
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 13, style: 'normal' } }
-                        },
-                        y: { beginAtZero: true, grid: { color: '#e5e7eb' } }
-                    }
-                }
-            });
-        }
-
-        // Hàm render biểu đồ theo các thứ trong tuần
-        function renderWeeklyChart(data, type = "revenue", weekInfo = null) {
-            const titleMap = {
-                revenue: weekInfo ? `Doanh thu Tuần ${weekInfo.weekNumber} (${weekInfo.year})` : "Doanh thu theo tuần",
-                orders: weekInfo ? `Số đơn hàng Tuần ${weekInfo.weekNumber} (${weekInfo.year})` : "Số đơn hàng theo tuần",
-            };
-
-            // Tạo mảng dữ liệu cho 7 ngày trong tuần
-            const daysOfWeek = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-            const weekData = new Array(7).fill(0);
-
-            // Điền dữ liệu vào đúng thứ
-            data.forEach(item => {
-                const dayIndex = parseInt(item.dayOfWeek) - 1; // SQL Server: 1=Chủ nhật, 2=Thứ 2, ..., 7=Thứ 7
-                if (dayIndex >= 0 && dayIndex < 7) {
-                    weekData[dayIndex] = type === "revenue" ?
-                        (item.revenue || 0) :
-                        (item.totalOrders || 0);
-                }
-            });
-
-            console.log('Weekly chart data:', weekData);
-
-            chart.setOption({
-                title: {
-                    text: titleMap[type],
-                    left: "center",
-                    textStyle: {
-                        fontSize: 16,
-                        fontWeight: 'bold'
-                    }
-                },
-                tooltip: {
-                    trigger: "axis",
-                    formatter: function (params) {
-                        return params[0].name + '<br/>' +
-                            (type === "revenue" ? "Doanh thu: " : "Số đơn hàng: ") +
-                            (type === "revenue" ?
-                                formatCurrency(params[0].value) :
-                                params[0].value + ' đơn');
-                    }
-                },
-                xAxis: {
-                    type: "category",
-                    data: daysOfWeek,
-                    axisLabel: {
-                        interval: 0,
-                        rotate: 0
-                    }
-                },
-                yAxis: {
-                    type: "value",
-                    axisLabel: {
-                        formatter: type === "revenue" ?
-                            function (value) {
-                                if (value >= 1000000) {
-                                    return (value / 1000000).toFixed(1) + 'M';
-                                } else if (value >= 1000) {
-                                    return (value / 1000).toFixed(0) + 'K';
-                                }
-                                return value;
-                            } :
-                            function (value) {
-                                return value;
-                            }
-                    }
-                },
-                series: [{
-                    name: type === "revenue" ? "Doanh thu" : "Số đơn hàng",
-                    type: "bar",
-                    data: weekData,
-                    itemStyle: {
-                        color: "#3b82f6",
-                        borderRadius: [4, 4, 0, 0]
-                    },
-                    label: {
-                        show: true,
-                        position: 'top',
-                        formatter: function (params) {
-                            return type === "revenue" ?
-                                formatCurrencyShort(params.value) :
-                                params.value;
-                        }
-                    }
-                }],
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                }
-            });
-        }
-
-        // Hàm định dạng tiền tệ ngắn gọn
-        function formatCurrencyShort(amount) {
-            if (amount >= 1000000) {
-                return (amount / 1000000).toFixed(1) + 'M';
-            } else if (amount >= 1000) {
-                return (amount / 1000).toFixed(0) + 'K';
-            }
-            return amount;
-        }
-
-        // Hàm định dạng tiền tệ đầy đủ
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND'
-            }).format(amount);
-        }
-
-        // Hàm load danh sách tuần
-        async function loadWeekOptions() {
-            try {
-                const weeksData = await fetchData('/allWeeks');
-                const weekSelect = document.getElementById('weekSelect');
-
-                // Xóa options cũ (giữ lại option "Tất cả")
-                while (weekSelect.options.length > 1) {
-                    weekSelect.remove(1);
-                }
-
-                // Thêm options mới
-                weeksData.forEach(week => {
-                    const option = document.createElement('option');
-                    option.value = week.weekNumber;
-                    option.textContent = `Tuần ${week.weekNumber} (${week.year})`;
-                    option.dataset.year = week.year;
-                    weekSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Lỗi khi tải danh sách tuần:', error);
-            }
-        }
-
-        // Load dữ liệu ban đầu
-        document.addEventListener('DOMContentLoaded', async function () {
-            try {
-                await loadWeekOptions();
-
-                // Load dữ liệu tháng (năm hiện tại)
-                const today = new Date();
-                const currentYear = today.getFullYear();
-                document.getElementById('yearSelectWeek').value = currentYear;
-                document.getElementById('yearSelect').value = currentYear;
-
-                const monthlyData = await fetchData('/monthlyByDate', {
-                    startDate: `${currentYear}-01-01T00:00:00`,
-                    endDate: `${currentYear}-12-31T23:59:59`
-                });
-                renderYearlyChart(monthlyData, 'revenue');
-
-                // Load dữ liệu tuần hiện tại
-                const currentWeek = getWeekNumber(today);
-                document.getElementById('weekSelect').value = currentWeek;
-
-                const dailyData = await fetchData('/dailyByWeek', {
-                    year: currentYear,
-                    weekNumber: currentWeek
-                });
-                renderWeeklyChart(dailyData, 'revenue', {
-                    weekNumber: currentWeek,
-                    year: currentYear
-                });
-
-            } catch (error) {
-                console.error('Lỗi khi tải dữ liệu:', error);
+        data.forEach(item => {
+            const month = parseInt(item.month) - 1;
+            if (month >= 0 && month < 12) {
+                monthlyData[month] = type === "revenue" ?
+                    (item.revenue || 0) :
+                    (item.totalOrders || 0);
             }
         });
 
-        // Hàm lấy số tuần từ ngày
-        function getWeekNumber(date) {
-            const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-            const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-            return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+        yearlyChart = new Chart(yearlyCtx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: type === "revenue" ? 'Doanh thu năm' : 'Số đơn hàng',
+                    data: monthlyData,
+                    fill: true,
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderColor: '#10b981',
+                    tension: 0.4,
+                    pointRadius: 3,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 13, style: 'normal' } }
+                    },
+                    y: { beginAtZero: true, grid: { color: '#e5e7eb' } }
+                }
+            }
+        });
+    }
+
+    // Hàm render biểu đồ theo các thứ trong tuần
+    function renderWeeklyChart(data, type = "revenue", weekInfo = null) {
+        const titleMap = {
+            revenue: weekInfo ? `Doanh thu Tuần ${weekInfo.weekNumber} (${weekInfo.year})` : "Doanh thu theo tuần",
+            orders: weekInfo ? `Số đơn hàng Tuần ${weekInfo.weekNumber} (${weekInfo.year})` : "Số đơn hàng theo tuần",
+        };
+
+        // Tạo mảng dữ liệu cho 7 ngày trong tuần
+        const daysOfWeek = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+        const weekData = new Array(7).fill(0);
+
+        // Điền dữ liệu vào đúng thứ
+        data.forEach(item => {
+            const dayIndex = parseInt(item.dayOfWeek) - 1; // SQL Server: 1=Chủ nhật, 2=Thứ 2, ..., 7=Thứ 7
+            if (dayIndex >= 0 && dayIndex < 7) {
+                weekData[dayIndex] = type === "revenue" ?
+                    (item.revenue || 0) :
+                    (item.totalOrders || 0);
+            }
+        });
+
+        console.log('Weekly chart data:', weekData);
+
+        chart.setOption({
+            title: {
+                text: titleMap[type],
+                left: "center",
+                textStyle: {
+                    fontSize: 16,
+                    fontWeight: 'bold'
+                }
+            },
+            tooltip: {
+                trigger: "axis",
+                formatter: function (params) {
+                    return params[0].name + '<br/>' +
+                        (type === "revenue" ? "Doanh thu: " : "Số đơn hàng: ") +
+                        (type === "revenue" ?
+                            formatCurrency(params[0].value) :
+                            params[0].value + ' đơn');
+                }
+            },
+            xAxis: {
+                type: "category",
+                data: daysOfWeek,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 0
+                }
+            },
+            yAxis: {
+                type: "value",
+                axisLabel: {
+                    formatter: type === "revenue" ?
+                        function (value) {
+                            if (value >= 1000000) {
+                                return (value / 1000000).toFixed(1) + 'M';
+                            } else if (value >= 1000) {
+                                return (value / 1000).toFixed(0) + 'K';
+                            }
+                            return value;
+                        } :
+                        function (value) {
+                            return value;
+                        }
+                }
+            },
+            series: [{
+                name: type === "revenue" ? "Doanh thu" : "Số đơn hàng",
+                type: "bar",
+                data: weekData,
+                itemStyle: {
+                    color: "#3b82f6",
+                    borderRadius: [4, 4, 0, 0]
+                },
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: function (params) {
+                        return type === "revenue" ?
+                            formatCurrencyShort(params.value) :
+                            params.value;
+                    }
+                }
+            }],
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            }
+        });
+    }
+
+    // Hàm định dạng tiền tệ ngắn gọn
+    function formatCurrencyShort(amount) {
+        if (amount >= 1000000) {
+            return (amount / 1000000).toFixed(1) + 'M';
+        } else if (amount >= 1000) {
+            return (amount / 1000).toFixed(0) + 'K';
         }
+        return amount;
+    }
 
-        // Gắn sự kiện cho form theo tuần
-        document.getElementById("filterFormWeek").addEventListener("submit", async function (e) {
-            e.preventDefault();
-            const year = document.getElementById("yearSelectWeek").value;
-            const week = document.getElementById("weekSelect").value;
-            const statType = document.getElementById("statTypeWeek").value;
+    // Hàm định dạng tiền tệ đầy đủ
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(amount);
+    }
 
-            if (!week) {
-                alert('Vui lòng chọn tuần');
-                return;
+    // Hàm lấy số tuần theo chuẩn ISO (tuần bắt đầu từ thứ 2)
+    function getISOWeekNumber(date) {
+        const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        const dayNum = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+
+    // Hàm load danh sách tuần và chọn tuần hiện tại
+    async function loadWeekOptions() {
+        try {
+            const weeksData = await fetchData('/allWeeks');
+            const weekSelect = document.getElementById('weekSelect');
+
+            // Xóa options cũ (giữ lại option "Tất cả")
+            while (weekSelect.options.length > 1) {
+                weekSelect.remove(1);
             }
 
+            // Thêm options mới
+            weeksData.forEach(week => {
+                const option = document.createElement('option');
+                option.value = week.weekNumber;
+                option.textContent = `Tuần ${week.weekNumber} (${week.year})`;
+                option.dataset.year = week.year;
+                weekSelect.appendChild(option);
+            });
+
+            // Chọn tuần hiện tại
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            const currentWeek = getISOWeekNumber(today);
+            
+            // Tìm option phù hợp với tuần hiện tại
+            const currentWeekOption = Array.from(weekSelect.options).find(option => 
+                option.value == currentWeek && option.dataset.year == currentYear
+            );
+            
+            if (currentWeekOption) {
+                weekSelect.value = currentWeekOption.value;
+            } else if (weekSelect.options.length > 1) {
+                // Nếu không tìm thấy tuần hiện tại, chọn tuần đầu tiên
+                weekSelect.selectedIndex = 1;
+            }
+            
+            return { year: currentYear, week: weekSelect.value };
+        } catch (error) {
+            console.error('Lỗi khi tải danh sách tuần:', error);
+            // Fallback: sử dụng tuần hiện tại
+            const today = new Date();
+            return { 
+                year: today.getFullYear(), 
+                week: getISOWeekNumber(today) 
+            };
+        }
+    }
+
+    // Load dữ liệu ban đầu
+    document.addEventListener('DOMContentLoaded', async function () {
+        try {
+            // Tải danh sách tuần và lấy thông tin tuần hiện tại
+            const { year, week } = await loadWeekOptions();
+            
+            // Thiết lập năm cho cả hai biểu đồ
+            document.getElementById('yearSelectWeek').value = year;
+            document.getElementById('yearSelect').value = year;
+
+            // Tải dữ liệu tháng (năm hiện tại)
+            const monthlyData = await fetchData('/monthlyByDate', {
+                startDate: `${year}-01-01T00:00:00`,
+                endDate: `${year}-12-31T23:59:59`
+            });
+            renderYearlyChart(monthlyData, 'revenue');
+
+            // Tải dữ liệu tuần hiện tại
+            if (week) {
+                const dailyData = await fetchData('/dailyByWeek', {
+                    year: parseInt(year),
+                    weekNumber: parseInt(week)
+                });
+                
+                if (dailyData && dailyData.length > 0) {
+                    renderWeeklyChart(dailyData, 'revenue', {
+                        weekNumber: parseInt(week),
+                        year: parseInt(year)
+                    });
+                } else {
+                    // Nếu không có dữ liệu, hiển thị thông báo
+                    chart.setOption({
+                        title: {
+                            text: `Không có dữ liệu cho Tuần ${week} (${year})`,
+                            left: "center",
+                            textStyle: {
+                                fontSize: 16,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        xAxis: {
+                            type: "category",
+                            data: ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'],
+                        },
+                        yAxis: { type: "value" },
+                        series: [{
+                            type: "bar",
+                            data: [0, 0, 0, 0, 0, 0, 0],
+                            itemStyle: { color: "#ccc" }
+                        }]
+                    });
+                }
+            }
+
+        } catch (error) {
+            console.error('Lỗi khi tải dữ liệu:', error);
+            // Hiển thị thông báo lỗi trên biểu đồ
+            chart.setOption({
+                title: {
+                    text: "Lỗi khi tải dữ liệu",
+                    left: "center",
+                    textStyle: {
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        color: '#f00'
+                    }
+                },
+                xAxis: { data: [] },
+                yAxis: { type: "value" },
+                series: [{ data: [] }]
+            });
+        }
+    });
+
+    // Gắn sự kiện cho form theo tuần
+    document.getElementById("filterFormWeek").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const year = document.getElementById("yearSelectWeek").value;
+        const week = document.getElementById("weekSelect").value;
+        const statType = document.getElementById("statTypeWeek").value;
+
+        if (!week) {
+            alert('Vui lòng chọn tuần');
+            return;
+        }
+
+        try {
             const dailyData = await fetchData('/dailyByWeek', {
                 year: parseInt(year),
                 weekNumber: parseInt(week)
             });
-            renderWeeklyChart(dailyData, statType, {
-                weekNumber: parseInt(week),
-                year: parseInt(year)
-            });
-        });
+            
+            if (dailyData && dailyData.length > 0) {
+                renderWeeklyChart(dailyData, statType, {
+                    weekNumber: parseInt(week),
+                    year: parseInt(year)
+                });
+            } else {
+                alert(`Không có dữ liệu cho Tuần ${week} năm ${year}`);
+            }
+        } catch (error) {
+            console.error('Lỗi khi tải dữ liệu tuần:', error);
+            alert('Có lỗi xảy ra khi tải dữ liệu');
+        }
+    });
 
-        // Gắn sự kiện cho form theo năm
-        document.getElementById("filterFormYear").addEventListener("submit", async function (e) {
-            e.preventDefault();
-            const year = document.getElementById("yearSelect").value;
-            const statType = document.getElementById("statTypeYear").value;
+    // Gắn sự kiện cho form theo năm
+    document.getElementById("filterFormYear").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const year = document.getElementById("yearSelect").value;
+        const statType = document.getElementById("statTypeYear").value;
 
+        try {
             const monthlyData = await fetchData('/monthlyByDate', {
                 startDate: `${year}-01-01T00:00:00`,
                 endDate: `${year}-12-31T23:59:59`
             });
             renderYearlyChart(monthlyData, statType);
-        });
+        } catch (error) {
+            console.error('Lỗi khi tải dữ liệu năm:', error);
+            alert('Có lỗi xảy ra khi tải dữ liệu');
+        }
+    });
 
-        // Tự động chọn năm tương ứng khi chọn tuần
-        document.getElementById('weekSelect').addEventListener('change', function () {
-            const selectedOption = this.options[this.selectedIndex];
-            if (selectedOption.dataset.year) {
-                document.getElementById('yearSelectWeek').value = selectedOption.dataset.year;
-            }
-        });
-    </script>
+    // Tự động chọn năm tương ứng khi chọn tuần
+    document.getElementById('weekSelect').addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.dataset.year) {
+            document.getElementById('yearSelectWeek').value = selectedOption.dataset.year;
+        }
+    });
+</script>
 
     <script> //link card
         // Thêm sự kiện click cho các link
