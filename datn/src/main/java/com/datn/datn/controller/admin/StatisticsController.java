@@ -5,21 +5,29 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.datn.datn.service.StatisticsService;
+import com.datn.datn.service.*;
+import com.datn.datn.model.Member;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class StatisticsController {
 
     @Autowired
     private StatisticsService statisticsService;
+    @Autowired
+    private MembersService memberService;
+
 
     // biểu đồ tuần
     @GetMapping("/dailyByWeek")

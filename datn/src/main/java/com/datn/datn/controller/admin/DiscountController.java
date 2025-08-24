@@ -36,6 +36,8 @@ import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.ProductService;
 import com.datn.datn.service.ProductVariantService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/discount")
 public class DiscountController {
@@ -96,7 +98,12 @@ public class DiscountController {
             @RequestParam("discount") float discount,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, HttpSession session) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !role.equals("ADMIN")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied";
+        }
 
         LocalDate today = LocalDate.now();
 
@@ -181,7 +188,5 @@ public class DiscountController {
         }
         return "redirect:/variants/discounts";
     }
-    
-
 
 }

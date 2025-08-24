@@ -180,6 +180,7 @@ public class HomeController {
         session.invalidate();
         session = request.getSession(true);
         session.setAttribute("loggedInUser", member);
+        session.setAttribute("role", member.getRole()); // lưu role (ADMIN / STAFF)
 
         // Điều hướng theo role
         switch (member.getRole()) {

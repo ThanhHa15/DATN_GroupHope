@@ -11,6 +11,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.datn.datn.model.Vouchers;
 import com.datn.datn.service.VoucherService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/vouchers")
 public class VoucherController {
@@ -19,7 +21,12 @@ public class VoucherController {
     private VoucherService voucherService;
 
     @GetMapping
-    public String listVouchers(Model model) {
+    public String listVouchers(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !role.equals("ADMIN")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied";
+        }
         model.addAttribute("voucher", new Vouchers()); // tạo mới form
         model.addAttribute("vouchers", voucherService.findAll()); // danh sách để hiển thị
         return "formVoucher";
@@ -27,8 +34,8 @@ public class VoucherController {
 
     @PostMapping("/save")
     public String saveVoucher(@ModelAttribute("voucher") Vouchers voucher,
-                              Model model,
-                              RedirectAttributes redirectAttributes) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
         boolean isEdit = (voucher.getId() != null);
         boolean isCodeDuplicate = voucherService.existsByCode(voucher.getCode());
 
@@ -68,7 +75,8 @@ public class VoucherController {
         }
 
         voucherService.save(voucher);
-        redirectAttributes.addFlashAttribute("success", isEdit ? "Cập nhật voucher thành công!" : "Thêm voucher thành công!");
+        redirectAttributes.addFlashAttribute("success",
+                isEdit ? "Cập nhật voucher thành công!" : "Thêm voucher thành công!");
         return "redirect:/vouchers";
     }
 
@@ -103,5 +111,5 @@ public class VoucherController {
         model.addAttribute("keyword", keyword);
         return "formVoucher";
     }
-    
+
 }

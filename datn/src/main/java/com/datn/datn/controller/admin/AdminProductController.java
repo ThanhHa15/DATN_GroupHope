@@ -1,30 +1,20 @@
 package com.datn.datn.controller.admin;
 
 import com.datn.datn.model.Category;
-import com.datn.datn.model.Member;
-import com.datn.datn.model.Order;
 import com.datn.datn.model.Product;
 import com.datn.datn.service.CategoryService;
-import com.datn.datn.service.OrderService;
 import com.datn.datn.service.ProductService;
-
-import jakarta.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/admin-products")
@@ -32,9 +22,6 @@ public class AdminProductController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
-
-    @Autowired // Thêm annotation này
-    private OrderService orderService;
 
     public AdminProductController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
@@ -78,6 +65,7 @@ public class AdminProductController {
                 Product existing = productService.getById(product.getProductID());
                 if (existing != null) {
                     product.setImageUrl(existing.getImageUrl());
+                    existing.setStatus(product.isStatus());
                 }
             }
         }
@@ -165,6 +153,17 @@ public class AdminProductController {
                 "/admin-products/filter?categoryId=" + (categoryId == null ? 0 : categoryId) + "&");
 
         return "formProduct";
+    }
+
+    @GetMapping("/toggle-status/{id}")
+    public String toggleStatus(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            productService.toggleStatus(id);
+            redirectAttributes.addFlashAttribute("message", "Cập nhật trạng thái thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+        }
+        return "redirect:/admin-products";
     }
 
     // @GetMapping("/filter-status")

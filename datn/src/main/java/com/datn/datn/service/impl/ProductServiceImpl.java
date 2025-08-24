@@ -88,5 +88,13 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getActiveProducts() {
         return repo.findByStatus(true); // Sử dụng phương thức mới không có Pageable
     }
+    @Override
+    public void toggleStatus(Integer id) {
+        Product product = repo.findById(id).orElse(null);
+        if (product != null) {
+            product.setStatus(!product.isStatus());
+            repo.save(product);
+        }
+    }
 
 }

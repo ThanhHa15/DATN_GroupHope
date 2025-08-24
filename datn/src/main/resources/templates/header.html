@@ -159,14 +159,24 @@
         <div class="user-dropdown-wrapper">
           <i class="ri-user-3-line text-2xl hover:text-blue-500 transition"></i>
           <div class="user-dropdown" id="userDropdown">
-            <div class="down">
-              <strong th:text="${loggedInUser?.role}">Quyền: Quản trị viên</strong>
-              <i class="fas fa-user"></i> Nguyễn Văn A<span th:text="${loggedInUser?.fullname}"></span>
+            <div class="down" th:if="${loggedInUser != null}">
+
+              <i class="fas fa-user"></i>
+              <strong th:text="'Tên: ' +${loggedInUser.fullname}">Nguyễn Văn A</strong><br>
+              <span th:text="'Quyền: ' + ${loggedInUser.role}">Quyền: Quản trị viên</span>
             </div>
-            <p><i class="fa-solid fa-user"></i> Tài khoản</p>
-            <p><i class="fa-solid fa-gear"></i> Đổi mật khẩu</p>
+
+
+            <p><a href="/info" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+                <i class="fa-solid fa-user"></i> Tài khoản
+              </a></p>
             <hr />
-            <button>Đăng xuất</button>
+            <form action="/logout" method="post" style="display: inline;">
+              <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+              </button>
+            </form>
+
           </div>
         </div>
 

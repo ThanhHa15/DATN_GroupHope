@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.datn.datn.model.Member;
 import com.datn.datn.service.MembersService;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -30,7 +31,14 @@ public class EmployeeController {
     private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping
-    public String showEmployeeList(@RequestParam(required = false) String keyword, Model model) {
+    public String showEmployeeList(@RequestParam(required = false) String keyword, Model model, HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !role.equals("ADMIN")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied";
+        }
+
         List<Member> employees = (keyword != null && !keyword.trim().isEmpty())
                 ? membersService.searchByKeywordAndRoles(keyword.trim(), List.of("ADMIN", "STAFF"))
                 : membersService.findByRoles(List.of("ADMIN", "STAFF"));

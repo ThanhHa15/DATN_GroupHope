@@ -26,6 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.datn.datn.model.Order;
 import com.datn.datn.service.OrderService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class OrderAdminController {
 
@@ -39,7 +41,14 @@ public class OrderAdminController {
             @RequestParam(defaultValue = "") String orderStatus,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-            Model model) {
+            Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+
+        String role = (String) session.getAttribute("role");
+        System.out.println("ROLE trong session = " + role);
+        if (role == null || (!role.equals("ADMIN") && !role.equals("STAFF"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied"; // hoặc trả về 1 trang báo lỗi
+        }
 
         // Tạo Specification để lọc dữ liệu
         Specification<Order> spec = Specification.where(null);
@@ -100,7 +109,13 @@ public class OrderAdminController {
     }
 
     @GetMapping("/admin-orderdetail/{orderId}")
-    public String viewOrderDetail(@PathVariable("orderId") Long orderId, Model model) {
+    public String viewOrderDetail(@PathVariable("orderId") Long orderId, Model model, HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || (!role.equals("ADMIN") && !role.equals("STAFF"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied"; // hoặc trả về 1 trang báo lỗi
+        }
         Order order = orderService.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
 
@@ -229,7 +244,13 @@ public class OrderAdminController {
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-            Model model) {
+            Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+
+        String role = (String) session.getAttribute("role");
+        if (role == null || !role.equals("ADMIN")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied";
+        }
 
         double shippingFee = 40000;
 

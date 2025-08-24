@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -39,6 +41,10 @@ public class Product {
 
     @Column(name = "status", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean status = true; // active, outofstock, hidden
+
+    @Column(name = "manufacture_date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate manufactureDate;
 
     public List<String> getStorages() {
         return storages;

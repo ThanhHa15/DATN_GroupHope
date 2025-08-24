@@ -4,13 +4,33 @@
 <head>
   <meta charset="UTF-8" />
   <title>Thêm sản phẩm</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-  <script>tailwind.config = { theme: { extend: { colors: { primary: '#1e88e5', secondary: '#f5f5f5' }, borderRadius: { 'none': '0px', 'sm': '4px', DEFAULT: '8px', 'md': '12px', 'lg': '16px', 'xl': '20px', '2xl': '24px', '3xl': '32px', 'full': '9999px', 'button': '8px' } } } }</script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: "#1e88e5", secondary: "#f5f5f5" },
+          borderRadius: {
+            none: "0px",
+            sm: "4px",
+            DEFAULT: "8px",
+            md: "12px",
+            lg: "16px",
+            xl: "20px",
+            "2xl": "24px",
+            "3xl": "32px",
+            full: "9999px",
+            button: "8px",
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
   <style>
     :where([class^="ri-"])::before {
@@ -20,7 +40,7 @@
     body {
       background-color: #f0f3f7;
       margin: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: "Poppins", sans-serif;
       color: #2c3e50;
     }
 
@@ -33,11 +53,9 @@
     body {
       background-color: #f0f3f7;
       margin: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: "Poppins", sans-serif;
       color: #2c3e50;
     }
-
-
 
     .content {
       margin-left: 295px;
@@ -76,7 +94,6 @@
     }
 
     label {
-
       display: block;
       margin-bottom: 6px;
       font-size: 14px;
@@ -84,7 +101,6 @@
       /* position: relative;
   bottom: -17px;
   left: 10px; */
-
     }
 
     select {
@@ -129,7 +145,6 @@ select {
 
     input[type="file"] {
       margin-bottom: 15px;
-
     }
 
     button {
@@ -169,7 +184,6 @@ select {
       background-color: #27ae60;
     }
 
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -182,7 +196,6 @@ select {
       text-align: center;
     }
 
-
     .cart-item {
       padding: 10px;
       background-color: #f9f9f9;
@@ -194,13 +207,18 @@ select {
   <div th:replace="nav :: na"></div>
   <div th:replace="header :: header"></div>
 
-
   <div class="content">
-    <h1 style=" margin-top: -18px; font-size: 23px; margin-bottom: 18px; margin-left: 8px;">Thêm/sửa sản phẩm</h1>
+    <h1 style="
+          margin-top: -18px;
+          font-size: 23px;
+          margin-bottom: 18px;
+          margin-left: 8px;
+        ">
+      Thêm/sửa sản phẩm
+    </h1>
     <div class="card">
       <form th:action="@{/admin-products/add}" method="post" enctype="multipart/form-data" th:object="${product}">
         <input type="hidden" th:field="*{productID}" />
-
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Tên sản phẩm -->
@@ -229,6 +247,15 @@ select {
               <option value="false">Ngừng kinh doanh</option>
             </select>
           </div>
+          <!-- Ngày sx -->
+          <div>
+            <label class="block text-gray-700 text-base font-semibold mb-2">Ngày sản xuất:</label>
+            <input type="date" th:field="*{manufactureDate}" required
+       class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+       th:max="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}"/>
+            <span class="error-message" th:if="${#fields.hasErrors('manufactureDate')}"
+              th:errors="*{manufactureDate}"></span>
+          </div>
         </div>
 
         <!-- Mô tả -->
@@ -241,26 +268,22 @@ select {
         <!-- Ảnh -->
         <div>
           <label class="block text-gray-700 text-base font-semibold mb-2">Ảnh</label>
-          <input type="file" name="imageFile" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4
-                  file:rounded-md file:border-0
-                  file:text-sm file:font-semibold
-                  file:bg-blue-50 file:text-blue-700
-                  hover:file:bg-blue-100" />
+          <input type="file" name="imageFile"
+            class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
         </div>
 
-
-
-        <button type="submit" class="submit-btn" style="margin-top: -50px;">Lưu sản phẩm</button>
+        <button type="submit" class="submit-btn" style="margin-top: -50px">
+          Lưu sản phẩm
+        </button>
       </form>
     </div>
   </div>
 
-
-  <div style="margin-left: 295px;">
+  <div style="margin-left: 295px">
     <div class="flex min-h-screen">
       <!-- Main Content -->
       <div class="flex-1 flex flex-col">
-        <main class="flex-1 p-6 overflow-auto" style="margin-top: -30px ; margin-left: -20px;">
+        <main class="flex-1 p-6 overflow-auto" style="margin-top: -30px; margin-left: -20px">
           <!-- Products Section -->
           <div class="bg-white rounded-2xl shadow-lg mb-6 overflow-hidden">
             <div class="p-6 border-b border-gray-200">
@@ -280,7 +303,6 @@ select {
                       <i class="ri-search-line text-gray-400"></i>
                     </div>
                   </form>
-
                 </div>
                 <div class="w-48">
                   <div class="relative">
@@ -288,14 +310,12 @@ select {
                       <select name="categoryId"
                         class="w-full h-[43px] pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                         onchange="document.getElementById('filterForm').submit()">
-
                         <option value="0" th:selected="${selectedCategoryId == null || selectedCategoryId == 0}">
                           Tất cả danh mục
                         </option>
 
                         <option th:each="cat : ${categories}" th:value="${cat.categoryID}" th:text="${cat.name}"
-                          th:selected="${selectedCategoryId == cat.categoryID}">
-                        </option>
+                          th:selected="${selectedCategoryId == cat.categoryID}"></option>
                       </select>
                     </form>
 
@@ -322,7 +342,6 @@ select {
                       </div>
                     </div>
                   </form>
-
                 </div>
               </div>
 
@@ -333,41 +352,59 @@ select {
                     <tr>
                       <th
                         class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
-                        STT</th>
+                        STT
+                      </th>
                       <th
                         class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
-                        Ảnh</th>
+                        Ảnh
+                      </th>
                       <th
                         class="px-4 py-3 bg-gray-50 text-left text-lg font-bold text-gray-700 uppercase tracking-wider">
-                        Sản phẩm</th>
+                        Sản phẩm
+                      </th>
                       <th
                         class="px-4 py-3 bg-gray-50 text-left text-lg font-bold text-gray-700 uppercase tracking-wider">
-                        Danh mục</th>
+                        Danh mục
+                      </th>
+                      <th
+                        class="1875rem px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
+                        Ngày sản xuất
+                      </th>
                       <th
                         class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
-                        Trạng thái</th>
+                        Trạng thái
+                      </th>
                       <th
                         class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
-                        Thao tác</th>
+                        Thao tác
+                      </th>
                     </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-200 text-sm text-gray-700">
                     <tr th:each="p, iter : ${products}">
                       <td th:text="${currentPage * pageSize + iter.index + 1}"
-                        class="px-4 py-4 text-center text-base font-small">1</td>
+                        class="px-4 py-4 text-center text-base font-small">
+                        1
+                      </td>
                       <td class="px-4 py-4 text-center">
                         <img class="w-[70px] h-[70px] object-cover rounded mx-auto"
-                          th:src="@{'/images/' + ${p.imageUrl}}" alt="">
+                          th:src="@{'/images/' + ${p.imageUrl}}" alt="" />
                       </td>
-                      <td th:text="${p.productName}" class="px-4 py-4 text-left text-base font-small">Iphone 15 Pro Max
+                      <td th:text="${p.productName}" class="px-4 py-4 text-left text-base font-small">
+                        Iphone 15 Pro Max
                       </td>
-                      <td th:text="${p.category.name}" class="px-4 py-4 text-left text-base font-small">Điện thoại</td>
+                      <td th:text="${p.category.name}" class="px-4 py-4 text-left text-base font-small">
+                        Điện thoại
+                      </td>
+                      <td th:text="${#temporals.format(p.manufactureDate, 'dd/MM/yyyy')}"></td>
                       <td class="px-4 py-4 text-center">
-                        <span th:text="${p.status ? 'Hiển thị' : 'Ẩn'}"
+                        <span th:text="${p.status ? 'Đang kinh doanh' : 'Ngừng kinh doanh'}"
                           th:class="${p.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}"
                           class="px-3 py-1 rounded-full text-xs font-semibold">
                         </span>
                       </td>
+
+
                       <td class="px-4 py-4">
                         <div class="flex justify-center gap-2">
                           <!-- Nút chuyển đổi trạng thái -->
@@ -394,6 +431,7 @@ select {
                           </a>
                         </div>
                       </td>
+
                     </tr>
                   </tbody>
                 </table>
@@ -401,13 +439,13 @@ select {
                 <div th:if="${#lists.isEmpty(products)}" class="w-full text-center py-12">
                   <img
                     src="https://i.postimg.cc/nrf4Qjsw/pngtree-business-web-error-404-concept-illustration-png-image-3507632-removebg-preview.png"
-                    alt="No products" class="mx-auto w-[250px] h-auto mb-4" style="margin-top: -50px;" />
-                  <p class="text-gray-800 text-lg">Không có sản phẩm nào được tìm thấy.</p>
+                    alt="No products" class="mx-auto w-[250px] h-auto mb-4" style="margin-top: -50px" />
+                  <p class="text-gray-800 text-lg">
+                    Không có sản phẩm nào được tìm thấy.
+                  </p>
                 </div>
               </div>
 
-
-              <!-- Pagination -->
               <!-- Pagination -->
               <div class="flex items-center justify-between mt-6">
                 <div id="pagination" class="flex space-x-2">
@@ -435,18 +473,12 @@ select {
                   </ul>
                 </div>
               </div>
-
-
-
             </div>
           </div>
 
           <!-- Sales Charts -->
-
         </main>
       </div>
-
-
     </div>
   </div>
   <script>
@@ -455,8 +487,8 @@ select {
 
     function loadProducts(page) {
       fetch(`/products?page=${page}&size=${pageSize}`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           // Hiển thị sản phẩm
           renderProducts(data.content);
 
@@ -468,7 +500,7 @@ select {
     function renderProducts(products) {
       const container = document.querySelector("#product-list");
       container.innerHTML = "";
-      products.forEach(p => {
+      products.forEach((p) => {
         container.innerHTML += `
       <div class="product-card">
         <img src="${p.imageUrl}" alt="${p.productName}">
@@ -483,21 +515,54 @@ select {
       paginationContainer.innerHTML = "";
 
       if (currentPage > 0) {
-        paginationContainer.innerHTML += `<button onclick="loadProducts(${currentPage - 1})">Trước</button>`;
+        paginationContainer.innerHTML += `<button onclick="loadProducts(${currentPage - 1
+          })">Trước</button>`;
       }
 
       for (let i = 0; i < totalPages; i++) {
-        paginationContainer.innerHTML += `<button onclick="loadProducts(${i})">${i + 1}</button>`;
+        paginationContainer.innerHTML += `<button onclick="loadProducts(${i})">${i + 1
+          }</button>`;
       }
 
       if (currentPage < totalPages - 1) {
-        paginationContainer.innerHTML += `<button onclick="loadProducts(${currentPage + 1})">Tiếp</button>`;
+        paginationContainer.innerHTML += `<button onclick="loadProducts(${currentPage + 1
+          })">Tiếp</button>`;
       }
     }
 
     // Load trang đầu tiên
     loadProducts(0);
+  </script>
+  <script>
+    document.querySelectorAll(".toggle-status").forEach((button) => {
+      button.addEventListener("click", async function (e) {
+        e.preventDefault();
+        const productId = this.getAttribute("data-id");
 
+        try {
+          const response = await fetch(
+            `/admin-products/toggle-status/${productId}`
+          );
+          if (response.ok) {
+            // Cập nhật giao diện ngay lập tức
+            const icon = this.querySelector("i");
+            if (icon.classList.contains("ri-eye-line")) {
+              icon.classList.remove("ri-eye-line");
+              icon.classList.add("ri-eye-off-line");
+              this.setAttribute("title", "Hiển thị sản phẩm");
+              // Cập nhật trạng thái trong bảng nếu cần
+            } else {
+              icon.classList.remove("ri-eye-off-line");
+              icon.classList.add("ri-eye-line");
+              this.setAttribute("title", "Ẩn sản phẩm");
+            }
+            // Có thể thêm thông báo thành công
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      });
+    });
   </script>
 </body>
 

@@ -34,6 +34,8 @@ public interface ProductService {
     
     List<Product> getActiveProducts(); // Lấy tất cả sản phẩm active (không phân trang)
 
+    void toggleStatus(Integer id);
+
 
 
 }

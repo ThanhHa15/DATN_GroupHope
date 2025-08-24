@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.datn.datn.model.Member;
 import com.datn.datn.service.MembersService;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -28,25 +29,30 @@ public class UserController {
 
     @GetMapping
     public String showEmployeeList(
-            @RequestParam(required = false) String keyword, 
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            Model model) {
-        
+            Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || !role.equals("ADMIN")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied";
+        }
+
         List<Member> employees;
         long totalUsers;
-        
+
         if (status != null && !status.isEmpty()) {
             // Lọc theo trạng thái
             boolean isActive = "active".equals(status);
             employees = membersService.findByActive(isActive, keyword);
             totalUsers = employees.size();
-            
+
             // Xử lý phân trang cho danh sách đã lọc
             int startIndex = page * size;
             int endIndex = Math.min(startIndex + size, employees.size());
-            
+
             if (startIndex < employees.size()) {
                 employees = employees.subList(startIndex, endIndex);
             } else {
@@ -61,12 +67,12 @@ public class UserController {
         // Tính toán thông tin phân trang
         int totalPages = (int) Math.ceil((double) totalUsers / size);
         int currentPage = page;
-        
+
         // Đảm bảo page không âm
         if (currentPage < 0) {
             currentPage = 0;
         }
-        
+
         // Đảm bảo page không vượt quá tổng số trang
         if (totalPages > 0 && currentPage >= totalPages) {
             currentPage = totalPages - 1;
@@ -76,7 +82,7 @@ public class UserController {
         model.addAttribute("employees", employees);
         model.addAttribute("keyword", keyword);
         model.addAttribute("selectedStatus", status);
-        
+
         // Thêm thông tin phân trang
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
@@ -84,7 +90,7 @@ public class UserController {
         model.addAttribute("size", size);
         model.addAttribute("hasNext", currentPage < totalPages - 1);
         model.addAttribute("hasPrevious", currentPage > 0);
-        
+
         return "views/admin/userslist";
     }
 
