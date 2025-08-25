@@ -37,6 +37,31 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Override
     public ProductVariant save(ProductVariant variant) {
+        Integer productId = variant.getProduct().getProductID();
+        String color = variant.getColor();
+        String storage = variant.getStorage();
+
+        // Nếu là thêm mới (chưa có ID)
+        if (variant.getVariantID() == null) {
+            if (repo.existsByProduct_ProductIDAndColorAndStorage(productId, color, storage)) {
+                throw new IllegalArgumentException(
+                        "Biến thể với màu '" + color + "' và bộ nhớ '" + storage + "' đã tồn tại cho sản phẩm này.");
+            }
+        } else {
+            // Nếu là update → phải check xem có bản ghi khác trùng không
+            boolean exists = repo.existsByProduct_ProductIDAndColorAndStorage(productId, color, storage);
+            if (exists) {
+                // Nếu tồn tại → lấy bản ghi hiện tại trong DB
+                ProductVariant existing = repo.findById(variant.getVariantID()).orElse(null);
+                if (existing != null &&
+                        (!existing.getColor().equals(color) || !existing.getStorage().equals(storage))) {
+                    throw new IllegalArgumentException(
+                            "Biến thể với màu '" + color + "' và bộ nhớ '" + storage
+                                    + "' đã tồn tại cho sản phẩm này.");
+                }
+            }
+        }
+
         return repo.save(variant);
     }
 

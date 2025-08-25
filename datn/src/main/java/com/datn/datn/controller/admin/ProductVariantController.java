@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -45,7 +46,11 @@ public class ProductVariantController {
             Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size) {
-        Page<ProductVariant> variantPage = variantService.getAll(PageRequest.of(page, size));
+
+        // sắp xếp A-Z theo tên sản phẩm (giả sử field là 'name')
+        Page<ProductVariant> variantPage = variantService.getAll(
+                PageRequest.of(page, size, Sort.by("product.productName").descending()));
+
         List<Product> products = loadProductsWithStorages();
 
         model.addAttribute("variant", new ProductVariant());
@@ -105,6 +110,7 @@ public class ProductVariantController {
         List<Product> products = loadProductsWithStorages();
 
         model.addAttribute("variant", new ProductVariant());
+
         model.addAttribute("variants", variantPage.getContent());
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.getAll());
@@ -120,39 +126,33 @@ public class ProductVariantController {
         return "formVariant";
     }
 
-    // ========== THÊM / SỬA ==========
-    @PostMapping("/add")
-    public String addOrUpdateVariant(
-            @Valid @ModelAttribute("variant") ProductVariant variant,
-            BindingResult result,
+    @PostMapping("/update")
+    public String updateVariant(
+            @ModelAttribute("variant") ProductVariant variant,
             @RequestParam("imageFile") MultipartFile imageFile,
-            Model model) {
+            RedirectAttributes redirectAttributes) {
 
-        if (result.hasErrors()) {
-            model.addAttribute("products", loadProductsWithStorages());
-            model.addAttribute("categories", categoryService.getAll());
-            return "formVariant"; // Trả về form kèm lỗi
-        }
-
-        // Xử lý ảnh
-        if (!imageFile.isEmpty()) {
-            try {
+        try {
+            // Xử lý ảnh
+            if (!imageFile.isEmpty()) {
                 String fileName = imageFile.getOriginalFilename();
                 String uploadDir = new File("src/main/resources/static/images").getAbsolutePath();
                 File dest = new File(uploadDir, fileName);
                 imageFile.transferTo(dest);
                 variant.setImagesno2(fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else if (variant.getVariantID() != null) {
+                ProductVariant existing = variantService.getById(variant.getVariantID());
+                if (existing != null) {
+                    variant.setImagesno2(existing.getImagesno2());
+                }
             }
-        } else if (variant.getVariantID() != null) {
-            ProductVariant existing = variantService.getById(variant.getVariantID());
-            if (existing != null) {
-                variant.setImagesno2(existing.getImagesno2());
-            }
+
+            variantService.save(variant);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật phiên bản thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật: " + e.getMessage());
         }
 
-        variantService.save(variant);
         return "redirect:/variants";
     }
 

@@ -15,7 +15,9 @@
 package com.datn.datn.controller.admin;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,33 +63,63 @@ public class DiscountController {
     public String showVariantForm(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String sort, // new param
             Model model) {
-        List<Product> products = productService.getAll();
 
+        List<ProductVariant> allVariants = variantService.getAll();
+
+        // filter theo category
+        if (name != null && !name.isEmpty()) {
+            allVariants = allVariants.stream()
+                    .filter(v -> v.getProduct().getCategory().getName().equalsIgnoreCase(name))
+                    .collect(Collectors.toList());
+        }
+
+        // filter theo keyword
+        if (keyword != null && !keyword.isEmpty()) {
+            allVariants = allVariants.stream()
+                    .filter(v -> v.getProduct().getProductName().toLowerCase().contains(keyword.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // sort theo tên sản phẩm
+        if ("desc".equalsIgnoreCase(sort)) {
+            allVariants = allVariants.stream()
+                    .sorted(Comparator.comparing((ProductVariant v) -> v.getProduct().getProductName()).reversed())
+                    .collect(Collectors.toList());
+        } else { // mặc định asc
+            allVariants = allVariants.stream()
+                    .sorted(Comparator.comparing(v -> v.getProduct().getProductName()))
+                    .collect(Collectors.toList());
+        }
+
+        List<Product> products = productService.getAll();
         for (Product p : products) {
             List<String> storages = variantService.findStoragesByProductId(p.getProductID());
             p.setStorages(storages);
         }
+        model.addAttribute("products", products);
 
-        // Lấy danh sách categories
-        List<Category> categories = categoryService.getAll();
-
-        // Phân trang cho variants
-        List<ProductVariant> allVariants = variantService.getAll();
+        // phân trang
         int totalItems = allVariants.size();
         int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / size));
         int fromIndex = Math.min((page - 1) * size, totalItems);
         int toIndex = Math.min(fromIndex + size, totalItems);
         List<ProductVariant> variants = allVariants.subList(fromIndex, toIndex);
 
-        model.addAttribute("variant", new ProductVariant());
         model.addAttribute("variants", variants);
-        model.addAttribute("products", products);
-        model.addAttribute("categories", categories);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("size", size);
         model.addAttribute("totalItems", totalItems);
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("name", name);
+        model.addAttribute("sort", sort);
+        // THÊM DÒNG NÀY để truyền danh sách sản phẩm cho dropdown
+        model.addAttribute("products", productService.getAll());
         return "formDiscount";
     }
 
@@ -109,24 +141,24 @@ public class DiscountController {
 
         if (start.isBefore(today) || end.isBefore(today)) {
             redirectAttributes.addFlashAttribute("error", "Ngày bắt đầu và kết thúc không được ở quá khứ.");
-            return "redirect:/variants/discounts";
+            return "redirect:/discount";
         }
 
         if (end.isBefore(start)) {
             redirectAttributes.addFlashAttribute("error", "Ngày kết thúc phải sau ngày bắt đầu.");
-            return "redirect:/variants/discounts";
+            return "redirect:/discount";
         }
 
         if (discount < 0 || discount > 100) {
             redirectAttributes.addFlashAttribute("error", "Giá trị giảm giá phải từ 0 đến 100.");
-            return "redirect:/variants/discounts";
+            return "redirect:/discount";
         }
 
         List<String> validStorages = variantService.findStoragesByProductId(productId);
 
         if (!validStorages.contains(storage)) {
             redirectAttributes.addFlashAttribute("error", "Dung lượng không hợp lệ cho sản phẩm đã chọn.");
-            return "redirect:/variants/discounts";
+            return "redirect:/discount";
         }
 
         try {
@@ -137,7 +169,7 @@ public class DiscountController {
             redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi khi áp dụng giảm giá.");
         }
 
-        return "redirect:/variants/discounts";
+        return "redirect:/discount";
     }
 
     @PostMapping("/remove/{variantId}")
@@ -149,7 +181,7 @@ public class DiscountController {
             logger.error("Lỗi khi xóa giảm giá: ", e);
             redirectAttributes.addFlashAttribute("error", "Xóa giảm giá thất bại: " + e.getMessage());
         }
-        return "redirect:/variants/discounts";
+        return "redirect:/discount";
     }
 
     @PostMapping("/update")
@@ -165,18 +197,18 @@ public class DiscountController {
         // Kiểm tra ngày kết thúc không được ở trong quá khứ
         if (end.isBefore(today)) {
             redirectAttributes.addFlashAttribute("error", "Ngày kết thúc không được ở trong quá khứ.");
-            return "redirect:/variants/discounts";
+            return "redirect:/discount";
         }
 
         // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc
         if (start.isAfter(end)) {
             redirectAttributes.addFlashAttribute("error", "Ngày bắt đầu không được lớn hơn ngày kết thúc.");
-            return "redirect:/variants/discounts";
+            return "redirect:/discount";
         }
 
         if (discount < 0 || discount > 100) {
             redirectAttributes.addFlashAttribute("error", "Giá trị giảm giá phải từ 0 đến 100.");
-            return "redirect:/variants/discounts";
+            return "redirect:/discount";
         }
 
         try {
@@ -186,7 +218,7 @@ public class DiscountController {
             logger.error("Lỗi khi cập nhật giảm giá: ", e);
             redirectAttributes.addFlashAttribute("error", "Cập nhật giảm giá thất bại: " + e.getMessage());
         }
-        return "redirect:/variants/discounts";
+        return "redirect:/discount";
     }
 
 }

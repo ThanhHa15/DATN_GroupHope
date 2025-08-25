@@ -2,10 +2,14 @@ package com.datn.datn.controller.admin;
 
 import com.datn.datn.model.Category;
 import com.datn.datn.model.Product;
+import com.datn.datn.repository.WishlistRepository;
 import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.ProductService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +36,14 @@ public class AdminProductController {
     public String showProductForm(Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size) {
-        Page<Product> productPage = productService.getAll(PageRequest.of(page, size));
+
+        // Sắp xếp Z -> A theo tên sản phẩm
+        Page<Product> productPage = productService.getAll(
+                PageRequest.of(page, size, Sort.by("productName").descending()));
 
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("categories", categoryService.getAll());
-        model.addAttribute("product", new Product());
+        model.addAttribute("product", null);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("pageSize", size);
@@ -49,7 +56,7 @@ public class AdminProductController {
 
     @PostMapping("/add")
     public String addProduct(@ModelAttribute Product product,
-            @RequestParam("imageFile") MultipartFile imageFile) {
+            @RequestParam("imageFile") MultipartFile imageFile, RedirectAttributes redirectAttributes) {
         if (!imageFile.isEmpty()) {
             try {
                 String fileName = imageFile.getOriginalFilename();
@@ -71,10 +78,34 @@ public class AdminProductController {
         }
 
         if (product.getProductID() != null) {
-            productService.update(product);
+            Product existing = productService.getById(product.getProductID());
+            if (existing != null) {
+                existing.setProductName(product.getProductName());
+                existing.setDescription(product.getDescription());
+                existing.setCategory(product.getCategory());
+                existing.setStatus(product.isStatus());
+
+                // Xử lý ngày sản xuất
+                if (product.getManufactureDate() != null) {
+                    existing.setManufactureDate(product.getManufactureDate());
+                }
+
+                // Xử lý ảnh
+                if (product.getImageUrl() != null) {
+                    existing.setImageUrl(product.getImageUrl());
+                }
+
+                productService.update(existing);
+            }
+            redirectAttributes.addFlashAttribute("message", "Cập nhật sản phẩm thành công!");
         } else {
+            if (product.getManufactureDate() == null) {
+                product.setManufactureDate(java.time.LocalDate.now());
+            }
             productService.save(product);
+            redirectAttributes.addFlashAttribute("message", "Thêm sản phẩm thành công!");
         }
+
         return "redirect:/admin-products";
     }
 
@@ -90,6 +121,7 @@ public class AdminProductController {
             @RequestParam(defaultValue = "8") int size,
             Model model) {
         Product product = productService.getById(id);
+        System.out.println("Manufacture Date: " + product.getManufactureDate());
         List<Category> categories = categoryService.getAll();
 
         Page<Product> productPage = productService.getAll(PageRequest.of(page, size));
@@ -100,6 +132,7 @@ public class AdminProductController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("pageSize", size);
+        System.out.println("Ngay sx " + product.getManufactureDate());
 
         return "formProduct";
     }
@@ -135,10 +168,12 @@ public class AdminProductController {
             Model model) {
 
         Page<Product> productPage;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("productName").descending());
+
         if (categoryId == null || categoryId == 0) {
-            productPage = productService.getAll(PageRequest.of(page, size));
+            productPage = productService.getAll(pageRequest);
         } else {
-            productPage = productService.getByCategoryId(categoryId, PageRequest.of(page, size));
+            productPage = productService.getByCategoryId(categoryId, pageRequest);
         }
 
         model.addAttribute("products", productPage.getContent());
@@ -165,31 +200,5 @@ public class AdminProductController {
         }
         return "redirect:/admin-products";
     }
-
-    // @GetMapping("/filter-status")
-    // public String filterProductsByStatus(
-    // @RequestParam(required = false) boolean status,
-    // @RequestParam(defaultValue = "0") int page,
-    // @RequestParam(defaultValue = "8") int size,
-    // Model model) {
-
-    // Page<Product> productPage;
-
-    // if (status == null || status.isEmpty()) {
-    // productPage = productService.getAll(PageRequest.of(page, size));
-    // } else {
-    // productPage = productService.getByStatus(status, PageRequest.of(page, size));
-    // }
-
-    // model.addAttribute("products", productPage.getContent());
-    // model.addAttribute("categories", categoryService.getAll());
-    // model.addAttribute("product", new Product());
-    // model.addAttribute("selectedStatus", status);
-    // model.addAttribute("currentPage", page);
-    // model.addAttribute("totalPages", productPage.getTotalPages());
-    // model.addAttribute("pageSize", size);
-
-    // return "formProduct";
-    // }
 
 }

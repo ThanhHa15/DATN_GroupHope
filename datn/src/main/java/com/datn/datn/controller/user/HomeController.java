@@ -192,9 +192,9 @@ public class HomeController {
         // Điều hướng theo role
         switch (member.getRole()) {
             case "ADMIN":
-                return "redirect:/admin/employees";
+                return "redirect:/statistics";
             case "STAFF":
-                return "redirect:/admin-products";
+                return "redirect:/categories";
             case "CUSTOMER":
                 session.setAttribute("showLoginSuccess", true);
                 return "redirect:/home";

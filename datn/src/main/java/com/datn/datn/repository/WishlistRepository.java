@@ -28,4 +28,5 @@ public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
     @Query("SELECT w.productVariant FROM Wishlist w WHERE w.user.id = :userId")
     Page<ProductVariant> findWishlistByUserId(@Param("userId") Long userId, Pageable pageable);
 
+    void deleteByProductVariant_VariantID(Integer variantID);
 }

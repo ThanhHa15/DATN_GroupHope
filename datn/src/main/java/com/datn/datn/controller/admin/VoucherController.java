@@ -23,7 +23,7 @@ public class VoucherController {
     @GetMapping
     public String listVouchers(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         String role = (String) session.getAttribute("role");
-        if (role == null || !role.equals("ADMIN")) {
+        if (role == null || (!role.equals("CUSTOMER") && !role.equals("STAFF"))) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
             return "redirect:/access-denied";
         }

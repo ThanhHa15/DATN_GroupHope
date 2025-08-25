@@ -85,4 +85,6 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
         // hàm lọc tên sản phẩm từ A-Z
 
+        boolean existsByProduct_ProductIDAndColorAndStorage(Integer productID, String color, String storage);
+
 }

@@ -31,19 +31,23 @@ public class ReviewController {
     private final FileStorageService fileStorageService;
     private final ReviewLikeRepository reviewLikeRepository;
     private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
 
     public ReviewController(ReviewRepository reviewRepository,
             FeedbackRepository feedbackRepository,
             FileStorageService fileStorageService,
             ReviewLikeRepository reviewLikeRepository,
-            ProductRepository productRepository) {
+            ProductRepository productRepository,
+            MemberRepository memberRepository) {
         this.reviewRepository = reviewRepository;
         this.feedbackRepository = feedbackRepository;
         this.fileStorageService = fileStorageService;
         this.reviewLikeRepository = reviewLikeRepository;
         this.productRepository = productRepository;
+        this.memberRepository = memberRepository;
     }
 
+    // Kiểm tra trạng thái đăng nhập
     @GetMapping("/check-auth")
     public ResponseEntity<?> checkAuth(HttpSession session) {
         Member loggedInUser = (Member) session.getAttribute("loggedInUser");
@@ -54,6 +58,7 @@ public class ReviewController {
         return ResponseEntity.ok(Map.of("username", loggedInUser.getEmail()));
     }
 
+    // Thêm phản hồi cho review
     @PostMapping("/{reviewId}/feedback")
     @Transactional
     public ResponseEntity<?> addFeedback(
@@ -86,23 +91,45 @@ public class ReviewController {
         }
     }
 
+    // Lấy danh sách feedback của review
     @GetMapping("/{reviewId}/feedback")
     public ResponseEntity<?> getFeedback(@PathVariable Long reviewId) {
         try {
             Review review = reviewRepository.findById(reviewId)
                     .orElseThrow(() -> new RuntimeException("Review not found"));
             List<Feedback> feedbacks = feedbackRepository.findByReview(review);
-            return ResponseEntity.ok(feedbacks);
+
+            // Map feedbacks để bao gồm thông tin role
+            List<Map<String, Object>> feedbackList = feedbacks.stream().map(fb -> {
+                Map<String, Object> fm = new HashMap<>();
+                fm.put("id", fb.getId());
+                fm.put("username", fb.getUsername());
+
+                // Thêm role vào feedback - GIẢI PHÁP THEN CHỐT
+                Member feedbackAuthor = memberRepository.findByEmail(fb.getUsername()).orElse(null);
+                if (feedbackAuthor != null) {
+                    fm.put("role", feedbackAuthor.getRole());
+                } else {
+                    fm.put("role", "CUSTOMER");
+                }
+
+                fm.put("content", fb.getContent());
+                fm.put("createdAt", fb.getCreatedAt() != null ? fb.getCreatedAt().toString() : null);
+                return fm;
+            }).collect(Collectors.toList());
+
+            return ResponseEntity.ok(feedbackList); // Trả về danh sách đã mapped
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", "Failed to get feedback: " + e.getMessage()));
         }
     }
 
+    // Tạo mới review
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createReview(
             @RequestParam(value = "images", required = false) MultipartFile[] images,
-            @RequestParam("productId") Integer productId, // Đổi từ Integer sang Long
+            @RequestParam("productId") Integer productId,
             @RequestParam("rating") Integer rating,
             @RequestParam("comment") String comment,
             HttpSession session) {
@@ -166,20 +193,7 @@ public class ReviewController {
         }
     }
 
-    // @PostMapping("/api/reviews")
-    // public ResponseEntity<?> submitReview(@RequestParam("rating") int rating,
-    // @RequestParam("comment") String comment,
-    // @RequestParam(value = "images", required = false) MultipartFile[] images) {
-    // try {
-    // Review review = reviewService.submitReview(rating, comment, images);
-    // return ResponseEntity.ok(review);
-    // } catch (Exception e) {
-    // return ResponseEntity.internalServerError().body(Map.of(
-    // "error", "Transaction failed",
-    // "message", e.getMessage()));
-    // }
-    // }
-
+    // Lấy ảnh của review
     @GetMapping("/image/{fileName:.+}")
     public ResponseEntity<Resource> getImage(@PathVariable String fileName) {
         try {
@@ -198,6 +212,7 @@ public class ReviewController {
         }
     }
 
+    // Lấy danh sách review theo sản phẩm
     @GetMapping("/product/{productId}")
     public ResponseEntity<?> getReviewsByProduct(
             @PathVariable Integer productId,
@@ -215,6 +230,15 @@ public class ReviewController {
                 Map<String, Object> m = new HashMap<>();
                 m.put("id", r.getId());
                 m.put("username", r.getUsername());
+
+                // Thêm role vào response
+                Member reviewer = memberRepository.findByEmail(r.getUsername()).orElse(null);
+                if (reviewer != null) {
+                    m.put("role", reviewer.getRole());
+                } else {
+                    m.put("role", "CUSTOMER"); // Mặc định nếu không tìm thấy
+                }
+
                 m.put("rating", r.getRating());
                 m.put("comment", r.getComment());
                 m.put("createdAt", r.getCreatedAt() != null ? r.getCreatedAt().toString() : null);
@@ -235,6 +259,15 @@ public class ReviewController {
                     Map<String, Object> fm = new HashMap<>();
                     fm.put("id", fb.getId());
                     fm.put("username", fb.getUsername());
+
+                    // Thêm role vào feedback
+                    Member feedbackAuthor = memberRepository.findByEmail(fb.getUsername()).orElse(null);
+                    if (feedbackAuthor != null) {
+                        fm.put("role", feedbackAuthor.getRole());
+                    } else {
+                        fm.put("role", "CUSTOMER");
+                    }
+
                     fm.put("content", fb.getContent());
                     fm.put("createdAt", fb.getCreatedAt() != null ? fb.getCreatedAt().toString() : null);
                     return fm;
@@ -254,6 +287,7 @@ public class ReviewController {
         }
     }
 
+    // Lấy thống kê review
     @GetMapping("/stats/{productId}")
     public ResponseEntity<?> getReviewStats(@PathVariable Integer productId) {
         try {
@@ -279,6 +313,7 @@ public class ReviewController {
         }
     }
 
+    // Thích review
     @PostMapping("/{reviewId}/like")
     @Transactional
     public ResponseEntity<?> likeReview(@PathVariable Long reviewId, HttpSession session) {
@@ -313,6 +348,7 @@ public class ReviewController {
         }
     }
 
+    // Lấy số lượng like của review
     @GetMapping("/{reviewId}/like-count")
     public ResponseEntity<?> getLikeCount(@PathVariable Long reviewId) {
         try {
@@ -326,6 +362,7 @@ public class ReviewController {
         }
     }
 
+    // Kiểm tra xem người dùng đã thích review chưa
     @GetMapping("/{reviewId}/has-liked")
     public ResponseEntity<?> checkUserLike(@PathVariable Long reviewId, HttpSession session) {
         Member loggedInUser = (Member) session.getAttribute("loggedInUser");

@@ -86,4 +86,7 @@ public class ProductVariant {
         this.productId = productId;
     }
 
+    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Wishlist> wishlists;
+
 }
