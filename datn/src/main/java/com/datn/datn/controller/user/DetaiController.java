@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.datn.datn.model.Member;
 import com.datn.datn.model.ProductSpecification;
@@ -42,7 +43,9 @@ public class DetaiController {
         }
 
         @GetMapping("/{id}")
-        public String detail(@PathVariable("id") Integer variantId, Model model, HttpSession session) {
+        public String detail(@PathVariable("id") Integer variantId, 
+                           @RequestParam(value = "review", required = false) Boolean showReview,
+                           Model model, HttpSession session) {
                 ProductVariant variant = productVariantService.getById(variantId);
 
                 if (variant == null) {
@@ -82,6 +85,20 @@ public class DetaiController {
                                         .map(ProductVariant::getVariantID)
                                         .collect(Collectors.toSet());
                         model.addAttribute("wishlistIds", wishlistIds);
+                }
+
+                // Thêm tham số để xác định có hiển thị form đánh giá không
+                if (showReview != null && showReview) {
+                    model.addAttribute("showReviewForm", true);
+                    
+                    // Kiểm tra xem người dùng đã đăng nhập chưa
+                    if (user == null) {
+                        // Nếu chưa đăng nhập, lưu URL hiện tại để chuyển hướng sau khi đăng nhập
+                        String redirectUrl = "/detail/" + variantId + "?review=true";
+                        session.setAttribute("redirectAfterLogin", redirectUrl);
+                    }
+                } else {
+                    model.addAttribute("showReviewForm", false);
                 }
 
                 model.addAttribute("v", variant);

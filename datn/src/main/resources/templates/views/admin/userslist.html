@@ -55,7 +55,25 @@
         .table th,
         .table td {
             vertical-align: middle !important;
+            border: 1px solid #dee2e6 !important;
+            font-size: 14px;
+            color: #2c3e50;
         }
+        .table {
+        border-collapse: collapse;  /* gộp viền để nhìn gọn */
+        width: 100%;
+}
+
+    .table thead {
+        background-color: #f8f9fa;
+        text-transform: uppercase;
+        color: #6c757d;
+        font-weight: 600;
+    }
+
+.table tbody tr:hover {
+    background-color: #fff8dc;
+}
 
         div+h1 {
             margin-left: 300px;
@@ -119,7 +137,7 @@
                 </div>
             </div>
             <!-- Bảng danh sách -->
-            <table class="min-w-full table-auto text-sm text-center">
+            <table class="min-w-full table-auto text-sm text-center table-bordered">
                 <thead class="bg-gray-100 text-gray-600 uppercase">
                     <tr>
                         <th class="p-2 align-middle">STT</th>
@@ -133,22 +151,21 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    <tr th:each="user : ${employees}" class="hover:bg-yellow-100">
-                        <td class="p-2 align-middle" th:text="${user.id}"></td>
-                        <td class="p-2 align-middle" th:text="${user.fullname}"></td>
-                        <td class="p-2 align-middle"
-                        th:with="e=${user.email}, len=${#strings.length(e)}, first=${(len>=3)? #strings.substring(e,0,3) : e}, last=${(len>=3)? #strings.substring(e, len-3, len) : ''}, masked=${(len>6)? first + '****' + last : (len>2 ? #strings.substring(e,0,1) + '***' + #strings.substring(e,len-1,len) : e)}"
-                        th:text="${masked}"
-                        th:title="${user.email}"></td>
+                    <tr th:each="user, stat : ${employees}" class="hover:bg-yellow-100">
+                        <td class="p-2 align-middle" th:text="${stat.index + 1 + currentPage * size}"></td>
 
-                            <td class="p-2 align-middle">
-                                <span th:if="${user.phone != null and user.phone.length() >= 3}">
-                                    *******<span th:text="${user.phone.substring(user.phone.length() - 3)}"></span>
-                                </span>
-                                <span th:if="${user.phone == null or user.phone.length() < 3}">
-                                    Chưa cập nhật
-                                </span>
-                            </td>
+                        <td class="p-2 align-middle" th:text="${user.fullname}"></td>
+                        <td class="p-2 align-middle" th:text="${user.email}"></td>
+                        
+
+                        <td class="p-2 align-middle">
+                            <span th:if="${user.phone != null and user.phone != ''}">
+                                <span th:text="${user.phone}"></span>
+                            </span>
+                            <span th:if="${user.phone == null or user.phone == ''}">
+                                Chưa cập nhật
+                            </span>
+                        </td>
                             
 
                         <td class="p-2 align-middle"
@@ -167,14 +184,23 @@
                         </td>
                         <td class="p-2 align-middle">
                             <form th:action="@{'/admin/users/toggle/' + ${user.id}}" method="post"
-                                th:id="'lockForm-' + ${user.id}">
+                                  th:id="'lockForm-' + ${user.id}">
                                 <button type="button"
-                                    th:classappend="${user.active} ? 'text-red-600' : 'text-green-600'"
-                                    th:onclick="'confirmToggle(' + ${user.id} + ', ' + ${user.active} + ')'">
-                                    <i class="text-lg" th:classappend="${user.active} ? 'ri-lock-fill' : 'ri-lock-unlock-line'"></i>
+                                        th:classappend="${user.active} 
+                                            ? 'text-green-600 hover:text-green-800' 
+                                            : 'text-red-600 hover:text-red-800'"
+                                        th:onclick="'confirmToggle(' + ${user.id} + ', \'' + ${user.active} + '\')'">
+                        
+                                    <!-- icon thao tác -->
+                                    <i class="text-lg"
+                                       th:classappend="${user.active} 
+                                            ? 'ri-lock-unlock-line' 
+                                            : 'ri-lock-fill'">        <!-- đã khóa -> icon khóa (màu đỏ) -->
+                                    </i>
                                 </button>
                             </form>
                         </td>
+                        
                     </tr>
 
                     <tr th:if="${employees.empty}">
@@ -206,7 +232,8 @@
                 <div>
                     Hiển thị 1 – <span th:text="${employees.size()}"></span> của <span th:text="${totalUsers}"></span> người dùng
                 </div>
-                
+                <br>
+                <br>
                 <!-- Phân trang bên phải -->
                 <div th:if="${totalPages > 1}" class="flex gap-2">
                     <!-- Nút Previous -->

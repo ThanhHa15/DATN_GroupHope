@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.datn.datn.model.Member;
 import com.datn.datn.model.Order;
 import com.datn.datn.model.Product;
+import com.datn.datn.model.ProductVariant;
 import com.datn.datn.repository.OrderDetailRepository;
 import com.datn.datn.repository.OrderRepository;
 import com.datn.datn.repository.ProductVariantRepository;
@@ -62,46 +63,73 @@ public class OrderController {
             @RequestParam(defaultValue = "10") int size,
             Model model,
             HttpSession session) {
+        try {
+            Member currentUser = (Member) session.getAttribute("loggedInUser");
+            if (currentUser != null) {
+                Specification<Order> spec = Specification
+                        .where((root, query, cb) -> cb.equal(root.get("member").get("id"), currentUser.getId()));
 
-        Member currentUser = (Member) session.getAttribute("loggedInUser");
-        if (currentUser != null) {
-            // Tạo Specification để lọc dữ liệu
-            Specification<Order> spec = Specification
-                    .where((root, query, cb) -> cb.equal(root.get("member").get("id"), currentUser.getId()));
+                if (!search.isEmpty()) {
+                    spec = spec.and((root, query, cb) -> cb.or(
+                            cb.like(root.get("orderCode"), "%" + search + "%"),
+                            cb.like(root.get("orderDate").as(String.class), "%" + search + "%")));
+                }
+                if (!paymentStatus.isEmpty()) {
+                    spec = spec.and((root, query, cb) -> cb.equal(root.get("paymentStatus"), paymentStatus));
+                }
+                if (!orderStatus.isEmpty()) {
+                    spec = spec.and((root, query, cb) -> cb.equal(root.get("orderStatus"), orderStatus));
+                }
 
-            // Thêm điều kiện tìm kiếm
-            if (!search.isEmpty()) {
-                spec = spec.and((root, query, cb) -> cb.or(
-                        cb.like(root.get("orderCode"), "%" + search + "%"),
-                        cb.like(root.get("orderDate").as(String.class), "%" + search + "%")));
+                PageRequest pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
+                Page<Order> orderPage = orderService.findAll(spec, pageable);
+
+                List<Order> orders = orderPage.getContent();
+                Map<Long, Long> orderToFirstProductMap = new HashMap<>();
+                Map<Long, Boolean> orderCanReviewMap = new HashMap<>();
+
+                for (Order order : orders) {
+                    try {
+                        if (order.getOrderDetails() != null && !order.getOrderDetails().isEmpty()) {
+                            ProductVariant variant = order.getOrderDetails().get(0).getProductVariant();
+                            if (variant != null && variant.getVariantID() != null) {
+                                orderToFirstProductMap.put(order.getId(), Long.valueOf(variant.getVariantID()));
+                            } else {
+                                orderToFirstProductMap.put(order.getId(), 0L);
+                            }
+                            orderCanReviewMap.put(order.getId(), "Đã giao hàng".equals(order.getOrderStatus()));
+                        } else {
+                            orderToFirstProductMap.put(order.getId(), 0L);
+                            orderCanReviewMap.put(order.getId(), false);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error processing order ID: " + order.getId() + " - " + e.getMessage());
+                        orderToFirstProductMap.put(order.getId(), 0L);
+                        orderCanReviewMap.put(order.getId(), false);
+                    }
+                }
+
+                model.addAttribute("orders", orders);
+                model.addAttribute("orderToProductMap", orderToFirstProductMap);
+                model.addAttribute("orderCanReviewMap", orderCanReviewMap);
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", orderPage.getTotalPages());
+                model.addAttribute("totalItems", orderPage.getTotalElements());
+                model.addAttribute("search", search);
+                model.addAttribute("paymentStatus", paymentStatus);
+                model.addAttribute("orderStatus", orderStatus);
+                model.addAttribute("pageSize", size);
+            } else {
+                model.addAttribute("orders", new ArrayList<>());
+                model.addAttribute("orderToProductMap", new HashMap<>());
+                model.addAttribute("orderCanReviewMap", new HashMap<>());
             }
-
-            // Thêm điều kiện lọc theo trạng thái thanh toán
-            if (!paymentStatus.isEmpty()) {
-                spec = spec.and((root, query, cb) -> cb.equal(root.get("paymentStatus"), paymentStatus));
-            }
-
-            // Thêm điều kiện lọc theo trạng thái đơn hàng
-            if (!orderStatus.isEmpty()) {
-                spec = spec.and((root, query, cb) -> cb.equal(root.get("orderStatus"), orderStatus));
-            }
-
-            // Phân trang và sắp xếp
-            PageRequest pageable = PageRequest.of(page - 1, size, Sort.by("id").descending());
-            Page<Order> orderPage = orderService.findAll(spec, pageable);
-
-            model.addAttribute("orders", orderPage.getContent());
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalPages", orderPage.getTotalPages());
-            model.addAttribute("totalItems", orderPage.getTotalElements());
-            model.addAttribute("search", search);
-            model.addAttribute("paymentStatus", paymentStatus);
-            model.addAttribute("orderStatus", orderStatus);
-            model.addAttribute("pageSize", size);
-        } else {
-            model.addAttribute("orders", new ArrayList<>());
+            return "views/user/order";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
+            return "error"; // Tạo file error.html để hiển thị lỗi
         }
-        return "views/user/order";
     }
 
     @GetMapping("/order/{orderId}")

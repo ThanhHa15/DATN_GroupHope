@@ -219,10 +219,15 @@
               </td>
 
               <td class="px-6 py-4">
-                <a href="/products"
+                <a th:if="${orderToProductMap.get(order.id) != null and orderCanReviewMap.get(order.id)}"
+                  th:href="@{'/detail/' + ${orderToProductMap.get(order.id)} + '?review=true'}"
                   class="inline-block px-3 py-1 text-sm text-gray-700 font-medium bg-gray-100 rounded-lg hover:bg-gray-200 hover:text-primary transition-colors cursor-pointer">
                   Đánh giá ngay
                 </a>
+                <span th:unless="${orderToProductMap.get(order.id) != null and orderCanReviewMap.get(order.id)}"
+                  class="inline-block px-3 py-1 text-sm text-gray-400 font-medium bg-gray-100 rounded-lg">
+                  Không thể đánh giá
+                </span>
               </td>
 
             </tr>
@@ -268,7 +273,7 @@
   <!-- Footer -->
   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 30px;"></div>
 
-  
+
 
   <script>
     // Hàm lọc đơn hàng

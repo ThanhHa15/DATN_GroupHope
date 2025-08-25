@@ -70,34 +70,9 @@ public class MembersServiceImpl implements MembersService {
         return memberRepository.findByEmail(email);
     }
 
-
     @Override
     public List<Member> findByActive(boolean active, String keyword) {
         return memberRepository.findByActive(active, keyword);
-    }
-
-    @Override
-    public List<Member> searchUsers(String keyword) {
-        return memberRepository.searchUsers(keyword);
-    }
-
-    @Override
-    public List<Member> searchUsersWithPagination(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            return memberRepository.searchUsersWithPagination(keyword.trim(), pageable);
-        } else {
-            return memberRepository.findAllUsersWithPagination(pageable);
-        }
-    }
-
-    @Override
-    public long countUsers(String keyword) {
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            return memberRepository.countUsersByKeyword(keyword.trim());
-        } else {
-            return memberRepository.countAllUsers();
-        }
     }
 
     @Override
@@ -111,4 +86,32 @@ public class MembersServiceImpl implements MembersService {
         return memberRepository.countEmployeesByKeyword(List.of("ADMIN", "STAFF"), keyword);
     }
 
+    @Override
+    public List<Member> searchCustomers(String keyword) {
+        return memberRepository.searchCustomers(keyword);
+    }
+
+    @Override
+    public List<Member> searchCustomersWithPagination(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return memberRepository.searchCustomersWithPagination(keyword.trim(), pageable);
+        } else {
+            return memberRepository.findAllCustomersWithPagination(pageable);
+        }
+    }
+
+    @Override
+    public long countCustomers(String keyword) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return memberRepository.countCustomersByKeyword(keyword.trim());
+        } else {
+            return memberRepository.countAllCustomers();
+        }
+    }
+
+    @Override
+    public List<Member> findCustomersByActive(boolean active, String keyword) {
+        return memberRepository.findByActive(active, keyword);
+    }
 }

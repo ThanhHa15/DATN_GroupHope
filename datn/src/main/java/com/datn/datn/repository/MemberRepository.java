@@ -1,11 +1,11 @@
 package com.datn.datn.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +14,7 @@ import com.datn.datn.model.Member;
 
 import jakarta.persistence.LockModeType;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>, JpaSpecificationExecutor<Member> {
     boolean existsByEmail(String email);
 
     boolean existsByPhone(String phone);
@@ -41,15 +41,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m WHERE m.email = :email OR m.phone = :phone")
     Optional<Member> findByEmailOrPhone(@Param("email") String email, @Param("phone") String phone);
 
-    // Đếm tổng số khách hàng (CUSTOMER và active = true)
-    @Query("SELECT COUNT(m) FROM Member m WHERE m.role = 'CUSTOMER' AND m.active = true")
-    long countTotalCustomers();
-
-    // Đếm số khách hàng mới (trong 30 ngày gần đây)
-    // Nếu không có createdDate, có thể dùng cách khác hoặc bỏ qua
-    @Query("SELECT COUNT(m) FROM Member m WHERE m.role = 'CUSTOMER' AND m.active = true")
-    long countNewCustomers();
-
     List<Member> findByActive(boolean active);
 
     // Tìm người dùng theo trạng thái active và keyword
@@ -72,12 +63,40 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("SELECT COUNT(m) FROM Member m")
     long countAllUsers();
-
-    // Phân trang cho nhân viên (ADMIN, STAFF) với keyword tùy chọn
+// Phân trang cho nhân viên (ADMIN, STAFF) với keyword tùy chọn
     @Query("SELECT m FROM Member m WHERE m.role IN :roles AND (:keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%)")
-    List<Member> searchEmployeesWithPagination(@Param("roles") List<String> roles, @Param("keyword") String keyword,
-            Pageable pageable);
+    List<Member> searchEmployeesWithPagination(@Param("roles") List<String> roles, @Param("keyword") String keyword, Pageable pageable);
 
     @Query("SELECT COUNT(m) FROM Member m WHERE m.role IN :roles AND (:keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%)")
     long countEmployeesByKeyword(@Param("roles") List<String> roles, @Param("keyword") String keyword);
+
+    //mới 
+    // Thêm queries mới cho customers
+    @Query("SELECT m FROM Member m WHERE m.role IN ('USER', 'CUSTOMER') AND (:keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%)")
+    List<Member> searchCustomers(@Param("keyword") String keyword);
+    
+    @Query("SELECT m FROM Member m WHERE m.role IN ('USER', 'CUSTOMER') AND (:keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%)")
+    List<Member> searchCustomersWithPagination(@Param("keyword") String keyword, Pageable pageable);
+    
+    @Query("SELECT m FROM Member m WHERE m.role IN ('USER', 'CUSTOMER')")
+    List<Member> findAllCustomersWithPagination(Pageable pageable);
+    
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.role IN ('USER', 'CUSTOMER') AND (:keyword IS NULL OR m.fullname LIKE %:keyword% OR m.email LIKE %:keyword%)")
+    long countCustomersByKeyword(@Param("keyword") String keyword);
+    
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.role IN ('USER', 'CUSTOMER')")
+    long countAllCustomers();
+    
+    @Query("SELECT m FROM Member m WHERE m.role IN ('USER', 'CUSTOMER') AND (:keyword IS NULL OR m.fullname LIKE %:keyword%) AND m.active = :active")
+    List<Member> findCustomersByActive(@Param("active") boolean active, @Param("keyword") String keyword);
+
+    // Đếm tổng số khách hàng (CUSTOMER và active = true)
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.role = 'CUSTOMER' AND m.active = true")
+    long countTotalCustomers();
+
+    // Đếm số khách hàng mới (trong 30 ngày gần đây)
+    // Nếu không có createdDate, có thể dùng cách khác hoặc bỏ qua
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.role = 'CUSTOMER' AND m.active = true")
+    long countNewCustomers();
+
 }

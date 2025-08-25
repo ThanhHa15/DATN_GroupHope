@@ -180,7 +180,14 @@ public class HomeController {
         session.invalidate();
         session = request.getSession(true);
         session.setAttribute("loggedInUser", member);
-        session.setAttribute("role", member.getRole()); // lưu role (ADMIN / STAFF)
+        session.setAttribute("role", member.getRole());
+        
+        // Kiểm tra nếu có URL chuyển hướng sau khi đăng nhập
+        String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
+        if (redirectUrl != null && !redirectUrl.isEmpty()) {
+            session.removeAttribute("redirectAfterLogin");
+            return "redirect:" + redirectUrl;
+        }
 
         // Điều hướng theo role
         switch (member.getRole()) {

@@ -85,10 +85,6 @@ public class ProductController {
         List<Category> allCategories = categoryService.getAll();
         model.addAttribute("allCategories", allCategories);
 
-        // Log để debug
-        System.out.println("All categories:");
-        allCategories.forEach(c -> System.out.println(c.getCategoryID() + ": " + c.getName()));
-
         // 🧮 Lọc theo loại
         if (type != null && !type.isEmpty()) {
             System.out.println("Đang lọc theo danh mục: " + type);

@@ -142,10 +142,19 @@
             <span class="group-hover:text-[#ffa600] transition-colors">Địa chỉ</span>
           </a>
 
-          <a href="/order" class="flex items-center gap-2 cursor-pointer group nav-icon">
+          <a th:if="${session.loggedInUser  != null}" href="/order"
+            class="flex items-center gap-2 cursor-pointer group nav-icon">
             <i class="fas fa-clipboard-list"></i>
             <span class="group-hover:text-[#ffa600] transition-colors">Đơn hàng</span>
           </a>
+
+          <a th:if="${session.loggedInUser  == null}" href="javascript:void(0)"
+            onclick="alert('Bạn cần đăng nhập để xem đơn hàng');"
+            class="flex items-center gap-2 cursor-pointer group nav-icon">
+            <i class="fas fa-clipboard-list"></i>
+            <span class="group-hover:text-[#ffa600] transition-colors">Đơn hàng</span>
+          </a>
+
 
           <!-- Bọc trong group để hover -->
           <div class="relative group">

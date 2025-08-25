@@ -276,8 +276,6 @@
           <thead class="bg-gray-50">
             <tr>
               <th class="py-3 px-4 border border-gray-200 text-left text-gray-700 font-bold text-base">Sản phẩm</th>
-              <th class="py-3 px-4 border border-gray-200 text-right text-gray-700 font-bold text-base min-w-[120px]">Số
-                serial</th>
               <th class="py-3 px-4 border border-gray-200 text-right text-gray-700 font-bold text-base min-w-[120px]">
                 Đơn giá</th>
               <th class="py-3 px-4 border border-gray-200 text-center text-gray-700 font-bold text-base min-w-[100px]">
@@ -307,7 +305,7 @@
                 </div>
               </td>
 
-              <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium"></td>
+            
 
               <td class="py-3 px-4 border border-gray-200 text-right text-gray-800 font-medium"
                 th:text="${#numbers.formatDecimal(detail.price, 1, 'COMMA', 0, 'POINT') + '₫'}"></td>

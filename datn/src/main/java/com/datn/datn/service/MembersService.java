@@ -31,19 +31,20 @@ public interface MembersService {
     Optional<Member> findByEmail(String email);
 
     List<Member> findByActive(boolean active, String keyword);
-    
+
     //
-
-    List<Member> searchUsers(String keyword);
-
-    // Users pagination
-    List<Member> searchUsersWithPagination(String keyword, int page, int size);
-
-    long countUsers(String keyword);
 
     // Employees pagination
     List<Member> searchEmployeesWithPagination(String keyword, int page, int size);
 
     long countEmployees(String keyword);
+
+    List<Member> searchCustomers(String keyword);
+
+    List<Member> searchCustomersWithPagination(String keyword, int page, int size);
+
+    long countCustomers(String keyword);
+
+    List<Member> findCustomersByActive(boolean active, String keyword);
 
 }
