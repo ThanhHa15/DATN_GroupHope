@@ -234,6 +234,22 @@
     .spec-edit-form button:hover {
       background-color: #1565c0;
     }
+
+    .pagination a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .pagination a:hover {
+      background-color: #e5e7eb;
+    }
+
+    .search-container input:focus {
+      outline: none;
+      border-color: #2563eb;
+      ring-color: #93c5fd;
+    }
   </style>
 </head>
 
@@ -241,9 +257,20 @@
   <div th:replace="nav :: na"></div>
   <div th:replace="header :: header"></div>
 
-  <h1 style="margin-left: 300px; margin-top: 75px; font-size: 23px; margin-bottom: 18px;">Quản lý thông số kỹ thuật</h1>
+  <h1 style="margin-left: 300px; margin-top: 75px; font-size: 23px; margin-bottom: 18px;">Quản lý thông số kỹ thuật
+  </h1>
 
-
+  <!-- Thêm form tìm kiếm sau thẻ h1 -->
+  <div class="search-container" style="margin-left: 300px; margin-bottom: 20px;">
+    <form th:action="@{/specification}" method="get" class="flex items-center gap-4">
+      <input type="text" name="search" th:value="${search}" placeholder="Tìm kiếm thông số..."
+        class="px-4 py-2 border rounded-lg w-64">
+      <button type="submit"
+        class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+        <i class="fas fa-search mr-2"></i> Tìm kiếm
+      </button>
+    </form>
+  </div>
 
   <h3 style="font-size: 20px; color: #333; margin-left: 300px; margin-bottom: -20px; margin-top: 20px;">Danh sách thông
     số đã lưu</h3>
@@ -278,6 +305,32 @@
       </tr>
     </tbody>
   </table>
+
+  <!-- Thêm phân trang sau bảng -->
+  <div class="pagination" style="margin-left: 300px; margin-top: 20px; margin-bottom: 40px;">
+    <div class="flex items-center justify-between">
+        <div class="text-sm text-gray-700 flex items-center gap-4">
+            <span>
+                Trang <span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span>
+            </span>
+            <span class="text-gray-500">
+                (Tổng <span th:text="${totalItems}"></span> thông số, hiển thị 10 sản phẩm mỗi trang)
+            </span>
+        </div>
+        <div class="flex gap-2">
+            <a th:if="${currentPage > 1}"
+                th:href="@{/specification(page=${currentPage - 1}, search=${search}, size=10)}"
+                class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
+                Trang trước
+            </a>
+            <a th:if="${currentPage < totalPages}"
+                th:href="@{/specification(page=${currentPage + 1}, search=${search}, size=10)}"
+                class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
+                Trang sau
+            </a>
+        </div>
+    </div>
+  </div>
 
   <script>
     function toggleSpecs(groupIdPrefix) {

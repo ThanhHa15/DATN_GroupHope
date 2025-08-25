@@ -974,9 +974,256 @@
         "block";
     }
 
+    // Thêm hàm validate cho từng step
     function validateStep(step) {
-      return true; // TODO: thêm logic validate nếu cần
+      if (step === 1) {
+        // Validate step 1
+        const productName = document.getElementById("productNameInput").value;
+        const category = document.getElementById("categorySelect").value;
+        const status = document.querySelector('select[name="status"]').value;
+        const manufactureDate = document.querySelector('input[name="manufactureDate"]').value;
+        const productImage = document.getElementById("productImageFile").value;
+
+        if (!productName.trim()) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Vui lòng nhập tên sản phẩm'
+          });
+          return false;
+        }
+
+        if (!category) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Vui lòng chọn loại sản phẩm'
+          });
+          return false;
+        }
+
+        if (!status) {
+          Swal.fire({
+            icon: 'error', 
+            title: 'Lỗi',
+            text: 'Vui lòng chọn trạng thái'
+          });
+          return false;
+        }
+
+        if (!manufactureDate) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi', 
+            text: 'Vui lòng chọn ngày sản xuất'
+          });
+          return false;
+        }
+
+        if (!productImage) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Vui lòng chọn ảnh sản phẩm'
+          });
+          return false;
+        }
+
+      } else if (step === 2) {
+        // Validate step 2
+        const quantity = document.querySelector('input[name="quantityInStock"]').value;
+        const price = document.getElementById("priceInput").value;
+        const color = document.querySelector('input[name="color"]:checked');
+        const variantImage = document.getElementById("variantImageFile").value;
+
+        if (!quantity || quantity < 0) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Vui lòng nhập số lượng hợp lệ'
+          });
+          return false;
+        }
+
+        if (!price) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Vui lòng nhập giá sản phẩm'
+          });
+          return false; 
+        }
+
+        if (!color) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Vui lòng chọn màu sắc'
+          });
+          return false;
+        }
+
+        if (!variantImage) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Vui lòng chọn ảnh cho phiên bản'
+          });
+          return false;
+        }
+      } else if (step === 3) {
+        const categoryID = document.getElementById("categorySelect").value;
+        
+        // Validate dựa trên loại sản phẩm
+        if (categoryID === "1") { // iPhone
+          const screenSize = document.querySelector('textarea[name="specs[\'Kích thước màn hình\']"]').value;
+          const screenTech = document.querySelector('textarea[name="specs[\'Công nghệ màn hình\']"]').value;
+          const chipset = document.querySelector('textarea[name="specs[\'Chipset\']"]').value;
+          const ram = document.querySelector('textarea[name="specs[\'Dung lượng RAM\']"]').value;
+          const os = document.querySelector('textarea[name="specs[\'Hệ điều hành\']"]').value;
+
+          if (!screenSize || !screenTech || !chipset || !ram || !os) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Lỗi',
+              text: 'Vui lòng điền đầy đủ các thông số kỹ thuật bắt buộc'
+            });
+            return false;
+          }
+        }
+        else if (categoryID === "2") { // iPad
+          const screenSize = document.querySelector('textarea[name="specs[\'Kích thước màn hình\']"]').value;
+          const screenTech = document.querySelector('textarea[name="specs[\'Công nghệ màn hình\']"]').value;
+          const chipset = document.querySelector('textarea[name="specs[\'Chipset\']"]').value;
+          const ram = document.querySelector('textarea[name="specs[\'Dung lượng RAM\']"]').value;
+          const os = document.querySelector('textarea[name="specs[\'Hệ điều hành\']"]').value;
+
+          if (!screenSize || !screenTech || !chipset || !ram || !os) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Lỗi',
+              text: 'Vui lòng điền đầy đủ thông số kỹ thuật cho iPad'
+            });
+            return false;
+          }
+        } 
+        else if (categoryID === "3") { // Macbook
+          const screenSize = document.querySelector('textarea[name="specs[\'Kích thước màn hình\']"]').value;
+          const os = document.querySelector('textarea[name="specs[\'Hệ điều hành\']"]').value;
+          const ram = document.querySelector('textarea[name="specs[\'Dung lượng RAM\']"]').value;
+          const cpu = document.querySelector('textarea[name="specs[\'Loại CPU\']"]').value;
+          const gpu = document.querySelector('textarea[name="specs[\'Loại card đồ họa\']"]').value;
+
+          if (!screenSize || !os || !ram || !cpu || !gpu) {
+            Swal.fire({
+              icon: 'error', 
+              title: 'Lỗi',
+              text: 'Vui lòng điền đầy đủ thông số kỹ thuật cho MacBook'
+            });
+            return false;
+          }
+        }
+        else if (categoryID === "4") { // AirPods
+          const weight = document.querySelector('textarea[name="specs[\'Trọng lượng\']"]').value;
+          const batteryLife = document.querySelector('textarea[name="specs[\'Thời lượng sử dụng\']"]').value;
+          const audioTech = document.querySelector('textarea[name="specs[\'Công nghệ âm thanh\']"]').value;
+          const chipset = document.querySelector('textarea[name="specs[\'Chipset\']"]').value;
+
+          if (!weight || !batteryLife || !audioTech || !chipset) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Lỗi', 
+              text: 'Vui lòng điền đầy đủ thông số kỹ thuật cho AirPods'
+            });
+            return false;
+          }
+        }
+        else if (categoryID === "5") { // Ốp lưng & Bao da
+          const material = document.querySelector('textarea[name="specs[\'Chất liệu\']"]').value;
+          const design = document.querySelector('textarea[name="specs[\'Thiết kế\']"]').value;
+          const compatibility = document.querySelector('textarea[name="specs[\'Thiết bị tương thích\']"]').value;
+
+          if (!material || !design || !compatibility) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Lỗi',
+              text: 'Vui lòng điền đầy đủ thông số kỹ thuật cho Ốp lưng/Bao da'
+            });
+            return false;
+          }
+        }
+        else if (categoryID === "6") { // Sạc & Cáp
+          const power = document.querySelector('textarea[name="specs[\'Công suất\']"]').value;
+          const chargerType = document.querySelector('textarea[name="specs[\'Loại sạc\']"]').value;
+          const compatibility = document.querySelector('textarea[name="specs[\'Thiết bị tương thích\']"]').value;
+
+          if (!power || !chargerType || !compatibility) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Lỗi',
+              text: 'Vui lòng điền đầy đủ thông số kỹ thuật cho Sạc/Cáp'
+            });
+            return false;
+          }
+        }
+        else if (categoryID === "7") { // Apple Watch
+          const screenTech = document.querySelector('textarea[name="specs[\'Công nghệ màn hình\']"]').value;
+          const diameter = document.querySelector('textarea[name="specs[\'Đường kính mặt\']"]').value;
+          const battery = document.querySelector('textarea[name="specs[\'Thời lượng pin\']"]').value;
+          const compatibility = document.querySelector('textarea[name="specs[\'Tương thích\']"]').value;
+
+          if (!screenTech || !diameter || !battery || !compatibility) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Lỗi',
+              text: 'Vui lòng điền đầy đủ thông số kỹ thuật cho Apple Watch'
+            });
+            return false;
+          }
+        }
+      }
+
+      return true;
     }
+
+    document.querySelector("form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      
+      if(!validateStep(3)) {
+          return;
+      }
+      
+      const formData = new FormData(this);
+      
+      fetch(this.action, {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => {
+          if(response.ok) {
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Thành công!', 
+                  text: 'Đã thêm sản phẩm thành công',
+                  showConfirmButton: true,
+                  confirmButtonText: 'OK'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      window.location.href = '/admin-addPVP'; // Reload trang sau khi thêm
+                  }
+              });
+          } else {
+              throw new Error('Có lỗi xảy ra');
+          }
+      })
+      .catch(error => {
+          Swal.fire({
+              icon: 'error',
+              title: 'Lỗi!',
+              text: 'Đã xảy ra lỗi khi thêm sản phẩm: ' + error.message
+          });
+      });
+  });
 
     function submitAllForms() {
       const specForm = document.getElementById("specForm");
@@ -1049,6 +1296,8 @@
       }
     });
   </script>
+
+  
 </body>
 
 </html>

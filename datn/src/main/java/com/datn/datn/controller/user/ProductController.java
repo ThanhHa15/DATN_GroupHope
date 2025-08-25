@@ -255,4 +255,44 @@ public class ProductController {
                 .collect(Collectors.toList());
     }
 
+    // Xóa phương thức thứ 2 vì đã có phương thức listProducts đầu tiên xử lý phân trang
+    // Hoặc nếu muốn giữ lại, đổi URL mapping thành khác:
+    @GetMapping("/list")  // thay vì /products
+    public String listProducts(Model model, 
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "12") int size) {
+        
+        // Đảm bảo page và size luôn dương
+        page = Math.max(1, page); 
+        size = Math.max(1, size);
+        
+        List<Product> allProducts = productService.getAll();
+        int totalProducts = allProducts.size();
+        
+        // Tính toán startIndex và đảm bảo không âm
+        int startIndex = (page - 1) * size;
+        if(startIndex < 0) {
+            startIndex = 0;
+        }
+        
+        // Đảm bảo startIndex không vượt quá kích thước list
+        if (startIndex >= totalProducts) {
+            startIndex = Math.max(0, ((totalProducts - 1) / size) * size);
+        }
+        
+        // Tính endIndex đảm bảo không vượt quá kích thước list 
+        int endIndex = Math.min(startIndex + size, totalProducts);
+        
+        // Lấy sublist an toàn
+        List<Product> products = allProducts.subList(startIndex, endIndex);
+        
+        // Tính tổng số trang
+        int totalPages = (int) Math.ceil((double) totalProducts / size);
+        
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("products", products);
+        
+        return "products";
+    }
 }

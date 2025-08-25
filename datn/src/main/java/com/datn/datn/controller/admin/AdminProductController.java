@@ -56,62 +56,74 @@ public class AdminProductController {
 
     @PostMapping("/add")
     public String addProduct(@ModelAttribute Product product,
-            @RequestParam("imageFile") MultipartFile imageFile, RedirectAttributes redirectAttributes) {
-        if (!imageFile.isEmpty()) {
-            try {
-                String fileName = imageFile.getOriginalFilename();
-                String uploadDir = new File("src/main/resources/static/images").getAbsolutePath();
-                File dest = new File(uploadDir, fileName);
-                imageFile.transferTo(dest);
-                product.setImageUrl(fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
+            @RequestParam("imageFile") MultipartFile imageFile, 
+            RedirectAttributes redirectAttributes) {
+        try {
+            if (!imageFile.isEmpty()) {
+                try {
+                    String fileName = imageFile.getOriginalFilename();
+                    String uploadDir = new File("src/main/resources/static/images").getAbsolutePath();
+                    File dest = new File(uploadDir, fileName);
+                    imageFile.transferTo(dest);
+                    product.setImageUrl(fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                if (product.getProductID() != null) {
+                    Product existing = productService.getById(product.getProductID());
+                    if (existing != null) {
+                        product.setImageUrl(existing.getImageUrl());
+                        existing.setStatus(product.isStatus());
+                    }
+                }
             }
-        } else {
+
             if (product.getProductID() != null) {
                 Product existing = productService.getById(product.getProductID());
                 if (existing != null) {
-                    product.setImageUrl(existing.getImageUrl());
+                    existing.setProductName(product.getProductName());
+                    existing.setDescription(product.getDescription());
+                    existing.setCategory(product.getCategory());
                     existing.setStatus(product.isStatus());
+
+                    // Xử lý ngày sản xuất
+                    if (product.getManufactureDate() != null) {
+                        existing.setManufactureDate(product.getManufactureDate());
+                    }
+
+                    // Xử lý ảnh
+                    if (product.getImageUrl() != null) {
+                        existing.setImageUrl(product.getImageUrl());
+                    }
+
+                    productService.update(existing);
                 }
-            }
-        }
-
-        if (product.getProductID() != null) {
-            Product existing = productService.getById(product.getProductID());
-            if (existing != null) {
-                existing.setProductName(product.getProductName());
-                existing.setDescription(product.getDescription());
-                existing.setCategory(product.getCategory());
-                existing.setStatus(product.isStatus());
-
-                // Xử lý ngày sản xuất
-                if (product.getManufactureDate() != null) {
-                    existing.setManufactureDate(product.getManufactureDate());
+                redirectAttributes.addFlashAttribute("message", "Cập nhật sản phẩm thành công!");
+            } else {
+                if (product.getManufactureDate() == null) {
+                    product.setManufactureDate(java.time.LocalDate.now());
                 }
-
-                // Xử lý ảnh
-                if (product.getImageUrl() != null) {
-                    existing.setImageUrl(product.getImageUrl());
-                }
-
-                productService.update(existing);
+                productService.save(product);
+                redirectAttributes.addFlashAttribute("message", "Thêm sản phẩm thành công!");
             }
-            redirectAttributes.addFlashAttribute("message", "Cập nhật sản phẩm thành công!");
-        } else {
-            if (product.getManufactureDate() == null) {
-                product.setManufactureDate(java.time.LocalDate.now());
-            }
-            productService.save(product);
-            redirectAttributes.addFlashAttribute("message", "Thêm sản phẩm thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
 
         return "redirect:/admin-products";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Integer id) {
-        productService.delete(id);
+    public String deleteProduct(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            productService.delete(id);
+            redirectAttributes.addFlashAttribute("message", "Xóa sản phẩm thành công!");
+        } catch (Exception e) {
+            // Thêm chi tiết lỗi nếu cần
+            String errorMessage = "Không thể xóa sản phẩm này vì đang có trong đơn hàng!";
+            redirectAttributes.addFlashAttribute("error", errorMessage);
+        }
         return "redirect:/admin-products";
     }
 

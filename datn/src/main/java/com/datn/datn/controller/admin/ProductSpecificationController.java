@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,20 +26,54 @@ public class ProductSpecificationController {
     private ProductSpecificationServiceImpl specificationService;
 
     @GetMapping
-    public String showForm(Model model) {
-        List<Product> products = productService.getAll();
-        model.addAttribute("products", products);
+    public String showForm(Model model,
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) { // 10 sản phẩm mỗi trang
 
-        Map<Integer, String> productIdToNameMap = new HashMap<>();
-        for (Product product : products) {
-            productIdToNameMap.put(product.getProductID().intValue(), product.getProductName());
-        }
-        model.addAttribute("productIdToNameMap", productIdToNameMap);
+        // Get all products
+        List<Product> allProducts = productService.getAll();
 
-        List<ProductSpecification> specList = specificationService.findAll();
-        Map<Integer, List<ProductSpecification>> groupedSpecList = specList.stream()
+        // Lọc theo search nếu có
+        List<Product> filteredProducts = allProducts.stream()
+                .filter(p -> p.getProductName().toLowerCase().contains(search.toLowerCase()))
+                .collect(Collectors.toList());
+
+        // Pagination cho sản phẩm
+        int totalProducts = filteredProducts.size();
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalProducts / size));
+        page = Math.min(Math.max(1, page), totalPages);
+        int startIndex = (page - 1) * size;
+        int endIndex = Math.min(startIndex + size, totalProducts);
+        List<Product> pagedProducts = filteredProducts.subList(startIndex, endIndex);
+
+        // Lấy tất cả thông số kỹ thuật cho các sản phẩm trong trang hiện tại
+        List<Integer> pagedProductIds = pagedProducts.stream()
+                .map(p -> p.getProductID().intValue())
+                .collect(Collectors.toList());
+
+        List<ProductSpecification> allSpecs = specificationService.findAll();
+        List<ProductSpecification> relevantSpecs = allSpecs.stream()
+                .filter(spec -> pagedProductIds.contains(spec.getProductid()))
+                .collect(Collectors.toList());
+
+        // Group specifications by product
+        Map<Integer, List<ProductSpecification>> groupedSpecList = relevantSpecs.stream()
                 .collect(Collectors.groupingBy(ProductSpecification::getProductid));
+
+        // Map id -> name cho các sản phẩm trong trang hiện tại
+        Map<Integer, String> productIdToNameMap = pagedProducts.stream()
+                .collect(Collectors.toMap(
+                    p -> p.getProductID().intValue(),
+                    Product::getProductName));
+
+        // Add model attributes
         model.addAttribute("groupedSpecList", groupedSpecList);
+        model.addAttribute("productIdToNameMap", productIdToNameMap);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("search", search);
+        model.addAttribute("totalItems", totalProducts);
 
         return "formProductSpecification";
     }
