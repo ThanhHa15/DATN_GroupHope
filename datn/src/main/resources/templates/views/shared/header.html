@@ -223,6 +223,12 @@
                   class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
                   <i class="fas fa-heart"></i> Danh sách yêu thích
                 </a>
+                
+                <!-- Thêm link quay về trang admin cho admin/staff -->
+                <a th:if="${loggedInUser.role == 'ADMIN' || loggedInUser.role == 'STAFF'}" href="/categories"
+                  class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
+                  <i class="fas fa-user-shield"></i> Quản trị viên
+                </a>
 
                 <a href="/logout" onclick="handleLogout()"
                   class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">

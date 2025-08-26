@@ -11,9 +11,11 @@ import com.datn.datn.model.ProductVariant;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
     List<Cart> findByMember(Member member);
+
     Optional<Cart> findByMemberAndVariant(Member member, ProductVariant variant);
 
     int countByMember(Member member);
+
     void deleteByMemberAndVariant(Member member, ProductVariant variant);
 
 }

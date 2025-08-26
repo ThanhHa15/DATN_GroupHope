@@ -66,7 +66,13 @@ public class DiscountController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort, // new param
-            Model model) {
+            Model model, HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || (!role.equals("ADMIN") && !role.equals("STAFF"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied"; // hoặc trả về 1 trang báo lỗi
+        }
 
         List<ProductVariant> allVariants = variantService.getAll();
 

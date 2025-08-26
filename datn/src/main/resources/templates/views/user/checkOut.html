@@ -437,18 +437,6 @@
       </div>
     </div>
     <!-- Thông báo Đặt hàng thành công -->
-    <div id="success-message" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
-        <h2 class="text-lg font-semibold text-green-600 mb-2">
-          Đặt hàng thành công!
-        </h2>
-        <p class="mb-4">Cảm ơn bạn đã mua hàng.</p>
-        <button onclick="redirectHome()"
-          class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
-          OK
-        </button>
-      </div>
-    </div>
   </main>
   <!-- 1 -->
   <script>
@@ -466,12 +454,8 @@
         .then(() => fetch("/checkout/cod-confirm"))
         .then((response) => {
           if (response.redirected) {
-            document
-              .getElementById("success-message")
-              .classList.remove("hidden");
-            setTimeout(() => {
-              window.location.href = "/result-order"; // Đảm bảo đã sửa thành /result-order
-            }, 1000);
+            // Xóa phần hiển thị thông báo và chuyển hướng trực tiếp
+            window.location.href = "/result-order";
           }
         })
         .catch(() => {
@@ -791,32 +775,6 @@
       });
     });
     x;
-
-    // Xác nhận đơn hàng COD
-    function confirmOrder() {
-      const fullAddress = document.getElementById("full-address").value;
-      const note = document.getElementById("note")?.value || "";
-
-      fetch("/checkout/save-address", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `address=${encodeURIComponent(
-          fullAddress
-        )}&note=${encodeURIComponent(note)}`,
-      })
-        .then(() => fetch("/checkout/cod-confirm"))
-        .then((response) => {
-          if (response.redirected) {
-            document
-              .getElementById("success-message")
-              .classList.remove("hidden");
-            setTimeout(() => (window.location.href = "/result-order"), 1000);
-          }
-        })
-        .catch(() => {
-          alert("Đã có lỗi xảy ra khi xác nhận đơn hàng!");
-        });
-    }
 
     // Xử lý chuyển phương thức thanh toán
     document.addEventListener("DOMContentLoaded", function () {

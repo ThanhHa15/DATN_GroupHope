@@ -146,7 +146,9 @@
       }
     </style>
     <nav class="sidebar">
-      <img src="https://i.postimg.cc/TPyYJ3MY/image-removebg-preview-2.png" alt="" />
+      <a th:href="@{/home}">
+        <img src="https://i.postimg.cc/TPyYJ3MY/image-removebg-preview-2.png" alt="" />
+      </a>
       <ul>
         <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng điều khiển</p>
         <li><a th:href="@{/statistics}"><i class="fa fa-home"></i>Tổng quan</a></li>
@@ -192,7 +194,7 @@
         <p style="margin: 16px 0 6px; text-transform: uppercase; font-size: 13px; color: #9faac4;">Bảng Thống kê & báo
           cáo</p>
         <!-- <li><a th:href="@{/statistics}"><i class="fa fas fa-chart-line"></i>Doanh thu</a></li> -->
-        <li><a th:href="@{/register}"><i class="fa fas fa-trophy"></i>Sản phẩm bán chạy</a></li>
+        <li><a th:href="@{/bestsellers}"><i class="fa fas fa-trophy"></i>Sản phẩm bán chạy</a></li>
 
       </ul>
 

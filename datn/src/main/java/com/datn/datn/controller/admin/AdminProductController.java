@@ -6,6 +6,8 @@ import com.datn.datn.repository.WishlistRepository;
 import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.ProductService;
 
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,8 +37,13 @@ public class AdminProductController {
     @GetMapping
     public String showProductForm(Model model,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size) {
-
+            @RequestParam(defaultValue = "8") int size, HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || (!role.equals("ADMIN") && !role.equals("STAFF"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied"; // hoặc trả về 1 trang báo lỗi
+        }
         // Sắp xếp Z -> A theo tên sản phẩm
         Page<Product> productPage = productService.getAll(
                 PageRequest.of(page, size, Sort.by("productName").descending()));
@@ -56,7 +63,7 @@ public class AdminProductController {
 
     @PostMapping("/add")
     public String addProduct(@ModelAttribute Product product,
-            @RequestParam("imageFile") MultipartFile imageFile, 
+            @RequestParam("imageFile") MultipartFile imageFile,
             RedirectAttributes redirectAttributes) {
         try {
             if (!imageFile.isEmpty()) {
@@ -211,6 +218,36 @@ public class AdminProductController {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
         return "redirect:/admin-products";
+    }
+
+    // Thêm phương thức mới
+    @GetMapping("/filter-status")
+    public String filterByStatus(
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+
+        Page<Product> productPage;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("productName").descending());
+
+        if (status == null) {
+            productPage = productService.getAll(pageRequest);
+        } else {
+            productPage = productService.getByStatus(status, pageRequest);
+        }
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("product", new Product());
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("pageSize", size);
+
+        model.addAttribute("baseUrl", "/admin-products/filter-status?status=" + status + "&");
+
+        return "formProduct";
     }
 
 }

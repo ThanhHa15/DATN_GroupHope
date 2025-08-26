@@ -4,10 +4,14 @@ import com.datn.datn.model.Product;
 import com.datn.datn.model.ProductSpecification;
 import com.datn.datn.service.ProductService;
 import com.datn.datn.service.impl.ProductSpecificationServiceImpl;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,8 +33,13 @@ public class ProductSpecificationController {
     public String showForm(Model model,
             @RequestParam(defaultValue = "") String search,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) { // 10 sản phẩm mỗi trang
-
+            @RequestParam(defaultValue = "10") int size, HttpSession session,
+            RedirectAttributes redirectAttributes) { // 10 sản phẩm mỗi trang
+        String role = (String) session.getAttribute("role");
+        if (role == null || (!role.equals("ADMIN") && !role.equals("STAFF"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied"; // hoặc trả về 1 trang báo lỗi
+        }
         // Get all products
         List<Product> allProducts = productService.getAll();
 
@@ -64,8 +73,8 @@ public class ProductSpecificationController {
         // Map id -> name cho các sản phẩm trong trang hiện tại
         Map<Integer, String> productIdToNameMap = pagedProducts.stream()
                 .collect(Collectors.toMap(
-                    p -> p.getProductID().intValue(),
-                    Product::getProductName));
+                        p -> p.getProductID().intValue(),
+                        Product::getProductName));
 
         // Add model attributes
         model.addAttribute("groupedSpecList", groupedSpecList);

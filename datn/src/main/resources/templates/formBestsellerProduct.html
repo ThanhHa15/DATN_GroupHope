@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Sản phẩm bán chạy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f0f3f7;
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            color: #2c3e50;
+        }
+
+        div+h1 {
+            margin-left: 300px;
+            font-size: 23px;
+            margin-top: 70px;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{nav :: na}"></div>
+    <div th:replace="~{header :: header}"></div>
+
+    <h1>Sản phẩm bán chạy</h1>
+
+    <div class="flex min-h-screen">
+        <div class="flex-1 flex flex-col">
+            <main class="flex-1 p-6 overflow-auto" style="margin-left: 270px">
+                <div class="bg-white rounded shadow mb-6 ">
+                    <div class="flex flex-wrap gap-4 mb-6 pt-10 pl-5 pr-5">
+                        <div class="flex-1 min-w-[240px]">
+                            <form method="get" th:action="@{/bestsellers}" id="filterForm" class="flex flex-wrap gap-2">
+                                <!-- KHÔNG dùng hidden field cho các tham số rỗng -->
+
+                                <!-- ô tìm kiếm -->
+                                <div class="flex-1 min-w-[200px] relative">
+                                    <input type="text" name="keyword" placeholder="Tìm sản phẩm..." id="keywordInput"
+                                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                                        th:value="${keyword}" />
+                                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                                        <i class="ri-search-line text-gray-400"></i>
+                                    </div>
+                                </div>
+
+                                <!-- dropdown danh mục -->
+                                <div class="relative w-48">
+                                    <select name="categoryId" id="categorySelect"
+                                        class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                                        <option value="">Tất cả danh mục</option>
+                                        <option th:each="c : ${categories}" th:value="${c.categoryID}"
+                                            th:text="${c.name}"
+                                            th:selected="${categoryId != null and c.categoryID == categoryId}">
+                                        </option>
+                                    </select>
+                                    <div
+                                        class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                        <i class="ri-arrow-down-s-line text-gray-400"></i>
+                                    </div>
+                                </div>
+
+                                <!-- dropdown trạng thái -->
+                                <div class="relative w-48">
+                                    <select name="status" id="statusSelect"
+                                        class="w-full pl-4 pr-10 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                                        <option value="">Trạng thái</option>
+                                        <option value="selling" th:selected="${status == 'selling'}">Sản phẩm bán chạy
+                                        </option>
+                                        <option value="notselling" th:selected="${status == 'notselling'}">Sản phẩm bán
+                                            không chạy</option>
+                                    </select>
+                                    <div
+                                        class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                        <i class="ri-arrow-down-s-line text-gray-400"></i>
+                                    </div>
+                                </div>
+
+                                <!-- nút lọc -->
+                                <button type="button" onclick="submitFilter()"
+                                    class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                                    Lọc
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <!-- Bảng sản phẩm bán chạy -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead>
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 bg-gray-50 text-left text-medium font-medium text-gray-700 uppercase">
+                                        STT
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 bg-gray-50 text-left text-medium font-medium text-gray-700 uppercase">
+                                        Sản phẩm
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 bg-gray-50 text-left text-medium font-medium text-gray-700 uppercase">
+                                        Danh mục
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 bg-gray-50 text-left text-medium font-medium text-gray-700 uppercase">
+                                        Giá bán
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 bg-gray-50 text-left text-medium font-medium text-gray-700 uppercase">
+                                        Số lượng bán
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr th:each="item, stat : ${bestSellers}">
+                                    <!-- STT -->
+                                    <td class="px-6 py-4 text-medium text-gray-900"
+                                        th:text="${stat.index + 1 + (currentPage * 5)}">
+                                    </td>
+
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <img class="h-10 w-10 rounded object-cover"
+                                                th:src="@{'/images/' + ${item.imageUrl}}" alt="ảnh bán chạy" />
+                                            <div class="ml-4">
+                                                <div class="text-medium font-medium text-gray-900"
+                                                    th:text="${item.productName}"></div>
+                                                <div class="text-medium text-gray-500" th:text="${item.config}"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="px-6 py-4 text-medium text-gray-500" th:text="${item.categoryName}"></td>
+                                    <td class="px-6 py-4 text-medium text-gray-900"
+                                        th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                                    </td>
+                                    <td class="px-6 py-4 text-medium font-medium text-center"
+                                        th:classappend="${item.totalSold > 0 ? 'text-green-500' : 'text-red-500'}"
+                                        th:text="${item.totalSold}"></td>
+
+
+                                </tr>
+                            </tbody>
+
+
+                        </table>
+                        <div th:if="${#lists.isEmpty(bestSellers)}" class="text-center text-red-500 font-medium py-4">
+                            Không tìm thấy sản phẩm nào.
+                        </div>
+
+                        <!-- Pagination -->
+                        <!-- Pagination -->
+                        <!-- Pagination -->
+                        <!-- Pagination -->
+                        <div class="mt-6 flex justify-left items-center space-x-2 ml-3 mb-3">
+                            <!-- Nút Prev -->
+                            <a th:if="${currentPage > 0}" th:onclick="|goToPage(${currentPage-1})|"
+                                href="javascript:void(0)"
+                                class="px-3 py-1 border rounded hover:bg-gray-100 cursor-pointer">
+                                &laquo; Trước
+                            </a>
+                            <span th:if="${currentPage == 0}" class="px-3 py-1 border rounded opacity-50">
+                                &laquo; Trước
+                            </span>
+
+                            <!-- Các trang -->
+                            <a th:each="i : ${#numbers.sequence(0, totalPages-1)}" th:onclick="|goToPage(${i})|"
+                                href="javascript:void(0)" th:text="${i+1}" th:classappend="${i == currentPage} 
+            ? ' bg-blue-500 text-white px-3 py-1 rounded cursor-pointer' 
+            : ' px-3 py-1 border rounded hover:bg-gray-100 cursor-pointer'">
+                            </a>
+
+                            <!-- Nút Next -->
+                            <a th:if="${currentPage < totalPages-1}" th:onclick="|goToPage(${currentPage+1})|"
+                                href="javascript:void(0)"
+                                class="px-3 py-1 border rounded hover:bg-gray-100 cursor-pointer">
+                                Sau &raquo;
+                            </a>
+                            <span th:if="${currentPage == totalPages-1}" class="px-3 py-1 border rounded opacity-50">
+                                Sau &raquo;
+                            </span>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        </main>
+
+    </div>
+    </div>
+    <script>
+        function submitFilter() {
+            const keyword = document.getElementById('keywordInput').value.trim();
+            const categoryId = document.getElementById('categorySelect').value;
+            const status = document.getElementById('statusSelect').value;
+
+            // Xây dựng URL
+            let url = '/bestsellers?size=6&page=0';
+
+            if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
+            if (categoryId) url += '&categoryId=' + categoryId;
+            if (status) url += '&status=' + status;
+
+            window.location.href = url;
+        }
+
+        function goToPage(page) {
+            const keyword = document.getElementById('keywordInput').value.trim();
+            const categoryId = document.getElementById('categorySelect').value;
+            const status = document.getElementById('statusSelect').value;
+
+            // Xây dựng URL phân trang
+            let url = '/bestsellers?size=6&page=' + page;
+
+            if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
+            if (categoryId) url += '&categoryId=' + categoryId;
+            if (status) url += '&status=' + status;
+
+            window.location.href = url;
+        }
+    </script>
+</body>
+
+</html>

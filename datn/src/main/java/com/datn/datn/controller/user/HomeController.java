@@ -104,14 +104,13 @@ public class HomeController {
         model.addAttribute("loggedInUser", loggedInUser);
 
         // Lấy danh sách sản phẩm duy nhất theo productId + storage
-        List<ProductVariant> allVariants = productVariantService.findUniqueVariantsByProductAndStorage();
-
-        // Giới hạn lấy 10 sản phẩm
-        List<ProductVariant> limitedVariants = allVariants.stream()
+        List<ProductVariant> allVariants = productVariantService.findUniqueVariantsByProductAndStorage()
+                .stream()
+                .filter(variant -> variant.getProduct() != null && variant.getProduct().isStatus())
                 .limit(10)
                 .collect(Collectors.toList());
 
-        model.addAttribute("products", limitedVariants);
+        model.addAttribute("products", allVariants);
 
         // ✅ Thêm danh sách wishlist nếu người dùng đăng nhập
         if (loggedInUser instanceof Member user) {
@@ -181,7 +180,7 @@ public class HomeController {
         session = request.getSession(true);
         session.setAttribute("loggedInUser", member);
         session.setAttribute("role", member.getRole());
-        
+
         // Kiểm tra nếu có URL chuyển hướng sau khi đăng nhập
         String redirectUrl = (String) session.getAttribute("redirectAfterLogin");
         if (redirectUrl != null && !redirectUrl.isEmpty()) {

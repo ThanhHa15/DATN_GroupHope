@@ -7,6 +7,7 @@ import com.datn.datn.service.CategoryService;
 import com.datn.datn.service.ProductService;
 import com.datn.datn.service.ProductVariantService;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -45,8 +46,13 @@ public class ProductVariantController {
     public String showVariantForm(
             Model model,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size) {
-
+            @RequestParam(defaultValue = "8") int size, HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        String role = (String) session.getAttribute("role");
+        if (role == null || (!role.equals("ADMIN") && !role.equals("STAFF"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied"; // hoặc trả về 1 trang báo lỗi
+        }
         // sắp xếp A-Z theo tên sản phẩm (giả sử field là 'name')
         Page<ProductVariant> variantPage = variantService.getAll(
                 PageRequest.of(page, size, Sort.by("product.productName").descending()));

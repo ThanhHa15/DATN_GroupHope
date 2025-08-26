@@ -13,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.datn.model.Category;
 import com.datn.datn.model.Member;
@@ -80,10 +82,17 @@ public class ProductController {
         } else {
             variants = productVariantService.findUniqueVariantsByProductAndStorage();
         }
+        variants = variants.stream()
+                .filter(v -> v.getProduct() != null && v.getProduct().isStatus())
+                .collect(Collectors.toList());
 
         // Thêm danh sách danh mục vào model
         List<Category> allCategories = categoryService.getAll();
         model.addAttribute("allCategories", allCategories);
+
+        // Log để debug
+        System.out.println("All categories:");
+        allCategories.forEach(c -> System.out.println(c.getCategoryID() + ": " + c.getName()));
 
         // 🧮 Lọc theo loại
         if (type != null && !type.isEmpty()) {
@@ -255,44 +264,4 @@ public class ProductController {
                 .collect(Collectors.toList());
     }
 
-    // Xóa phương thức thứ 2 vì đã có phương thức listProducts đầu tiên xử lý phân trang
-    // Hoặc nếu muốn giữ lại, đổi URL mapping thành khác:
-    @GetMapping("/list")  // thay vì /products
-    public String listProducts(Model model, 
-        @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "12") int size) {
-        
-        // Đảm bảo page và size luôn dương
-        page = Math.max(1, page); 
-        size = Math.max(1, size);
-        
-        List<Product> allProducts = productService.getAll();
-        int totalProducts = allProducts.size();
-        
-        // Tính toán startIndex và đảm bảo không âm
-        int startIndex = (page - 1) * size;
-        if(startIndex < 0) {
-            startIndex = 0;
-        }
-        
-        // Đảm bảo startIndex không vượt quá kích thước list
-        if (startIndex >= totalProducts) {
-            startIndex = Math.max(0, ((totalProducts - 1) / size) * size);
-        }
-        
-        // Tính endIndex đảm bảo không vượt quá kích thước list 
-        int endIndex = Math.min(startIndex + size, totalProducts);
-        
-        // Lấy sublist an toàn
-        List<Product> products = allProducts.subList(startIndex, endIndex);
-        
-        // Tính tổng số trang
-        int totalPages = (int) Math.ceil((double) totalProducts / size);
-        
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("products", products);
-        
-        return "products";
-    }
 }
