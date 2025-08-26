@@ -146,7 +146,7 @@
   <!-- Nút xem tất cả -->
   <style>
     .xem-tat-ca-btn {
-      display: block;
+     display: block;
       margin: 16px auto 0;
       padding: 8px 24px;
       border: 1px solid #000f8f;
@@ -170,6 +170,79 @@
     .arrow-icon {
       transition: transform 0.3s ease;
     }
+
+    /* === SCROLL ANIMATIONS === */
+    /* Fade In từ dưới lên */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.6s ease-out;
+    }
+
+    .fade-in-up.animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Fade In từ trái */
+    .fade-in-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.6s ease-out;
+    }
+
+    .fade-in-left.animate {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Fade In từ phải */
+    .fade-in-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.6s ease-out;
+    }
+
+    .fade-in-right.animate {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Scale In */
+    .scale-in {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.6s ease-out;
+    }
+
+    .scale-in.animate {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Stagger animation cho grid items */
+    .stagger-item {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.5s ease-out;
+    }
+
+    .stagger-item.animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Bounce In cho buttons */
+    .bounce-in {
+      opacity: 0;
+      transform: scale(0.3);
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .bounce-in.animate {
+      opacity: 1;
+      transform: scale(1);
+    }
   </style>
 </head>
 
@@ -184,7 +257,7 @@
   <section class="py-8">
     <div class="container mx-auto px-4">
       <!-- Đoạn 1 -->
-      <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]"
+      <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)] fade-in-up"
         style="max-width: 1250px; margin: auto">
         <!-- Tiêu đề sản phẩm -->
         <div class="flex items-center justify-between mb-8">
@@ -200,7 +273,7 @@
 
         <div class="flex flex-col lg:flex-row gap-8">
           <!-- Phần 1: Ảnh sản phẩm -->
-          <div class="product-images-wrapper relative lg:w-1/3">
+          <div class="product-images-wrapper relative lg:w-1/3 fade-in-left">
             <div class="product-images-scrollable">
               <!-- Ảnh lớn chính -->
               <div class="main-image mb-3">
@@ -224,7 +297,7 @@
           </div>
 
           <!-- Phần 2: Thông tin cơ bản và giá -->
-          <div class="lg:w-2/4" style="margin-right: -20px">
+          <div class="lg:w-2/4 fade-in-up" data-delay="200" style="margin-right: -20px">
             <!-- Thông tin cơ bản -->
             <div class="mb-6">
               <div class="mb-4">
@@ -396,7 +469,7 @@
                   <button
                     class="bg-[#000f8f] hover:bg-[#000d7a] h-[60px] text-white py-3 px-4 rounded-sm transition-all duration-300 flex flex-col items-center justify-center transform hover:-translate-y-1 shadow-md hover:shadow-lg">
                     <span class="font-medium text-sm">Liên hệ
-                      <span class="text-[18px]">1900 xxxx</span></span>
+                      <span class="text-[18px]">1900 0000</span></span>
                     <span class="text-sm mt-1">Để được tư vấn và hỗ trợ ngay!!!</span>
                   </button>
                 </div>
@@ -455,7 +528,7 @@
           </div>
 
           <!-- Phần 3: Thông tin mua hàng -->
-          <div class="lg:w-2/7">
+          <div class="lg:w-2/7 fade-in-right">
             <!-- Hệ thống cửa hàng -->
             <div class="border-[1.5px] border-black rounded-md overflow-hidden text-sm mb-5"
               style="margin-bottom: 20px">
@@ -531,7 +604,7 @@
             </div>
 
             <!-- Danh sách khuyến mãi -->
-            <div class="border-[1.5px] border-black rounded-md overflow-hidden text-sm mb-5"
+            <div class="border-[1.5px] border-black rounded-md w-[350px] overflow-hidden text-sm mb-5"
               style="margin-bottom: 10px">
               <div class="rounded-md overflow-hidden w-full max-w-md">
                 <!-- Tiêu đề -->
@@ -546,16 +619,17 @@
                 <ul class="p-4 space-y-3 text-[15px] leading-snug">
                   <li class="flex items-start space-x-2">
                     <i class="fa-solid fa-check" style="margin-top: 6px"></i>
-                    <span>Áp dụng Phiếu quà tặng/ Mã giảm giá theo sản
-                      phẩm.</span>
+                    <span>Nhập ngay <strong>DATN2808</strong> để giảm <strong>30%</strong> áp dụng cho mọi đơn
+                      hàng.</span>
                   </li>
                   <li class="flex items-start space-x-2">
                     <i class="fa-solid fa-check" style="margin-top: 6px"></i>
-                    <span>Giảm giá 10% khi mua từ 5 sản phẩm.</span>
+                    <span>Nhập ngay <strong>HOPEPHONE</strong> để giảm <strong>10%</strong> áp dụng cho đơn từ 5
+                      triệu.</span>
                   </li>
                   <li class="flex items-start space-x-2">
                     <i class="fa-solid fa-gift" style="margin-top: 6px"></i>
-                    <span>Tặng 100.000₫ cho thành viên Dola.</span>
+                    <span>Giảm giá 10% khi mua từ 5 sản phẩm.</span>
                   </li>
                 </ul>
               </div>
@@ -565,7 +639,8 @@
       </div>
 
       <!-- Đoạn 2 -->
-      <div class="reviews-section flex flex-row gap-6 items-stretch" data-product-id="${v.product.productID}" style="
+      <div class="reviews-section fade-in-up flex flex-row gap-6 items-stretch" data-product-id="${v.product.productID}"
+        style="
             max-width: 1250px;
             margin: auto;
             margin-top: 20px;
@@ -654,10 +729,6 @@
               <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
             </div>
 
-            <!-- 👇 Lớp làm mờ phủ lên dòng cuối -->
-            <div
-              class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-lg">
-            </div>
             <div class="text-center mt-4">
               <button onclick="toggleFullSpecs()"
                 class="px-6 py-2 border border-[#000f8f] text-[#000f8f] rounded hover:bg-[#000f8f] hover:text-white transition">
@@ -713,7 +784,7 @@
             <!-- Image Upload Section -->
             <div class="space-y-2">
               <label class="block text-gray-700 font-medium">Ảnh đính kèm
-                <span class="text-sm text-gray-500">(tối đa 5 ảnh)</span></label>
+                <span class="text-sm text-gray-500"></span></label>
               <div class="flex items-center justify-center w-full">
                 <label for="imageUpload"
                   class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
@@ -768,7 +839,7 @@
       </div>
 
       <!-- Đoạn 3 -->
-      <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)]"
+      <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)] fade-in-up"
         style="max-width: 1250px; margin: auto">
         <div class="flex items-center justify-between mb-8" style="margin-bottom: 5px">
           <h2 class="text-2xl font-bold border-l-8 border-custom-blue pl-4">
@@ -779,7 +850,7 @@
         <!-- Sản phẩm khác có thể bạn quan tâm: -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           <div th:each="product : ${products}"
-            class="bg-white rounded-lg border border-gray-200 shadow-lg hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+            class="bg-white rounded-lg border border-gray-200 shadow-lg hover:shadow-lg transition-all duration-300 group relative overflow-hidden stagger-item">
             <!-- Mác giảm giá -->
             <div class="absolute top-3 left-3 z-10" th:if="${product.discountedPrice < product.price}">
               <div class="relative">
@@ -889,7 +960,9 @@
         </div>
 
         <!-- Nút "Xem tất cả" sẽ dẫn đến trang danh sách sản phẩm khác -->
-        <button class="xem-tat-ca-btn" style="margin-top: 20px">
+        <button
+          class="scale-in xem-tat-ca-btn transition-all duration-300 flex flex-col items-center justify-center transform hover:-translate-y-1 shadow-md hover:shadow-lg bounce-in"
+          style="margin-top: 20px">
           <a href="/products">Xem toàn bộ sản phẩm</a>
           <i class="arrow-icon fas fa-arrow-right"></i>
         </button>
@@ -899,6 +972,72 @@
 
   <!-- Footer -->
   <div th:insert="views/shared/footer :: footerFragment" style="margin-top: 30px"></div>
+  <script>
+    // === SCROLL ANIMATIONS SCRIPT ===
+    document.addEventListener('DOMContentLoaded', function () {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      // Observer cho animations cơ bản
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.classList.contains('animate')) {
+            const delay = entry.target.dataset.delay || 0;
+            setTimeout(() => {
+              entry.target.classList.add('animate');
+            }, parseInt(delay));
+          }
+        });
+      }, observerOptions);
+
+      // Observer riêng cho stagger animation
+      const staggerObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const container = entry.target.closest('[class*="grid"], .flex-wrap, .space-y-');
+            if (container) {
+              const staggerItems = container.querySelectorAll('.stagger-item');
+              staggerItems.forEach((item, index) => {
+                if (!item.classList.contains('animate')) {
+                  setTimeout(() => {
+                    item.classList.add('animate');
+                  }, index * 100); // 100ms giữa mỗi item
+                }
+              });
+            }
+          }
+        });
+      }, { threshold: 0.05 });
+
+      // Quan sát tất cả elements có animation classes
+      const animationElements = document.querySelectorAll(`
+        .fade-in-up, .fade-in-left, .fade-in-right, 
+        .scale-in, .bounce-in
+    `);
+      animationElements.forEach(el => observer.observe(el));
+
+      // Quan sát stagger items
+      const staggerContainers = document.querySelectorAll('.grid, .flex-wrap');
+      staggerContainers.forEach(container => {
+        const firstStaggerItem = container.querySelector('.stagger-item');
+        if (firstStaggerItem) {
+          staggerObserver.observe(firstStaggerItem);
+        }
+      });
+
+      // Hiệu ứng đặc biệt cho buttons khi hover
+      document.querySelectorAll('.bounce-in').forEach(button => {
+        button.addEventListener('mouseenter', function () {
+          this.style.transform = 'scale(1.05)';
+        });
+        button.addEventListener('mouseleave', function () {
+          this.style.transform = 'scale(1)';
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>
@@ -1599,7 +1738,7 @@
       }
     }
 
-    // --- Update review stats (average, totals) ---
+    // --- Load initial reviews ---
     async function updateReviewStats(productId) {
       try {
         const resp = await fetch(`/api/reviews/stats/${productId}`);

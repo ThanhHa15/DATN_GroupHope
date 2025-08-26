@@ -6,6 +6,7 @@ import com.datn.datn.model.Wishlist;
 import com.datn.datn.repository.MemberRepository;
 import com.datn.datn.repository.ProductVariantRepository;
 import com.datn.datn.repository.WishlistRepository;
+import com.datn.datn.service.ProductService;
 import com.datn.datn.service.WishlistService;
 
 import org.springframework.ui.Model;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 
 @Controller
 public class WishlistController {
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private WishlistService wishlistService;
@@ -90,6 +93,15 @@ public class WishlistController {
         int toIndex = Math.min(fromIndex + size, totalItems);
         List<ProductVariant> pagedWishlist = wishlist.subList(fromIndex, toIndex);
 
+        List<Object[]> counts = productService.countProductsByCategory();
+        Map<String, Long> categoryCounts = new HashMap<>();
+        for (Object[] row : counts) {
+            String categoryName = (String) row[0];
+            Long count = (Long) row[1];
+            categoryCounts.put(categoryName, count);
+        }
+        
+        model.addAttribute("categoryCounts", categoryCounts);
         model.addAttribute("products", pagedWishlist);
         model.addAttribute("wishlistIds", wishlist.stream()
                 .map(ProductVariant::getVariantID)

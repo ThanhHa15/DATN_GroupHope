@@ -255,4 +255,35 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         }
     }
 
+    // Thêm vào ProductVariantServiceImpl
+
+    @Override
+    public Page<ProductVariant> getDiscountedVariants(Pageable pageable) {
+        return repo.findDiscountedVariants(pageable);
+    }
+
+    @Override
+    public Page<ProductVariant> searchDiscountedVariants(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getDiscountedVariants(pageable);
+        }
+        return repo.findDiscountedVariantsByKeyword(keyword.trim(), pageable);
+    }
+
+    @Override
+    public Page<ProductVariant> getDiscountedVariantsByCategory(Integer categoryId, Pageable pageable) {
+        if (categoryId == null) {
+            return getDiscountedVariants(pageable);
+        }
+        return repo.findDiscountedVariantsByCategoryId(categoryId, pageable);
+    }
+
+    @Override
+    public Page<ProductVariant> filterDiscountedVariants(String keyword, Integer categoryId, Pageable pageable) {
+        // Xử lý keyword null hoặc empty
+        String processedKeyword = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
+
+        return repo.findDiscountedVariantsWithFilters(processedKeyword, categoryId, pageable);
+    }
+
 }

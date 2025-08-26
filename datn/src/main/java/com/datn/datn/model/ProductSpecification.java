@@ -16,8 +16,10 @@ public class ProductSpecification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer specId;
 
-    @Column(nullable = false)
-    private Integer productid;
+   @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)  // cột khóa ngoại trong bảng product_specifications
+    private Product product;
+
 
     @Column(nullable = false)
     private String specKey;

@@ -72,7 +72,7 @@
               </button>
               <!-- // Dropdown menu  -->
               <div class="category-dropdown space-y-2">
-                <a href="products?type=ipad">
+                <a href="products?type=iphone">
                   <i class="fas fa-mobile-alt"></i> iPhone
                 </a>
                 <a href="products?type=ipad">
@@ -142,18 +142,19 @@
             <span class="group-hover:text-[#ffa600] transition-colors">Địa chỉ</span>
           </a>
 
-          <a th:if="${session.loggedInUser  != null}" href="/order"
+          <a th:if="${loggedInUser != null}" href="/order"
             class="flex items-center gap-2 cursor-pointer group nav-icon">
             <i class="fas fa-clipboard-list"></i>
             <span class="group-hover:text-[#ffa600] transition-colors">Đơn hàng</span>
           </a>
 
-          <a th:if="${session.loggedInUser  == null}" href="javascript:void(0)"
-            onclick="alert('Bạn cần đăng nhập để xem đơn hàng');"
+          <a th:if="${loggedInUser == null}" href="/login"
             class="flex items-center gap-2 cursor-pointer group nav-icon">
             <i class="fas fa-clipboard-list"></i>
             <span class="group-hover:text-[#ffa600] transition-colors">Đơn hàng</span>
           </a>
+
+
 
 
           <!-- Bọc trong group để hover -->
@@ -223,7 +224,7 @@
                   class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
                   <i class="fas fa-heart"></i> Danh sách yêu thích
                 </a>
-                
+
                 <!-- Thêm link quay về trang admin cho admin/staff -->
                 <a th:if="${loggedInUser.role == 'ADMIN' || loggedInUser.role == 'STAFF'}" href="/categories"
                   class="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-gray-100 hover:text-[#000f8f] transition-colors">
@@ -364,9 +365,7 @@
             <a href="/formGuarantee">Tra cứu bảo hành</a>
           </li>
 
-          <li>
-            <a href="">Liên hệ</a>
-          </li>
+        
         </ul>
       </div>
     </nav>
@@ -403,8 +402,8 @@
         }
       });
     }
-  </script>
 
+  </script>
 </body>
 
 </html>

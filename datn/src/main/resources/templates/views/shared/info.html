@@ -55,8 +55,8 @@
           <aside class="w-full md:w-64 bg-gray-300 p-6">
             <div class="mb-8">
               <h2 class="text-xl font-bold text-gray-800">TRANG TÀI KHOẢN</h2>
-              <p class="text-sm text-gray-600 mt-2">
-                Xin chào, <span class="text-primary font-medium">name !</span>
+              <p class="text-sm text-primary font-medium mt-2">
+                Xin chào!
               </p>
             </div>
 
@@ -78,7 +78,7 @@
               <input type="text" th:value="${member.fullname}" readonly
                     class="border border-gray-300 px-3 py-2 rounded-md w-[200px] bg-gray-100" />
             </div>
-            <div class="flex items-center gap-2">
+            <!-- <div class="flex items-center gap-2">
               <span class="font-semibold w-28 shrink-0">Mật khẩu:</span>
               <div class="relative w-[200px]">
                 <input id="password-field" type="password"
@@ -87,7 +87,7 @@
                 <i id="toggle-password"
                   class="ri-eye-line absolute top-1/2 right-3 -translate-y-1/2 text-gray-600 cursor-pointer"></i>
               </div>
-            </div>
+            </div> -->
             <div class="flex items-center gap-2">
               <span class="font-semibold w-28 shrink-0">Email:</span>
               <input type="text" th:value="${member.email}" readonly
@@ -112,10 +112,10 @@
           </a>
           
           <!-- Nút xóa tài khoản -->
-          <button onclick="confirmDeleteAccount()" 
+          <!-- <button onclick="confirmDeleteAccount()" 
                   class="inline-block bg-red-600 text-white font-medium px-5 py-2 rounded-button hover:bg-red-700 transition">
             <i class="ri-delete-bin-line mr-2"></i> Xóa tài khoản
-          </button>
+          </button> -->
         </div>
         </main>
       </div>

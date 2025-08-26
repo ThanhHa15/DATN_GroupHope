@@ -94,25 +94,28 @@ public class HomeController {
             model.addAttribute("type", (type != null && !type.isEmpty()) ? type : "success");
         }
 
-        // Gán thông báo đăng nhập (nếu có) từ flash attribute
         if (loginSuccess != null && !loginSuccess.isEmpty()) {
             model.addAttribute("loginSuccess", loginSuccess);
         }
 
-        // Gán thông tin người dùng đã đăng nhập vào model
         Object loggedInUser = session.getAttribute("loggedInUser");
         model.addAttribute("loggedInUser", loggedInUser);
 
-        // Lấy danh sách sản phẩm duy nhất theo productId + storage
-        List<ProductVariant> allVariants = productVariantService.findUniqueVariantsByProductAndStorage()
+        // ✅ Lấy danh sách sản phẩm đang giảm giá (unique theo productId + storage)
+        List<ProductVariant> discountedVariants = productVariantService.findDiscountedVariants()
                 .stream()
                 .filter(variant -> variant.getProduct() != null && variant.getProduct().isStatus())
-                .limit(10)
-                .collect(Collectors.toList());
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toMap(
+                                v -> v.getProduct().getProductID() + "-" +
+                                        (v.getStorage() != null ? v.getStorage() : "no-storage"),
+                                v -> v,
+                                (v1, v2) -> v1),
+                        map -> map.values().stream().limit(10).collect(Collectors.toList())));
 
-        model.addAttribute("products", allVariants);
+        model.addAttribute("products", discountedVariants);
 
-        // ✅ Thêm danh sách wishlist nếu người dùng đăng nhập
+        // ✅ Wishlist
         if (loggedInUser instanceof Member user) {
             Set<Integer> wishlistIds = wishlistService.getWishlistByUserId(user.getId())
                     .stream()

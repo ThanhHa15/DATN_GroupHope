@@ -197,149 +197,142 @@
     </div>
 
     <!-- // Nội dung sản phẩm -->
-    <section class="py-8" style="margin-bottom: -40px; max-width: 1350px; margin: auto;">
+    <section class="py-8 fade-in" style="margin-bottom: -40px; max-width: 1350px; margin: auto">
         <div class="container mx-auto px-4">
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3"> <!-- Giảm gap xuống 3 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
                 <!-- Item iPhone -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
-                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
+                <a href="/products?type=iPhone"
+                    class="flex flex-col items-center group transition-all duration-300 category-stagger">
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
-                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
+                        <div
+                            class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:bg-blue-900">
                             <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/collections/230918040730-ip15pm1-23091816073.png?v=1700645552053"
                                 alt="iPhone"
-                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
+                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
-                            style="font-size: 15px;">
+                            style="font-size: 15px">
                             iPhone
                         </h3>
-                        <p class="text-center group-hover:text-blue-400 transition-colors"
-                            style="color: #000f8f; font-weight: 510;">
-                            (34 sản phẩm)
+                        <p class="text-base text-blue-900 font-semibold">
+                            <span th:text="'(' + (${categoryCounts['Iphone']} ?: 0) + ' sản phẩm)'"></span>
                         </p>
                     </div>
                 </a>
 
                 <!-- Item iPad -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
-                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
+                <a href="/products?type=ipad"
+                    class="flex flex-col items-center group transition-all duration-300 category-stagger">
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
-                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
+                        <div
+                            class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:bg-blue-900">
                             <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/collections/230725104430-icon-ipadgen91-2307.png?v=1700645580260"
                                 alt="iPhone"
-                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
+                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
-                            style="font-size: 15px;">
+                            style="font-size: 15px">
                             iPad
                         </h3>
-                        <p class="text-center group-hover:text-blue-400 transition-colors"
-                            style="color: #000f8f; font-weight: 510;">
-                            (19 sản phẩm)
-                        </p>
-                    </div>
-                </a>
-
-                <!-- Item Watch -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
-                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
-                    <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
-                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
-                            <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/collections/aw-ultra-230217110022-2302251350.png?v=1700645603220"
-                                alt="iPhone"
-                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
-                        </div>
-                        <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
-                            style="font-size: 15px;">
-                            Watch
-                        </h3>
-                        <p class="text-center group-hover:text-blue-400 transition-colors"
-                            style="color: #000f8f; font-weight: 510;">
-                            (8 sản phẩm)
+                        <p class="text-base text-blue-900 font-semibold">
+                            <span th:text="'(' + (${categoryCounts['Ipad']} ?: 0) + ' sản phẩm)'"></span>
                         </p>
                     </div>
                 </a>
 
                 <!-- Item Mac -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
-                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
+                <a href="/products?type=Macbook"
+                    class="flex flex-col items-center group transition-all duration-300 category-stagger">
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
-                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
+                        <div
+                            class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:bg-blue-900">
                             <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/collections/230224041834-macbboook21-2302241.png?v=1700645623697"
                                 alt="iPhone"
-                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
+                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
-                            style="font-size: 15px;">
+                            style="font-size: 15px">
                             Macbook
                         </h3>
-                        <p class="text-center group-hover:text-blue-400 transition-colors"
-                            style="color: #000f8f; font-weight: 510;">
-                            (22 sản phẩm)
+                        <p class="text-base text-blue-900 font-semibold">
+                            <span th:text="'(' + (${categoryCounts['Macbook']} ?: 0) + ' sản phẩm)'"></span>
+                        </p>
+                    </div>
+                </a>
+
+                <!-- Item Watch -->
+                <a href="/products?type=Watch"
+                    class="flex flex-col items-center group transition-all duration-300 category-stagger">
+                    <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
+                        <div
+                            class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:bg-blue-900">
+                            <img src="https://bizweb.dktcdn.net/thumb/large/100/502/883/collections/aw-ultra-230217110022-2302251350.png?v=1700645603220"
+                                alt="iPhone"
+                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110" />
+                        </div>
+                        <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
+                            style="font-size: 15px">
+                            Watch
+                        </h3>
+                        <p class="text-base text-blue-900 font-semibold">
+                            <span th:text="'(' + (${categoryCounts['Watch']} ?: 0) + ' sản phẩm)'"></span>
                         </p>
                     </div>
                 </a>
 
                 <!-- Item AirPods -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
-                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
+                <a href="/products?type=Airpods"
+                    class="flex flex-col items-center group transition-all duration-300 category-stagger">
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
-                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
+                        <div
+                            class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:bg-blue-900">
                             <img src="/images/epotCate.png" alt="iPhone"
-                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
+                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
-                            style="font-size: 15px;">
+                            style="font-size: 15px">
                             AirPods
                         </h3>
-                        <p class="text-center group-hover:text-blue-400 transition-colors"
-                            style="color: #000f8f; font-weight: 510;">
-                            (4 sản phẩm)
+                        <p class="text-base text-blue-900 font-semibold">
+                            <span th:text="'(' + (${categoryCounts['Airpods']} ?: 0) + ' sản phẩm)'"></span>
                         </p>
                     </div>
                 </a>
 
-                <!-- Item Âm thanh -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
-                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
+                <!-- Item  Ốp lưng & Bao da -->
+                <a href="/products?type=Ốp+lưng+và+Bao+da"
+                    class="flex flex-col items-center group transition-all duration-300 category-stagger">
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
-                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
-                            <img src="https://i.postimg.cc/QxP9d4RW/image-removebg-preview-1.png" alt="iPhone"
-                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
+                        <div
+                            class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:bg-blue-900">
+                            <img src="https://i.postimg.cc/908SLn0j/oplungip13-removebg-preview.png" alt="iPhone"
+                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
-                            style="font-size: 15px;">
-                            Âm thanh
+                            style="font-size: 15px">
+                            Ốp lưng & Bao da
                         </h3>
-                        <p class="text-center group-hover:text-blue-400 transition-colors"
-                            style="color: #000f8f; font-weight: 510;">
-                            (7 sản phẩm)
+                        <p class="text-base text-blue-900 font-semibold">
+                            <span th:text="'(' + (${categoryCounts['Ốp lưng và Bao da']} ?: 0) + ' sản phẩm)'"></span>
                         </p>
                     </div>
                 </a>
 
-                <!-- Item Phụ kiện -->
-                <a href="#" class="flex flex-col items-center group transition-all duration-300">
-                    <!-- TOÀN BỘ KHỐI CÓ HIỆU ỨNG NHẢY -->
+                <!-- Item Sạc & cáp -->
+                <a href="/products?type=Sạc+và+Cáp"
+                    class="flex flex-col items-center group transition-all duration-300 category-stagger">
                     <div class="flex flex-col items-center transition-all duration-300 group-hover:-translate-y-2">
-                        <div class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 
-                                    group-hover:shadow-lg group-hover:bg-blue-900">
+                        <div
+                            class="w-24 h-24 flex items-center justify-center mb-2 rounded-full bg-white shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:bg-blue-900">
                             <img src="https://i.postimg.cc/QCRhQkJy/image-removebg-preview.png" alt="iPhone"
-                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110">
+                                class="w-16 h-16 object-cover rounded-full transition-transform duration-300 group-hover:scale-110" />
                         </div>
                         <h3 class="text-center font-bold text-black group-hover:text-yellow-500 transition-colors text-sm"
-                            style="font-size: 15px;">
-                            Phụ kiện
+                            style="font-size: 15px">
+                            Sạc & cáp
                         </h3>
-                        <p class="text-center group-hover:text-blue-400 transition-colors"
-                            style="color: #000f8f; font-weight: 510;">
-                            (13 sản phẩm)
+                        <p class="text-base text-blue-900 font-semibold">
+                            <span th:text="'(' + (${categoryCounts['Sạc và Cáp']} ?: 0) + ' sản phẩm)'"></span>
                         </p>
                     </div>
                 </a>

@@ -20,8 +20,8 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
         return specRepo.findAll();
     }
     @Override
-    public List<ProductSpecification> getSpecificationsByProductId(Integer productid) {
-        return specRepo.findByProductid(productid);
+    public List<ProductSpecification> getSpecificationsByProductId(Integer productId) {
+        return specRepo.findByProduct_ProductID(productId);
     }
 
     @Override

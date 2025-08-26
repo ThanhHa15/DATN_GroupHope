@@ -84,7 +84,6 @@
                     </option>
                 </select>
             </div>
-            
 
             <div>
                 <label for="storageSelect" class="block font-medium mb-1">Dung lượng</label>
@@ -114,8 +113,6 @@
 
             <button type="submit" class="bg-green-500 text-white font-semibold px-4 py-2 rounded hover:bg-green-600">Áp
                 dụng giảm giá</button>
-
-
 
             <!-- Thông báo thành công từ backend -->
             <div th:if="${success}"
@@ -157,39 +154,63 @@
         <!-- Danh sách phiên bản -->
         <div class="mt-10 bg-white rounded-xl shadow overflow-x-auto">
             <h2 class="text-xl font-semibold p-6 border-b border-gray-200">Danh sách phiên bản và giảm giá</h2>
-            <!-- Search and Filter -->
-            <form th:action="@{/discount}" method="get" class="flex items-center gap-4 mb-6 ml-5 mr-5">
-                <div class="relative flex-1 min-w-[240px]">
-                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm sản phẩm..."
-                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <i class="ri-search-line text-gray-400"></i>
+
+            <!-- Fixed Search and Filter Form -->
+            <form method="get" th:action="@{/discount}" class="p-6 border-b border-gray-200">
+                <div class="flex items-center gap-4 mb-6">
+                    <!-- Filter toggle buttons -->
+                    <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                        <button type="submit" name="activeOnly" value="false"
+                            th:class="${!activeOnly ? 'bg-white text-blue-600 shadow-sm font-medium px-4 py-2 rounded-md' : 'text-gray-600 px-4 py-2 rounded-md hover:text-blue-600'}">
+                            Tất cả
+                        </button>
+                        <button type="submit" name="activeOnly" value="true"
+                            th:class="${activeOnly ? 'bg-white text-blue-600 shadow-sm font-medium px-4 py-2 rounded-md' : 'text-gray-600 px-4 py-2 rounded-md hover:text-blue-600'}">
+                            Đang giảm giá
+                        </button>
                     </div>
-                </div>
 
-                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded">
-                    Tìm kiếm
-                </button>
-
-                <a th:if="${keyword != null or name != null}" th:href="@{/variants/discounts}"
-                    class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded">
-                    Xóa bộ lọc
-                </a>
-
-                <div class="w-48">
-                    <div class="relative h-full">
-                        <select name="name" onchange="this.form.submit()"
-                            class="w-full h-10 pl-1 pr-8 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
-                            <option value="">Tất cả danh mục</option>
-                            <option th:each="cat : ${categories}" th:value="${cat.name}" th:text="${cat.name}"
-                                th:selected="${param.name == cat.name}">
-                            </option>
-                        </select>
-                        <div
-                            class="pb-3 absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
-                            <i class="ri-arrow-down-s-line text-gray-400 text-base"></i>
+                    <!-- Search input -->
+                    <div class="relative flex-1 min-w-[240px]">
+                        <input type="text" name="keyword" th:value="${keyword}" placeholder="Tìm kiếm sản phẩm..."
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                        <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                            <i class="ri-search-line text-gray-400"></i>
                         </div>
                     </div>
+
+                    <!-- Search button -->
+                    <button type="submit"
+                        class="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded">
+                        Tìm kiếm
+                    </button>
+
+                    <!-- Clear filter button -->
+                    <a th:if="${keyword != null or name != null or activeOnly}" th:href="@{/discount}"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded">
+                        Xóa bộ lọc
+                    </a>
+
+                    <!-- Category dropdown -->
+                    <div class="w-48">
+                        <div class="relative h-full">
+                            <select name="name"
+                                class="w-full h-10 pl-1 pr-8 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
+                                <option value="">Tất cả danh mục</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.name}" th:text="${cat.name}"
+                                    th:selected="${name == cat.name}">
+                                </option>
+                            </select>
+                            <div
+                                class="pb-3 absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                                <i class="ri-arrow-down-s-line text-gray-400 text-base"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden inputs to preserve state -->
+                    <input type="hidden" name="page" value="1">
+                    <input type="hidden" name="size" value="10">
                 </div>
             </form>
 
@@ -198,7 +219,6 @@
                     <tr>
                         <th class="p-3">STT</th>
                         <th class="p-3">SẢN PHẨM</th>
-                        <!-- Gộp Ảnh + Tên + Màu + Dung lượng -->
                         <th class="p-3">Danh mục</th>
                         <th class="p-0 w-[180px] pr-14">Giảm (%)</th>
                         <th class="pr-15">Giá</th>
@@ -217,27 +237,18 @@
                         </td>
                     </tr>
                     <tr th:each="v, stat : ${variants}" class="border-t odd:bg-white even:bg-gray-100">
-                        <!-- Hiển thị số thứ tự -->
                         <td class="p-3" th:text="${(currentPage - 1) * 10 + stat.index + 1}"></td>
 
-
-                        <!-- ✅ Gộp ảnh + tên sản phẩm + màu + dung lượng -->
                         <td class="flex items-center gap-4 p-3">
                             <img th:src="@{'/images/' + ${v.imagesno2}}" alt="ảnh"
                                 class="w-14 h-14 object-contain rounded-xl shadow" />
-
                             <div class="leading-tight">
-                                <!-- Tên sản phẩm -->
                                 <div class="font-semibold text-gray-900" th:text="${v.product.productName}">Tên SP</div>
-
-                                <!-- Màu và dung lượng -->
                                 <div class="text-sm text-gray-500" th:text="${v.storage} + ' - ' + ${v.color}">128GB -
                                     Đen</div>
                             </div>
                         </td>
-                        <td class="p-3" th:text="${v.product.category.name}">
-
-                        </td>
+                        <td class="p-3" th:text="${v.product.category.name}"></td>
                         <td class="p-3" th:text="${v.discount != null ? v.discount + '%' : '0%'}"></td>
 
                         <td class="pl-left text-left">
@@ -278,26 +289,10 @@
                 </tbody>
             </table>
 
-
+            <!-- Edit Modal -->
             <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div class="bg-white rounded-lg p-6 w-full max-w-md">
                     <h3 class="text-lg font-semibold mb-4">Sửa giảm giá</h3>
-
-                    <!-- Thông báo lỗi từ backend -->
-                    <div th:if="${error}"
-                        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-                        role="alert">
-                        <strong class="font-bold">Lỗi!</strong>
-                        <span class="block sm:inline" th:text="${error}"></span>
-                    </div>
-
-                    <!-- Thông báo thành công từ backend -->
-                    <div th:if="${success}"
-                        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
-                        role="alert">
-                        <strong class="font-bold">Thành công!</strong>
-                        <span class="block sm:inline" th:text="${success}"></span>
-                    </div>
 
                     <form id="editForm" method="post" th:action="@{/discount/update}">
                         <input type="hidden" name="variantId" id="editVariantId">
@@ -329,30 +324,21 @@
                             </button>
                         </div>
                     </form>
-
                 </div>
-
             </div>
 
-            <!-- Modal thành công -->
+            <!-- Success Modal -->
             <div id="successModal"
                 class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div class="bg-white rounded-lg p-6 w-full max-w-md text-center">
-                    <!-- Icon thành công -->
                     <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
                         <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
                             </path>
                         </svg>
                     </div>
-
-                    <!-- Tiêu đề thành công -->
                     <h3 class="text-lg font-medium text-gray-900 mb-2">Thành công!</h3>
-
-                    <!-- Nội dung thông báo -->
                     <p class="text-sm text-gray-500 mb-6" id="successMessage">Cập nhật giảm giá thành công!</p>
-
-                    <!-- Nút OK -->
                     <button onclick="closeSuccessModal()"
                         class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
                         OK
@@ -361,7 +347,6 @@
             </div>
 
             <!-- Pagination -->
-            <!-- Phân trang -->
             <div class="flex items-center justify-between px-6 py-4 border-t border-gray-200">
                 <div class="text-sm text-gray-600">
                     Hiển thị
@@ -371,446 +356,28 @@
                     của <span th:text="${#numbers.formatInteger(totalItems, 1, 'COMMA')}">100</span> sản phẩm
                 </div>
                 <div class="flex items-center space-x-2">
-                    <!-- Nút Trước -->
                     <a th:if="${currentPage > 1}"
-                        th:href="@{/discount(keyword=${keyword}, name=${name}, page=${currentPage - 1}, size=10)}"
+                        th:href="@{/discount(keyword=${keyword}, name=${name}, activeOnly=${activeOnly}, page=${currentPage - 1}, size=10)}"
                         class="pagination-button">Trước</a>
                     <span th:if="${currentPage == 1}" class="pagination-button disabled">Trước</span>
 
-                    <!-- Nút số trang -->
                     <a th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
-                        th:href="@{/discount(keyword=${keyword}, name=${name}, page=${pageNum}, size=10)}"
+                        th:href="@{/discount(keyword=${keyword}, name=${name}, activeOnly=${activeOnly}, page=${pageNum}, size=10)}"
                         th:class="${pageNum == currentPage ? 'pagination-button active' : 'pagination-button'}"
                         th:text="${pageNum}"></a>
 
-                    <!-- Nút Tiếp -->
                     <a th:if="${currentPage < totalPages}"
-                        th:href="@{/discount(keyword=${keyword}, name=${name}, page=${currentPage + 1}, size=10)}"
+                        th:href="@{/discount(keyword=${keyword}, name=${name}, activeOnly=${activeOnly}, page=${currentPage + 1}, size=10)}"
                         class="pagination-button">Tiếp</a>
                     <span th:if="${currentPage == totalPages}" class="pagination-button disabled">Tiếp</span>
                 </div>
             </div>
-
         </div>
 
-        <!-- JavaScript xử lý -->
+        <!-- JavaScript -->
         <script>
-            // Xử lý nút xóa
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const form = this.closest('.delete-form');
-                    Swal.fire({
-                        title: 'Xác nhận xóa?',
-                        text: "Bạn có chắc muốn xóa giảm giá này?",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Xóa',
-                        cancelButtonText: 'Hủy'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-
-            // Xử lý nút sửa
-            let editModal = document.getElementById('editModal');
-
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    document.getElementById('editVariantId').value = this.dataset.id;
-                    document.querySelector('#editForm [name="discount"]').value = this.dataset.discount;
-                    document.querySelector('#editForm [name="startDate"]').value = this.dataset.start;
-                    document.querySelector('#editForm [name="endDate"]').value = this.dataset.end;
-                    editModal.classList.remove('hidden');
-                });
-            });
-
-            // Validation cho form chỉnh sửa trước khi submit
-            document.getElementById('editForm').addEventListener('submit', function (e) {
-                e.preventDefault(); // Ngăn form submit mặc định
-
-                const startDate = document.querySelector('#editForm [name="startDate"]').value;
-                const endDate = document.querySelector('#editForm [name="endDate"]').value;
-                const discount = document.querySelector('#editForm [name="discount"]').value;
-                const variantId = document.querySelector('#editForm [name="variantId"]').value;
-
-                if (startDate && endDate) {
-                    const start = new Date(startDate);
-                    const end = new Date(endDate);
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-
-                    // Kiểm tra ngày kết thúc không được ở trong quá khứ
-                    if (end < today) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Lỗi',
-                            text: 'Ngày kết thúc không được ở trong quá khứ!',
-                            confirmButtonText: 'OK'
-                        });
-                        return false;
-                    }
-
-                    // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc
-                    if (start > end) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Lỗi',
-                            text: 'Ngày bắt đầu không được lớn hơn ngày kết thúc!',
-                            confirmButtonText: 'OK'
-                        });
-                        return false;
-                    }
-
-                    // Nếu validation pass, submit form bằng AJAX
-                    console.log('Validation passed, submitting form via AJAX...');
-
-                    // Tạo FormData
-                    const formData = new FormData();
-                    formData.append('variantId', variantId);
-                    formData.append('discount', discount);
-                    formData.append('startDate', startDate);
-                    formData.append('endDate', endDate);
-
-                    // Submit form bằng AJAX
-                    fetch('/discount/update', {
-                        method: 'POST',
-                        body: formData
-                    })
-                        .then(response => {
-                            if (response.ok) {
-                                // Đóng modal edit
-                                closeEditModal();
-                                // Hiển thị modal thành công
-                                showSuccessModal('Cập nhật giảm giá thành công!');
-                                // Reload trang sau 2 giây để cập nhật dữ liệu
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 2000);
-                            } else {
-                                throw new Error('Cập nhật thất bại');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi',
-                                text: 'Cập nhật giảm giá thất bại!',
-                                confirmButtonText: 'OK'
-                            });
-                        });
-                }
-            });
-
-            function closeEditModal() {
-                editModal.classList.add('hidden');
-            }
-
-            // Hàm hiển thị modal thành công
-            function showSuccessModal(message) {
-                console.log('showSuccessModal called with message:', message);
-                const modal = document.getElementById('successModal');
-                if (modal) {
-                    document.getElementById('successMessage').textContent = message;
-                    modal.classList.remove('hidden');
-                    console.log('Success modal shown');
-                } else {
-                    console.error('Success modal element not found!');
-                }
-            }
-
-            // Hàm đóng modal thành công
-            function closeSuccessModal() {
-                console.log('closeSuccessModal called');
-                const modal = document.getElementById('successModal');
-                if (modal) {
-                    modal.classList.add('hidden');
-                    console.log('Success modal hidden');
-                }
-            }
-
-            // Kiểm tra thông báo thành công từ backend và hiển thị modal
             document.addEventListener('DOMContentLoaded', function () {
-                console.log('DOM loaded, checking for success messages...');
-
-                // Kiểm tra URL parameter để hiển thị modal thành công
-                const urlParams = new URLSearchParams(window.location.search);
-                const successParam = urlParams.get('success');
-                if (successParam) {
-                    console.log('Success parameter found in URL:', successParam);
-                    showSuccessModal(successParam);
-                }
-
-                // Đợi một chút để đảm bảo tất cả elements đã load
-                setTimeout(() => {
-                    // Kiểm tra tất cả thông báo thành công
-                    const allSuccessMessages = document.querySelectorAll('[th\\:if="${success}"]');
-                    console.log('All success messages found:', allSuccessMessages.length);
-
-                    allSuccessMessages.forEach((msg, index) => {
-                        console.log(`Success message ${index}:`, msg.textContent);
-                        if (msg.textContent && msg.textContent.includes('thành công')) {
-                            console.log('Found success message, showing modal...');
-                            showSuccessModal(msg.textContent);
-                        }
-                    });
-
-                    // Kiểm tra cụ thể cho từng loại thông báo
-                    const editSuccessMessage = document.querySelector('[th\\:if="${success}"]');
-                    if (editSuccessMessage && editSuccessMessage.textContent.includes('Cập nhật giảm giá thành công')) {
-                        console.log('Showing success modal for edit...');
-                        showSuccessModal('Cập nhật giảm giá thành công!');
-                        // Đóng modal edit
-                        setTimeout(() => {
-                            closeEditModal();
-                        }, 1000);
-                    }
-
-                    const mainSuccessMessage = document.querySelector('form[th\\:action="@{/discount/apply}"] [th\\:if="${success}"]');
-                    if (mainSuccessMessage && mainSuccessMessage.textContent.includes('Áp dụng giảm giá thành công')) {
-                        console.log('Showing success modal for main form...');
-                        showSuccessModal('Áp dụng giảm giá thành công!');
-                    }
-                }, 500);
-            });
-
-            // Test function để hiển thị modal thành công
-            function testSuccessModal() {
-                console.log('testSuccessModal called');
-                showSuccessModal('Test: Cập nhật giảm giá thành công!');
-            }
-        </script>
-
-
-
-    </div>
-    </div>
-    <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            const countdownElements = document.querySelectorAll('.countdown-timer');
-
-            countdownElements.forEach(function (element) {
-                const endDateStr = element.getAttribute('data-end-date');
-                if (!endDateStr) return;
-
-                const endDate = new Date(endDateStr);
-
-                function updateCountdown() {
-                    const now = new Date();
-                    const diff = endDate - now;
-
-                    if (diff <= 0) {
-                        element.innerHTML = '<span style="color: #ef4444; font-weight: 500;">Đã kết thúc</span>';
-                        return;
-                    }
-
-                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-                    element.innerHTML = `
-                <span style="color: #16a34a; font-weight: 500;">
-                    ${days} ngày ${hours} giờ ${minutes} phút ${seconds} giây
-                </span>
-            `;
-                }
-
-                updateCountdown();
-                setInterval(updateCountdown, 1000); // ⏳ Cập nhật mỗi giây
-            });
-        });
-    </script>
-
-
-    <!-- Lọc dung lượng theo sản phẩm -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const productSelect = document.getElementById("productSelect");
-            const storageSelect = document.getElementById("storageSelect");
-
-            productSelect.addEventListener("change", function () {
-                const selected = this.options[this.selectedIndex];
-                const storagesStr = selected.getAttribute("data-storages");
-
-                storageSelect.innerHTML = '<option value="">-- Chọn dung lượng --</option>';
-
-                if (storagesStr) {
-                    const cleaned = storagesStr.replaceAll("[", "").replaceAll("]", "").replaceAll("'", "").trim();
-                    const storages = cleaned.split(",").map(s => s.trim()).filter(Boolean);
-                    storages.forEach(storage => {
-                        const option = document.createElement("option");
-                        option.value = storage;
-                        option.textContent = storage;
-                        storageSelect.appendChild(option);
-                    });
-                }
-            });
-
-            // Validation cho form chính trước khi submit
-            const mainForm = document.querySelector('form[th\\:action="@{/discount/apply}"]');
-            if (mainForm) {
-                mainForm.addEventListener('submit', function (e) {
-                    const startDate = document.querySelector('[name="startDate"]').value;
-                    const endDate = document.querySelector('[name="endDate"]').value;
-
-                    if (startDate && endDate) {
-                        const start = new Date(startDate);
-                        const end = new Date(endDate);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-
-                        // Kiểm tra ngày bắt đầu không được ở trong quá khứ
-                        if (start < today) {
-                            e.preventDefault();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi',
-                                text: 'Ngày bắt đầu không được ở trong quá khứ!',
-                                confirmButtonText: 'OK'
-                            });
-                            return false;
-                        }
-
-                        // Kiểm tra ngày kết thúc không được ở trong quá khứ
-                        if (end < today) {
-                            e.preventDefault();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi',
-                                text: 'Ngày kết thúc không được ở trong quá khứ!',
-                                confirmButtonText: 'OK'
-                            });
-                            return false;
-                        }
-
-                        // Kiểm tra ngày bắt đầu không được lớn hơn ngày kết thúc
-                        if (start > end) {
-                            e.preventDefault();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Lỗi',
-                                text: 'Ngày bắt đầu không được lớn hơn ngày kết thúc!',
-                                confirmButtonText: 'OK'
-                            });
-                            return false;
-                        }
-                    }
-                });
-            }
-        });
-    </script>
-
-    <!-- Chức năng tìm kiếm real-time -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const searchInput = document.getElementById("searchInput");
-            const tbody = document.querySelector("tbody");
-            let searchTimeout;
-
-            searchInput.addEventListener("input", function () {
-                clearTimeout(searchTimeout);
-                const keyword = this.value.trim();
-
-                // Debounce search để tránh gọi API quá nhiều
-                searchTimeout = setTimeout(() => {
-                    performSearch(keyword);
-                }, 300);
-            });
-
-            function performSearch(keyword) {
-                // Hiển thị loading
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">Đang tìm kiếm...</td></tr>';
-
-                // Gọi API tìm kiếm
-                fetch(`/discount/search?keyword=${encodeURIComponent(keyword)}`)
-                    .then(response => response.json())
-                    .then(variants => {
-                        updateTable(variants);
-                    })
-                    .catch(error => {
-                        console.error('Lỗi tìm kiếm:', error);
-                        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-red-500">Có lỗi xảy ra khi tìm kiếm</td></tr>';
-                    });
-            }
-
-            function updateTable(variants) {
-                if (variants.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-500">Không tìm thấy sản phẩm nào</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = variants.map((variant, index) => {
-                    const discountText = variant.discount != null ? variant.discount + '%' : '0%';
-                    const price = variant.price;
-                    const discountedPrice = variant.discountedPrice;
-
-                    let priceHtml = '';
-                    if (discountedPrice && discountedPrice < price) {
-                        priceHtml = `
-                            <span style="color: #dc2626; font-weight: bold; font-size: 1rem">${formatPrice(discountedPrice)}đ</span><br/>
-                            <span style="color: #9ca3af; text-decoration: line-through; font-size: 0.75rem; font-style: italic;">${formatPrice(price)}đ</span>
-                        `;
-                    } else {
-                        priceHtml = `<span>${formatPrice(price)}đ</span>`;
-                    }
-
-                    const countdownHtml = variant.discountEnd ?
-                        `<span class="countdown-timer" data-end-date="${variant.discountEnd}">
-                            <span class="loading-text">Chưa giảm giá...</span>
-                        </span>` :
-                        '<span style="color: #ef4444; font-weight: 500;">Không có giảm giá</span>';
-
-                    return `
-                        <tr class="border-t odd:bg-white even:bg-gray-100">
-                            <td class="p-3">${index + 1}</td>
-                            <td class="flex items-center gap-4 p-3">
-                                <img src="/images/${variant.imagesno2 || 'default.jpg'}" alt="ảnh" 
-                                     class="w-14 h-14 object-contain rounded-xl shadow" />
-                                <div class="leading-tight">
-                                    <div class="font-semibold text-gray-900">${variant.product.productName}</div>
-                                    <div class="text-sm text-gray-500">${variant.storage} - ${variant.color}</div>
-                                </div>
-                            </td>
-                            <td class="p-3">${variant.product.category ? variant.product.category.name : 'N/A'}</td>
-                            <td class="p-3">${discountText}</td>
-                            <td class="pl-left text-left">${priceHtml}</td>
-                            <td class="p-3">${countdownHtml}</td>
-                            <td class="p-3">
-                                <div class="flex space-x-2">
-                                    <button class="edit-btn text-blue-500 hover:text-blue-700" 
-                                            data-id="${variant.variantID}" 
-                                            data-discount="${variant.discount || ''}"
-                                            data-start="${variant.discountStart || ''}"
-                                            data-end="${variant.discountEnd || ''}">
-                                        <i class="ri-edit-2-line"></i>
-                                    </button>
-                                    <form action="/discount/remove/${variant.variantID}" method="post" class="delete-form">
-                                        <button type="button" class="text-red-500 hover:text-red-700 delete-btn">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-
-                // Re-attach event listeners cho các nút edit và delete
-                attachEventListeners();
-            }
-
-            function formatPrice(price) {
-                return new Intl.NumberFormat('vi-VN').format(price);
-            }
-
-            function attachEventListeners() {
-                // Re-attach delete button listeners
+                // Delete button handlers
                 document.querySelectorAll('.delete-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
                         const form = this.closest('.delete-form');
@@ -831,7 +398,8 @@
                     });
                 });
 
-                // Re-attach edit button listeners
+                // Edit button handlers
+                let editModal = document.getElementById('editModal');
                 document.querySelectorAll('.edit-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
                         document.getElementById('editVariantId').value = this.dataset.id;
@@ -841,10 +409,204 @@
                         editModal.classList.remove('hidden');
                     });
                 });
+
+                // Edit form validation and submission
+                document.getElementById('editForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const startDate = document.querySelector('#editForm [name="startDate"]').value;
+                    const endDate = document.querySelector('#editForm [name="endDate"]').value;
+                    const discount = document.querySelector('#editForm [name="discount"]').value;
+                    const variantId = document.querySelector('#editForm [name="variantId"]').value;
+
+                    if (startDate && endDate) {
+                        const start = new Date(startDate);
+                        const end = new Date(endDate);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+
+                        if (end < today) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Ngày kết thúc không được ở trong quá khứ!',
+                                confirmButtonText: 'OK'
+                            });
+                            return false;
+                        }
+
+                        if (start > end) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Ngày bắt đầu không được lớn hơn ngày kết thúc!',
+                                confirmButtonText: 'OK'
+                            });
+                            return false;
+                        }
+
+                        // Submit form via AJAX
+                        const formData = new FormData();
+                        formData.append('variantId', variantId);
+                        formData.append('discount', discount);
+                        formData.append('startDate', startDate);
+                        formData.append('endDate', endDate);
+
+                        fetch('/discount/update', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    closeEditModal();
+                                    showSuccessModal('Cập nhật giảm giá thành công!');
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 2000);
+                                } else {
+                                    throw new Error('Cập nhật thất bại');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Cập nhật giảm giá thất bại!',
+                                    confirmButtonText: 'OK'
+                                });
+                            });
+                    }
+                });
+
+                // Dropdown/Storage handling
+                const productSelect = document.getElementById("productSelect");
+                const storageSelect = document.getElementById("storageSelect");
+
+                productSelect.addEventListener("change", function () {
+                    const selected = this.options[this.selectedIndex];
+                    const storagesStr = selected.getAttribute("data-storages");
+
+                    storageSelect.innerHTML = '<option value="">-- Chọn dung lượng --</option>';
+
+                    if (storagesStr) {
+                        const cleaned = storagesStr.replaceAll("[", "").replaceAll("]", "").replaceAll("'", "").trim();
+                        const storages = cleaned.split(",").map(s => s.trim()).filter(Boolean);
+                        storages.forEach(storage => {
+                            const option = document.createElement("option");
+                            option.value = storage;
+                            option.textContent = storage;
+                            storageSelect.appendChild(option);
+                        });
+                    }
+                });
+
+                // Main form validation
+                const mainForm = document.querySelector('form[th\\:action="@{/discount/apply}"]');
+                if (mainForm) {
+                    mainForm.addEventListener('submit', function (e) {
+                        const startDate = document.querySelector('[name="startDate"]').value;
+                        const endDate = document.querySelector('[name="endDate"]').value;
+
+                        if (startDate && endDate) {
+                            const start = new Date(startDate);
+                            const end = new Date(endDate);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+
+                            if (start < today) {
+                                e.preventDefault();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Ngày bắt đầu không được ở trong quá khứ!',
+                                    confirmButtonText: 'OK'
+                                });
+                                return false;
+                            }
+
+                            if (end < today) {
+                                e.preventDefault();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Ngày kết thúc không được ở trong quá khứ!',
+                                    confirmButtonText: 'OK'
+                                });
+                                return false;
+                            }
+
+                            if (start > end) {
+                                e.preventDefault();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: 'Ngày bắt đầu không được lớn hơn ngày kết thúc!',
+                                    confirmButtonText: 'OK'
+                                });
+                                return false;
+                            }
+                        }
+                    });
+                }
+
+                // Countdown timer functionality
+                const countdownElements = document.querySelectorAll('.countdown-timer');
+                countdownElements.forEach(function (element) {
+                    const endDateStr = element.getAttribute('data-end-date');
+                    if (!endDateStr) return;
+
+                    const endDate = new Date(endDateStr);
+
+                    function updateCountdown() {
+                        const now = new Date();
+                        const diff = endDate - now;
+
+                        if (diff <= 0) {
+                            element.innerHTML = '<span style="color: #ef4444; font-weight: 500;">Đã kết thúc</span>';
+                            return;
+                        }
+
+                        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                        element.innerHTML = `
+                            <span style="color: #16a34a; font-weight: 500;">
+                                ${days} ngày ${hours} giờ ${minutes} phút ${seconds} giây
+                            </span>
+                        `;
+                    }
+
+                    updateCountdown();
+                    setInterval(updateCountdown, 1000);
+                });
+
+                // Success modal functionality
+                const urlParams = new URLSearchParams(window.location.search);
+                const successParam = urlParams.get('success');
+                if (successParam) {
+                    showSuccessModal(successParam);
+                }
+            });
+
+            function closeEditModal() {
+                document.getElementById('editModal').classList.add('hidden');
             }
-        });
-    </script>
 
-</body>
+            function showSuccessModal(message) {
+                const modal = document.getElementById('successModal');
+                if (modal) {
+                    document.getElementById('successMessage').textContent = message;
+                    modal.classList.remove('hidden');
+                }
+            }
 
-</html>
+            function closeSuccessModal() {
+                const modal = document.getElementById('successModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            }
+        </script>

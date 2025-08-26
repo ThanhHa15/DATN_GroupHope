@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.datn.datn.model.Product;
 import com.datn.datn.model.ProductSpecification;
@@ -55,6 +56,7 @@ public class AdminAddPVP {
     }
 
     @PostMapping("/saveAll")
+    @Transactional
     public String saveAll(
             @ModelAttribute("product") Product product,
             @ModelAttribute("variant") ProductVariant variant,
@@ -64,7 +66,7 @@ public class AdminAddPVP {
             Model model) {
 
         try {
-            // 1. Lưu Product
+            // 1. Lưu Product trước
             if (!productImageFile.isEmpty()) {
                 String fileName = productImageFile.getOriginalFilename();
                 String uploadDir = new File("src/main/resources/static/images").getAbsolutePath();
@@ -72,12 +74,14 @@ public class AdminAddPVP {
                 productImageFile.transferTo(dest);
                 product.setImageUrl(fileName);
             }
-
             Product savedProduct = productService.save(product);
+            if (savedProduct == null || savedProduct.getProductID() == null) {
+                model.addAttribute("error", "Không lưu được Product!");
+                return PVP(model);
+            }
 
             // 2. Lưu ProductVariant
-            variant.setProduct(savedProduct); // Gán product đã lưu cho variant
-
+            variant.setProduct(savedProduct);
             if (!variantImageFile.isEmpty()) {
                 String fileName = variantImageFile.getOriginalFilename();
                 String uploadDir = new File("src/main/resources/static/images").getAbsolutePath();
@@ -85,51 +89,41 @@ public class AdminAddPVP {
                 variantImageFile.transferTo(dest);
                 variant.setImagesno2(fileName);
             }
-
-            // Xử lý giá từ format VNĐ sang double
             String priceInput = allParams.get("priceInput");
             if (priceInput != null && !priceInput.isEmpty()) {
                 String cleanedPrice = priceInput.replaceAll("[.,\\s]", "");
                 try {
                     double price = Double.parseDouble(cleanedPrice);
                     variant.setPrice(price);
-                } catch (NumberFormatException e) {
-                    // Xử lý lỗi nếu cần
-                }
+                } catch (NumberFormatException e) {}
             }
-
-            // Kiểm tra ngày sản xuất
             if (product.getManufactureDate() == null || product.getManufactureDate().isAfter(LocalDate.now())) {
                 model.addAttribute("error", "Ngày sản xuất không hợp lệ");
                 return PVP(model);
             }
-
-            ProductVariant savedVariant = variantService.save(variant);
+            variantService.save(variant);
 
             // 3. Lưu ProductSpecification
-            Integer productId = savedProduct.getProductID();
-
             for (Map.Entry<String, String> entry : allParams.entrySet()) {
-                if (entry.getKey().startsWith("specs[") && entry.getValue() != null && !entry.getValue().isEmpty()) {
-                    String specKey = entry.getKey().substring(6, entry.getKey().length() - 1);
-
-                    ProductSpecification spec = new ProductSpecification();
-                    spec.setProductid(productId.intValue());
-                    spec.setSpecKey(specKey);
-                    spec.setSpecValue(entry.getValue());
-
-                    specificationService.saveSpecification(spec);
+                String key = entry.getKey();
+                if (key.startsWith("specs[") && key.endsWith("]")) {
+                    String value = entry.getValue();
+                    String specKey = key.substring(6, key.length() - 1);
+                    if (value != null && !value.trim().isEmpty()) {
+                        ProductSpecification spec = new ProductSpecification();
+                        spec.setProduct(savedProduct); // LUÔN dùng savedProduct đã có productID
+                        spec.setSpecKey(specKey);
+                        spec.setSpecValue(value.trim());
+                        specificationService.saveSpecification(spec);
+                    }
                 }
             }
 
-            return "redirect:/admin-addPVP";
-
-        } catch (IOException e) {
-            model.addAttribute("error", "Lỗi khi upload file: " + e.getMessage());
-            return PVP(model);
+            return "redirect:/admin-addPVP?success=true";
         } catch (Exception e) {
-            model.addAttribute("error", "Lỗi hệ thống: " + e.getMessage());
-            return PVP(model);
+            e.printStackTrace();
+            model.addAttribute("error", "Lỗi khi lưu dữ liệu: " + e.getMessage());
+            return "formAddPVP";
         }
     }
 

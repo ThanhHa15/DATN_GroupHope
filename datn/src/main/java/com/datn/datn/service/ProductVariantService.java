@@ -59,4 +59,18 @@ public interface ProductVariantService {
 
     // Lấy các phiên bản theo trạng thái
     Page<ProductVariant> filterByStatus(String status, Pageable pageable);
+
+    // Thêm các method mới vào interface ProductVariantService
+
+    // Lọc sản phẩm đang giảm giá với phân trang
+    Page<ProductVariant> getDiscountedVariants(Pageable pageable);
+
+    // Lọc sản phẩm đang giảm giá theo từ khóa
+    Page<ProductVariant> searchDiscountedVariants(String keyword, Pageable pageable);
+
+    // Lọc sản phẩm đang giảm giá theo danh mục
+    Page<ProductVariant> getDiscountedVariantsByCategory(Integer categoryId, Pageable pageable);
+
+    // Lọc sản phẩm đang giảm giá với nhiều điều kiện
+    Page<ProductVariant> filterDiscountedVariants(String keyword, Integer categoryId, Pageable pageable);
 }

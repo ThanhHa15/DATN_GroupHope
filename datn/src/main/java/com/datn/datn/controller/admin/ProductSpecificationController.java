@@ -62,13 +62,14 @@ public class ProductSpecificationController {
                 .collect(Collectors.toList());
 
         List<ProductSpecification> allSpecs = specificationService.findAll();
-        List<ProductSpecification> relevantSpecs = allSpecs.stream()
-                .filter(spec -> pagedProductIds.contains(spec.getProductid()))
-                .collect(Collectors.toList());
+       List<ProductSpecification> relevantSpecs = allSpecs.stream()
+        .filter(spec -> pagedProductIds.contains(spec.getProduct().getProductID()))
+        .collect(Collectors.toList());
 
-        // Group specifications by product
-        Map<Integer, List<ProductSpecification>> groupedSpecList = relevantSpecs.stream()
-                .collect(Collectors.groupingBy(ProductSpecification::getProductid));
+// Group specifications by productId
+Map<Integer, List<ProductSpecification>> groupedSpecList = relevantSpecs.stream()
+        .collect(Collectors.groupingBy(spec -> spec.getProduct().getProductID()));
+
 
         // Map id -> name cho các sản phẩm trong trang hiện tại
         Map<Integer, String> productIdToNameMap = pagedProducts.stream()
@@ -89,7 +90,7 @@ public class ProductSpecificationController {
 
     @PostMapping("/save")
     public String saveSpecifications(
-            @RequestParam("productid") Long productId,
+            @RequestParam("productid") Integer productId,
             @RequestParam Map<String, String> allParams) {
         // Lặp qua tất cả các tham số
         for (Map.Entry<String, String> entry : allParams.entrySet()) {
@@ -100,7 +101,8 @@ public class ProductSpecificationController {
 
                 // Tạo và lưu thông số kỹ thuật
                 ProductSpecification spec = new ProductSpecification();
-                spec.setProductid(productId.intValue());
+                Product product = productService.getById(productId);
+                spec.setProduct(product);
                 spec.setSpecKey(specKey);
                 spec.setSpecValue(entry.getValue());
 

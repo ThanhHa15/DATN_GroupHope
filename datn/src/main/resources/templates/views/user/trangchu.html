@@ -39,7 +39,6 @@
     /* Thêm style mới cho ảnh sản phẩm */
     .product-image-container {
       height: 200px;
-      /* Chiều cao cố định */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -56,7 +55,6 @@
 
     .category-image-container {
       height: 120px;
-      /* Chiều cao cố định */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -90,7 +88,6 @@
 
     .category-card:hover h3 {
       color: #fbbf24;
-      /* Màu vàng */
     }
 
     .category-arrow {
@@ -98,16 +95,116 @@
       bottom: 10px;
       right: 10px;
       color: #000;
-      /* Màu đen mặc định */
       transition: color 0.3s ease;
-      /* Chỉ transition cho màu sắc */
     }
 
     .category-card:hover .category-arrow {
       color: #fbbf24;
-      /* Chuyển màu vàng khi hover */
+    }
+
+    /* Scroll Animation Styles */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s ease-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide-in-left {
+      opacity: 0;
+      transform: translateX(-100px);
+      transition: all 0.8s ease-out;
+    }
+
+    .slide-in-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide-in-right {
+      opacity: 0;
+      transform: translateX(100px);
+      transition: all 0.8s ease-out;
+    }
+
+    .slide-in-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .scale-in {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.8s ease-out;
+    }
+
+    .scale-in.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Stagger animation cho các items */
+    .stagger-item {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease-out;
+    }
+
+    .stagger-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Delay cho các items */
+    .stagger-item:nth-child(1) { transition-delay: 0.1s; }
+    .stagger-item:nth-child(2) { transition-delay: 0.2s; }
+    .stagger-item:nth-child(3) { transition-delay: 0.3s; }
+    .stagger-item:nth-child(4) { transition-delay: 0.4s; }
+    .stagger-item:nth-child(5) { transition-delay: 0.5s; }
+    .stagger-item:nth-child(6) { transition-delay: 0.6s; }
+    .stagger-item:nth-child(7) { transition-delay: 0.7s; }
+    .stagger-item:nth-child(8) { transition-delay: 0.8s; }
+
+    /* Animation cho product cards */
+    .product-stagger {
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+      transition: all 0.7s ease-out;
+    }
+
+    .product-stagger.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .product-stagger:nth-child(1) { transition-delay: 0.1s; }
+    .product-stagger:nth-child(2) { transition-delay: 0.15s; }
+    .product-stagger:nth-child(3) { transition-delay: 0.2s; }
+    .product-stagger:nth-child(4) { transition-delay: 0.25s; }
+    .product-stagger:nth-child(5) { transition-delay: 0.3s; }
+    .product-stagger:nth-child(6) { transition-delay: 0.35s; }
+    .product-stagger:nth-child(7) { transition-delay: 0.4s; }
+    .product-stagger:nth-child(8) { transition-delay: 0.45s; }
+    .product-stagger:nth-child(9) { transition-delay: 0.5s; }
+    .product-stagger:nth-child(10) { transition-delay: 0.55s; }
+
+    /* Slide up animation cho section headers */
+    .section-header {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+
+    .section-header.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
+
   <!-- Nút xem tất cả -->
   <style>
     .xem-tat-ca-btn {
@@ -136,6 +233,7 @@
       transition: transform 0.3s ease;
     }
   </style>
+
   <!-- poster -->
   <style>
     .image-container {
@@ -152,10 +250,8 @@
       flex: 0 0 auto;
       width: 614px;
       overflow: hidden;
-      /* Ẩn phần ảnh phóng to vượt khung */
       border-radius: 8px;
       transition: transform 0.3s ease;
-      /* Hiệu ứng cho khung ảnh (tùy chọn) */
     }
 
     .image-wrapper img {
@@ -165,16 +261,12 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: transform 0.5s ease;
-      /* Hiệu ứng zoom */
     }
 
-    /* Hiệu ứng khi hover */
     .image-wrapper:hover img {
       transform: scale(1.05);
-      /* Phóng to 5% */
     }
 
-    /* Tùy chọn: nâng khung ảnh lên khi hover */
     .image-wrapper:hover {
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
@@ -220,7 +312,6 @@
         </div>
       </div>
 
-
       <!-- Nút điều hướng -->
       <button id="prev-btn"
         class="hidden group-hover:flex absolute top-1/2 left-4 -translate-y-1/2 bg-black bg-opacity-40 text-white px-4 py-2 rounded-full">
@@ -233,14 +324,14 @@
     </div>
 
     <!-- Small Banners -->
-    <div class="absolute bottom-[-120px] left-0 right-0 flex justify-center gap-5 max-w-[1250px] mx-auto flex-wrap z-10"
+    <div class="absolute bottom-[-120px] left-0 right-0 flex justify-center gap-5 max-w-[1250px] mx-auto flex-wrap z-10 fade-in"
       style="margin-bottom: -30px">
       <div class="image-container" style="margin-bottom: -20px">
-        <div class="image-wrapper" style="width: 612px">
+        <div class="image-wrapper slide-in-left" style="width: 612px">
           <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/2banner_1.jpg?1719764721426"
             alt="Banner 1" />
         </div>
-        <div class="image-wrapper" style="width: 612px">
+        <div class="image-wrapper slide-in-right" style="width: 612px">
           <img src="https://bizweb.dktcdn.net/100/502/883/themes/934584/assets/2banner_2.jpg?1719764721426"
             alt="Banner 2" />
         </div>
@@ -248,13 +339,12 @@
     </div>
   </div>
 
-
   <!-- Main Content (1250px centered) -->
   <div class="main-content-container" style="margin-top: 180px">
     <!-- Info Boxes Section -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-32 px-4 mb-8 mx-auto"
       style="padding-left: 1px; padding-right: 1px">
-      <div class="info-card bg-[#ffffff] p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+      <div class="info-card bg-[#ffffff] p-4 rounded-lg shadow-sm border border-gray-100 text-center stagger-item">
         <div class="text-blue-600 mb-2">
           <i class="fas fa-truck-fast text-2xl"></i>
         </div>
@@ -264,7 +354,7 @@
         <p class="text-sm text-gray-600">Nhận hàng trong 2h</p>
       </div>
 
-      <div class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+      <div class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center stagger-item">
         <div class="text-green-600 mb-2">
           <i class="fas fa-headset text-2xl"></i>
         </div>
@@ -274,7 +364,7 @@
         <p class="text-sm text-gray-600">Hỗ trợ 24/7</p>
       </div>
 
-      <div class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+      <div class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center stagger-item">
         <div class="text-purple-600 mb-2">
           <i class="fas fa-certificate text-2xl"></i>
         </div>
@@ -284,7 +374,7 @@
         <p class="text-sm text-gray-600">Bảo hành đầy đủ</p>
       </div>
 
-      <div class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+      <div class="info-card bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center stagger-item">
         <div class="text-orange-600 mb-2">
           <i class="fas fa-credit-card text-2xl"></i>
         </div>
@@ -295,9 +385,10 @@
       </div>
     </div>
 
-    <div class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 -mt-4">
+    <!-- Categories Section -->
+    <div class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 -mt-4 fade-in">
       <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-bold border-l-8 border-blue-900 pl-4">
+        <h2 class="text-2xl font-bold border-l-8 border-blue-900 pl-4 section-header">
           DANH MỤC NỔI BẬT
         </h2>
       </div>
@@ -305,7 +396,7 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 px-4">
         <!-- Danh mục iPhone -->
         <a href="/products?type=iPhone"
-          class="category-card bg-[white] p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          class="category-card bg-[white] p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow stagger-item">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/iponemau.jpg}" alt="iPhone icon" class="category-image" />
@@ -319,7 +410,7 @@
 
         <!-- Danh mục iPad -->
         <a href="/products?type=iPad"
-          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow stagger-item">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/1750395869916_air6.jpg}" alt="iPad icon" class="category-image" />
@@ -333,7 +424,7 @@
 
         <!-- Danh mục Mac -->
         <a href="/products?type=MacBook"
-          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow stagger-item">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/macmau.webp}" alt="Mac icon" class="category-image" />
@@ -347,7 +438,7 @@
 
         <!-- Danh mục Airpods -->
         <a href="/products?type=Airpods"
-          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow stagger-item">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/airpodsmau.webp}" alt="Watch icon" class="category-image" />
@@ -362,17 +453,17 @@
     </div>
 
     <!-- Products Section -->
-    <div class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 -mt-6 min-h-[450px]">
+    <div class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 -mt-6 min-h-[450px] fade-in">
       <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-bold border-l-8 border-blue-900 pl-4">
-          SẢN PHẨM NỔI BẬT
+        <h2 class="text-2xl font-bold border-l-8 border-blue-900 pl-4 section-header">
+          SẢN PHẨM ĐANG GIẢM GIÁ
         </h2>
       </div>
 
       <!-- Product Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         <div th:each="product : ${products}"
-          class="bg-white rounded-lg border border-gray-200 shadow-lg hover:shadow-lg transition-all duration-300 group relative overflow-hidden">
+          class="bg-white rounded-lg border border-gray-200 shadow-lg hover:shadow-lg transition-all duration-300 group relative overflow-hidden product-stagger">
           <!-- Mác giảm giá -->
           <div class="absolute top-3 left-3 z-10" th:if="${product.discountedPrice < product.price}">
             <div class="relative">
@@ -380,7 +471,6 @@
                 class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-sm transform -rotate-3 origin-left shadow-[2px_2px_0px_rgba(0,0,0,0.2)] group-hover:shadow-[3px_3px_0px_rgba(0,0,0,0.3)] transition-all duration-200">
                 GIẢM <span th:text="${product.discount}">0</span>%
               </div>
-              <!-- Hiệu ứng góc gập 3D */ -->
               <div class="absolute top-full left-1 w-4 h-1 bg-red-700 transform -rotate-6 origin-top-left opacity-80">
               </div>
             </div>
@@ -406,7 +496,6 @@
                 'ri-heart-fill text-red-600' : 'ri-heart-line text-gray-600 hover:text-red-500'"></i>
               </button>
             </div>
-
 
             <!-- Nút giỏ hàng -->
             <button
@@ -471,28 +560,28 @@
         </div>
       </div>
 
-      <button class="xem-tat-ca-btn" style="margin-top: 20px">
+      <button class="xem-tat-ca-btn scale-in" style="margin-top: 20px">
         <a href="products">Xem toàn bộ sản phẩm</a>
         <i class="arrow-icon fas fa-arrow-right"></i>
       </button>
     </div>
 
-    <div class="w-full h-full -mt-8">
-      <!-- Thêm negative margin -->
+    <div class="w-full h-full -mt-8 fade-in">
       <img th:src="@{/images/banner.webp}" alt="banner" class="w-full h-full object-cover rounded-lg" />
     </div>
 
-    <div class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 mt-4 mb-1.25"
+    <!-- Accessories Section -->
+    <div class="px-4 mb-12 bg-white py-6 rounded-lg shadow-sm border border-gray-100 mt-4 mb-1.25 fade-in"
       style="margin-bottom: 70px">
       <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-bold border-l-8 border-blue-900 pl-4">
+        <h2 class="text-2xl font-bold border-l-8 border-blue-900 pl-4 section-header">
           DANH MỤC NỔI BẬT
         </h2>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 px-4">
         <!-- Phụ kiện 1 - Ốp lưng -->
         <a href="/products?type=Ốp+lưng+%26+Bao+da"
-          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow stagger-item">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/image copy 6.png}" alt="Ốp lưng iPhone" class="category-image" />
@@ -506,7 +595,7 @@
 
         <!-- Phụ kiện 2 - Cáp sạc -->
         <a href="/products?type=Sạc+%26+cáp"
-          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow stagger-item">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/image copy 7.png}" alt="Cáp sạc" class="category-image" />
@@ -520,7 +609,7 @@
 
         <!-- Phụ kiện 3 - watch -->
         <a href="/products?type=Watch"
-          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow stagger-item">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img
@@ -536,7 +625,7 @@
 
         <!-- Phụ kiện 4 - Miếng dán màn hình -->
         <div
-          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          class="category-card bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow stagger-item">
           <div class="flex flex-col items-center text-center">
             <div class="category-image-container">
               <img th:src="@{/images/image copy 9.png}" alt="Miếng dán màn hình" class="category-image" />
@@ -550,14 +639,9 @@
       </div>
     </div>
   </div>
-  </div>
-
-
 
   <!-- Footer (Full width) -->
   <div th:insert="views/shared/footer :: footerFragment"></div>
-
-
 
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -576,109 +660,143 @@
     });
   </script>
 
+  <!-- Scroll Animation Script -->
+  <script>
+    // Intersection Observer cho scroll animation
+    const observerOptions = {
+      threshold: 0.1, // Trigger khi 10% element xuất hiện
+      rootMargin: '0px 0px -50px 0px' // Trigger sớm hơn một chút
+    };
 
-
-</body>
-
-</html>
-<script> // Xử lý sự kiện cho nút wishlist
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.wishlist-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        const variantId = this.getAttribute('data-variant-id');
-        const userId = this.getAttribute('data-user-id');
-
-        if (!userId) {
-          window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
-          return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
         }
+      });
+    }, observerOptions);
 
-        fetch(`/api/wishlist/toggle?userId=${userId}&productVariantId=${variantId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
+    // Observer riêng cho stagger items với delay
+    const staggerObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const staggerItems = entry.target.querySelectorAll('.stagger-item, .product-stagger');
+          staggerItems.forEach((item, index) => {
+            setTimeout(() => {
+              item.classList.add('visible');
+            }, index * 100); // Delay 100ms cho mỗi item
+          });
+        }
+      });
+    }, observerOptions);
+
+    // Khi DOM loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Observe các elements với animation
+      const fadeElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in');
+      const sectionHeaders = document.querySelectorAll('.section-header');
+      const staggerContainers = document.querySelectorAll('.grid');
+
+      fadeElements.forEach(el => observer.observe(el));
+      sectionHeaders.forEach(el => observer.observe(el));
+      staggerContainers.forEach(container => staggerObserver.observe(container));
+
+      // Banner slides animation (đã có sẵn)
+      const slides = document.querySelectorAll(".banner-slide");
+      const prevBtn = document.getElementById("prev-btn");
+      const nextBtn = document.getElementById("next-btn");
+      let currentIndex = 0;
+      let timeout;
+
+      const slidesWrapper = document.getElementById("slides-wrapper");
+
+      function showSlide(index) {
+        const offset = -index * 100;
+        slidesWrapper.style.transform = `translateX(${offset}%)`;
+        currentIndex = index;
+      }
+
+      function nextSlide() {
+        let newIndex = (currentIndex + 1) % slides.length;
+        showSlide(newIndex);
+      }
+
+      function prevSlide() {
+        let newIndex = (currentIndex - 1 + slides.length) % slides.length;
+        showSlide(newIndex);
+      }
+
+      function startAutoSlide() {
+        timeout = setTimeout(function tick() {
+          nextSlide();
+          timeout = setTimeout(tick, 4000);
+        }, 4000);
+      }
+
+      function stopAutoSlide() {
+        clearTimeout(timeout);
+      }
+
+      nextBtn.addEventListener("click", () => {
+        nextSlide();
+        stopAutoSlide();
+        startAutoSlide();
+      });
+
+      prevBtn.addEventListener("click", () => {
+        prevSlide();
+        stopAutoSlide();
+        startAutoSlide();
+      });
+
+      document.getElementById("banner-slides").addEventListener("mouseenter", stopAutoSlide);
+      document.getElementById("banner-slides").addEventListener("mouseleave", startAutoSlide);
+
+      showSlide(0);
+      startAutoSlide();
+    });
+  </script>
+
+  <!-- Wishlist Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.wishlist-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+          const variantId = this.getAttribute('data-variant-id');
+          const userId = this.getAttribute('data-user-id');
+
+          if (!userId) {
+            window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+            return;
           }
-        })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              const icon = this.querySelector('i');
-              if (data.added) {
-                icon.classList.replace('ri-heart-line', 'ri-heart-fill');
-                icon.classList.replace('text-gray-600', 'text-red-500');
-                this.classList.add('active');
-              } else {
-                icon.classList.replace('ri-heart-fill', 'ri-heart-line');
-                icon.classList.replace('text-red-500', 'text-gray-600');
-                this.classList.remove('active');
-              }
+
+          fetch(`/api/wishlist/toggle?userId=${userId}&productVariantId=${variantId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
             }
           })
-          .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                const icon = this.querySelector('i');
+                if (data.added) {
+                  icon.classList.replace('ri-heart-line', 'ri-heart-fill');
+                  icon.classList.replace('text-gray-600', 'text-red-500');
+                  this.classList.add('active');
+                } else {
+                  icon.classList.replace('ri-heart-fill', 'ri-heart-line');
+                  icon.classList.replace('text-red-500', 'text-gray-600');
+                  this.classList.remove('active');
+                }
+              }
+            })
+            .catch(error => console.error('Error:', error));
+        });
       });
     });
-  });
-</script>
+  </script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const slides = document.querySelectorAll(".banner-slide");
-    const prevBtn = document.getElementById("prev-btn");
-    const nextBtn = document.getElementById("next-btn");
-    let currentIndex = 0;
-    let interval;
-
-    const slidesWrapper = document.getElementById("slides-wrapper");
-
-    function showSlide(index) {
-      const offset = -index * 100; // dịch chuyển 100% chiều ngang
-      slidesWrapper.style.transform = `translateX(${offset}%)`;
-      currentIndex = index;
-    }
-
-
-    function nextSlide() {
-      let newIndex = (currentIndex + 1) % slides.length;
-      showSlide(newIndex);
-    }
-
-    function prevSlide() {
-      let newIndex = (currentIndex - 1 + slides.length) % slides.length;
-      showSlide(newIndex);
-    }
-
-    let timeout;
-
-    function startAutoSlide() {
-      timeout = setTimeout(function tick() {
-        nextSlide();
-        timeout = setTimeout(tick, 4000);
-      }, 4000);
-    }
-
-    function stopAutoSlide() {
-      clearTimeout(timeout);
-    }
-
-
-    nextBtn.addEventListener("click", () => {
-      nextSlide();
-      stopAutoSlide();
-      startAutoSlide();
-    });
-
-    prevBtn.addEventListener("click", () => {
-      prevSlide();
-      stopAutoSlide();
-      startAutoSlide();
-    });
-
-    // Hover thì dừng auto chạy
-    document.getElementById("banner-slides").addEventListener("mouseenter", stopAutoSlide);
-    document.getElementById("banner-slides").addEventListener("mouseleave", startAutoSlide);
-
-    showSlide(0);
-    startAutoSlide();
-  });
-</script>
+</body>
+</html>

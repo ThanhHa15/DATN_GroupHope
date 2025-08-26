@@ -1,26 +1,17 @@
-// Code này nhìn chung đã ổn, đã tuân thủ các nguyên tắc cơ bản của Spring MVC:
-// - Sử dụng annotation controller, mapping rõ ràng
-// - Validate dữ liệu đầu vào (ngày, storage hợp lệ)
-// - Xử lý lỗi và trả thông báo qua RedirectAttributes
-// - Phân tách service cho nghiệp vụ
-
-// Một số góp ý nhỏ để code tốt hơn:
-// 1. Có thể log lỗi chi tiết hơn trong các catch (dùng logger).
-// 2. Nên validate discount (ví dụ: discount >= 0 && discount <= 100).
-// 3. Có thể tách logic validate ra service hoặc sử dụng @Valid cho form.
-// 4. Nếu hệ thống lớn, có thể dùng DTO thay vì truyền trực tiếp các tham số.
-
-// Ví dụ bổ sung log lỗi và validate discount:
-
 package com.datn.datn.controller.admin;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.datn.datn.model.Category;
@@ -65,7 +57,8 @@ public class DiscountController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String sort, // new param
+            @RequestParam(required = false) String sort,
+            @RequestParam(defaultValue = "false") boolean activeOnly, // new param
             Model model, HttpSession session,
             RedirectAttributes redirectAttributes) {
         String role = (String) session.getAttribute("role");
@@ -76,6 +69,13 @@ public class DiscountController {
 
         List<ProductVariant> allVariants = variantService.getAll();
 
+        if (activeOnly) {
+            // Chỉ lấy sản phẩm đang giảm giá
+            allVariants = variantService.findDiscountedVariants();
+        } else {
+            // Lấy tất cả sản phẩm
+            allVariants = variantService.getAll();
+        }
         // filter theo category
         if (name != null && !name.isEmpty()) {
             allVariants = allVariants.stream()
@@ -124,6 +124,7 @@ public class DiscountController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("name", name);
         model.addAttribute("sort", sort);
+        model.addAttribute("activeOnly", activeOnly);
         // THÊM DÒNG NÀY để truyền danh sách sản phẩm cho dropdown
         model.addAttribute("products", productService.getAll());
         return "formDiscount";
@@ -227,4 +228,92 @@ public class DiscountController {
         return "redirect:/discount";
     }
 
+    @GetMapping("/active")
+    public String showActiveDiscounts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) String sort,
+            Model model, HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        String role = (String) session.getAttribute("role");
+        if (role == null || (!role.equals("ADMIN") && !role.equals("STAFF"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
+            return "redirect:/access-denied";
+        }
+
+        // Tạo Pageable với sort
+        Sort sorting = Sort.unsorted();
+        if ("desc".equalsIgnoreCase(sort)) {
+            sorting = Sort.by("product.productName").descending();
+        } else if ("asc".equalsIgnoreCase(sort) || sort != null) {
+            sorting = Sort.by("product.productName").ascending();
+        }
+
+        PageRequest pageable = PageRequest.of(page - 1, size, sorting);
+
+        // Lọc sản phẩm đang giảm giá
+        Page<ProductVariant> variantPage = variantService.filterDiscountedVariants(keyword, categoryId, pageable);
+
+        // Lấy danh sách sản phẩm cho dropdown
+        List<Product> products = productService.getAll();
+        for (Product p : products) {
+            List<String> storages = variantService.findStoragesByProductId(p.getProductID());
+            p.setStorages(storages);
+        }
+
+        model.addAttribute("variants", variantPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", variantPage.getTotalPages());
+        model.addAttribute("size", size);
+        model.addAttribute("totalItems", variantPage.getTotalElements());
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("products", products);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sort", sort);
+        model.addAttribute("showActiveDiscountsOnly", true); // Flag để template biết đang filter
+
+        return "formDiscount";
+    }
+
+    // Thêm vào DiscountController
+
+    @GetMapping("/search/active")
+    @ResponseBody
+    public List<ProductVariant> searchActiveDiscounts(@RequestParam(required = false) String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return variantService.findDiscountedVariants();
+        }
+
+        // Lấy tất cả sản phẩm đang giảm giá và filter theo keyword
+        List<ProductVariant> allDiscounted = variantService.findDiscountedVariants();
+        return allDiscounted.stream()
+                .filter(v -> v.getProduct().getProductName().toLowerCase()
+                        .contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/discounted")
+    @ResponseBody
+    public Map<String, Object> getDiscountedVariantsApi(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer categoryId) {
+
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<ProductVariant> variantPage = variantService.filterDiscountedVariants(keyword, categoryId, pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", variantPage.getContent());
+        response.put("totalElements", variantPage.getTotalElements());
+        response.put("totalPages", variantPage.getTotalPages());
+        response.put("currentPage", page);
+        response.put("size", size);
+
+        return response;
+    }
 }

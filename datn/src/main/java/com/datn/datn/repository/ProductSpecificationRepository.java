@@ -7,5 +7,5 @@ import com.datn.datn.model.ProductSpecification;
 import java.util.List;
 
 public interface ProductSpecificationRepository extends JpaRepository<ProductSpecification, Integer> {
-    List<ProductSpecification> findByProductid(Integer productid);
+    List<ProductSpecification> findByProduct_ProductID(Integer productId);
 }
