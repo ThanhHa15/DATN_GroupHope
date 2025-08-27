@@ -28,13 +28,12 @@ public interface MembersService {
 
     boolean existsByEmail(String email);
 
+    boolean existsByPhone(String phone);
+
     Optional<Member> findByEmail(String email);
 
     List<Member> findByActive(boolean active, String keyword);
 
-    //
-
-    // Employees pagination
     List<Member> searchEmployeesWithPagination(String keyword, int page, int size);
 
     long countEmployees(String keyword);

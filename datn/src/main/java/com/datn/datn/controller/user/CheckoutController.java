@@ -80,12 +80,12 @@ public class CheckoutController {
             BigDecimal price = variant.getDiscountedPrice() != null ? variant.getDiscountedPrice() : originalPrice;
             BigDecimal quantity = BigDecimal.valueOf(cart.getQuantity());
 
-            originalTotal = originalTotal.add(originalPrice.multiply(quantity));
+            originalTotal = originalTotal.add(price.multiply(quantity));
             total = total.add(price.multiply(quantity));
         }
 
         BigDecimal shippingFee = BigDecimal.valueOf(40000);
-        BigDecimal grandTotal = originalTotal.add(shippingFee); // Sử dụng originalTotal thay vì total
+        BigDecimal grandTotal = total.add(shippingFee); // Sử dụng originalTotal thay vì total
 
         BigDecimal discount = BigDecimal.ZERO;
         if (voucherCode != null && !voucherCode.trim().isEmpty()) {

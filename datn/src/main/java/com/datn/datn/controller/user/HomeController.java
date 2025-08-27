@@ -2,6 +2,7 @@ package com.datn.datn.controller.user;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -235,15 +236,15 @@ public class HomeController {
         if (!member.getPassword().equals(member.getConfirmPassword())) {
             result.rejectValue("confirmPassword", "error.confirmPassword", "Mật khẩu xác nhận không khớp");
         }
-
+        // Kiểm tra email và phone đã tồn tại
         if (memberRepository.existsByEmail(member.getEmail())) {
             result.rejectValue("email", "error.email", "Email đã tồn tại");
         }
-
+        // Kiểm tra số điện thoại đã tồn tại
         if (memberRepository.existsByPhone(member.getPhone())) {
             result.rejectValue("phone", "error.phone", "Số điện thoại đã tồn tại");
         }
-
+        // Nếu có lỗi, trả về form đăng ký với thông báo lỗi
         if (result.hasErrors()) {
             return "views/shared/register";
         }
@@ -276,7 +277,7 @@ public class HomeController {
 
     @GetMapping("/otp")
     public String showOtpPage(Model model) {
-        return "views/shared/otp"; // Trang nhập OTP
+        return "views/shared/otp"; 
     }
 
     @PostMapping("/verify-otp")
@@ -286,6 +287,7 @@ public class HomeController {
             RedirectAttributes redirectAttributes) {
 
         try {
+            // Xác thực OTP
             boolean isVerified = authService.verifyOtp(email, otp);
             if (isVerified) {
                 redirectAttributes.addFlashAttribute("success", "Xác thực thành công! Vui lòng đăng nhập.");
@@ -299,6 +301,25 @@ public class HomeController {
             redirectAttributes.addFlashAttribute("error", "Lỗi hệ thống khi xác thực OTP: " + e.getMessage());
             redirectAttributes.addFlashAttribute("email", email); // Giữ lại email
             return "redirect:/otp";
+        }
+    }
+
+    @PostMapping("/resend-otp")
+    @ResponseBody
+    public ResponseEntity<String> resendOtp(@RequestParam String email) {
+        try {
+            // Tạo OTP mới và gửi lại
+            String otp = authService.generateOtp();
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
+            member.setOtp(otp);
+            member.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+            memberRepository.save(member);
+            // Gửi OTP qua email
+            authService.sendOtp(email);
+            return ResponseEntity.ok("OTP mới đã được gửi");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Lỗi khi gửi lại OTP: " + e.getMessage());
         }
     }
 

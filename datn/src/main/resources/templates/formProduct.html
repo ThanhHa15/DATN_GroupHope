@@ -343,14 +343,18 @@ select {
                 <div class="w-48">
                   <div class="relative">
                     <form method="get" action="/admin-products/filter-status" id="statusFilterForm">
-                      <select name="status"
-                        onchange="document.getElementById('statusFilterForm').submit();"
+                      <select name="status" onchange="document.getElementById('statusFilterForm').submit();"
                         class="w-full h-[43px] pl-4 pr-10 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary">
                         <option value="">Tất cả trạng thái</option>
-                        <option value="true" th:selected="${selectedStatus == true}">Đang kinh doanh</option>
-                        <option value="false" th:selected="${selectedStatus == false}">Ngừng kinh doanh</option>
+                        <option value="true" th:selected="${selectedStatus == true}">
+                          Đang kinh doanh
+                        </option>
+                        <option value="false" th:selected="${selectedStatus == false}">
+                          Ngừng kinh doanh
+                        </option>
                       </select>
-                      <div class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
+                      <div
+                        class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center pointer-events-none">
                         <i class="ri-arrow-down-s-line text-gray-400"></i>
                       </div>
                     </form>
@@ -366,10 +370,6 @@ select {
                       <th
                         class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
                         STT
-                      </th>
-                      <th
-                        class="px-4 py-3 bg-gray-50 text-center text-lg font-bold text-gray-700 uppercase tracking-wider">
-                        Ảnh
                       </th>
                       <th
                         class="px-4 py-3 bg-gray-50 text-left text-lg font-bold text-gray-700 uppercase tracking-wider">
@@ -398,10 +398,6 @@ select {
                       <td th:text="${currentPage * pageSize + iter.index + 1}"
                         class="px-4 py-4 text-center text-base font-small">
                         1
-                      </td>
-                      <td class="px-4 py-4 text-center">
-                        <img class="w-[70px] h-[70px] object-cover rounded mx-auto"
-                          th:src="@{'/images/' + ${p.imageUrl}}" alt="" />
                       </td>
                       <td th:text="${p.productName}" class="px-4 py-4 text-left text-base font-small">
                         Iphone 15 Pro Max
@@ -575,7 +571,7 @@ select {
     });
 
       // Thông báo thành công hoặc lỗi
-      /*   const message = /*[[${message}]]*/ "null";
+      /*   const message = /*[[${message}]]*/ ("null");
     const error = /*[[${error}]]*/ "null";
 
     if (message !== "null") {

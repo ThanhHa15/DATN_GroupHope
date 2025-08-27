@@ -137,6 +137,9 @@ public class EmployeeController {
             if (newPassword == null || newPassword.isBlank()) {
                 result.rejectValue("password", "error.member", "Mật khẩu không được để trống");
             }
+             if (membersService.existsByPhone(member.getPhone())) {
+                result.rejectValue("phone", "error.member", "Số điện thoại đã tồn tại, vui lòng nhập số khác");
+            }
         }
 
         // 3. Validate cập nhật nhân viên

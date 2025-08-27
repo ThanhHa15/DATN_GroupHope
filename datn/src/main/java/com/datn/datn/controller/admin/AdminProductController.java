@@ -186,8 +186,8 @@ public class AdminProductController {
             @RequestParam(defaultValue = "8") int size,
             Model model) {
 
-        Page<Product> productPage;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("productName").descending());
+        Page<Product> productPage;
 
         if (categoryId == null || categoryId == 0) {
             productPage = productService.getAll(pageRequest);
@@ -203,8 +203,11 @@ public class AdminProductController {
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("pageSize", size);
 
-        model.addAttribute("baseUrl",
-                "/admin-products/filter?categoryId=" + (categoryId == null ? 0 : categoryId) + "&");
+        String baseUrl = "/admin-products/filter?";
+        if (categoryId != null && categoryId != 0) {
+            baseUrl += "categoryId=" + categoryId + "&";
+        }
+        model.addAttribute("baseUrl", baseUrl);
 
         return "formProduct";
     }
@@ -228,8 +231,8 @@ public class AdminProductController {
             @RequestParam(defaultValue = "8") int size,
             Model model) {
 
-        Page<Product> productPage;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("productName").descending());
+        Page<Product> productPage;
 
         if (status == null) {
             productPage = productService.getAll(pageRequest);
@@ -245,7 +248,11 @@ public class AdminProductController {
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("pageSize", size);
 
-        model.addAttribute("baseUrl", "/admin-products/filter-status?status=" + status + "&");
+        String baseUrl = "/admin-products/filter-status?";
+        if (status != null) {
+            baseUrl += "status=" + status + "&";
+        }
+        model.addAttribute("baseUrl", baseUrl);
 
         return "formProduct";
     }

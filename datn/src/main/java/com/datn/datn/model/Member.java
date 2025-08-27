@@ -1,6 +1,7 @@
 package com.datn.datn.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.datn.datn.validator.MinAge;
 
@@ -40,13 +41,13 @@ public class Member {
     @Size(max = 100, message = "Họ và tên không quá 100 ký tự")
     private String fullname;
 
-    // @NotNull(message = "Ngày sinh không được để trống")
-    // @Past(message = "Ngày sinh phải là ngày trong quá khứ")
-    // @MinAge(value = 16, message = "Thành viên phải đủ ít nhất 16 tuổi")
+    @NotNull(message = "Ngày sinh không được để trống")
+    @Past(message = "Ngày sinh phải là ngày trong quá khứ")
+    @MinAge(value = 16, message = "Thành viên phải đủ ít nhất 16 tuổi")
     private LocalDate birthday;
 
-    // @NotBlank(message = "Số điện thoại không được để trống")
-    // @Pattern(regexp = "^[0-9]{10,15}$", message = "Số điện thoại không hợp lệ")
+    @NotBlank(message = "Số điện thoại không được để trống")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Số điện thoại phải đúng 10 chữ số")
     private String phone;
 
     @NotBlank(message = "Email không được để trống")
@@ -54,10 +55,8 @@ public class Member {
     @Column(unique = true)
     private String email;
 
-    // @NotBlank(message = "Mật khẩu không được để trống")
-    // @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
-    // @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z]).+$", message = "Mật khẩu phải
-    // chứa ít nhất 1 chữ cái và 1 số")
+  //  @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
     private String password;
 
     @Transient
@@ -71,7 +70,7 @@ public class Member {
     private boolean active = true;
 
     private String otp;
-    
+
     @Column(name = "verified", nullable = false, columnDefinition = "TINYINT(1) default 0")
     private Boolean verified = false;
 
@@ -79,6 +78,8 @@ public class Member {
     private Integer version;
 
     @Column(nullable = false)
-    private String loginType; 
+    private String loginType;
+
+    private LocalDateTime otpExpiry;
 
 }

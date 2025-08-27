@@ -1,493 +1,438 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Thêm Thông số kỹ thuật</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: { primary: "#1e88e5", secondary: "#f5f5f5" },
-            borderRadius: {
-              none: "0px",
-              sm: "4px",
-              DEFAULT: "8px",
-              md: "12px",
-              lg: "16px",
-              xl: "20px",
-              "2xl": "24px",
-              "3xl": "32px",
-              full: "9999px",
-              button: "8px",
-            },
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Thêm Thông số kỹ thuật</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: "#1e88e5", secondary: "#f5f5f5" },
+          borderRadius: {
+            none: "0px",
+            sm: "4px",
+            DEFAULT: "8px",
+            md: "12px",
+            lg: "16px",
+            xl: "20px",
+            "2xl": "24px",
+            "3xl": "32px",
+            full: "9999px",
+            button: "8px",
           },
         },
-      };
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
-    <style>
-      body {
-        background-color: #f0f3f7;
-        margin: 0;
-        font-family: "Poppins", sans-serif;
-        color: #2c3e50;
-      }
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+  <style>
+    body {
+      background-color: #f0f3f7;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      color: #2c3e50;
+    }
 
-      div + h2 {
-        margin-top: 100px;
-        margin-left: 295px;
-        font-size: 23px;
-      }
+    div+h2 {
+      margin-top: 100px;
+      margin-left: 295px;
+      font-size: 23px;
+    }
 
-      h3 {
-        margin-left: 270px;
-        color: #5f9cd8;
-      }
+    h3 {
+      margin-left: 270px;
+      color: #5f9cd8;
+    }
 
-      form {
-        max-width: 800px;
-        margin-left: 295px;
-        padding: 20px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
+    form {
+      max-width: 800px;
+      margin-left: 295px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
-      table {
-        margin-left: 295px;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      }
+    table {
+      margin-left: 295px;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
 
-      .spec-row {
-        display: none;
-        overflow: hidden;
-        transition: max-height 0.3s ease, opacity 0.2s ease;
-        max-height: 0;
-        opacity: 0;
-      }
+    .spec-row {
+      display: none;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.2s ease;
+      max-height: 0;
+      opacity: 0;
+    }
 
-      .spec-row.show {
-        display: table-row;
-        max-height: 500px;
-        /* Giá trị đủ lớn để chứa nội dung */
-        opacity: 1;
-      }
+    .spec-row.show {
+      display: table-row;
+      max-height: 500px;
+      /* Giá trị đủ lớn để chứa nội dung */
+      opacity: 1;
+    }
 
-      .product-header {
-        cursor: pointer;
-        background-color: #f9f9f9;
-        font-weight: bold;
-        transition: background-color 0.2s ease;
-      }
+    .product-header {
+      cursor: pointer;
+      background-color: #f9f9f9;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
 
-      .product-header:hover {
-        background-color: #e0e0e0;
-      }
+    .product-header:hover {
+      background-color: #e0e0e0;
+    }
 
-      .spec-table {
-        width: 1200px;
-        border-collapse: collapse;
-      }
+    .spec-table {
+      width: 1200px;
+      border-collapse: collapse;
+    }
 
-      .spec-table th,
-      .spec-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-      }
-    </style>
-    <style>
-      .specification-form {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        font-family: "Poppins", sans-serif;
-      }
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+  </style>
+  <style>
+    .specification-form {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: "Poppins", sans-serif;
+    }
 
-      .form-group {
-        margin-bottom: 15px;
-      }
+    .form-group {
+      margin-bottom: 15px;
+    }
 
-      .form-label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 600;
-        color: #333;
-      }
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #333;
+    }
 
-      .form-control {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
-      }
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
 
-      textarea.form-control {
-        min-height: 80px;
-        resize: vertical;
-      }
+    textarea.form-control {
+      min-height: 80px;
+      resize: vertical;
+    }
 
-      .card {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-top: 20px;
-        overflow: hidden;
-      }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
 
-      .card-header {
-        background-color: #f5f5f5;
-        padding: 15px 20px;
-        border-bottom: 1px solid #ddd;
-      }
+    .card-header {
+      background-color: #f5f5f5;
+      padding: 15px 20px;
+      border-bottom: 1px solid #ddd;
+    }
 
-      .card-body {
-        padding: 20px;
-      }
+    .card-body {
+      padding: 20px;
+    }
 
-      .grid-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-      }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
 
-      .form-actions {
-        margin-top: 20px;
-        text-align: right;
-      }
+    .form-actions {
+      margin-top: 20px;
+      text-align: right;
+    }
 
-      .btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-      }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-      .btn-primary {
-        background-color: #007bff;
-        color: white;
-      }
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
 
-      .btn-primary:hover {
-        background-color: #0069d9;
-      }
+    .btn-primary:hover {
+      background-color: #0069d9;
+    }
 
-      select.form-control {
-        height: 38px;
-      }
+    select.form-control {
+      height: 38px;
+    }
 
-      .spec-form label {
-        font-weight: 700;
-        color: #2c3e50;
-        margin-bottom: 6px;
-        display: block;
-      }
-    </style>
-    <style>
-      .spec-table {
-        width: 1200px;
-        margin-left: 300px;
-        border-collapse: collapse;
-        border-radius: 12px;
-        overflow: hidden;
-        font-size: 15px;
-        box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
-      }
+    .spec-form label {
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 6px;
+      display: block;
+    }
+  </style>
+  <style>
+    .spec-table {
+      width: 1200px;
+      margin-left: 300px;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 15px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+    }
 
-      .spec-table th {
-        background-color: #000f8f;
-        color: white;
-        padding: 12px;
-        text-align: center;
-        font-weight: bold;
-      }
+    .spec-table th {
+      background-color: #000f8f;
+      color: white;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
 
-      .spec-table td {
-        padding: 10px;
-        border: 1px solid #ddd;
-        text-align: center;
-        background-color: #fff;
-      }
+    .spec-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+      background-color: #fff;
+    }
 
-      .spec-table tr:nth-child(even) td:not(.product-header) {
-        background-color: #f4f6fa;
-      }
+    .spec-table tr:nth-child(even) td:not(.product-header) {
+      background-color: #f4f6fa;
+    }
 
-      .product-header td {
-        background-color: #f0f0f0;
-        font-weight: 600;
-        font-size: 16px;
-        color: #000f8f;
-        text-align: left;
-        padding: 12px 16px;
-      }
+    .product-header td {
+      background-color: #f0f0f0;
+      font-weight: 600;
+      font-size: 16px;
+      color: #000f8f;
+      text-align: left;
+      padding: 12px 16px;
+    }
 
-      .spec-edit-form input[type="text"] {
-        padding: 6px 8px;
-        width: 200px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-      }
+    .spec-edit-form input[type="text"] {
+      padding: 6px 8px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
 
-      .spec-edit-form button {
-        margin-left: 8px;
-        background-color: #1e88e5;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-      }
+    .spec-edit-form button {
+      margin-left: 8px;
+      background-color: #1e88e5;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
 
-      .spec-edit-form button:hover {
-        background-color: #1565c0;
-      }
+    .spec-edit-form button:hover {
+      background-color: #1565c0;
+    }
 
-      .pagination a {
-        text-decoration: none;
-        color: #333;
-        font-weight: 500;
-      }
+    .pagination a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
 
-      .pagination a:hover {
-        background-color: #e5e7eb;
-      }
+    .pagination a:hover {
+      background-color: #e5e7eb;
+    }
 
-      .search-container input:focus {
-        outline: none;
-        border-color: #2563eb;
-        ring-color: #93c5fd;
-      }
-    </style>
-  </head>
+    .search-container input:focus {
+      outline: none;
+      border-color: #2563eb;
+      ring-color: #93c5fd;
+    }
+  </style>
+</head>
 
-  <body>
-    <div th:replace="nav :: na"></div>
-    <div th:replace="header :: header"></div>
+<body>
+  <div th:replace="nav :: na"></div>
+  <div th:replace="header :: header"></div>
 
-    <h1
-      style="
+  <h1 style="
         margin-left: 300px;
         margin-top: 75px;
         font-size: 23px;
         margin-bottom: 18px;
-      "
-    >
-      Quản lý thông số kỹ thuật
-    </h1>
+      ">
+    Quản lý thông số kỹ thuật
+  </h1>
 
-    <!-- Thêm form tìm kiếm sau thẻ h1 -->
-    <div class="search-container w-full mb-5">
-      <form
-        th:action="@{/specification}"
-        method="get"
-        class="flex items-center gap-4 w-full"
-      >
-        <!-- Input full chiều ngang -->
-        <input
-          type="text"
-          name="search"
-          th:value="${search}"
-          placeholder="Tìm kiếm thông số..."
-          class="flex-1 px-4 py-2 border rounded-lg w-full"
-        />
+  <!-- Thêm form tìm kiếm sau thẻ h1 -->
+  <div class="search-container w-full mb-5">
+    <form th:action="@{/specification}" method="get" class="flex items-center gap-4 w-full">
+      <!-- Input full chiều ngang -->
+      <input type="text" name="search" th:value="${search}" placeholder="Tìm kiếm thông số..."
+        class="flex-1 px-4 py-2 border rounded-lg w-full" />
 
-        <!-- Button nằm sát input -->
-        <button
-          type="submit"
-          class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
-        >
-          <i class="fas fa-search mr-2"></i> Tìm kiếm
-        </button>
-      </form>
-    </div>
+      <!-- Button nằm sát input -->
+      <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">
+        <i class="fas fa-search mr-2"></i> Tìm kiếm
+      </button>
+    </form>
+  </div>
 
-    <h3
-      style="
+  <h3 style="
         font-size: 20px;
         color: #333;
         margin-left: 300px;
         margin-bottom: -20px;
         margin-top: 20px;
-      "
-    >
-      Danh sách thông số đã lưu
-    </h3>
+      ">
+    Danh sách thông số đã lưu
+  </h3>
 
-    <table class="spec-table" style="table-layout: fixed; width: 1200px">
-      <thead>
-        <tr>
-          <th style="width: 200px">Sản phẩm</th>
-          <th style="width: 350px">Tên thông số</th>
-          <th>Giá trị</th>
-        </tr>
-      </thead>
-      <tbody th:each="entry : ${groupedSpecList}">
-        <!-- Dòng tiêu đề sản phẩm -->
-        <tr
-          class="product-header"
-          style="cursor: pointer"
-          th:onclick="|toggleSpecs('group-' + ${entry.key})|"
-        >
-          <td
-            th:text="${productIdToNameMap.get(entry.key)}"
-            style="width: 200px"
-          ></td>
-          <td colspan="2"></td>
-        </tr>
+  <table class="spec-table" style="table-layout: fixed; width: 1200px">
+    <thead>
+      <tr>
+        <th style="width: 200px">Sản phẩm</th>
+        <th style="width: 350px">Tên thông số</th>
+        <th>Giá trị</th>
+      </tr>
+    </thead>
+    <tbody th:each="entry : ${groupedSpecList}">
+      <!-- Dòng tiêu đề sản phẩm -->
+      <tr class="product-header" style="cursor: pointer" th:onclick="|toggleSpecs('group-' + ${entry.key})|">
+        <td th:text="${productIdToNameMap.get(entry.key)}" style="width: 200px"></td>
+        <td colspan="2"></td>
+      </tr>
 
-        <!-- Các dòng thông số -->
-        <tr
-          th:each="spec : ${entry.value}"
-          th:id="|group-${spec.product.productID}|"
-          class="spec-row"
-        >
-          <td style="width: 200px"></td>
-          <td
-            style="font-weight: 600; font-size: 17px"
-            th:text="${spec.specKey}"
-          ></td>
-          <td class="text-left pl-2">
-            <form
-              style="margin-left: 10px"
-              th:action="@{/specification/update}"
-              method="post"
-              class="spec-edit-form"
-            >
-              <input type="hidden" name="specId" th:value="${spec.specId}" />
-              <input
-                style="
+      <!-- Các dòng thông số -->
+      <tr th:each="spec : ${entry.value}" th:id="|group-${spec.product.productID}|" class="spec-row">
+        <td style="width: 200px"></td>
+        <td style="font-weight: 600; font-size: 17px" th:text="${spec.specKey}"></td>
+        <td class="text-left pl-2">
+          <form style="margin-left: 10px" th:action="@{/specification/update}" method="post" class="spec-edit-form">
+            <input type="hidden" name="specId" th:value="${spec.specId}" />
+            <input style="
                   width: 70%;
                   padding-left: 10px;
                   background-color: #e1e1e1;
                   color: black;
-                "
-                type="text"
-                name="specValue"
-                th:value="${spec.specValue}"
-              />
-              <button type="submit">Cập nhật</button>
-            </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+                " type="text" name="specValue" th:value="${spec.specValue}" />
+            <button type="submit">Cập nhật</button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-    <!-- Thêm phân trang sau bảng -->
-    <div
-      class="pagination"
-      style="margin-left: 300px; margin-top: 20px; margin-bottom: 40px"
-    >
-      <div class="flex items-center justify-between">
-        <div class="text-sm text-gray-700 flex items-center gap-4">
-          <span>
-            Trang <span th:text="${currentPage}"></span> /
-            <span th:text="${totalPages}"></span>
-          </span>
-          <span class="text-gray-500">
-            (Tổng <span th:text="${totalItems}"></span> thông số, hiển thị 10
-            sản phẩm mỗi trang)
-          </span>
-        </div>
-        <div class="flex gap-2">
-          <a
-            th:if="${currentPage > 1}"
-            th:href="@{/specification(page=${currentPage - 1}, search=${search}, size=10)}"
-            class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-          >
-            Trang trước
-          </a>
-          <a
-            th:if="${currentPage < totalPages}"
-            th:href="@{/specification(page=${currentPage + 1}, search=${search}, size=10)}"
-            class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
-          >
-            Trang sau
-          </a>
-        </div>
+  <!-- Thêm phân trang sau bảng -->
+  <div class="pagination" style="margin-left: 300px; margin-top: 20px; margin-bottom: 40px">
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-gray-700 flex items-center gap-4">
+        <span>
+          Trang <span th:text="${currentPage}"></span> /
+          <span th:text="${totalPages}"></span>
+        </span>
+        <span class="text-gray-500">
+          (Tổng <span th:text="${totalItems}"></span> thông số, hiển thị 10
+          sản phẩm mỗi trang)
+        </span>
+      </div>
+      <div class="flex gap-2">
+        <a th:if="${currentPage > 1}" th:href="@{/specification(page=${currentPage - 1}, search=${search}, size=10)}"
+          class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300" style="margin-right: 30px;">
+          Trang trước
+        </a>
+        <a th:if="${currentPage < totalPages}"
+          th:href="@{/specification(page=${currentPage + 1}, search=${search}, size=10)}"
+          class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300" style="margin-right: 20px">
+          Trang sau
+        </a>
       </div>
     </div>
+  </div>
 
-    <script>
-      function toggleSpecs(groupIdPrefix) {
-        const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
-        rows.forEach((row) => {
-          if (row.classList.contains("show")) {
-            // Hiệu ứng thu lên
-            row.style.maxHeight = "0";
-            row.style.opacity = "0";
-            setTimeout(() => {
-              row.classList.remove("show");
-            }, 300);
+  <script>
+    function toggleSpecs(groupIdPrefix) {
+      const rows = document.querySelectorAll(`tr[id^="${groupIdPrefix}"]`);
+      rows.forEach((row) => {
+        if (row.classList.contains("show")) {
+          // Hiệu ứng thu lên
+          row.style.maxHeight = "0";
+          row.style.opacity = "0";
+          setTimeout(() => {
+            row.classList.remove("show");
+          }, 300);
+        } else {
+          // Hiệu ứng trượt xuống
+          row.classList.add("show");
+          // Tính toán chiều cao thực tế
+          const contentHeight = row.scrollHeight;
+          row.style.maxHeight = `${contentHeight}px`;
+          row.style.opacity = "1";
+        }
+      });
+    }
+
+    function showFieldsByProductType() {
+      const select = document.getElementById("productSelect");
+      const selectedOption = select.options[select.selectedIndex];
+      const categoryName = selectedOption.getAttribute("data-category-name");
+      const productId = selectedOption.value;
+
+      // Cập nhật giá trị productid
+      document.getElementById("productId").value = productId;
+
+      // Ẩn tất cả form
+      document
+        .querySelectorAll(".spec-form")
+        .forEach((form) => (form.style.display = "none"));
+
+      if (categoryName) {
+        // Chuẩn hóa tên danh mục (bỏ dấu, thay khoảng trắng bằng gạch ngang)
+        const normalized = categoryName
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+
+        const formId = `form-type-${normalized}`;
+        const form = document.getElementById(formId);
+
+        if (form) {
+          form.style.display = "block"; // Hiển thị form tương ứng
+        } else {
+          // Nếu không tìm thấy form, hiển thị form mặc định
+          const defaultForm = document.getElementById("form-type-default");
+          if (defaultForm) {
+            defaultForm.style.display = "block";
           } else {
-            // Hiệu ứng trượt xuống
-            row.classList.add("show");
-            // Tính toán chiều cao thực tế
-            const contentHeight = row.scrollHeight;
-            row.style.maxHeight = `${contentHeight}px`;
-            row.style.opacity = "1";
-          }
-        });
-      }
-
-      function showFieldsByProductType() {
-        const select = document.getElementById("productSelect");
-        const selectedOption = select.options[select.selectedIndex];
-        const categoryName = selectedOption.getAttribute("data-category-name");
-        const productId = selectedOption.value;
-
-        // Cập nhật giá trị productid
-        document.getElementById("productId").value = productId;
-
-        // Ẩn tất cả form
-        document
-          .querySelectorAll(".spec-form")
-          .forEach((form) => (form.style.display = "none"));
-
-        if (categoryName) {
-          // Chuẩn hóa tên danh mục (bỏ dấu, thay khoảng trắng bằng gạch ngang)
-          const normalized = categoryName
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "");
-
-          const formId = `form-type-${normalized}`;
-          const form = document.getElementById(formId);
-
-          if (form) {
-            form.style.display = "block"; // Hiển thị form tương ứng
-          } else {
-            // Nếu không tìm thấy form, hiển thị form mặc định
-            const defaultForm = document.getElementById("form-type-default");
-            if (defaultForm) {
-              defaultForm.style.display = "block";
-            } else {
-              console.warn("Không tìm thấy form thông số phù hợp!");
-            }
+            console.warn("Không tìm thấy form thông số phù hợp!");
           }
         }
       }
-    </script>
-  </body>
+    }
+  </script>
+</body>
+
 </html>

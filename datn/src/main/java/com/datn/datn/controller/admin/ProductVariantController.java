@@ -46,14 +46,15 @@ public class ProductVariantController {
     public String showVariantForm(
             Model model,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size, HttpSession session,
+            @RequestParam(defaultValue = "8") int size,
+            HttpSession session,
             RedirectAttributes redirectAttributes) {
         String role = (String) session.getAttribute("role");
         if (role == null || (!role.equals("ADMIN") && !role.equals("STAFF"))) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập trang này!");
-            return "redirect:/access-denied"; // hoặc trả về 1 trang báo lỗi
+            return "redirect:/access-denied";
         }
-        // sắp xếp A-Z theo tên sản phẩm (giả sử field là 'name')
+
         Page<ProductVariant> variantPage = variantService.getAll(
                 PageRequest.of(page, size, Sort.by("product.productName").descending()));
 
@@ -75,9 +76,12 @@ public class ProductVariantController {
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) String status,
             Model model) {
 
-        Page<ProductVariant> variantPage = variantService.searchVariantsByName(keyword, PageRequest.of(page, size));
+        Page<ProductVariant> variantPage = variantService.searchVariantsByNameWithFilters(
+                keyword, categoryId, status, PageRequest.of(page, size));
         List<Product> products = loadProductsWithStorages();
 
         model.addAttribute("variant", new ProductVariant());
@@ -85,10 +89,11 @@ public class ProductVariantController {
         model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.getAll());
         model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("status", status);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", variantPage.getTotalPages());
 
-        // ✅ Thêm thông báo khi không có kết quả
         if (variantPage.isEmpty()) {
             model.addAttribute("notFoundMessage", "Không tìm thấy kết quả cho từ khóa: \"" + keyword + "\"");
         }
@@ -96,7 +101,59 @@ public class ProductVariantController {
         return "formVariant";
     }
 
-    // ========== LỌC THEO DANH MỤC ==========
+    // ========== LỌC KẾT HỢP (DANH MỤC + TRẠNG THÁI) ==========
+    @GetMapping("/filter")
+    public String filterVariants(
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("product.productName").descending());
+        Page<ProductVariant> variantPage;
+
+        // Sử dụng phương thức lọc kết hợp
+        variantPage = variantService.filterVariantsWithMultipleFilters(categoryId, status, keyword, pageable);
+
+        List<Product> products = loadProductsWithStorages();
+
+        model.addAttribute("variant", new ProductVariant());
+        model.addAttribute("variants", variantPage.getContent());
+        model.addAttribute("products", products);
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("status", status);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", variantPage.getTotalPages());
+
+        // Tạo thông báo phù hợp
+        if (variantPage.isEmpty()) {
+            StringBuilder message = new StringBuilder("Không tìm thấy sản phẩm");
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                message.append(" với từ khóa: \"").append(keyword).append("\"");
+            }
+            if (categoryId != null && categoryId > 0) {
+                Category category = categoryService.getById(categoryId);
+                if (category != null) {
+                    message.append(" trong danh mục: \"").append(category.getName()).append("\"");
+                }
+            }
+            if (status != null && !status.isEmpty()) {
+                String statusText = status.equals("con") ? "còn hàng" : "hết hàng";
+                message.append(" với trạng thái: \"").append(statusText).append("\"");
+            }
+            model.addAttribute("notFoundMessage", message.toString());
+        }
+
+        return "formVariant";
+    }
+
+    // ========== CÁC PHƯƠNG THỨC CŨ VẪN GIỮ NGUYÊN ==========
+
+    // Giữ nguyên phương thức filterVariantsByCategory cho tương thích ngược
     @GetMapping("/filter-variants")
     public String filterVariantsByCategory(
             @RequestParam(required = false) Integer categoryId,
@@ -104,32 +161,18 @@ public class ProductVariantController {
             @RequestParam(defaultValue = "8") int size,
             Model model) {
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductVariant> variantPage;
+        return filterVariants(categoryId, null, null, page, size, model);
+    }
 
-        if (categoryId == null || categoryId == 0) {
-            variantPage = variantService.getAll(pageable); // lấy tất cả
-        } else {
-            variantPage = variantService.filterByCategory(categoryId, pageable); // lọc
-        }
+    // Giữ nguyên phương thức filterVariantsByStatus cho tương thích ngược
+    @GetMapping("/filter-status")
+    public String filterVariantsByStatus(
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            Model model) {
 
-        List<Product> products = loadProductsWithStorages();
-
-        model.addAttribute("variant", new ProductVariant());
-
-        model.addAttribute("variants", variantPage.getContent());
-        model.addAttribute("products", products);
-        model.addAttribute("categories", categoryService.getAll());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", variantPage.getTotalPages());
-        model.addAttribute("selectedCategoryId", categoryId);
-
-        // ✅ nếu không có sản phẩm
-        if (variantPage.isEmpty()) {
-            model.addAttribute("noProductMessage", "Không có sản phẩm trong danh mục này");
-        }
-
-        return "formVariant";
+        return filterVariants(null, status, null, page, size, model);
     }
 
     @PostMapping("/update")
@@ -139,7 +182,6 @@ public class ProductVariantController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            // Xử lý ảnh
             if (!imageFile.isEmpty()) {
                 String fileName = imageFile.getOriginalFilename();
                 String uploadDir = new File("src/main/resources/static/images").getAbsolutePath();
@@ -162,7 +204,6 @@ public class ProductVariantController {
         return "redirect:/variants";
     }
 
-    // ========== XÓA ==========
     @GetMapping("/delete/{id}")
     public String deleteVariant(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         try {
@@ -176,7 +217,6 @@ public class ProductVariantController {
         return "redirect:/variants";
     }
 
-    // ========== SỬA ==========
     @GetMapping("/edit/{id}")
     public String editVariant(@PathVariable Integer id,
             @RequestParam(defaultValue = "0") int page,
@@ -204,29 +244,6 @@ public class ProductVariantController {
         return "formVariant";
     }
 
-    // ========== LỌC THEO TRẠNG THÁI ==========
-    @GetMapping("/filter-status")
-    public String filterVariantsByStatus(
-            @RequestParam(required = false) String status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size,
-            Model model) {
-
-        Page<ProductVariant> variantPage = variantService.filterByStatus(status, PageRequest.of(page, size));
-        List<Product> products = loadProductsWithStorages();
-
-        model.addAttribute("variant", new ProductVariant());
-        model.addAttribute("variants", variantPage.getContent());
-        model.addAttribute("products", products);
-        model.addAttribute("categories", categoryService.getAll());
-        model.addAttribute("status", status);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", variantPage.getTotalPages());
-
-        return "formVariant";
-    }
-
-    // ========== HÀM CHUNG: LOAD PRODUCTS KÈM STORAGES ==========
     private List<Product> loadProductsWithStorages() {
         List<Product> products = productService.getAll();
         for (Product p : products) {

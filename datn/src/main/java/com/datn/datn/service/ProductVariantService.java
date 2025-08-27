@@ -73,4 +73,10 @@ public interface ProductVariantService {
 
     // Lọc sản phẩm đang giảm giá với nhiều điều kiện
     Page<ProductVariant> filterDiscountedVariants(String keyword, Integer categoryId, Pageable pageable);
+
+    Page<ProductVariant> filterVariantsWithMultipleFilters(Integer categoryId, String status, String keyword,
+            Pageable pageable);
+
+    Page<ProductVariant> searchVariantsByNameWithFilters(String keyword, Integer categoryId, String status,
+            Pageable pageable);
 }

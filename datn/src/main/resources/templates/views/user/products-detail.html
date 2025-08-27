@@ -36,6 +36,7 @@
   <link rel="stylesheet" href="/css/shared/footer.css" />
   <link rel="stylesheet" href="/css/shared/header.css" />
   <link rel="stylesheet" href="/css/shared/chatbox.css" />
+  <script src="/js/profanity-filter.js"></script>
   <style>
     :where([class^="ri-"])::before {
       content: "\f3c2";
@@ -146,7 +147,7 @@
   <!-- Nút xem tất cả -->
   <style>
     .xem-tat-ca-btn {
-     display: block;
+      display: block;
       margin: 16px auto 0;
       padding: 8px 24px;
       border: 1px solid #000f8f;
@@ -1890,97 +1891,112 @@
           });
           return;
         }
-
-        // Build FormData and send
-        const fd = new FormData();
-        fd.append("productId", PRODUCT_ID);
-        fd.append("rating", rating);
-        fd.append("comment", comment);
-        if (imageFiles.length) {
-          Array.from(imageFiles)
-            .slice(0, 5)
-            .forEach((f) => fd.append("images", f));
-        }
-
-        try {
-          const resp = await fetch("/api/reviews", {
-            method: "POST",
-            body: fd,
-            credentials: "include",
-          });
-          if (!resp.ok) {
-            // try to read JSON error, else text
-            const err = await resp.json().catch(() => null);
-            throw new Error(
-              (err && (err.error || err.message)) ||
-              (await resp.text()) ||
-              "Error submitting review"
-            );
-          }
-
-          Swal.fire({
-            icon: "success",
-            title: "Thành công",
-            text: "Đánh giá của bạn đã được gửi!",
-            confirmButtonText: "OK",
-          });
-          document.getElementById("reviewModal")?.classList.add("hidden");
-          resetReviewForm();
-          // reload lists & stats
-          loadReviews(PRODUCT_ID, currentFilter);
-          updateReviewStats(PRODUCT_ID);
-        } catch (e) {
-          console.error("Submit review error", e);
+        // Kiểm tra nội dung có từ ngữ không phù hợp
+        if (containsProfanity(comment)) {
+          const badWords = findProfanityWords(comment);
           Swal.fire({
             icon: "error",
-            title: "Lỗi",
-            text: "Có lỗi xảy ra khi gửi đánh giá: " + e.message,
+            title: "Nội dung không phù hợp",
+            text: "Vui lòng không sử dụng các từ ngữ thô tục hoặc thiếu văn hóa trong đánh giá.",
+            footer: `Các từ không phù hợp: ${ badWords.join(", ") }`
           });
-        }
-      });
+      return;
     }
 
-    // Reset review form
-    function resetReviewForm() {
-      document.getElementById("reviewComment") &&
-        (document.getElementById("reviewComment").value = "");
-      document.getElementById("imageUpload") &&
-        (document.getElementById("imageUpload").value = "");
-      document.getElementById("previewImages") &&
-        (document.getElementById("previewImages").innerHTML = "");
-      document.getElementById("ratingValue") &&
-        (document.getElementById("ratingValue").value = 0);
-      document.querySelectorAll(".rating-stars i").forEach((i) => {
-        i.classList.remove("fa-solid", "text-yellow-500");
-        i.classList.add("fa-regular");
-      });
+    // Build FormData and send
+    const fd = new FormData();
+    fd.append("productId", PRODUCT_ID);
+    fd.append("rating", rating);
+    fd.append("comment", comment);
+    if (imageFiles.length) {
+      Array.from(imageFiles)
+        .slice(0, 5)
+        .forEach((f) => fd.append("images", f));
     }
 
-    // Filter buttons (assumes .filter-button elements exist and have data-rating attribute)
-    document.querySelectorAll(".filter-button").forEach((btn) => {
-      btn.addEventListener("click", function () {
-        const rating = parseInt(this.getAttribute("data-rating")) || 0;
-        currentFilter = rating;
-        // active style
-        document
-          .querySelectorAll(".filter-button")
-          .forEach((b) =>
-            b.classList.remove(
-              "bg-gray-200",
-              "border-gray-500",
-              "active-filter"
-            )
-          );
-        this.classList.add("bg-gray-200", "border-gray-500", "active-filter");
-        loadReviews(PRODUCT_ID, rating);
+    try {
+      const resp = await fetch("/api/reviews", {
+        method: "POST",
+        body: fd,
+        credentials: "include",
       });
-    });
+      if (!resp.ok) {
+        // try to read JSON error, else text
+        const err = await resp.json().catch(() => null);
+        throw new Error(
+          (err && (err.error || err.message)) ||
+          (await resp.text()) ||
+          "Error submitting review"
+        );
+      }
 
-    // Initial load
-    (async () => {
-      await checkLoginStatus();
+      Swal.fire({
+        icon: "success",
+        title: "Thành công",
+        text: "Đánh giá của bạn đã được gửi!",
+        confirmButtonText: "OK",
+      });
+      document.getElementById("reviewModal")?.classList.add("hidden");
+      resetReviewForm();
+      // reload lists & stats
       loadReviews(PRODUCT_ID, currentFilter);
       updateReviewStats(PRODUCT_ID);
-    })();
+    } catch (e) {
+      console.error("Submit review error", e);
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Có lỗi xảy ra khi gửi đánh giá: " + e.message,
+      });
+    }
+  });
+    }
+
+  // Reset review form
+  function resetReviewForm() {
+    document.getElementById("reviewComment") &&
+      (document.getElementById("reviewComment").value = "");
+    document.getElementById("imageUpload") &&
+      (document.getElementById("imageUpload").value = "");
+    document.getElementById("previewImages") &&
+      (document.getElementById("previewImages").innerHTML = "");
+    document.getElementById("ratingValue") &&
+      (document.getElementById("ratingValue").value = 0);
+    document.querySelectorAll(".rating-stars i").forEach((i) => {
+      i.classList.remove("fa-solid", "text-yellow-500");
+      i.classList.add("fa-regular");
+    });
+  }
+
+  // Filter buttons (assumes .filter-button elements exist and have data-rating attribute)
+  document.querySelectorAll(".filter-button").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const rating = parseInt(this.getAttribute("data-rating")) || 0;
+      currentFilter = rating;
+      // active style
+      document
+        .querySelectorAll(".filter-button")
+        .forEach((b) =>
+          b.classList.remove(
+            "bg-gray-200",
+            "border-gray-500",
+            "active-filter"
+          )
+        );
+      this.classList.add("bg-gray-200", "border-gray-500", "active-filter");
+      loadReviews(PRODUCT_ID, rating);
+    });
+  });
+
+  // Initial load
+  (async () => {
+    await checkLoginStatus();
+    loadReviews(PRODUCT_ID, currentFilter);
+    updateReviewStats(PRODUCT_ID);
+  })();
   }); // DOMContentLoaded
+</script>
+<script>
+  // Kiểm tra nội dung có từ ngữ không phù hợp
+
 </script>

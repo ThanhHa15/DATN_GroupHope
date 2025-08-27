@@ -43,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void delete(Integer id) {    
+    public void delete(Integer id) {
         wishlistRepository.deleteByProductVariant_VariantID(id);
         repo.deleteById(id);
     }
@@ -91,11 +91,12 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> getByStatus(boolean status, Pageable pageable) {
         return repo.findByStatus(status, pageable);
     }
-    
+
     @Override
     public List<Product> getActiveProducts() {
         return repo.findByStatus(true); // Sử dụng phương thức mới không có Pageable
     }
+
     @Override
     public void toggleStatus(Integer id) {
         Product product = repo.findById(id).orElse(null);

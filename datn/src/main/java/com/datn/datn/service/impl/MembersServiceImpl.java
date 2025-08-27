@@ -19,6 +19,7 @@ public class MembersServiceImpl implements MembersService {
     @Autowired
     private MemberRepository memberRepository;
 
+
     @Override
     public List<Member> getAllEmployees() {
         return memberRepository.findByRoleIn(List.of("ADMIN", "STAFF"));
@@ -113,5 +114,10 @@ public class MembersServiceImpl implements MembersService {
     @Override
     public List<Member> findCustomersByActive(boolean active, String keyword) {
         return memberRepository.findByActive(active, keyword);
+    }
+
+    @Override
+    public boolean existsByPhone(String phone) {
+        return memberRepository.existsByPhone(phone);
     }
 }

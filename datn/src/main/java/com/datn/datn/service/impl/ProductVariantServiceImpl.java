@@ -285,5 +285,34 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
         return repo.findDiscountedVariantsWithFilters(processedKeyword, categoryId, pageable);
     }
+    // Thêm các method sau vào ProductVariantService
+
+    /**
+     * Lọc variants kết hợp nhiều tiêu chí
+     * 
+     * @param categoryId ID danh mục (null hoặc 0 = tất cả)
+     * @param status     Trạng thái ("con", "het", null = tất cả)
+     * @param keyword    Từ khóa tìm kiếm (null = không tìm)
+     * @param pageable   Thông tin phân trang
+     * @return Page<ProductVariant>
+     */
+    public Page<ProductVariant> filterVariantsWithMultipleFilters(Integer categoryId, String status, String keyword,
+            Pageable pageable) {
+        return repo.findVariantsWithMultipleFilters(categoryId, status, keyword, pageable);
+    }
+
+    /**
+     * Tìm kiếm variants với các bộ lọc bổ sung
+     * 
+     * @param keyword    Từ khóa tìm kiếm
+     * @param categoryId ID danh mục
+     * @param status     Trạng thái
+     * @param pageable   Thông tin phân trang
+     * @return Page<ProductVariant>
+     */
+    public Page<ProductVariant> searchVariantsByNameWithFilters(String keyword, Integer categoryId, String status,
+            Pageable pageable) {
+        return repo.searchVariantsByNameWithFilters(keyword, categoryId, status, pageable);
+    }
 
 }

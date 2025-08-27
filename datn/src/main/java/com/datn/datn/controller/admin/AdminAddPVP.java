@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,7 +44,11 @@ public class AdminAddPVP {
     @GetMapping
     public String PVP(Model model) {
         List<Product> products = productService.getAll();
-
+        List<String> productNames = products.stream()
+                .map(p -> p.getProductName().trim().toLowerCase())
+                .collect(Collectors.toList());
+        model.addAttribute("products", products);
+        model.addAttribute("productNames", productNames);
         for (Product p : products) {
             List<String> storages = variantService.findStoragesByProductId(p.getProductID());
             p.setStorages(storages);
@@ -67,13 +72,8 @@ public class AdminAddPVP {
 
         try {
             // 1. Lưu Product trước
-            if (!productImageFile.isEmpty()) {
-                String fileName = productImageFile.getOriginalFilename();
-                String uploadDir = new File("src/main/resources/static/images").getAbsolutePath();
-                File dest = new File(uploadDir, fileName);
-                productImageFile.transferTo(dest);
-                product.setImageUrl(fileName);
-            }
+            // BỎ TOÀN BỘ ĐOẠN XỬ LÝ productImageFile
+            product.setImageUrl(null); // Đảm bảo luôn null
             Product savedProduct = productService.save(product);
             if (savedProduct == null || savedProduct.getProductID() == null) {
                 model.addAttribute("error", "Không lưu được Product!");
@@ -95,7 +95,8 @@ public class AdminAddPVP {
                 try {
                     double price = Double.parseDouble(cleanedPrice);
                     variant.setPrice(price);
-                } catch (NumberFormatException e) {}
+                } catch (NumberFormatException e) {
+                }
             }
             if (product.getManufactureDate() == null || product.getManufactureDate().isAfter(LocalDate.now())) {
                 model.addAttribute("error", "Ngày sản xuất không hợp lệ");
