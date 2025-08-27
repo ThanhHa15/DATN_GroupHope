@@ -724,7 +724,7 @@
 
           <!-- Danh sách thông số -->
           <div class="space-y-2 text-sm relative" style="position: relative">
-            <div th:each="spec, iterStat : ${specifications}" th:if="${iterStat.index < 20}"
+            <div th:each="spec, iterStat : ${specifications}" th:if="${iterStat.index < 7}"
               th:class="${iterStat.index % 2 == 0} ? 'flex bg-white' : 'flex bg-gray-200'">
               <div class="w-1/2 px-4 py-2 font-medium" th:text="${#strings.replace(spec.specKey, '''', '')}"></div>
               <div class="w-1/2 px-4 py-2" th:utext="${#strings.replace(spec.specValue, '\n', '<br/>')}"></div>
@@ -828,8 +828,8 @@
             Thông số kỹ thuật đầy đủ
           </div>
 
-          <!-- Nội dung thông số -->
-          <div class="divide-y divide-gray-200">
+          <!-- Nội dung thông số có thanh cuộn -->
+          <div class="divide-y divide-gray-200 max-h-[600px] overflow-y-auto">
             <div th:each="spec, iterStat : ${specifications}"
               th:class="${iterStat.index % 2 == 0} ? 'flex bg-white' : 'flex bg-gray-100'">
               <div class="w-1/2 px-4 py-2 font-medium" th:text="${#strings.replace(spec.specKey, '''', '')}"></div>
@@ -838,6 +838,7 @@
           </div>
         </div>
       </div>
+
 
       <!-- Đoạn 3 -->
       <div class="bg-white rounded-lg p-6 mb-6 shadow-[0_0_15px_rgba(0,0,0,0.1)] fade-in-up"
@@ -1898,102 +1899,102 @@
             icon: "error",
             title: "Nội dung không phù hợp",
             text: "Vui lòng không sử dụng các từ ngữ thô tục hoặc thiếu văn hóa trong đánh giá.",
-            footer: `Các từ không phù hợp: ${ badWords.join(", ") }`
+            footer: `Các từ không phù hợp: ${badWords.join(", ")}`
           });
-      return;
+          return;
+        }
+
+        // Build FormData and send
+        const fd = new FormData();
+        fd.append("productId", PRODUCT_ID);
+        fd.append("rating", rating);
+        fd.append("comment", comment);
+        if (imageFiles.length) {
+          Array.from(imageFiles)
+            .slice(0, 5)
+            .forEach((f) => fd.append("images", f));
+        }
+
+        try {
+          const resp = await fetch("/api/reviews", {
+            method: "POST",
+            body: fd,
+            credentials: "include",
+          });
+          if (!resp.ok) {
+            // try to read JSON error, else text
+            const err = await resp.json().catch(() => null);
+            throw new Error(
+              (err && (err.error || err.message)) ||
+              (await resp.text()) ||
+              "Error submitting review"
+            );
+          }
+
+          Swal.fire({
+            icon: "success",
+            title: "Thành công",
+            text: "Đánh giá của bạn đã được gửi!",
+            confirmButtonText: "OK",
+          });
+          document.getElementById("reviewModal")?.classList.add("hidden");
+          resetReviewForm();
+          // reload lists & stats
+          loadReviews(PRODUCT_ID, currentFilter);
+          updateReviewStats(PRODUCT_ID);
+        } catch (e) {
+          console.error("Submit review error", e);
+          Swal.fire({
+            icon: "error",
+            title: "Lỗi",
+            text: "Có lỗi xảy ra khi gửi đánh giá: " + e.message,
+          });
+        }
+      });
     }
 
-    // Build FormData and send
-    const fd = new FormData();
-    fd.append("productId", PRODUCT_ID);
-    fd.append("rating", rating);
-    fd.append("comment", comment);
-    if (imageFiles.length) {
-      Array.from(imageFiles)
-        .slice(0, 5)
-        .forEach((f) => fd.append("images", f));
+    // Reset review form
+    function resetReviewForm() {
+      document.getElementById("reviewComment") &&
+        (document.getElementById("reviewComment").value = "");
+      document.getElementById("imageUpload") &&
+        (document.getElementById("imageUpload").value = "");
+      document.getElementById("previewImages") &&
+        (document.getElementById("previewImages").innerHTML = "");
+      document.getElementById("ratingValue") &&
+        (document.getElementById("ratingValue").value = 0);
+      document.querySelectorAll(".rating-stars i").forEach((i) => {
+        i.classList.remove("fa-solid", "text-yellow-500");
+        i.classList.add("fa-regular");
+      });
     }
 
-    try {
-      const resp = await fetch("/api/reviews", {
-        method: "POST",
-        body: fd,
-        credentials: "include",
+    // Filter buttons (assumes .filter-button elements exist and have data-rating attribute)
+    document.querySelectorAll(".filter-button").forEach((btn) => {
+      btn.addEventListener("click", function () {
+        const rating = parseInt(this.getAttribute("data-rating")) || 0;
+        currentFilter = rating;
+        // active style
+        document
+          .querySelectorAll(".filter-button")
+          .forEach((b) =>
+            b.classList.remove(
+              "bg-gray-200",
+              "border-gray-500",
+              "active-filter"
+            )
+          );
+        this.classList.add("bg-gray-200", "border-gray-500", "active-filter");
+        loadReviews(PRODUCT_ID, rating);
       });
-      if (!resp.ok) {
-        // try to read JSON error, else text
-        const err = await resp.json().catch(() => null);
-        throw new Error(
-          (err && (err.error || err.message)) ||
-          (await resp.text()) ||
-          "Error submitting review"
-        );
-      }
+    });
 
-      Swal.fire({
-        icon: "success",
-        title: "Thành công",
-        text: "Đánh giá của bạn đã được gửi!",
-        confirmButtonText: "OK",
-      });
-      document.getElementById("reviewModal")?.classList.add("hidden");
-      resetReviewForm();
-      // reload lists & stats
+    // Initial load
+    (async () => {
+      await checkLoginStatus();
       loadReviews(PRODUCT_ID, currentFilter);
       updateReviewStats(PRODUCT_ID);
-    } catch (e) {
-      console.error("Submit review error", e);
-      Swal.fire({
-        icon: "error",
-        title: "Lỗi",
-        text: "Có lỗi xảy ra khi gửi đánh giá: " + e.message,
-      });
-    }
-  });
-    }
-
-  // Reset review form
-  function resetReviewForm() {
-    document.getElementById("reviewComment") &&
-      (document.getElementById("reviewComment").value = "");
-    document.getElementById("imageUpload") &&
-      (document.getElementById("imageUpload").value = "");
-    document.getElementById("previewImages") &&
-      (document.getElementById("previewImages").innerHTML = "");
-    document.getElementById("ratingValue") &&
-      (document.getElementById("ratingValue").value = 0);
-    document.querySelectorAll(".rating-stars i").forEach((i) => {
-      i.classList.remove("fa-solid", "text-yellow-500");
-      i.classList.add("fa-regular");
-    });
-  }
-
-  // Filter buttons (assumes .filter-button elements exist and have data-rating attribute)
-  document.querySelectorAll(".filter-button").forEach((btn) => {
-    btn.addEventListener("click", function () {
-      const rating = parseInt(this.getAttribute("data-rating")) || 0;
-      currentFilter = rating;
-      // active style
-      document
-        .querySelectorAll(".filter-button")
-        .forEach((b) =>
-          b.classList.remove(
-            "bg-gray-200",
-            "border-gray-500",
-            "active-filter"
-          )
-        );
-      this.classList.add("bg-gray-200", "border-gray-500", "active-filter");
-      loadReviews(PRODUCT_ID, rating);
-    });
-  });
-
-  // Initial load
-  (async () => {
-    await checkLoginStatus();
-    loadReviews(PRODUCT_ID, currentFilter);
-    updateReviewStats(PRODUCT_ID);
-  })();
+    })();
   }); // DOMContentLoaded
 </script>
 <script>
